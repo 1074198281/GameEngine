@@ -1,0 +1,9 @@
+file(GLOB_RECURSE D3d_RHI_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
+source_group("Header Files" FILES D3d_RHI_HEADER_FILES)
+
+set(D3d_RHI_SRC_LIST
+D3d12GraphicsManager.cpp
+)
+
+
+add_library(D3dRHI ${D3d_RHI_HEADER_FILES} ${D3d_RHI_SRC_LIST})

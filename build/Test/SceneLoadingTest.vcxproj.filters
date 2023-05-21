@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Test\SceneLoadingTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D5AB69DA-8602-3F63-BB40-367F3D981E86}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
