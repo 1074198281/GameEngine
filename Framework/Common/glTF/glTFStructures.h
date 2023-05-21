@@ -91,11 +91,13 @@ namespace My {
 	} glTF_Materials;
 
 	typedef struct {
+		std::string name;
 
 	} glTF_Meshes;
 
 	typedef struct {
-
+		std::string name;
+		int meshIndex;
 	} glTF_Nodes;
 
 	typedef struct {
@@ -107,6 +109,7 @@ namespace My {
 	} glTF_Scenes;
 
 	typedef struct {
-
+		int samplerIndex;
+		int sourceIndex;
 	} glTF_Textures;
 }
