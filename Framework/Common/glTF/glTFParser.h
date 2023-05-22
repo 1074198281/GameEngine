@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <unordered_map>
 #include "portable.hpp"
@@ -10,9 +11,6 @@ namespace My {
 		virtual ~glTFParser() = default;
 
 		virtual std::unique_ptr<Scene> Parse(const std::string& buf);
-
-	private:
-		void ProcessText(std::string& buf);
 	};
 }
 

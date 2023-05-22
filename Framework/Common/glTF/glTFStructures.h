@@ -1,9 +1,10 @@
+#pragma once
 #include "../GeomMath/geommath.hpp"
 #include <string>
 #include <unordered_map>
 
+#pragma pack(4)
 namespace My {
-
 	//Accessors
 	enum glTF_ComponentType {
 		glTF_ComponentType_NONE = 0,
@@ -51,14 +52,10 @@ namespace My {
 		int ByteOffset;
 		glTF_ComponentType componentType;
 		int count;
-		union {
-			int index;
-			Vector3f vertex;
-		} dataBoundaryMin;
-		union {
-			int index;
-			Vector3f vertex;
-		} dataBoundaryMax;
+		int dataBoundaryIndexMin;
+		Vector3f dataBoundaryVertexMin;
+		int dataBoundaryIndexMax;
+		Vector3f dataBoundaryVertexMax;
 		std::string dataType;
 	} glTF_Accessors;
 
@@ -97,7 +94,7 @@ namespace My {
 
 	typedef struct {
 		std::string name;
-		int meshIndex;
+		std::vector<int> meshIndex;
 	} glTF_Nodes;
 
 	typedef struct {
@@ -105,11 +102,15 @@ namespace My {
 	} glTF_Samplers;
 
 	typedef struct {
-
+		std::vector<int> nodeIndex;
 	} glTF_Scenes;
 
 	typedef struct {
 		int samplerIndex;
 		int sourceIndex;
 	} glTF_Textures;
+
+
 }
+
+#pragma pack(pop)

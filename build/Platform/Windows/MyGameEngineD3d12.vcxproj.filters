@@ -9,9 +9,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\WindowsApplication.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

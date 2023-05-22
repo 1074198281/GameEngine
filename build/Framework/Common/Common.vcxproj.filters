@@ -81,6 +81,9 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFProcessor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>

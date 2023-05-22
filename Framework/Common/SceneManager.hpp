@@ -20,6 +20,7 @@ namespace My {
 
     protected:
         void LoadOgexScene(const char* ogex_scene_file_name);
+        void LoadglTFScene(const char* glTF_scene_file_name);
 
     protected:
         std::unique_ptr<Scene>  m_pScene;

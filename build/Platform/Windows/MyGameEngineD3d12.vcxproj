@@ -88,11 +88,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -115,9 +112,9 @@
     <Link>
       <AdditionalDependencies>..\..\Framework\Common\Debug\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\Debug\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/Debug/MyGameEngineD3d12.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/Debug/MyGameEngineD3d12.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -157,9 +154,9 @@
     <Link>
       <AdditionalDependencies>..\..\Framework\Common\Release\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\Release\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/Release/MyGameEngineD3d12.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/Release/MyGameEngineD3d12.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -199,9 +196,9 @@
     <Link>
       <AdditionalDependencies>..\..\Framework\Common\MinSizeRel\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\MinSizeRel\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/MinSizeRel/MyGameEngineD3d12.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/MinSizeRel/MyGameEngineD3d12.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -240,9 +237,9 @@
     <Link>
       <AdditionalDependencies>..\..\Framework\Common\RelWithDebInfo\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\RelWithDebInfo\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/RelWithDebInfo/MyGameEngineD3d12.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/RelWithDebInfo/MyGameEngineD3d12.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -309,7 +306,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\Mesh.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\WindowsApplication.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\d3dx12.h" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows\WindowsApplication.cpp" />

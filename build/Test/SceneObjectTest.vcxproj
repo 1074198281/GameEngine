@@ -88,11 +88,8 @@
     <ClCompile>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -115,9 +112,9 @@
     <Link>
       <AdditionalDependencies>..\Framework\Common\Debug\Common.lib;xg.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/Debug/SceneObjectTest.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/Debug/SceneObjectTest.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -157,9 +154,9 @@
     <Link>
       <AdditionalDependencies>..\Framework\Common\Release\Common.lib;xg.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/Release/SceneObjectTest.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/Release/SceneObjectTest.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -199,9 +196,9 @@
     <Link>
       <AdditionalDependencies>..\Framework\Common\MinSizeRel\Common.lib;xg.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/MinSizeRel/SceneObjectTest.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/MinSizeRel/SceneObjectTest.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
@@ -240,9 +237,9 @@
     <Link>
       <AdditionalDependencies>..\Framework\Common\RelWithDebInfo\Common.lib;xg.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/RelWithDebInfo/SceneObjectTest.lib</ImportLibrary>
       <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Test/RelWithDebInfo/SceneObjectTest.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
