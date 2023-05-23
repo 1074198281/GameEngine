@@ -4,11 +4,15 @@ set(CMAKE_CXX_STANDARD 11)
 
 project(GameEngine)
 
+#添加可编辑并继续的程序数据库用于调试
 if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   set(CMAKE_CXX_FLAGS_DEBUG "/ZI")
   set(CMAKE_SHARED_LINKER_FLAGS "/SAFESEH:NO")
   set(CMAKE_EXE_LINKER_FLAGS "/SAFESEH:NO")
 endif()
+
+#添加预处理器定义屏蔽vs的全局max和min宏
+add_compile_definitions(NOMINMAX)
 
 set(MYGE_TARGET_PLATFORM "Windows")
 set(MYGE_EXTERNAL_ROOT ${PROJECT_SOURCE_DIR}/External/${MYGE_TARGET_PLATFORM}/)
