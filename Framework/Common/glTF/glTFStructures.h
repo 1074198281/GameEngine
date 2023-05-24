@@ -5,12 +5,6 @@
 
 #pragma pack(4)
 namespace My {
-	//Accessors
-	enum glTF_ComponentType {
-		glTF_ComponentType_NONE = 0,
-		glTF_ComponentType_UNSIGNED_SHORT = 5123,
-		glTF_ComponentType_FLOAT = 5126,
-	};
 
 #define glTF_DataType_SCALAR		"SCALAR"
 #define glTF_DataType_VEC3			"VEC3"
@@ -50,14 +44,14 @@ namespace My {
 	typedef struct {
 		int BufferView;
 		int ByteOffset;
-		glTF_ComponentType componentType;
+		int componentType;
 		int count;
-		int dataBoundaryIndexMin;
-		Vector3f dataBoundaryVertexMin;
-		int dataBoundaryIndexMax;
-		Vector3f dataBoundaryVertexMax;
+		std::vector<int> dataBoundaryIndexMin;
+		std::vector<float> dataBoundaryVertexMin;
+		std::vector<int> dataBoundaryIndexMax;
+		std::vector<float> dataBoundaryVertexMax;
 		std::string dataType;
-	} glTF_Accessors;
+	} glTF_Accessor;
 
 	typedef struct {
 		std::string generator;
@@ -69,46 +63,46 @@ namespace My {
 		int byteLength;
 		int byteOffset;
 		glTF_BufferView_Target targetType;
-	} glTF_BufferViews;
+	} glTF_BufferView;
 
 	typedef struct {
 		int byteLength;
 		std::string uri;
-	} glTF_Buffers;
+	} glTF_Buffer;
 
 	typedef struct {
-		std::vector<std::string> images;
-	} glTF_Images;
+		std::string image;
+	} glTF_Image;
 
 	typedef struct {
 		std::string name;
 		pbrMetallicRoughness pbr;
 		normalTexture normal;
 		occlusionTexture occlusion;
-	} glTF_Materials;
+	} glTF_Material;
 
 	typedef struct {
 		std::string name;
 
-	} glTF_Meshes;
+	} glTF_Mesh;
 
 	typedef struct {
 		std::string name;
-		std::vector<int> meshIndex;
-	} glTF_Nodes;
+		int meshIndex;
+	} glTF_Node;
 
 	typedef struct {
 
-	} glTF_Samplers;
+	} glTF_Sampler;
 
 	typedef struct {
-		std::vector<int> nodeIndex;
-	} glTF_Scenes;
+		int nodeIndex;
+	} glTF_Scene;
 
 	typedef struct {
 		int samplerIndex;
 		int sourceIndex;
-	} glTF_Textures;
+	} glTF_Texture;
 
 
 }
