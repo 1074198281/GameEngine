@@ -95,52 +95,173 @@ namespace My {
 
 		void CGLTFProcessor::ProcessBufferViews(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
+			if (type == kArrayType) {
+				for (auto it = Value.Begin(); it != Value.End(); it++) {
+					glTF_BufferView bufferView;
+					auto object = it->GetObject();
+					bufferView.bufferIndex = object["buffer"].GetInt();
+					bufferView.byteLength = object["byteLength"].GetInt();
+					bufferView.byteOffset = object["byteOffset"].GetInt();
+					bufferView.targetType = object["target"].GetInt();
+					m_BufferViews.push_back(bufferView);
+				}
+			}
+			else {
+				assert(false);
+			}
 		}
 
 		void CGLTFProcessor::ProcessBuffers(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
+			if (type == kArrayType) {
+				for (auto it = Value.Begin(); it != Value.End(); it++) {
+					glTF_Buffer buffer;
+					auto object = it->GetObject();
+					buffer.byteLength = object["byteLength"].GetInt();
+					buffer.uri = object["uri"].GetString();
+					m_Buffers.push_back(buffer);
+				}
+			}
 		}
 
 		void CGLTFProcessor::ProcessImages(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
+			if (type == kArrayType) {
+				for (auto it = Value.Begin(); it != Value.End(); it++) {
+					glTF_Image image;
+					auto object = it->GetObject();
+					image.image = object["uri"].GetString();
+					m_Images.push_back(image);
+				}
+			}
+			else {
+				assert(false);
+			}
 		}
 
 		void CGLTFProcessor::ProcessMaterials(rapidjson::Value& Value)
 		{
+			Type type = Value.GetType();
+			if (type == kArrayType) {
+				for (auto it = Value.Begin(); it != Value.End(); it++) {
+					glTF_Material material;
+					auto object = it->GetObject();
+					if (object.HasMember("name")) {
+						material.name = object["name"].GetString();
+					}
 
+					if (object.HasMember("pbrMetallicRoughness")) {
+						rapidjson::Value& pbr = object["pbrMetallicRoughness"];
+						if (pbr.HasMember("baseColorFactor")) {
+							if (pbr.GetObject()["baseColorFactor"].GetType() == kArrayType) {
+								for (auto it = pbr.GetObject()["baseColorFactor"].Begin(); it != pbr.GetObject()["baseColorFactor"].End(); it++) {
+									material.pbr.baseColorFactor.push_back(it->GetFloat());
+								}
+							}
+						}
+						if (pbr.GetObject()["baseColorTexture"].HasMember("index")) {
+							material.pbr.baseColorTextureIndex = pbr.GetObject()["baseColorTexture"]["index"].GetInt();
+						}
+						if (pbr.GetObject()["metallicRoughnessTexture"].HasMember("index")) {
+							material.pbr.metallicRoughnessTextureIndex = pbr.GetObject()["metallicRoughnessTexture"]["index"].GetInt();
+						}
+						if (pbr.GetObject().HasMember("metallicFactor")) {
+							material.pbr.metallicFactor = pbr.GetObject()["metallicFactor"].GetFloat();
+						}
+						if (pbr.GetObject().HasMember("roughnessFactor")) {
+							material.pbr.metallicFactor = pbr.GetObject()["roughnessFactor"].GetFloat();
+						}
+					}
+
+					/* remain
+					normalTexture normal;
+					occlusionTexture occlusion;
+					*/
+					m_Materials.push_back(material);
+
+				}
+			}
 		}
 
 		void CGLTFProcessor::ProcessMeshes(rapidjson::Value& Value)
 		{
+			Type type = Value.GetType();
+			if (type == kArrayType) {
+				for (auto it = Value.Begin(); it != Value.End(); it++) {
+					glTF_Mesh mesh;
+					auto object = it->GetObject();
+					if (object.HasMember("name")) {
+						mesh.name = object["name"].GetString();
+					}
+					if (object.HasMember("primitives")) {
+						rapidjson::Value& prim = object["primitives"];
+						if (prim.GetType() == kArrayType) {
+							for (auto itp = prim.Begin(); itp != prim.End(); itp++) {
+								primitives primit;
+								if (itp->HasMember("attributes")) {
+									if (itp->GetObject()["attributes"].GetType() == kObjectType) {
+										if (itp->GetObject()["attributes"].HasMember("POSITION")) {
+											primit.atrribute.positionIndex = itp->GetObject()["attributes"].GetObject()["POSITION"].GetInt();
+										}
+										if (itp->GetObject()["attributes"].HasMember("NORMAL")) {
+											primit.atrribute.positionIndex = itp->GetObject()["attributes"].GetObject()["NORMAL"].GetInt();
+										}
+										if (itp->GetObject()["attributes"].HasMember("TANGENT")) {
+											primit.atrribute.positionIndex = itp->GetObject()["attributes"].GetObject()["TANGENT"].GetInt();
+										}
+										if (itp->GetObject()["attributes"].HasMember("TEXCOORD_0")) {
+											primit.atrribute.positionIndex = itp->GetObject()["attributes"].GetObject()["TEXCOORD_0"].GetInt();
+										}
+									}
+								}
+								if (itp->HasMember("indices")) {
+									primit.indices = itp->GetObject()["indices"].GetInt();
+								}
+								if (itp->HasMember("material")) {
+									primit.materialIndex = itp->GetObject()["material"].GetInt();
+								}
+								if (itp->HasMember("mode")) {
+									primit.mode = itp->GetObject()["mode"].GetInt();
+								}
 
+								mesh.primitives.push_back(primit);
+							}
+						}
+					}
+					m_Meshes.push_back(mesh);
+				}
+			}
 		}
 
 		void CGLTFProcessor::ProcessNodes(rapidjson::Value& Value)
 		{
+			Type type = Value.GetType();
+			if (type == kArrayType) {
 
+			}
 		}
 
 		void CGLTFProcessor::ProcessSamplers(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
 		}
 
 		void CGLTFProcessor::ProcessScene(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
 		}
 
 		void CGLTFProcessor::ProcessScenes(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
 		}
 
 		void CGLTFProcessor::ProcessTextures(rapidjson::Value& Value)
 		{
-
+			Type type = Value.GetType();
 		}
 
 		bool CGLTFProcessor::ProcessText(const std::string& buf)

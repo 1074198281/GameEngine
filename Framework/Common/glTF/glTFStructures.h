@@ -10,42 +10,48 @@ namespace My {
 #define glTF_DataType_VEC3			"VEC3"
 #define glTF_DataType_MAT4			"MAT4"
 
-	//bufferView
-	enum glTF_BufferView_Target {
-		glTF_BufferView_NONE = 0,
-		glTF_BufferView_ArrayBuffer = 34962,
-		glTF_BufferView_ElementArrayBuffer = 34963,
-	};
-
 	//Material
 	/* pbr流程相关参数 所有参数均为可选 没有必须项 */
 	typedef struct {
-		Vector4f baseColorFactor;					//基础色系数
-		int baseColorTextureIndex;					//基础色贴图索引
-		float metallicFactor;						//金属度系数
-		float roughnessFactor;						//粗糙度系数
-		int metallicRoughnessTextureIndex;			//金属度或粗糙度贴图索引
+		std::vector<float> baseColorFactor;					//基础色系数
+		int baseColorTextureIndex = -1;					//基础色贴图索引
+		float metallicFactor = -1;						//金属度系数
+		float roughnessFactor = -1;						//粗糙度系数
+		int metallicRoughnessTextureIndex = -1;			//金属度或粗糙度贴图索引
 	} pbrMetallicRoughness;
 
 	typedef struct {
-		int normalTextureIndex;						//法线贴图索引	必须
-		int texCoord;								//在primitives.attributes中的位置，如果是0则为TEXCOORD_0  可选
-		float scale;								//缩放系数  可选  scaledNormal = normalize((<sampled normal texture value> * 2.0 - 1.0) * vec3(<normal scale>, <normal scale>, 1.0))来设置
+		int normalTextureIndex = -1;						//法线贴图索引	必须
+		int texCoord = -1;								//在primitives.attributes中的位置，如果是0则为TEXCOORD_0  可选
+		float scale = -1;								//缩放系数  可选  scaledNormal = normalize((<sampled normal texture value> * 2.0 - 1.0) * vec3(<normal scale>, <normal scale>, 1.0))来设置
 	} normalTexture;
 
 	typedef struct {
-		int occlusionTextureIndex;					//遮蔽贴图索引  必须
-		int texCoord;								//在primitives.attributes中的位置，如果是0则为TEXCOORD_0  可选
-		float strength;								//遮蔽强度 可选
+		int occlusionTextureIndex = -1;					//遮蔽贴图索引  必须
+		int texCoord = -1;								//在primitives.attributes中的位置，如果是0则为TEXCOORD_0  可选
+		float strength = -1;								//遮蔽强度 可选
 	} occlusionTexture;
 
+	typedef struct {
+		int positionIndex = -1;
+		int normalIndex = -1;
+		int tangentIndex = -1;
+		int texcoord0Index = -1;
+	} attributes;
+
+	typedef struct {
+		attributes atrribute;
+		int indices = -1;
+		int materialIndex = -1;
+		int mode = -1;
+	} primitives;
 
 	//basic structures
 	typedef struct {
-		int BufferView;
-		int ByteOffset;
-		int componentType;
-		int count;
+		int BufferView = -1;
+		int ByteOffset = -1;
+		int componentType = -1;
+		int count = -1;
 		std::vector<int> dataBoundaryIndexMin;
 		std::vector<float> dataBoundaryVertexMin;
 		std::vector<int> dataBoundaryIndexMax;
@@ -59,14 +65,14 @@ namespace My {
 	} glTF_Asset;
 
 	typedef struct {
-		int bufferIndex;
-		int byteLength;
-		int byteOffset;
-		glTF_BufferView_Target targetType;
+		int bufferIndex = -1;
+		int byteLength = -1;
+		int byteOffset = -1;
+		int targetType = -1;
 	} glTF_BufferView;
 
 	typedef struct {
-		int byteLength;
+		int byteLength = -1;
 		std::string uri;
 	} glTF_Buffer;
 
@@ -83,12 +89,12 @@ namespace My {
 
 	typedef struct {
 		std::string name;
-
+		std::vector<primitives> primitives;
 	} glTF_Mesh;
 
 	typedef struct {
 		std::string name;
-		int meshIndex;
+		int meshIndex = -1;
 	} glTF_Node;
 
 	typedef struct {
@@ -96,12 +102,12 @@ namespace My {
 	} glTF_Sampler;
 
 	typedef struct {
-		int nodeIndex;
+		int nodeIndex = -1;
 	} glTF_Scene;
 
 	typedef struct {
-		int samplerIndex;
-		int sourceIndex;
+		int samplerIndex = -1;
+		int sourceIndex = -1;
 	} glTF_Texture;
 
 
