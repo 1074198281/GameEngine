@@ -87,8 +87,11 @@ My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetO
                 break;
             }
 
-            if (fp)
+            if (fp) {
+                m_AssetPath = fullPath;
                 return (AssetFilePtr)fp;
+            }
+                
         }
 
         upPath.append("../");

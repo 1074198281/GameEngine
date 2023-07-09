@@ -4,7 +4,7 @@
 #include <new>
 
 namespace My {
-    class MemoryManager : implements IRuntimeModule
+    class MemoryManager : __implements IRuntimeModule
     {
     public:
         template<typename T, typename... Arguments>

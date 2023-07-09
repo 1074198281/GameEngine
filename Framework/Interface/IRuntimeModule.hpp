@@ -4,7 +4,7 @@
 
 namespace My{
 	
-	Interface IRuntimeModule {
+	__Interface IRuntimeModule {
 	public:
 		virtual ~IRuntimeModule() {}		//当使用基类指针释放派生类实例时，可能只调用了基类的析构函数，会造成memory leak
 		

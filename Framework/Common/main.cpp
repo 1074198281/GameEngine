@@ -28,8 +28,8 @@ int main(int argc, char** argv) {
 		return ret;
 	}
 
-	//g_pSceneManager->LoadScene("Scene/OpenGEX/Example.ogex");
-	g_pSceneManager->LoadScene("Scene/glTF/Cube/glTF/Cube.gltf");
+	g_pSceneManager->LoadScene("Scene/OpenGEX/Example.ogex");
+	//g_pSceneManager->LoadScene("Scene/glTF/Cube/glTF/Cube.gltf");
 
 
 	if ((ret = g_pGraphicsManager->Initialize()) != 0) {

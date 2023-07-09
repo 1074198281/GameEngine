@@ -3,7 +3,7 @@
 #include "IRuntimeModule.hpp"
 
 namespace My {
-    class GraphicsManager : implements IRuntimeModule
+    class GraphicsManager : __implements IRuntimeModule
     {
     public:
         virtual ~GraphicsManager() {}

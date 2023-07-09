@@ -6,7 +6,7 @@
 
 namespace My {
 	
-	Interface IApplication : implements IRuntimeModule {
+	__Interface IApplication : __implements IRuntimeModule {
 	public:
 		virtual int Initialize() = 0;
 		virtual void Finalize() = 0;

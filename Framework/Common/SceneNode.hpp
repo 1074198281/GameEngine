@@ -10,8 +10,8 @@ namespace My {
     class BaseSceneNode {
     protected:
         std::string m_strName;
-        std::list<std::unique_ptr<BaseSceneNode>> m_Children;
-        std::list<std::unique_ptr<SceneObjectTransform>> m_Transforms;
+        std::list<std::shared_ptr<BaseSceneNode>> m_Children;
+        std::list<std::shared_ptr<SceneObjectTransform>> m_Transforms;
 
     protected:
         virtual void dump(std::ostream& out) const {};
@@ -23,12 +23,12 @@ namespace My {
         BaseSceneNode(const std::string&& name) { m_strName = std::move(name); };
         virtual ~BaseSceneNode() {};
 
-        void AppendChild(std::unique_ptr<BaseSceneNode>&& sub_node)
+        void AppendChild(std::shared_ptr<BaseSceneNode>&& sub_node)
         {
             m_Children.push_back(std::move(sub_node));
         }
 
-        void AppendChild(std::unique_ptr<SceneObjectTransform>&& transform)
+        void AppendChild(std::shared_ptr<SceneObjectTransform>&& transform)
         {
             m_Transforms.push_back(std::move(transform));
         }
@@ -44,11 +44,11 @@ namespace My {
             node.dump(out);
             out << std::endl;
 
-            for (const std::unique_ptr<BaseSceneNode>& sub_node : node.m_Children) {
+            for (const std::shared_ptr<BaseSceneNode>& sub_node : node.m_Children) {
                 out << *sub_node << std::endl;
             }
 
-            for (const std::unique_ptr<SceneObjectTransform>& sub_node : node.m_Transforms) {
+            for (const std::shared_ptr<SceneObjectTransform>& sub_node : node.m_Transforms) {
                 out << *sub_node << std::endl;
             }
 
@@ -75,6 +75,7 @@ namespace My {
 
         void AddSceneObjectRef(const std::string& key) { m_keySceneObject = key; };
 
+        const std::string& GetSceneObjectRef() { return m_keySceneObject; }
     };
 
     typedef BaseSceneNode SceneEmptyNode;

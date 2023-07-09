@@ -1,10 +1,10 @@
 #pragma once
-#include "../GeomMath/geommath.hpp"
+#include "geommath.hpp"
 #include "IRuntimeModule.hpp"
 #include "SceneParser.hpp"
 
 namespace My {
-    class SceneManager : implements IRuntimeModule
+    class SceneManager : __implements IRuntimeModule
     {
     public:
         virtual ~SceneManager();

@@ -7,7 +7,7 @@
 #include "../External/Windows/include/Guid.hpp"
 #include "Image.hpp"
 #include "portable.hpp"
-#include "../GeomMath/geommath.hpp"
+#include "geommath.hpp"
 
 namespace My {
     namespace details {
@@ -273,7 +273,8 @@ namespace My {
             void AddVertexArray(SceneObjectVertexArray&& array) { m_VertexArray.push_back(std::move(array)); };
 			void SetPrimitiveType(PrimitiveType type) { m_PrimitiveType = type;  };
 
-            size_t GetIndexCount() const { return (m_IndexArray.empty()? 0 : m_IndexArray[0].GetIndexCount()); };
+            size_t GetIndexGroupCount() const { return m_IndexArray.size(); }
+            size_t GetIndexCount(const size_t index) const { return (m_IndexArray.empty()? 0 : m_IndexArray[index].GetIndexCount()); };
             size_t GetVertexCount() const { return (m_VertexArray.empty()? 0 : m_VertexArray[0].GetVertexCount()); };
             size_t GetVertexPropertiesCount() const { return m_VertexArray.size(); }; 
             const SceneObjectVertexArray& GetVertexPropertyArray(const size_t index) const { return m_VertexArray[index]; };
@@ -301,6 +302,9 @@ namespace My {
             void AddTransform(Matrix4X4f& matrix) { m_Transforms.push_back(matrix); };
             void SetName(const std::string& name) { m_Name = name; };
             void SetName(std::string&& name) { m_Name = std::move(name); };
+            void LoadTextures() {
+
+            }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectTexture& obj);
     };
@@ -355,6 +359,9 @@ namespace My {
             Normal      m_Normal;
             Parameter   m_Specular;
             Parameter   m_AmbientOcclusion;
+            Color       m_Opacity;
+            Color       m_Transparency;
+            Color       m_Emission;
 
         public:
             SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name) {};
@@ -364,7 +371,7 @@ namespace My {
             void SetName(std::string&& name) { m_Name = std::move(name); };
             void SetColor(std::string& attrib, Vector4f& color) 
             { 
-                if(attrib == "deffuse") {
+                if(attrib == "diffuse") {
                     m_BaseColor = Color(color); 
                 }
             };
@@ -386,6 +393,10 @@ namespace My {
                     m_BaseColor = texture; 
                 }
             };
+
+            void LoadTextures() {
+
+            }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectMaterial& obj);
     };
@@ -453,6 +464,14 @@ namespace My {
                 }
             };
 
+            void SetAttenuation(AttenFunc func)
+            {
+                m_LightAttenuation = func;
+            }
+
+            const Color& GetColor() { return m_LightColor; };
+            float GetIntensity() { return m_fIntensity; };
+
         protected:
             // can only be used as base class of delivered lighting objects
             SceneObjectLight(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeLight), m_LightColor(Vector4f(1.0f)), m_fIntensity(100.0f), m_LightAttenuation(DefaultAttenFunc), m_bCastShadows(false) {};
@@ -477,6 +496,14 @@ namespace My {
             SceneObjectSpotLight(void) : SceneObjectLight(), m_fConeAngle(PI / 4.0f), m_fPenumbraAngle(PI / 3.0f) {};
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectSpotLight& obj);
+    };
+
+    class SceneObjectInfiniteLight : public SceneObjectLight
+    {
+    public:
+        using SceneObjectLight::SceneObjectLight;
+
+        friend std::ostream& operator<<(std::ostream& out, const SceneObjectInfiniteLight& obj);
     };
 
     class SceneObjectCamera : public BaseSceneObject

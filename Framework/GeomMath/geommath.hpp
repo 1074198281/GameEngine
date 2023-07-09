@@ -351,7 +351,7 @@ namespace My {
 
         for (int i = 0; i < Da; i++) {
             for (int j = 0; j < Dc; j++) {
-                _Tp s = 0;
+                float s = 0;
                 for (int k = 0; k < Db; k++) {
                     s += matrix1.data[i][k] * matrix2.data[k][j];
                 }

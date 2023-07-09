@@ -6,7 +6,7 @@
 #include "SceneManager.hpp"
 
 namespace My {
-    class BaseApplication : implements IApplication
+    class BaseApplication : __implements IApplication
     {
     public:
         BaseApplication(GfxConfiguration& cfg);
