@@ -19,6 +19,9 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\MemoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -26,9 +29,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\main.cpp">
@@ -66,6 +66,9 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -76,15 +79,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\cbuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFProcessor.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\glTF\glTFStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\portable.hpp">

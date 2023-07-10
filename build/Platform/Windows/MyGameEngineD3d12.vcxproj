@@ -86,10 +86,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -100,10 +101,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;NOMINMAX;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -111,7 +112,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\Debug\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\Debug\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Framework\Common\Debug\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;..\..\RHI\D3d\Core\Debug\D3dCore.lib;..\..\RHI\D3d\Debug\D3dRHI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -126,10 +127,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -142,10 +144,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -153,7 +155,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\Release\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\Release\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Framework\Common\Release\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;..\..\RHI\D3d\Core\Release\D3dCore.lib;..\..\RHI\D3d\Release\D3dRHI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -168,10 +170,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MinSpace</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -184,10 +187,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -195,7 +198,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\MinSizeRel\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\MinSizeRel\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Framework\Common\MinSizeRel\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;..\..\RHI\D3d\Core\MinSizeRel\D3dCore.lib;..\..\RHI\D3d\MinSizeRel\D3dRHI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -210,11 +213,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -225,10 +229,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -236,7 +240,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\RelWithDebInfo\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;..\..\RHI\D3d\RelWithDebInfo\D3dRHI.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\..\Framework\Common\RelWithDebInfo\Common.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\xg.lib;d3d12.lib;dxgi.lib;d3dcompiler.lib;..\..\RHI\D3d\Core\RelWithDebInfo\D3dCore.lib;..\..\RHI\D3d\RelWithDebInfo\D3dRHI.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -322,6 +326,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Common\Common.vcxproj">
       <Project>{1F2C1C0A-EFA8-35D4-873C-403F89B165E5}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\Core\D3dCore.vcxproj">
+      <Project>{AFBE8A63-08E6-3EE8-84C0-3891DD17A366}</Project>
+      <Name>D3dCore</Name>
     </ProjectReference>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\D3dRHI.vcxproj">
       <Project>{84A5672F-23CF-3EED-AE2C-157F50E3DEB7}</Project>

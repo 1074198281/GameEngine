@@ -6,7 +6,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsManager.hpp">
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GeometryStructure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

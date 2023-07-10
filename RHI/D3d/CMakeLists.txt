@@ -1,9 +1,10 @@
-file(GLOB_RECURSE D3d_RHI_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
-source_group("Header Files" FILES D3d_RHI_HEADER_FILES)
+add_subdirectory(Core)
 
-set(D3d_RHI_SRC_LIST
-D3d12GraphicsManager.cpp
-)
+file(GLOB D3d_RHI_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.h )
+file(GLOB D3d_RHI_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp )
+source_group("D3dRHI Files" FILES D3d_RHI_HEADER_FILES)
+source_group("D3dRHISrc Files" FILES D3d_RHI_SOURCE_FILES)
 
 
-add_library(D3dRHI ${D3d_RHI_HEADER_FILES} ${D3d_RHI_SRC_LIST})
+add_library(D3dRHI ${D3d_RHI_HEADER_FILES} ${D3d_RHI_SOURCE_FILES})
+#target_link_libraries(D3dRHI D3dCore d3d12 dxgi d3dcompiler)
