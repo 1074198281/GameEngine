@@ -1,9 +1,9 @@
 #include "SceneManager.hpp"
 #include "AssetLoader.hpp"
 #include "../Framework/Parser/OGEX.hpp"
-//#include "../Framework/Parser/GLTF.hpp"
+#include "../Framework/Parser/GLTF.hpp"
 #include "D3d/Core/Common/Utility.h"
-
+#include <filesystem>
 
 using namespace My;
 
@@ -50,10 +50,13 @@ void SceneManager::LoadOgexScene(const char* ogex_scene_file_name)
 
 void SceneManager::LoadglTFScene(const char* glTF_scene_file_name)
 {
-    //string glTF_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(glTF_scene_file_name);
+    std::string glTF_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(glTF_scene_file_name);
+    
+    std::filesystem::path currentpath = std::filesystem::current_path();
+    std::wstring filepath = currentpath.wstring() + Utility::UTF8ToWideString(std::string(glTF_scene_file_name));
 
-    //glTF::GLTFParser glTF_parser;
-    //glTF_parser.Parse(Utility::UTF8ToWideString(std::string(glTF_scene_file_name)));
+    glTF::GLTFParser glTF_parser;
+    glTF_parser.Parse(Utility::UTF8ToWideString(g_pAssetLoader->m_AssetPath));
 }
 
 const Scene& SceneManager::GetSceneForRendering()

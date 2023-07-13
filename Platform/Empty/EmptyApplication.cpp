@@ -1,6 +1,7 @@
 #include "BaseApplication.hpp"
 #include "GraphicsManager.hpp"
 #include "MemoryManager.hpp"
+#include "SceneManager.hpp"
 
 namespace My {
     GfxConfiguration config;

@@ -112,8 +112,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\Debug\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\..\Framework\Common\Debug\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\RHI\D3d\Debug\D3dRHI.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -155,8 +155,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\Release\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\..\Framework\Common\Release\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\RHI\D3d\Release\D3dRHI.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -198,8 +198,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\MinSizeRel\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\..\Framework\Common\MinSizeRel\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\RHI\D3d\MinSizeRel\D3dRHI.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -240,8 +240,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\..\Framework\Common\RelWithDebInfo\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>..\..\Framework\Common\RelWithDebInfo\Common.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\RHI\D3d\RelWithDebInfo\D3dRHI.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
@@ -323,6 +323,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Common\Common.vcxproj">
       <Project>{1F2C1C0A-EFA8-35D4-873C-403F89B165E5}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\D3dRHI.vcxproj">
+      <Project>{84A5672F-23CF-3EED-AE2C-157F50E3DEB7}</Project>
+      <Name>D3dRHI</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -15,6 +15,9 @@ endif()
 #添加预处理器定义屏蔽vs的全局max和min宏
 add_compile_definitions(NOMINMAX)
 
+
+
+
 set(MYGE_TARGET_PLATFORM "Windows")
 set(MYGE_EXTERNAL_ROOT ${PROJECT_SOURCE_DIR}/External/${MYGE_TARGET_PLATFORM}/)
 include_directories("${MYGE_EXTERNAL_ROOT}include")
@@ -23,6 +26,8 @@ find_library(XG_LIBRARY xg PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROO
 find_library(OPENDDL_LIBRARY OpenDDL PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
 find_library(OPENGEX_LIBRARY OpenGEX PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
 
+#设置附加库目录
+link_directories(${MYGE_EXTERNAL_LIBRARY_PATH})
 
 include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include")
 include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include/zlib")
