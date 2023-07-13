@@ -18,11 +18,10 @@
 #include "Hash.h"
 #include <map>
 
-using namespace std;
 
 namespace
 {
-    map< size_t, D3D12_CPU_DESCRIPTOR_HANDLE > s_SamplerCache;
+    std::map< size_t, D3D12_CPU_DESCRIPTOR_HANDLE > s_SamplerCache;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE D3dGraphicsCore::SamplerDesc::CreateDescriptor()

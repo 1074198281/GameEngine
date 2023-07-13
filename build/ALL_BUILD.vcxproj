@@ -185,10 +185,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{B10519F1-3485-3B48-88DB-145DE31D8449}</Project>
       <Name>D2dRHI</Name>
     </ProjectReference>
-    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\Core\D3dCore.vcxproj">
-      <Project>{AFBE8A63-08E6-3EE8-84C0-3891DD17A366}</Project>
-      <Name>D3dCore</Name>
-    </ProjectReference>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\D3dRHI.vcxproj">
       <Project>{84A5672F-23CF-3EED-AE2C-157F50E3DEB7}</Project>
       <Name>D3dRHI</Name>

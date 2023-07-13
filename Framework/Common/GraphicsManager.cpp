@@ -3,7 +3,6 @@
 #include "cbuffer.h"
 
 using namespace My;
-using namespace std;
 
 int GraphicsManager::Initialize()
 {

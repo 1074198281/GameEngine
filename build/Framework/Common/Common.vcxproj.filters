@@ -90,6 +90,15 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\BMP.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\GLTF.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\OGEX.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\CMakeLists.txt" />
@@ -97,6 +106,9 @@
   <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{CF45F0C9-155F-3A63-8671-CE699FDFF24B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{E9E2E714-98D9-32DF-8B4E-2F29F982E1AC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{D5AB69DA-8602-3F63-BB40-367F3D981E86}</UniqueIdentifier>

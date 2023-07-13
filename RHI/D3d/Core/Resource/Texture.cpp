@@ -21,8 +21,6 @@
 #include <map>
 #include <thread>
 
-using namespace std;
-
 
 //--------------------------------------------------------------------------------------
 // Return the BPP for a particular format

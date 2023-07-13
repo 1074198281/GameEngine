@@ -1,15 +1,9 @@
 #pragma once
 // include the basic windows header file
+
 #include <windows.h>
 #include <windowsx.h>
 #include "BaseApplication.hpp"
-
-#pragma comment(lib, "D3dCore.lib")
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-
-
 
 namespace My {
     class WindowsApplication : public BaseApplication

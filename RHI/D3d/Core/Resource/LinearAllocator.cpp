@@ -18,7 +18,6 @@
 #include "CommandListManager.h"
 #include <thread>
 
-using namespace std;
 
 D3dGraphicsCore::LinearAllocatorType D3dGraphicsCore::LinearAllocatorPageManager::sm_AutoType = kGpuExclusive;
 
@@ -33,7 +32,7 @@ D3dGraphicsCore::LinearAllocatorPageManager D3dGraphicsCore::LinearAllocator::sm
 
 D3dGraphicsCore::LinearAllocationPage* D3dGraphicsCore::LinearAllocatorPageManager::RequestPage()
 {
-    lock_guard<mutex> LockGuard(m_Mutex);
+    std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
     while (!m_RetiredPages.empty() && g_CommandManager.IsFenceComplete(m_RetiredPages.front().first))
     {
@@ -57,16 +56,16 @@ D3dGraphicsCore::LinearAllocationPage* D3dGraphicsCore::LinearAllocatorPageManag
     return PagePtr;
 }
 
-void D3dGraphicsCore::LinearAllocatorPageManager::DiscardPages(uint64_t FenceValue, const vector<LinearAllocationPage*>& UsedPages)
+void D3dGraphicsCore::LinearAllocatorPageManager::DiscardPages(uint64_t FenceValue, const std::vector<LinearAllocationPage*>& UsedPages)
 {
-    lock_guard<mutex> LockGuard(m_Mutex);
+    std::lock_guard<std::mutex> LockGuard(m_Mutex);
     for (auto iter = UsedPages.begin(); iter != UsedPages.end(); ++iter)
-        m_RetiredPages.push(make_pair(FenceValue, *iter));
+        m_RetiredPages.push(std::make_pair(FenceValue, *iter));
 }
 
-void D3dGraphicsCore::LinearAllocatorPageManager::FreeLargePages(uint64_t FenceValue, const vector<LinearAllocationPage*>& LargePages)
+void D3dGraphicsCore::LinearAllocatorPageManager::FreeLargePages(uint64_t FenceValue, const std::vector<LinearAllocationPage*>& LargePages)
 {
-    lock_guard<mutex> LockGuard(m_Mutex);
+    std::lock_guard<std::mutex> LockGuard(m_Mutex);
 
     while (!m_DeletionQueue.empty() && g_CommandManager.IsFenceComplete(m_DeletionQueue.front().first))
     {
@@ -77,7 +76,7 @@ void D3dGraphicsCore::LinearAllocatorPageManager::FreeLargePages(uint64_t FenceV
     for (auto iter = LargePages.begin(); iter != LargePages.end(); ++iter)
     {
         (*iter)->Unmap();
-        m_DeletionQueue.push(make_pair(FenceValue, *iter));
+        m_DeletionQueue.push(std::make_pair(FenceValue, *iter));
     }
 }
 

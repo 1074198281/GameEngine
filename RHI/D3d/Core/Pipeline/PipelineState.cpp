@@ -21,10 +21,9 @@
 
 using Math::IsAligned;
 using Microsoft::WRL::ComPtr;
-using namespace std;
 
-static map< size_t, ComPtr<ID3D12PipelineState> > s_GraphicsPSOHashMap;
-static map< size_t, ComPtr<ID3D12PipelineState> > s_ComputePSOHashMap;
+static std::map< size_t, ComPtr<ID3D12PipelineState> > s_GraphicsPSOHashMap;
+static std::map< size_t, ComPtr<ID3D12PipelineState> > s_ComputePSOHashMap;
 
 void D3dGraphicsCore::PSO::DestroyAll(void)
 {
@@ -128,8 +127,8 @@ void D3dGraphicsCore::GraphicsPSO::Finalize()
     ID3D12PipelineState** PSORef = nullptr;
     bool firstCompile = false;
     {
-        static mutex s_HashMapMutex;
-        lock_guard<mutex> CS(s_HashMapMutex);
+        static std::mutex s_HashMapMutex;
+        std::lock_guard<std::mutex> CS(s_HashMapMutex);
         auto iter = s_GraphicsPSOHashMap.find(HashCode);
 
         // Reserve space so the next inquiry will find that someone got here first.
@@ -152,7 +151,7 @@ void D3dGraphicsCore::GraphicsPSO::Finalize()
     else
     {
         while (*PSORef == nullptr)
-            this_thread::yield();
+            std::this_thread::yield();
         m_PSO = *PSORef;
     }
 }
@@ -168,8 +167,8 @@ void D3dGraphicsCore::ComputePSO::Finalize()
     ID3D12PipelineState** PSORef = nullptr;
     bool firstCompile = false;
     {
-        static mutex s_HashMapMutex;
-        lock_guard<mutex> CS(s_HashMapMutex);
+        static std::mutex s_HashMapMutex;
+        std::lock_guard<std::mutex> CS(s_HashMapMutex);
         auto iter = s_ComputePSOHashMap.find(HashCode);
 
         // Reserve space so the next inquiry will find that someone got here first.
@@ -191,7 +190,7 @@ void D3dGraphicsCore::ComputePSO::Finalize()
     else
     {
         while (*PSORef == nullptr)
-            this_thread::yield();
+            std::this_thread::yield();
         m_PSO = *PSORef;
     }
 }

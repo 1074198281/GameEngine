@@ -66,7 +66,6 @@
 #include <cstdlib>
 
 
-using namespace std;
 
 namespace ODDL
 {

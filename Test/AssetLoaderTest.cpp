@@ -3,7 +3,6 @@
 #include "AssetLoader.hpp"
 #include "MemoryManager.hpp"
 
-using namespace std;
 using namespace My;
 
 namespace My {
@@ -15,9 +14,9 @@ int main(int , char** )
     g_pMemoryManager->Initialize();
 
     AssetLoader asset_loader;
-    string shader_pgm = asset_loader.SyncOpenAndReadTextFileToString("Shaders/copy.vs");
+    std::string shader_pgm = asset_loader.SyncOpenAndReadTextFileToString("Shaders/copy.vs");
 
-    cout << shader_pgm;
+    std::cout << shader_pgm;
 
     g_pMemoryManager->Finalize();
 

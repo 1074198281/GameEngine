@@ -292,6 +292,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneObject.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneParser.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\main.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\BMP.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\GLTF.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\OGEX.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\ZERO_CHECK.vcxproj">
