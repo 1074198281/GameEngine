@@ -2,6 +2,7 @@
 #include "Core/Common/D3dCommonDef.h"
 #include <fstream>
 #include <mutex>
+#include <memory>
 #include <zlib.h> // From NuGet package 
 
 using namespace Utility;

@@ -37,7 +37,7 @@ source_group(src/D3dSource FILES ${D3d_RHI_SOURCE_FILES})
 
 
 add_library(D3dRHI STATIC ${D3d_CORE_HEADER_FILES} ${D3d_CORE_SOURCE_FILES} ${D3d_RHI_HEADER_FILES} ${D3d_RHI_SOURCE_FILES})
-target_link_libraries(D3dRHI d3d12 dxguid dxgi d3dcompiler)
+target_link_libraries(D3dRHI ${ZLIB_DEBUG_LIBRARY} d3d12 dxguid dxgi d3dcompiler)
 
 
 #target_include_directories(D3dCore PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

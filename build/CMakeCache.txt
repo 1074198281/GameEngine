@@ -218,6 +218,12 @@ OPENGEX_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Ex
 //Path to a library.
 XG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/xg.lib
 
+//Path to a library.
+ZLIB_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/zlibd.lib
+
+//Path to a library.
+ZLIB_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/zlib.lib
+
 
 ########################
 # INTERNAL cache entries

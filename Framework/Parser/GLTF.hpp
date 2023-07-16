@@ -17,10 +17,15 @@
 #include "D3d/Core/Common/Utility.h"
 #include "D3d/Core/Common/Functions.inl"
 #include "d3dx12.h"
+#include "SceneParser.hpp"
+#include "SceneNode.hpp"
+#include "SceneObject.hpp"
+#include "Scene.hpp"
+
 #include <string>
 #include <vector>
 #include <fstream>
-
+#include <memory>
 
 
 #ifndef _WIN32
@@ -280,11 +285,10 @@ namespace glTF
         }
     }
 
-    class GLTFParser
+    class GLTFParser : __implements My::SceneParser
     {
     public:
         GLTFParser() : m_scene(nullptr) {}
-        GLTFParser(const std::wstring& filepath) : m_scene(nullptr) { Parse(filepath); }
         ~GLTFParser() { m_meshes.clear(); }
 
         Scene* m_scene;
@@ -886,7 +890,7 @@ namespace glTF
 
 
     public:
-        void Parse(const std::wstring& filepath)
+        void ParseGLTFFile(const std::wstring& filepath)
         {
             // TODO:  add GLB support by extracting JSON section and BIN sections
             //https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#glb-file-format-specification
@@ -1000,7 +1004,35 @@ namespace glTF
                 m_scene = &m_scenes[root.at("scene")];
         }
 
+        virtual std::unique_ptr<My::Scene> Parse(const std::string& buf)
+        {
+            std::unique_ptr<My::Scene> pScene(new My::Scene("GLTF Scene"));
+            std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") +std::string(buf);
+            ParseGLTFFile(Utility::UTF8ToWideString(gltfpath));
 
+            std::shared_ptr<My::BaseSceneNode> base_node = pScene->SceneGraph;
+
+            //这里还需要重写一下，每个解析格式需要一个接口完成
+            for (int sceneIdx = 0; sceneIdx < m_scenes.size(); sceneIdx++) {
+                auto node = m_scenes[sceneIdx].nodes;
+                for (auto it = node.begin(); it != node.end(); it++) {
+                    auto primitive = (*it)->mesh->primitives;
+                    for (auto primIt = primitive.begin(); primIt != primitive.end(); primIt++) {
+                        (*primIt).attributes;
+                    }
+                }
+            }
+
+            while (true)
+            {
+                //std::shared_ptr<BaseSceneNode> node;
+
+                
+
+                //base_node->AppendChild(std::move(node));
+            }
+            
+        }
     };
 
 

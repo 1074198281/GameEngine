@@ -14,4 +14,4 @@ D3d12Application.cpp
 )
 
 add_executable(MyGameEngineD3d12 ${WINDOWS_HEADER_FILES} ${WINDOWS_SRC_LIST})
-target_link_libraries(MyGameEngineD3d12 Common ${OPENGEX_LIBRARY} ${OPENDDL_LIBRARY} ${XG_LIBRARY} d3d12 dxgi d3dcompiler D3dRHI)
+target_link_libraries(MyGameEngineD3d12 Common ${OPENGEX_LIBRARY} ${OPENDDL_LIBRARY} ${XG_LIBRARY} ${ZLIB_DEBUG_LIBRARY} d3d12 dxgi d3dcompiler D3dRHI)
