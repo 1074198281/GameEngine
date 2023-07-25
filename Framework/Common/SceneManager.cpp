@@ -56,7 +56,7 @@ void SceneManager::LoadglTFScene(const char* glTF_scene_file_name)
     std::wstring filepath = currentpath.wstring() + Utility::UTF8ToWideString(std::string(glTF_scene_file_name));
 
     glTF::GLTFParser glTF_parser;
-    glTF_parser.Parse(glTF_scene_file_name);
+    m_pScene = glTF_parser.Parse(glTF_scene_file_name);
 }
 
 const Scene& SceneManager::GetSceneForRendering()

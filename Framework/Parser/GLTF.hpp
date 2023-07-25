@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Copyright (c) Microsoft. All rights reserved.
 // This code is licensed under the MIT License (MIT).
 // THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
@@ -21,11 +21,13 @@
 #include "SceneNode.hpp"
 #include "SceneObject.hpp"
 #include "Scene.hpp"
+#include "utility.hpp"
 
 #include <string>
 #include <vector>
 #include <fstream>
 #include <memory>
+#include <xutility>
 
 
 #ifndef _WIN32
@@ -50,7 +52,7 @@ namespace glTF
         uint16_t byteStride;
         bool     elementArrayBuffer;
     };
-    
+
     struct Accessor
     {
         enum // componentType
@@ -109,6 +111,7 @@ namespace glTF
 
     struct Material
     {
+        std::string name;
         union
         {
             struct
@@ -160,6 +163,7 @@ namespace glTF
 
     struct Mesh
     {
+        std::string name;
         std::vector<Primitive> primitives;
         int32_t skin;
     };
@@ -186,6 +190,7 @@ namespace glTF
 
     struct Node
     {
+        std::string name;
         union
         {
             uint8_t flags;
@@ -274,6 +279,103 @@ namespace glTF
             flt_array[i++] = flt;
     }
 
+    My::VertexDataType GetVertexDataType(int type)
+    {
+        My::VertexDataType vertexDataType;
+        switch (type) {
+        case 0:
+            vertexDataType = My::kVertexDataTypeFloat1;
+            break;
+        case 1:
+            vertexDataType = My::kVertexDataTypeFloat2;
+            break;
+        case 2:
+            vertexDataType = My::kVertexDataTypeFloat3;
+            break;
+        case 3:
+            vertexDataType = My::kVertexDataTypeFloat4;
+            break;
+        case 4:
+            vertexDataType = My::kVertexDataTypeMatrix2;
+            break;
+        case 5:
+            vertexDataType = My::kVertexDataTypeMatrix2;
+            break;
+        case 6:
+            vertexDataType = My::kVertexDataTypeMatrix2;
+            break;
+        default:
+            ASSERT("Vertex Type Parse Error!");
+            break;
+        }
+        return vertexDataType;
+    }
+
+    My::IndexDataType GetIndexDataType(int type)
+    {
+        My::IndexDataType indexDataType;
+        switch (type) {
+        case 0:
+            indexDataType = My::kIndexDataTypeInt8;
+            break;
+        case 1:
+            indexDataType = My::kIndexDataTypeInt8;
+            break;
+        case 2:
+            indexDataType = My::kIndexDataTypeInt16;
+            break;
+        case 3:
+            indexDataType = My::kIndexDataTypeInt16;
+            break;
+        case 4:
+            indexDataType = My::kIndexDataTypeInt32;
+            break;
+        case 5:
+            indexDataType = My::kIndexDataTypeInt32;
+            break;
+        case 6:
+            indexDataType = My::kIndexDataTypeInt32;
+            break;
+        default:
+            ASSERT("Parse Index Data Type Error!");
+            break;
+        }
+        return indexDataType;
+    }
+
+    int GetComponentDataSize(int componentType)
+    {
+        int dataSize;
+        switch (componentType) {
+        case 0:
+            dataSize = 1;
+            break;
+        case 1:
+            dataSize = 1;
+            break;
+        case 2:
+            dataSize = 2;
+            break;
+        case 3:
+            dataSize = 2;
+            break;
+        case 4:
+            ASSERT("ComponentType Signed Int Should Not Happen!");
+            dataSize = 4;
+            break;
+        case 5:
+            dataSize = 4;
+            break;
+        case 6:
+            dataSize = 4;
+            break;
+        default:
+            ASSERT("Parse ComponentType Error");
+            break;
+        }
+        return dataSize;
+    }
+
     D3D12_TEXTURE_ADDRESS_MODE GLtoD3DTextureAddressMode(int32_t glWrapMode)
     {
         switch (glWrapMode)
@@ -308,7 +410,7 @@ namespace glTF
         std::vector<Animation> m_animations;
 
     private:
-        void ProcessBuffers( json& buffers, ByteArray chunk1bin )
+        void ProcessBuffers(json& buffers, ByteArray chunk1bin)
         {
             m_buffers.reserve(buffers.size());
 
@@ -404,6 +506,10 @@ namespace glTF
                 material.flags = 0;
                 material.alphaCutoff = floatToHalf(0.5f);
                 material.normalTextureScale = 1.0f;
+
+                if (thisMaterial.find("name") != thisMaterial.end()) {
+                    material.name = thisMaterial.at("name");
+                }
 
                 if (thisMaterial.find("alphaMode") != thisMaterial.end())
                 {
@@ -600,6 +706,10 @@ namespace glTF
                 m_meshes[curMesh].primitives.resize(primitives.size());
                 m_meshes[curMesh].skin = -1;
 
+                if (thisMesh.find("name") != thisMesh.end()) {
+                    m_meshes[curMesh].name = thisMesh.at("name");
+                }
+
                 uint32_t curSubMesh = 0;
                 for (json::iterator primIt = primitives.begin(); primIt != primitives.end(); ++primIt, ++curSubMesh)
                 {
@@ -667,6 +777,10 @@ namespace glTF
                 node.flags = 0;
                 node.mesh = nullptr;
                 node.linearIdx = -1;
+
+                if (thisNode.find("camera") != thisNode.end()) {
+                    node.name = thisNode.at("name");
+                }
 
                 if (thisNode.find("camera") != thisNode.end())
                 {
@@ -1004,34 +1118,178 @@ namespace glTF
                 m_scene = &m_scenes[root.at("scene")];
         }
 
+        void GenerateMesh(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, Node currNode)
+        {
+            std::shared_ptr<My::SceneGeometryNode> GeoNode;
+            std::shared_ptr<My::SceneObjectGeometry> GeoObject;
+            auto& mesh = currNode.mesh;
+            GeoNode = std::make_shared<My::SceneGeometryNode>(currNode.name);
+            GeoObject = std::make_shared<My::SceneObjectGeometry>();
+
+            for (auto meshIt = mesh->primitives.begin(); meshIt != mesh->primitives.end(); meshIt++) {
+                std::shared_ptr<My::SceneObjectMesh> GeoMesh;
+                GeoMesh = std::make_shared<My::SceneObjectMesh>();
+
+
+                //primitive type
+                switch (meshIt->mode) {
+                case 0:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypePointList);
+                    break;
+                case 1:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeLineStrip);
+                    break;
+                case 2:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeLineLoop);
+                    break;
+                case 3:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeLineList);
+                    break;
+                case 4:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeTriList);
+                    break;
+                case 5:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeTriStrip);
+                    break;
+                case 6:
+                    GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeTriFan);
+                    break;
+                default:
+                    ASSERT("GLTF Mesh Type Parse Error!");
+                    break;
+                }
+
+                //attributes   indice/vertex array
+                //vertex data
+                int morph_index = 0;
+                My::VertexDataType vertexDataType;
+                int componentSize;
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kPosition)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kPosition]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kPosition]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("POSITION", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kPosition]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kPosition]->count * meshIt->attributes[Primitive::eAttribType::kPosition]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kNormal)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kNormal]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kNormal]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("NORMAL", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kNormal]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kNormal]->count * meshIt->attributes[Primitive::eAttribType::kNormal]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTangent)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTangent]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTangent]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TANGENT", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kTangent]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kTangent]->count * meshIt->attributes[Primitive::eAttribType::kTangent]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTexcoord0)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTexcoord0]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTexcoord0]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TEXCOORD0", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord0]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord0]->count * meshIt->attributes[Primitive::eAttribType::kTexcoord0]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTexcoord1)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTexcoord1]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTexcoord1]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TEXCOORD1", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord1]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord1]->count * meshIt->attributes[Primitive::eAttribType::kTexcoord1]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kColor0)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kColor0]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kColor0]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("COLOR0", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kColor0]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kColor0]->count * meshIt->attributes[Primitive::eAttribType::kColor0]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kJoints0)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kJoints0]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kJoints0]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("JOINTS0", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kJoints0]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kJoints0]->count * meshIt->attributes[Primitive::eAttribType::kJoints0]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kWeights0)) {
+                    vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kWeights0]->type);
+                    componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kWeights0]->componentType);
+                    My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("WEIGHTS0", morph_index, vertexDataType
+                        , meshIt->attributes[Primitive::eAttribType::kWeights0]->dataPtr
+                        , meshIt->attributes[Primitive::eAttribType::kWeights0]->count * meshIt->attributes[Primitive::eAttribType::kWeights0]->stride / componentSize);
+                    GeoMesh->AddVertexArray(std::move(_v_array));
+                }
+                //indice data
+                size_t restart_index = 0;
+                uint32_t material_index = meshIt->material->index;
+                componentSize = GetComponentDataSize(meshIt->indices->componentType);
+                My::IndexDataType index_type = GetIndexDataType(meshIt->indices->componentType);
+                My::SceneObjectIndexArray& _i_array = *new My::SceneObjectIndexArray(material_index, restart_index, index_type
+                    , meshIt->indices->dataPtr
+                    , meshIt->indices->count);
+                GeoMesh->AddIndexArray(std::move(_i_array));
+
+                GeoObject->AddMesh(GeoMesh);
+
+                //Material
+                GeoNode->AddMaterialRef(meshIt->material->name);
+                std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
+
+
+                Scene.Materials[meshIt->material->name] = GeoMaterial;
+            }
+
+            GeoNode->AddSceneObjectRef(mesh->name);
+            Scene.LUT_Name_GeometryNode.emplace(mesh->name, GeoNode);
+            Scene.GeometryNodes.emplace(currNode.name, GeoNode);
+            Scene.Geometries[mesh->name] = GeoObject;
+
+
+            node->AppendChild(GeoNode);
+        }
+
+        void GenerateNode(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene)
+        {
+            std::shared_ptr<My::BaseSceneNode> StructureNode;
+
+            for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
+                StructureNode = std::make_shared<My::SceneEmptyNode>(nodeIt->name);
+
+                if (nodeIt->pointsToCamera) {
+                    //camera
+                }
+                else {
+                    //mesh
+                    GenerateMesh(StructureNode, Scene, *nodeIt);
+                }
+
+                node->AppendChild(std::move(StructureNode));
+            }
+
+        }
+
         virtual std::unique_ptr<My::Scene> Parse(const std::string& buf)
         {
             std::unique_ptr<My::Scene> pScene(new My::Scene("GLTF Scene"));
-            std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") +std::string(buf);
+            std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") + std::string(buf);
             ParseGLTFFile(Utility::UTF8ToWideString(gltfpath));
 
             std::shared_ptr<My::BaseSceneNode> base_node = pScene->SceneGraph;
 
-            //ÕâÀï»¹ÐèÒªÖØÐ´Ò»ÏÂ£¬Ã¿¸ö½âÎö¸ñÊ½ÐèÒªÒ»¸ö½Ó¿ÚÍê³É
-            for (int sceneIdx = 0; sceneIdx < m_scenes.size(); sceneIdx++) {
-                auto node = m_scenes[sceneIdx].nodes;
-                for (auto it = node.begin(); it != node.end(); it++) {
-                    auto primitive = (*it)->mesh->primitives;
-                    for (auto primIt = primitive.begin(); primIt != primitive.end(); primIt++) {
-                        (*primIt).attributes;
-                    }
-                }
-            }
+            ASSERT(m_scenes.size() == 1);
 
-            while (true)
-            {
-                //std::shared_ptr<BaseSceneNode> node;
+            GenerateNode(base_node, *pScene);
 
-                
-
-                //base_node->AppendChild(std::move(node));
-            }
-            
+            return pScene;
         }
     };
 
