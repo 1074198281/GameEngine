@@ -1,3 +1,5 @@
+#pragma once
+
 namespace My {
 	template<class T>
 	inline void SafeRelease(T **ppInterfaceToRelease)
@@ -10,6 +12,10 @@ namespace My {
 		}
 	}
 
-#define BIT_MASK(a) (1 << a)
-#define TEST_BIT(a, bit) (BIT_MASK(bit) & a)
+#define BIT_MASK(b)      (1 << (b))
+#define SET_BIT(word, bit)    ((word) |= BIT_MASK(bit))
+#define CLEAR_BIT(word, bit)    ((word) &= ~BIT_MASK(bit))
+#define TEST_BIT(word, bit)   (((word) & BIT_MASK(bit)) != 0)
+#define ALL_BITS(type)      (~(type)0))
+
 }

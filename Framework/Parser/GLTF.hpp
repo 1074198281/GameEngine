@@ -1167,65 +1167,81 @@ namespace glTF
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kPosition)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kPosition]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kPosition]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kPosition]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kPosition]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kPosition]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("POSITION", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kPosition]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kPosition]->count * meshIt->attributes[Primitive::eAttribType::kPosition]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kPosition]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kNormal)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kNormal]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kNormal]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kNormal]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kNormal]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kNormal]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("NORMAL", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kNormal]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kNormal]->count * meshIt->attributes[Primitive::eAttribType::kNormal]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kNormal]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTangent)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTangent]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTangent]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kTangent]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kTangent]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kTangent]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TANGENT", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kTangent]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kTangent]->count * meshIt->attributes[Primitive::eAttribType::kTangent]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kTangent]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTexcoord0)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTexcoord0]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTexcoord0]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kTexcoord0]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kTexcoord0]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kTexcoord0]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TEXCOORD0", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kTexcoord0]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kTexcoord0]->count * meshIt->attributes[Primitive::eAttribType::kTexcoord0]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord0]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kTexcoord1)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kTexcoord1]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kTexcoord1]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kTexcoord1]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kTexcoord1]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kTexcoord1]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("TEXCOORD1", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kTexcoord1]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kTexcoord1]->count * meshIt->attributes[Primitive::eAttribType::kTexcoord1]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kTexcoord1]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kColor0)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kColor0]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kColor0]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kColor0]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kColor0]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kColor0]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("COLOR0", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kColor0]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kColor0]->count * meshIt->attributes[Primitive::eAttribType::kColor0]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kColor0]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kJoints0)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kJoints0]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kJoints0]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kJoints0]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kJoints0]->dataPtr, sizeof(float) * meshIt->attributes[Primitive::eAttribType::kJoints0]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("JOINTS0", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kJoints0]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kJoints0]->count * meshIt->attributes[Primitive::eAttribType::kJoints0]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kJoints0]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 if (TEST_BIT(meshIt->attribMask, Primitive::eAttribType::kWeights0)) {
                     vertexDataType = GetVertexDataType(meshIt->attributes[Primitive::eAttribType::kWeights0]->type);
                     componentSize = GetComponentDataSize(meshIt->attributes[Primitive::eAttribType::kWeights0]->componentType);
+                    void* pData = new float[meshIt->attributes[Primitive::eAttribType::kWeights0]->count];
+                    memcpy(pData, meshIt->attributes[Primitive::eAttribType::kWeights0]->dataPtr, sizeof(float)* meshIt->attributes[Primitive::eAttribType::kWeights0]->count);
                     My::SceneObjectVertexArray& _v_array = *new My::SceneObjectVertexArray("WEIGHTS0", morph_index, vertexDataType
-                        , meshIt->attributes[Primitive::eAttribType::kWeights0]->dataPtr
-                        , meshIt->attributes[Primitive::eAttribType::kWeights0]->count * meshIt->attributes[Primitive::eAttribType::kWeights0]->stride / componentSize);
+                        , pData
+                        , meshIt->attributes[Primitive::eAttribType::kWeights0]->count);
                     GeoMesh->AddVertexArray(std::move(_v_array));
                 }
                 //indice data
@@ -1233,8 +1249,27 @@ namespace glTF
                 uint32_t material_index = meshIt->material->index;
                 componentSize = GetComponentDataSize(meshIt->indices->componentType);
                 My::IndexDataType index_type = GetIndexDataType(meshIt->indices->componentType);
+                void* pData = nullptr;
+                switch (index_type) {
+                case My::kIndexDataTypeInt8:
+                    pData = new uint8_t[meshIt->indices->count];
+                    memcpy(pData, meshIt->indices->dataPtr, sizeof(uint8_t) * meshIt->indices->count);
+                    break;
+                case My::kIndexDataTypeInt16:
+                    pData = new uint16_t[meshIt->indices->count];
+                    memcpy(pData, meshIt->indices->dataPtr, sizeof(uint16_t) * meshIt->indices->count);
+                    break;
+                case My::kIndexDataTypeInt32:
+                    pData = new uint32_t[meshIt->indices->count];
+                    memcpy(pData, meshIt->indices->dataPtr, sizeof(uint32_t) * meshIt->indices->count);
+                    break;
+                case My::kIndexDataTypeInt64:
+                    pData = new uint64_t[meshIt->indices->count];
+                    memcpy(pData, meshIt->indices->dataPtr, sizeof(uint64_t) * meshIt->indices->count);
+                    break;
+                }
                 My::SceneObjectIndexArray& _i_array = *new My::SceneObjectIndexArray(material_index, restart_index, index_type
-                    , meshIt->indices->dataPtr
+                    , pData
                     , meshIt->indices->count);
                 GeoMesh->AddIndexArray(std::move(_i_array));
 

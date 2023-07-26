@@ -36,6 +36,7 @@ void My::D3d12GraphicsManager::Finalize()
 void My::D3d12GraphicsManager::Tick()
 {
 
+    Draw();
 }
 
 void My::D3d12GraphicsManager::Clear()
@@ -45,13 +46,14 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
-    
+    LoadScene();
 }
 
 bool My::D3d12GraphicsManager::LoadScene()
 {
     auto& Scene = g_pSceneManager->GetSceneForRendering();
-    
+    ASSERT(&Scene, "Scene Is Null Error!");
+
     for (auto _it : Scene.GeometryNodes) {
         auto GeometryNode = _it.second;
 
