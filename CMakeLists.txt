@@ -46,13 +46,14 @@ include_directories("${PROJECT_SOURCE_DIR}/RHI")
 
 #add shader files 还没搞明白shader如何通过shader添加编译
 #暂时不将这些加入目录，直接将shader编译为.h文件，用于头文件
-#add_subdirectory("${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl")
-#file(GLOB SHADERS ${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl/*.hlsl)
-#source_group("Shader Files" FILES ${SHADERS})
+
+file(GLOB ASSET_SHADERS
+${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl/*.hlsl)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl)
+
 
 
 #add_subdirectory(${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl)
-
 add_subdirectory(RHI)
 add_subdirectory(Framework)
 add_subdirectory(Platform)

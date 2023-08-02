@@ -382,6 +382,7 @@ void D3dGraphicsCore::Initialize(bool RequireDXRSupport)
 
     //Initialize Display columns, now combine all Display columns into D3dGraphicsCore
     InitializeDisplay();
+    InitializeCommonState();
 }
 
 void D3dGraphicsCore::Shutdown(void)
@@ -521,7 +522,7 @@ void D3dGraphicsCore::Present(void)
     UINT PresentInterval = 0;
     //UINT PresentInterval = s_EnableVSync ? std::min(4, (int)Round(s_FrameTime * 60.0f)) : 0;
 
-    s_SwapChain1->Present(PresentInterval, 0);
+    s_SwapChain1->Present(1, 0);
 
     g_CurrentBuffer = (g_CurrentBuffer + 1) % SWAP_CHAIN_BUFFER_COUNT;
 

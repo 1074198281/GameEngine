@@ -24,7 +24,8 @@ namespace My {
 int My::D3d12GraphicsManager::Initialize()
 {
     m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
-    m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow());
+    m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
+    m_pGraphics->InitializeGraphics();
     return 0;
 }
 
@@ -35,8 +36,8 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Tick()
 {
-
-    Draw();
+    //Draw();
+    m_pGraphics->UpdateStatus();
 }
 
 void My::D3d12GraphicsManager::Clear()
