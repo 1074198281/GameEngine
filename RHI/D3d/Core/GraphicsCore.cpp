@@ -22,13 +22,18 @@ D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 
 void D3dGraphicsCore::CD3dGraphicsCore::GenerateMatrix()
 {
-    m_ProjMatrix = Math::Matrix4(DirectX::XMMatrixPerspectiveFovLH(XM_PIDIV4, g_DisplayWidth / (float)g_DisplayHeight, 1.0f, 10.f));
-    m_ModelMatrix = Math::Matrix4(Math::kIdentity);
-    XMFLOAT3 eyepos(0.f, 0.f, 5.f);
+    XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(XM_PIDIV4, g_DisplayWidth / (float)g_DisplayHeight, 1.0f, 1000.f);
+    XMMATRIX model = XMMATRIX(1.f, 0.f, 0.f, 0.f,
+                              0.f, 1.f, 0.f, 0.f,
+                              0.f, 0.f, 1.f, 0.f,
+                              0.f, 0.f, 0.f, 1.f);
+    model = DirectX::XMMatrixTranspose(model);
+    XMFLOAT3 eyepos(0.f, 0.f, -5.f);
     XMFLOAT3 lookat(0.f, 0.f, 0.f);
     XMFLOAT3 updire(0.f, 1.f, 0.f);
-    m_ViewMatrix = Math::Matrix4(DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eyepos), XMLoadFloat3(&lookat), XMLoadFloat3(&updire)));
-    m_ModelViewProjMatrix = Math::Matrix4(DirectX::XMMatrixTranspose(m_ModelMatrix * m_ViewMatrix * m_ProjMatrix));
+    XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eyepos), XMLoadFloat3(&lookat), XMLoadFloat3(&updire));
+
+    m_ModelViewProjMatrix = Math::Matrix4(DirectX::XMMatrixTranspose(model * view * proj));
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int height)
