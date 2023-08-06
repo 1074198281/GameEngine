@@ -1,4 +1,4 @@
-#include <objbase.h>
+﻿#include <objbase.h>
 #include <d3dcompiler.h>
 #include "D3d12GraphicsManager.hpp"
 #include "WindowsApplication.hpp"
@@ -36,7 +36,7 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Tick()
 {
-    //Draw();
+    Draw();
     m_pGraphics->UpdateStatus();
 }
 
@@ -68,39 +68,84 @@ bool My::D3d12GraphicsManager::LoadScene()
             continue;
         }
 
-        std::vector<Vertex> VertexFloat;
-        std::vector<VertexT> VertexFloat2;
-        std::vector<VertexNT> VertexFloat3;
-        std::vector<VertexNTT> VertexFloat4;
+        ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
 
-        switch (pMesh->GetVertexPropertiesCount())
-        {
-        case 1:
-        {
-            CreateVertex(pMesh, VertexFloat);
-            break;
+        int elementCount = pMesh->GetVertexCount();
+        int indexPerCount = 1;
+        int vertexPerCount = 0;
+        //ÿ����ٸ�float����position + tex����3 + 2
+        for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
+            auto& vtArray = pMesh->GetVertexPropertyArray(groupCount);
+            ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
+            vertexPerCount += vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
         }
-        case 2:
-        {
-            CreateVertex(pMesh, VertexFloat2);
-            break;
+        float* pVertexData = new float[elementCount * vertexPerCount];
+
+        for (int i = 0; i < elementCount; i++) {
+            int _dataCount = 0;
+            for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
+                const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
+                const size_t elementCount = vtArray.GetDataSize();
+                int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
+                float* _pData = (float*)vtArray.GetData();
+                for (int j = 0; j < elementCountPerArray; j++) {
+                    pVertexData[i * vertexPerCount + _dataCount] = _pData[i * elementCountPerArray + j];
+                    _dataCount++;
+                }
+            }
+            ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
         }
-        case 3:
+
+
+        switch (pMesh->GetIndexArray(0).GetIndexType()) {
+        case My::kIndexDataTypeInt8:
         {
-            CreateVertex(pMesh, VertexFloat3);
-            break;
+            uint8_t* pIndexData = new uint8_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint8_t* _pData = (uint8_t*)pMesh->GetIndexArray(0).GetData();
+            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+                pIndexData[i] = _pData[i];
+            }
+            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
         }
-        case 4:
+        break;
+        case My::kIndexDataTypeInt16:
         {
-            CreateVertex(pMesh, VertexFloat4);
-            break;
+            uint16_t* pIndexData = new uint16_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint16_t* _pData = (uint16_t*)pMesh->GetIndexArray(0).GetData();
+            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+                pIndexData[i] = _pData[i];
+            }
+            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
         }
+        break;
+        case My::kIndexDataTypeInt32:
+        {
+            uint32_t* pIndexData = new uint32_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint32_t* _pData = (uint32_t*)pMesh->GetIndexArray(0).GetData();
+            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+                pIndexData[i] = _pData[i];
+            }
+            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
+        }
+        break;
+        case My::kIndexDataTypeInt64:
+        {
+            uint64_t* pIndexData = new uint64_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint64_t* _pData = (uint64_t*)pMesh->GetIndexArray(0).GetData();
+            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+                pIndexData[i] = _pData[i];
+            }
+            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
+        }
+        break;
         default:
-            assert(false);
+            ASSERT(false, "Convert Index Type ERROR!");
             break;
         }
+
+        m_pGraphics->SetVertexBuffer(L"Vertex Buffer", elementCount * vertexPerCount, elementCount * vertexPerCount * sizeof(float), pVertexData);
     }
-    
+
     return true;
 }
 

@@ -98,6 +98,7 @@ namespace My {
 
         const std::string& GetAttributeName() const { return m_strAttribute; };
         VertexDataType GetDataType() const { return m_DataType; };
+        const size_t GetElementCount() const { return m_szData; }
         size_t GetDataSize() const
         {
             size_t size = m_szData;
@@ -193,6 +194,7 @@ namespace My {
 
         const IndexDataType GetIndexType() const { return m_DataType; };
         const void* GetData() const { return m_pData; };
+        size_t GetElementCount() const { return m_szData; }
         size_t GetDataSize() const
         {
             size_t size = m_szData;

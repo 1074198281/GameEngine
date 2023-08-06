@@ -49,11 +49,9 @@ include_directories("${PROJECT_SOURCE_DIR}/RHI")
 
 file(GLOB ASSET_SHADERS
 ${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl/*.hlsl)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl)
-
-
-
 #add_subdirectory(${PROJECT_SOURCE_DIR}/Asset/Shaders/hlsl)
+
+
 add_subdirectory(RHI)
 add_subdirectory(Framework)
 add_subdirectory(Platform)

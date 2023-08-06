@@ -20,6 +20,8 @@ namespace D3dGraphicsCore {
 	public:
 		void UpdateStatus();
 
+		void SetIndexBuffer(std::wstring name, int indexCount, int perElementSize, void* _pData);
+		void SetVertexBuffer(std::wstring name, int vertexCount, int perElementSize, void* _pData);
 		//extension features
 	private:
 		void GenerateMatrix();
@@ -34,15 +36,16 @@ namespace D3dGraphicsCore {
 	private:
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
-		Math::Matrix4 m_ProjMatrix;
-		Math::Matrix4 m_ViewMatrix;
-		Math::Matrix4 m_ModelMatrix;
 		Math::Matrix4 m_ModelViewProjMatrix;
 
 		D3D12_INPUT_ELEMENT_DESC* m_InputlayoutPos;
 		D3D12_INPUT_ELEMENT_DESC* m_InputlayoutPosUV;
 		D3D12_INPUT_ELEMENT_DESC* m_InputlayoutPosNormalUV;
 		D3D12_INPUT_ELEMENT_DESC* m_InputlayoutPosNormalTangentUV;
+
+		//for test
+	private:
+		void test();
 	};
 
 }
