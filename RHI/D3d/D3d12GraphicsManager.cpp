@@ -36,7 +36,11 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Tick()
 {
-    Draw();
+    if (!m_bLoadOK) {
+        Draw();
+        m_bLoadOK = true;
+    }
+
     m_pGraphics->UpdateStatus();
 }
 
@@ -85,7 +89,6 @@ bool My::D3d12GraphicsManager::LoadScene()
             int _dataCount = 0;
             for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
                 const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
-                const size_t elementCount = vtArray.GetDataSize();
                 int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
                 float* _pData = (float*)vtArray.GetData();
                 for (int j = 0; j < elementCountPerArray; j++) {
@@ -143,7 +146,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             break;
         }
 
-        m_pGraphics->SetVertexBuffer(L"Vertex Buffer", elementCount * vertexPerCount, elementCount * vertexPerCount * sizeof(float), pVertexData);
+        m_pGraphics->SetVertexBuffer(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
     }
 
     return true;

@@ -61,6 +61,9 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\DepthBuffer.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\GpuBuffer.cpp">
+      <Filter>src\D3dCoreSource</Filter>
+    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\LinearAllocator.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>

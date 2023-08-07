@@ -36,5 +36,6 @@ namespace My {
 
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
+        bool m_bLoadOK = false;
     };
 }

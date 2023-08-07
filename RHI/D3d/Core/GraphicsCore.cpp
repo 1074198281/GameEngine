@@ -5,6 +5,8 @@
 
 #include "../Asset/Shaders/CompiledShaders/g_mainPS.h"
 #include "../Asset/Shaders/CompiledShaders/g_mainVS.h"
+#include "../Asset/Shaders/CompiledShaders/g_main4PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_main4VS.h"
 
 using namespace DirectX;
 
@@ -73,8 +75,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphics()
     m_PSO.SetInputLayout(4, m_InputlayoutPosNormalTangentUV);
     m_PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
     m_PSO.SetRenderTargetFormat(g_DisplayBuffer[g_CurrentBuffer].GetFormat(), DXGI_FORMAT_UNKNOWN);
-    m_PSO.SetVertexShader(g_pmainVS, sizeof(g_pmainVS));
-    m_PSO.SetPixelShader(g_pmainPS, sizeof(g_pmainPS));
+    m_PSO.SetVertexShader(g_pmain4VS, sizeof(g_pmain4VS));
+    m_PSO.SetPixelShader(g_pmain4PS, sizeof(g_pmain4PS));
     m_PSO.Finalize();
 }
 
@@ -130,10 +132,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeInputLayout()
     m_InputlayoutPosNormalUV = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(3 * sizeof(D3D12_INPUT_ELEMENT_DESC));
     m_InputlayoutPosNormalTangentUV = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(4 * sizeof(D3D12_INPUT_ELEMENT_DESC));
 
-    D3D12_INPUT_ELEMENT_DESC pos = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0xffffffff, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
-    D3D12_INPUT_ELEMENT_DESC tex = { "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0xffffffff, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
-    D3D12_INPUT_ELEMENT_DESC nor = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0xffffffff, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
-    D3D12_INPUT_ELEMENT_DESC tan = { "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0xffffffff, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
+    D3D12_INPUT_ELEMENT_DESC pos = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
+    D3D12_INPUT_ELEMENT_DESC tex = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 40, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
+    D3D12_INPUT_ELEMENT_DESC nor = { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
+    D3D12_INPUT_ELEMENT_DESC tan = { "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
 
     m_InputlayoutPos[0] = { pos };
     m_InputlayoutPosUV[0] = { pos }; m_InputlayoutPosUV[1] = { tex };
