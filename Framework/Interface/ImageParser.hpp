@@ -4,7 +4,7 @@
 #include "Buffer.hpp"
 
 namespace My {
-    Interface ImageParser
+    __Interface ImageParser
     {
     public:
         virtual Image Parse(const Buffer& buf) = 0;
