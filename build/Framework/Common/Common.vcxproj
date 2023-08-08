@@ -287,6 +287,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\BaseApplication.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\GraphicsManager.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Image.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\InputManager.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\MemoryManager.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Scene.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\SceneManager.cpp" />

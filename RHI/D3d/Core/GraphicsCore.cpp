@@ -13,31 +13,49 @@ using namespace DirectX;
 D3dGraphicsCore::CD3dGraphicsCore::CD3dGraphicsCore()
 {
     m_PSO = GraphicsPSO(L"Main PSO");
-    InitializeInputLayout();
+    InitializeInputLayout();   
 }
 
 D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 {
-    m_IndexBuffer.Destroy();
-    m_VertexBuffer.Destroy();
-    Shutdown(); 
+#if 0
+    // for dxgi debug,to solve memory leak 
+    IDXGIDebug1* dxgiDebug;
+    if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    {
+        dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+        dxgiDebug->Release();
+    }
+#endif
+}
+
+int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
+{
+    return 0;
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
+{
+    Shutdown();
     ShutdownDisplay();
+    DestroyCommonState();
+    for (auto it = m_RenderObjects.begin(); it != m_RenderObjects.end(); it++) {
+        it->VertexBuffer.Destroy();
+        it->IndexBuffer.Destroy();
+    }
+
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::GenerateMatrix()
 {
-    XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(XM_PIDIV4, g_DisplayWidth / (float)g_DisplayHeight, 1.0f, 1000.f);
+    m_ProjectionMatrix = DirectX::XMMatrixPerspectiveFovLH(XM_PIDIV4, g_DisplayWidth / (float)g_DisplayHeight, 1.0f, 100000.f);
     XMMATRIX model = XMMATRIX(1.f, 0.f, 0.f, 0.f,
-                              0.f, 1.f, 0.f, 0.f,
-                              0.f, 0.f, 1.f, 0.f,
-                              0.f, 0.f, 0.f, 1.f);
+        0.f, 1.f, 0.f, 0.f,
+        0.f, 0.f, 1.f, 0.f,
+        0.f, 0.f, 0.f, 1.f);
     model = DirectX::XMMatrixTranspose(model);
-    XMFLOAT3 eyepos(0.f, 0.f, -5.f);
-    XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    XMFLOAT3 updire(0.f, 1.f, 0.f);
-    XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eyepos), XMLoadFloat3(&lookat), XMLoadFloat3(&updire));
 
-    m_ModelViewProjMatrix = Math::Matrix4(DirectX::XMMatrixTranspose(model * view * proj));
+    m_ModelViewProjMatrix = Math::Matrix4(DirectX::XMMatrixTranspose(model * m_ViewMatrix * m_ProjectionMatrix));
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int height)
@@ -59,6 +77,11 @@ void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int he
     m_MainScissor.top = 0;
     m_MainScissor.right = g_DisplayWidth;
     m_MainScissor.bottom = g_DisplayHeight;
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateView(DirectX::XMMATRIX mat)
+{
+    m_ViewMatrix = mat;
     GenerateMatrix();
 }
 
@@ -80,14 +103,9 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphics()
     m_PSO.Finalize();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::SetIndexBuffer(std::wstring name, int indexCount, int perElementSize, void* _pData)
+void D3dGraphicsCore::CD3dGraphicsCore::AddRenderObject(My::RenderObject _object)
 {
-    m_IndexBuffer.Create(name, indexCount, perElementSize, _pData);
-}
-
-void D3dGraphicsCore::CD3dGraphicsCore::SetVertexBuffer(std::wstring name, int vertexCount, int perElementSize, void* _pData)
-{
-    m_VertexBuffer.Create(name, vertexCount, perElementSize, _pData);
+    m_RenderObjects.push_back(_object);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
@@ -109,14 +127,16 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
     gfxContext.SetRootSignature(m_RootSignature);
     // 
     gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    // 
-    gfxContext.SetVertexBuffer(0, m_VertexBuffer.VertexBufferView());
-    // 
-    gfxContext.SetIndexBuffer(m_IndexBuffer.IndexBufferView());
-    // 
-    gfxContext.SetDynamicConstantBufferView(0, sizeof(m_ModelViewProjMatrix), &m_ModelViewProjMatrix);
-    // 
-    gfxContext.DrawIndexedInstanced(36, 1, 0, 0, 0);
+    
+    for (auto it = m_RenderObjects.begin(); it != m_RenderObjects.end(); it++) {
+        gfxContext.SetVertexBuffer(0, it->VertexBuffer.VertexBufferView());
+        // 
+        gfxContext.SetIndexBuffer(it->IndexBuffer.IndexBufferView());
+        // 
+        gfxContext.SetDynamicConstantBufferView(0, sizeof(m_ModelViewProjMatrix), &m_ModelViewProjMatrix);
+        // 
+        gfxContext.DrawIndexedInstanced(it->indexCountPerInstance, it->InstanceCount, 0, 0, 0);
+    }
 
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT, true);
 
@@ -197,9 +217,9 @@ void D3dGraphicsCore::CD3dGraphicsCore::test()
         4, 3, 7
     };
 
-    // GPUBuff�࣬�Զ��Ѷ���ͨ���ϴ������������˶�Ӧ��Ĭ�϶���
-    m_VertexBuffer.Create(L"vertex buff", 8, sizeof(VertexTemp), vertices.data());
-    m_IndexBuffer.Create(L"index buff", 36, sizeof(std::uint16_t), indices.data());
+    
+    //m_VertexBuffer.Create(L"vertex buff", 8, sizeof(VertexTemp), vertices.data());
+    //m_IndexBuffer.Create(L"index buff", 36, sizeof(std::uint16_t), indices.data());
 
     D3D12_INPUT_ELEMENT_DESC mInputLayout[] =
     {

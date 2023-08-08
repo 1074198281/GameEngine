@@ -1,4 +1,5 @@
 #include "WindowsApplication.hpp"
+#include "InputManager.hpp"
 #include <tchar.h>
 
 using namespace My;
@@ -111,7 +112,26 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
     case WM_KEYDOWN:
     {
         // we will replace this with input manager
-        m_bQuit = true;
+        switch (wParam)
+        {
+        case VK_LEFT:
+            g_pInputManager->LeftArrowKeyDown();
+            break;
+        case VK_RIGHT:
+            g_pInputManager->RightArrowKeyDown();
+            break;
+        case VK_UP:
+            g_pInputManager->UpArrowKeyDown();
+            break;
+        case VK_DOWN:
+            g_pInputManager->DownArrowKeyDown();
+            break;
+        case VK_ESCAPE:
+            m_bQuit = true;
+            break;
+        default:
+            break;
+        }
     }
     break;
 

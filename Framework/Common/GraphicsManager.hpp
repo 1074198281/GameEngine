@@ -15,6 +15,11 @@ namespace My {
 
         virtual void Clear();
         virtual void Draw();
+
+        virtual void MoveCameraXPositive();
+        virtual void MoveCameraXNegative();
+        virtual void MoveCameraYPositive();
+        virtual void MoveCameraYNegative();
     };
 
     extern GraphicsManager* g_pGraphicsManager;

@@ -21,16 +21,16 @@ namespace My {
     }
 
     ENUM(SceneObjectType) {
-        kSceneObjectTypeMesh        = "MESH"_i32,
-        kSceneObjectTypeMaterial    = "MATL"_i32,
-        kSceneObjectTypeTexture     = "TXTU"_i32,
-        kSceneObjectTypeLight       = "LGHT"_i32,
-        kSceneObjectTypeCamera      = "CAMR"_i32,
-        kSceneObjectTypeAnimator    = "ANIM"_i32,
-        kSceneObjectTypeClip        = "CLIP"_i32,
-        kSceneObjectTypeVertexArray = "VARR"_i32,
-        kSceneObjectTypeIndexArray  = "VARR"_i32,
-        kSceneObjectTypeGeometry    = "GEOM"_i32,
+        kSceneObjectTypeMesh = "MESH"_i32,
+            kSceneObjectTypeMaterial = "MATL"_i32,
+            kSceneObjectTypeTexture = "TXTU"_i32,
+            kSceneObjectTypeLight = "LGHT"_i32,
+            kSceneObjectTypeCamera = "CAMR"_i32,
+            kSceneObjectTypeAnimator = "ANIM"_i32,
+            kSceneObjectTypeClip = "CLIP"_i32,
+            kSceneObjectTypeVertexArray = "VARR"_i32,
+            kSceneObjectTypeIndexArray = "VARR"_i32,
+            kSceneObjectTypeGeometry = "GEOM"_i32,
     };
 
     std::ostream& operator<<(std::ostream& out, SceneObjectType type);
@@ -65,17 +65,17 @@ namespace My {
     };
 
     ENUM(VertexDataType) {
-        kVertexDataTypeFloat1   = "FLT1"_i32,
-        kVertexDataTypeFloat2   = "FLT2"_i32,
-        kVertexDataTypeFloat3   = "FLT3"_i32,
-        kVertexDataTypeFloat4   = "FLT4"_i32,
-        kVertexDataTypeDouble1  = "DUB1"_i32,
-        kVertexDataTypeDouble2  = "DUB2"_i32,
-        kVertexDataTypeDouble3  = "DUB3"_i32,
-        kVertexDataTypeDouble4  = "DUB4"_i32,
-        kVertexDataTypeMatrix2  = "MAT2"_i32,
-        kVertexDataTypeMatrix3  = "MAT3"_i32,
-        kVertexDataTypeMatrix4  = "MAT4"_i32,
+        kVertexDataTypeFloat1 = "FLT1"_i32,
+            kVertexDataTypeFloat2 = "FLT2"_i32,
+            kVertexDataTypeFloat3 = "FLT3"_i32,
+            kVertexDataTypeFloat4 = "FLT4"_i32,
+            kVertexDataTypeDouble1 = "DUB1"_i32,
+            kVertexDataTypeDouble2 = "DUB2"_i32,
+            kVertexDataTypeDouble3 = "DUB3"_i32,
+            kVertexDataTypeDouble4 = "DUB4"_i32,
+            kVertexDataTypeMatrix2 = "MAT2"_i32,
+            kVertexDataTypeMatrix3 = "MAT3"_i32,
+            kVertexDataTypeMatrix4 = "MAT4"_i32,
     };
 
     std::ostream& operator<<(std::ostream& out, VertexDataType type);
@@ -98,7 +98,7 @@ namespace My {
 
         const std::string& GetAttributeName() const { return m_strAttribute; };
         VertexDataType GetDataType() const { return m_DataType; };
-        const size_t GetElementCount() const { return m_szData; }
+        size_t GetElementCount() const { return m_szData; };
         size_t GetDataSize() const
         {
             size_t size = m_szData;
@@ -168,9 +168,9 @@ namespace My {
 
     ENUM(IndexDataType) {
         kIndexDataTypeInt8 = "I8  "_i32,
-        kIndexDataTypeInt16 = "I16 "_i32,
-        kIndexDataTypeInt32 = "I32 "_i32,
-        kIndexDataTypeInt64 = "I64 "_i32,
+            kIndexDataTypeInt16 = "I16 "_i32,
+            kIndexDataTypeInt32 = "I32 "_i32,
+            kIndexDataTypeInt64 = "I64 "_i32,
     };
 
     std::ostream& operator<<(std::ostream& out, IndexDataType type);
@@ -182,7 +182,7 @@ namespace My {
         const size_t      m_szRestartIndex;
         const IndexDataType m_DataType;
 
-        const void*       m_pData;
+        const void* m_pData;
 
         const size_t      m_szData;
 
@@ -194,12 +194,11 @@ namespace My {
 
         const IndexDataType GetIndexType() const { return m_DataType; };
         const void* GetData() const { return m_pData; };
-        size_t GetElementCount() const { return m_szData; }
         size_t GetDataSize() const
         {
             size_t size = m_szData;
 
-                switch(m_DataType) {
+            switch (m_DataType) {
             case IndexDataType::kIndexDataTypeInt8:
                 size *= sizeof(int8_t);
                 break;
@@ -368,10 +367,18 @@ namespace My {
         Color       m_Transparency;
         Color       m_Emission;
 
+        //pbr
+        Color       m_pbrBaseColor;
+        Color       m_pbrMetallicRoughness;
+        Color       m_pbrOcclusion;
+        Color       m_pbrEmissive;
+        Color       m_pbrNormal;
+        int         m_TextureTypeFlag;
+
     public:
-        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name) {};
-        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)) {};
-        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Metallic(0.0f), m_Roughness(0.0f), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f) {};
+        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0) {};
+        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)), m_TextureTypeFlag(0) {};
+        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Metallic(0.0f), m_Roughness(0.0f), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f), m_TextureTypeFlag(0) {};
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
         void SetColor(std::string& attrib, Vector4f& color)
@@ -379,23 +386,78 @@ namespace My {
             if (attrib == "diffuse") {
                 m_BaseColor = Color(color);
             }
+            else if (attrib == "Opacity") {
+                m_Opacity = Color(color);
+            }
+            else if (attrib == "transparency") {
+                m_Transparency = Color(color);
+            }
+            else if (attrib == "emission") {
+                m_Emission = Color(color);
+            }
         };
 
         void SetParam(std::string& attrib, float param)
         {
+            if (attrib == "metallic") {
+                m_Metallic = Parameter(param);
+            }
+            else if (attrib == "roughness") {
+                m_Roughness = Parameter(param);
+            }
+            else if (attrib == "specular") {
+                m_Specular = Parameter(param);
+            }
+            else if (attrib == "ambient") {
+                m_AmbientOcclusion = Parameter(param);;
+            }
         };
 
         void SetTexture(std::string& attrib, std::string& textureName)
         {
-            if (attrib == "diffuse") {
-                m_BaseColor = std::make_shared<SceneObjectTexture>(textureName);
+            if (attrib == "pbrdiffuse") {
+                m_pbrBaseColor = std::make_shared<SceneObjectTexture>(textureName);
+                m_TextureTypeFlag |= (1 << 0);
+            }
+            else if (attrib == "pbrmetallicroughness") {
+                m_pbrMetallicRoughness = std::make_shared<SceneObjectTexture>(textureName);
+                m_TextureTypeFlag |= (1 << 1);
+            }
+            else if (attrib == "pbrocclusion") {
+                m_pbrOcclusion = std::make_shared<SceneObjectTexture>(textureName);
+                m_TextureTypeFlag |= (1 << 2);
+            }
+            else if (attrib == "pbremissive") {
+                m_pbrEmissive = std::make_shared<SceneObjectTexture>(textureName);
+                m_TextureTypeFlag |= (1 << 3);
+            }
+            else if (attrib == "pbrnormal") {
+                m_pbrNormal = std::make_shared<SceneObjectTexture>(textureName);
+                m_TextureTypeFlag |= (1 << 4);
             }
         };
 
         void SetTexture(std::string& attrib, std::shared_ptr<SceneObjectTexture>& texture)
         {
-            if (attrib == "diffuse") {
-                m_BaseColor = texture;
+            if (attrib == "pbrdiffuse") {
+                m_pbrBaseColor = texture;
+                m_TextureTypeFlag |= (1 << 0);
+            }
+            else if (attrib == "pbrmetallicroughness") {
+                m_pbrMetallicRoughness = texture;
+                m_TextureTypeFlag |= (1 << 1);
+            }
+            else if (attrib == "pbrocclusion") {
+                m_pbrOcclusion = texture;
+                m_TextureTypeFlag |= (1 << 2);
+            }
+            else if (attrib == "pbremissive") {
+                m_pbrEmissive = texture;
+                m_TextureTypeFlag |= (1 << 3);
+            }
+            else if (attrib == "pbrnormal") {
+                m_pbrNormal = texture;
+                m_TextureTypeFlag |= (1 << 4);
             }
         };
 

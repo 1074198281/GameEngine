@@ -2,6 +2,7 @@
 #include "GraphicsManager.hpp"
 #include "MemoryManager.hpp"
 #include "SceneManager.hpp"
+#include "InputManager.hpp"
 
 namespace My {
     GfxConfiguration config;
@@ -10,4 +11,5 @@ namespace My {
     MemoryManager* g_pMemoryManager = static_cast<MemoryManager*>(new MemoryManager);
     AssetLoader* g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
     SceneManager* g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
+    InputManager* g_pInputManager = static_cast<InputManager*>(new InputManager);
 }

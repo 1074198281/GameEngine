@@ -23,19 +23,20 @@ namespace My {
         virtual void Clear();
         virtual void Draw();
 
+        virtual void MoveCameraXPositive();
+        virtual void MoveCameraXNegative();
+        virtual void MoveCameraYPositive();
+        virtual void MoveCameraYNegative();
     public:
 
-    private:
-        //bool InitBasicGraphicsParam();
+
     private:
         bool LoadScene();
-        void CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<Vertex>& VertexVec);
-        void CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexT>& VertexVec);
-        void CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexNT>& VertexVec);
-        void CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexNTT>& VertexVec);
+
 
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
+        DirectX::XMFLOAT3 m_EyePos;
         bool m_bLoadOK = false;
     };
 }

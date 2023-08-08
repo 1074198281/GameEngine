@@ -25,3 +25,19 @@ void GraphicsManager::Clear()
 void GraphicsManager::Draw()
 {
 }
+
+void GraphicsManager::MoveCameraXPositive()
+{
+}
+
+void GraphicsManager::MoveCameraXNegative()
+{
+}
+
+void GraphicsManager::MoveCameraYPositive()
+{
+}
+
+void GraphicsManager::MoveCameraYNegative()
+{
+}

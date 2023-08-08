@@ -5,6 +5,8 @@
 #include "Resource/GpuBuffer.h"
 #include "Pipeline/PipelineState.h"
 #include "Common/Matrix4.h"
+#include "GeometryStructure.h"
+#include <array>
 
 namespace D3dGraphicsCore {
 
@@ -13,15 +15,17 @@ namespace D3dGraphicsCore {
 		CD3dGraphicsCore();
 		~CD3dGraphicsCore();
 
+		int StartUp();
+		void Finalize();
 	public:
 		void setCoreHWND(HWND hwnd, int width, int height);
+		void UpdateView(DirectX::XMMATRIX mat);
 		void InitializeGraphics();
 
 	public:
 		void UpdateStatus();
 
-		void SetIndexBuffer(std::wstring name, int indexCount, int perElementSize, void* _pData);
-		void SetVertexBuffer(std::wstring name, int vertexCount, int perElementSize, void* _pData);
+		void AddRenderObject(My::RenderObject _object);
 		//extension features
 	private:
 		void GenerateMatrix();
@@ -30,12 +34,13 @@ namespace D3dGraphicsCore {
 	private:
 		RootSignature m_RootSignature;
 		GraphicsPSO m_PSO;
-		StructuredBuffer m_VertexBuffer;
-		ByteAddressBuffer m_IndexBuffer;
+		std::vector<My::RenderObject> m_RenderObjects;
 
 	private:
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
+		DirectX::XMMATRIX m_ProjectionMatrix;
+		DirectX::XMMATRIX m_ViewMatrix;
 		Math::Matrix4 m_ModelViewProjMatrix;
 
 		D3D12_INPUT_ELEMENT_DESC* m_InputlayoutPos;

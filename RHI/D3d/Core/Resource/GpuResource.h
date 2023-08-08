@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "Common/D3dCommonDef.h"
+#include "Core/Common/D3dCommonDef.h"
 
 namespace D3dGraphicsCore {
 

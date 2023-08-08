@@ -140,7 +140,7 @@ namespace glTF
         };
         float emissiveFactor[3]; // default=[0,0,0]
         float normalTextureScale; // default=1
-        enum { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kNumTextures };
+        enum eTextureType { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kNumTextures };
         Texture* textures[kNumTextures];
         uint32_t index;
 
@@ -406,6 +406,33 @@ namespace glTF
             break;
         }
         return count;
+    }
+
+    std::string GetTextureType(Material::eTextureType texType)
+    {
+        std::string stringType;
+        switch (texType)
+        {
+        case Material::eTextureType::kBaseColor:
+            stringType = "pbrdiffuse";
+            break;
+        case Material::eTextureType::kMetallicRoughness:
+            stringType = "pbrmetallicroughness";
+            break;
+        case Material::eTextureType::kOcclusion:
+            stringType = "pbrocclusion";
+            break;
+        case Material::eTextureType::kEmissive:
+            stringType = "pbremissive";
+            break;
+        case Material::eTextureType::kNormal:
+            stringType = "pbrnormal";
+            break;
+        default:
+            ASSERT(false, "Parse Material Texture Type Error!");
+            break;
+        }
+        return stringType;
     }
 
     D3D12_TEXTURE_ADDRESS_MODE GLtoD3DTextureAddressMode(int32_t glWrapMode)
@@ -1311,7 +1338,14 @@ namespace glTF
                 //Material
                 GeoNode->AddMaterialRef(meshIt->material->name);
                 std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
-
+                
+                for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
+                    if (!meshIt->material->textures[type]) {
+                        continue;
+                    }
+                    std::string textureType = GetTextureType(Material::eTextureType(type));
+                    GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
+                }
 
                 Scene.Materials[meshIt->material->name] = GeoMaterial;
             }

@@ -24,14 +24,21 @@ namespace My {
 int My::D3d12GraphicsManager::Initialize()
 {
     m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
+    m_pGraphics->StartUp();
     m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
     m_pGraphics->InitializeGraphics();
+
+    m_EyePos = DirectX::XMFLOAT3(0.f, 0.f, -400.f);
+    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
+    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
+    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
+    m_pGraphics->UpdateView(view);
     return 0;
 }
 
 void My::D3d12GraphicsManager::Finalize()
 {
-
+    m_pGraphics->Finalize();
 }
 
 void My::D3d12GraphicsManager::Tick()
@@ -42,6 +49,42 @@ void My::D3d12GraphicsManager::Tick()
     }
 
     m_pGraphics->UpdateStatus();
+}
+
+void My::D3d12GraphicsManager::MoveCameraXPositive()
+{
+    m_EyePos.x += 1.0f;
+    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
+    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
+    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
+    m_pGraphics->UpdateView(view);
+}
+
+void My::D3d12GraphicsManager::MoveCameraXNegative()
+{
+    m_EyePos.x -= 1.0f;
+    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
+    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
+    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
+    m_pGraphics->UpdateView(view);
+}
+
+void My::D3d12GraphicsManager::MoveCameraYPositive()
+{
+    m_EyePos.y += 1.0f;
+    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
+    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
+    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
+    m_pGraphics->UpdateView(view);
+}
+
+void My::D3d12GraphicsManager::MoveCameraYNegative()
+{
+    m_EyePos.y -= 1.0f;
+    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
+    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
+    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
+    m_pGraphics->UpdateView(view);
 }
 
 void My::D3d12GraphicsManager::Clear()
@@ -74,10 +117,12 @@ bool My::D3d12GraphicsManager::LoadScene()
 
         ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
 
+        My::RenderObject _object;
+
         int elementCount = pMesh->GetVertexCount();
         int indexPerCount = 1;
         int vertexPerCount = 0;
-        //ÿ����ٸ�float����position + tex����3 + 2
+        
         for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
             auto& vtArray = pMesh->GetVertexPropertyArray(groupCount);
             ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
@@ -98,7 +143,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             }
             ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
         }
-
+        _object.VertexBuffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
 
         switch (pMesh->GetIndexArray(0).GetIndexType()) {
         case My::kIndexDataTypeInt8:
@@ -108,7 +153,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
+            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt16:
@@ -118,7 +163,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
+            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt32:
@@ -128,7 +173,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
+            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt64:
@@ -138,95 +183,18 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            m_pGraphics->SetIndexBuffer(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
+            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
         }
         break;
         default:
             ASSERT(false, "Convert Index Type ERROR!");
             break;
         }
+        _object.indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
+        _object.InstanceCount = 1;
 
-        m_pGraphics->SetVertexBuffer(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
+        m_pGraphics->AddRenderObject(_object);
     }
 
     return true;
-}
-
-void My::D3d12GraphicsManager::CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<Vertex>& VertexVec)
-{
-    assert(pMesh->GetVertexPropertiesCount() == 1);
-    /*
-    const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(0);
-    const void* pData = vtArray.GetData();
-    void* pVecData = VertexVec.data();
-    memcpy(pVecData, pData, vtArray.GetDataSize());
-    */
-
-    for (int j = 0; j < pMesh->GetVertexCount(); j++) {
-        Vertex vt;
-        for (int i = 0; i < pMesh->GetVertexPropertiesCount(); i++) {
-            const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(i);
-            const void* pData = vtArray.GetData();
-            const char* pcharData = static_cast<const char*>(pData);
-            const float* pfloatData = reinterpret_cast<const float*>(pcharData);
-            vt.pos[0] = pfloatData[j * 3];
-            vt.pos[1] = pfloatData[j * 3 + 1];
-            vt.pos[2] = pfloatData[j * 3 + 2];
-        }
-        VertexVec.push_back(vt);
-    }
-}
-
-void My::D3d12GraphicsManager::CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexT>& VertexVec)
-{
-    for (int j = 0; j < pMesh->GetVertexCount(); j++) {
-        VertexT vt;
-        const float* pVertexPropertyData[2];
-        for (int i = 0; i < pMesh->GetVertexPropertiesCount(); i++) {
-            const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(i);
-            const void* pData = vtArray.GetData();
-            const char* pcharData = static_cast<const char*>(pData);
-            pVertexPropertyData[i] = reinterpret_cast<const float*>(pcharData);
-        }
-        vt.pos = Vector3f(pVertexPropertyData[0][j * 3], pVertexPropertyData[0][j * 3 + 1], pVertexPropertyData[0][j * 3 + 2]);
-        vt.tex = Vector2f(pVertexPropertyData[1][j * 2], pVertexPropertyData[1][j * 2 + 1]);
-        VertexVec.push_back(vt);
-    }
-}
-
-void My::D3d12GraphicsManager::CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexNT>& VertexVec)
-{
-    for (int j = 0; j < pMesh->GetVertexCount(); j++) {
-        VertexNT vt;
-        const float* pVertexPropertyData[3];
-        for (int i = 0; i < pMesh->GetVertexPropertiesCount(); i++) {
-            const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(i);
-            const void* pData = vtArray.GetData();
-            const char* pcharData = static_cast<const char*>(pData);
-            pVertexPropertyData[i] = reinterpret_cast<const float*>(pcharData);
-        }
-        vt.pos = Vector3f(pVertexPropertyData[0][j * 3], pVertexPropertyData[0][j * 3 + 1], pVertexPropertyData[0][j * 3 + 2]);
-        vt.normal = Vector3f(pVertexPropertyData[1][j * 3], pVertexPropertyData[1][j * 3 + 1], pVertexPropertyData[1][j * 3 + 2]);
-        vt.tex = Vector2f(pVertexPropertyData[2][j * 2], pVertexPropertyData[2][j * 2 + 1]);
-        VertexVec.push_back(vt);
-    }
-}
-
-void My::D3d12GraphicsManager::CreateVertex(std::shared_ptr<SceneObjectMesh> pMesh, std::vector<VertexNTT>& VertexVec)
-{
-    for (int j = 0; j < pMesh->GetVertexCount(); j++) {
-        VertexNTT vt;
-        const float* pVertexPropertyData[4];
-        for (int i = 0; i < pMesh->GetVertexPropertiesCount(); i++) {
-            const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(i);
-            const void* pData = vtArray.GetData();
-            const char* pcharData = static_cast<const char*>(pData);
-            pVertexPropertyData[i] = reinterpret_cast<const float*>(pcharData);
-        }
-        vt.pos = Vector3f(pVertexPropertyData[0][j * 3], pVertexPropertyData[0][j * 3 + 1], pVertexPropertyData[0][j * 3 + 2]);
-        vt.normal = Vector3f(pVertexPropertyData[1][j * 3], pVertexPropertyData[1][j * 3 + 1], pVertexPropertyData[1][j * 3 + 2]);
-        vt.tangent = Vector3f(pVertexPropertyData[2][j * 3], pVertexPropertyData[2][j * 3 + 1], pVertexPropertyData[2][j * 3 + 2]);
-        vt.tex = Vector2f(pVertexPropertyData[3][j * 2], pVertexPropertyData[3][j * 2 + 1]);
-        VertexVec.push_back(vt);
-    }
 }
