@@ -8,17 +8,6 @@ using namespace My;
 
 namespace My {
     extern IApplication* g_pApp;
-
-    template<class T>
-    inline void SafeRelease(T** ppInterfaceToRelease)
-    {
-        if (*ppInterfaceToRelease != nullptr)
-        {
-            (*ppInterfaceToRelease)->Release();
-
-            (*ppInterfaceToRelease) = nullptr;
-        }
-    }
 }
 
 int My::D3d12GraphicsManager::Initialize()
