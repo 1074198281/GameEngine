@@ -14,6 +14,24 @@
 # EXTERNAL cache entries
 ########################
 
+//Path to a library.
+BULLETCOLLISION_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletCollision_Debug.lib
+
+//Path to a library.
+BULLETCOLLISION_RELEASE_LIBRARY:FILEPATH=BULLETCOLLISION_RELEASE_LIBRARY-NOTFOUND
+
+//Path to a library.
+BULLETDYNAMICS_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletDynamics_Debug.lib
+
+//Path to a library.
+BULLETDYNAMICS_RELEASE_LIBRARY:FILEPATH=BULLETDYNAMICS_RELEASE_LIBRARY-NOTFOUND
+
+//Path to a library.
+BULLETLINEARMATH_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/LinearMath_Debug.lib
+
+//Path to a library.
+BULLETLINEARMATH_RELEASE_LIBRARY:FILEPATH=BULLETLINEARMATH_RELEASE_LIBRARY-NOTFOUND
+
 //Path to a program.
 CMAKE_AR:FILEPATH=F:/vs2022/VC/Tools/MSVC/14.33.31629/bin/HostX64/x64/lib.exe
 
