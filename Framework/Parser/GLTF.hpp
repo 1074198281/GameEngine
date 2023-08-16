@@ -1345,6 +1345,8 @@ namespace glTF
                     }
                     std::string textureType = GetTextureType(Material::eTextureType(type));
                     GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
+                    GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
+                        meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
                 }
 
                 Scene.Materials[meshIt->material->name] = GeoMaterial;

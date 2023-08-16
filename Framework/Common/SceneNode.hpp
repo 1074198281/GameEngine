@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "SceneObject.hpp"
+#include "geommath.hpp"
 
 namespace My {
     class BaseSceneNode {
@@ -31,6 +32,19 @@ namespace My {
         void AppendChild(std::shared_ptr<SceneObjectTransform>&& transform)
         {
             m_Transforms.push_back(std::move(transform));
+        }
+
+        const std::shared_ptr<My::Matrix4X4f> GetCalculatedTransform() const
+        {
+            std::shared_ptr<Matrix4X4f> result(new Matrix4X4f());
+            BuildIdentityMatrix(*result);
+
+            for (auto trans : m_Transforms)
+            {
+                *result = *result * static_cast<Matrix4X4f>(*trans);
+            }
+
+            return result;
         }
 
         friend std::ostream& operator<<(std::ostream& out, const BaseSceneNode& node)
@@ -86,6 +100,7 @@ namespace My {
         bool        m_bShadow;
         bool        m_bMotionBlur;
         std::vector<std::string> m_Materials;
+        void*       m_pRigidBody;
 
     protected:
         virtual void dump(std::ostream& out) const
@@ -112,6 +127,26 @@ namespace My {
         using SceneNode::AddSceneObjectRef;
         void AddMaterialRef(const std::string& key) { m_Materials.push_back(key); };
         void AddMaterialRef(const std::string&& key) { m_Materials.push_back(std::move(key)); };
+        std::string GetMaterialRef(const size_t index)
+        {
+            if (index < m_Materials.size()) {
+                return m_Materials[index];
+            } else {
+                return std::string("default");
+            }
+        }
+
+        void LinkRigidBody(void* rigidBody)
+        {
+            m_pRigidBody = rigidBody;
+        }
+
+        void* UnlinkRigidBody()
+        {
+            void* rigidBody = m_pRigidBody;
+            m_pRigidBody = nullptr;
+            return rigidBody;
+        }
     };
 
     class SceneLightNode : public SceneNode<SceneObjectLight>

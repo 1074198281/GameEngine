@@ -57,10 +57,16 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Buffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\ColorSpaceConversion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\GfxConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\GraphicsManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\HuffmanTree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Image.hpp">
@@ -102,6 +108,9 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\ImageParserHeader.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\BMP.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
@@ -109,6 +118,15 @@
       <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\OGEX.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\JPEG.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\PNG.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\TGA.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,22 +4,16 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "../External/Windows/include/Guid.hpp"
+#include "Guid.hpp"
 #include "Image.hpp"
 #include "portable.hpp"
 #include "geommath.hpp"
+#include "AssetLoader.hpp"
+#include "ImageParserHeader.h"
+#include "utility.hpp"
+
 
 namespace My {
-    namespace details {
-        constexpr int32_t i32(const char* s, int32_t v) {
-            return *s ? i32(s + 1, v * 256 + *s) : v;
-        }
-    }
-
-    constexpr int32_t operator "" _i32(const char* s, size_t) {
-        return details::i32(s, 0);
-    }
-
     ENUM(SceneObjectType) {
         kSceneObjectTypeMesh = "MESH"_i32,
             kSceneObjectTypeMaterial = "MATL"_i32,
@@ -31,6 +25,21 @@ namespace My {
             kSceneObjectTypeVertexArray = "VARR"_i32,
             kSceneObjectTypeIndexArray = "VARR"_i32,
             kSceneObjectTypeGeometry = "GEOM"_i32,
+    };
+
+    ENUM(SceneObjectCollisionType) {
+        kSceneObjectCollisionTypeNone = "CNON"_i32,
+            kSceneObjectCollisionTypeSphere = "CSPH"_i32,
+            kSceneObjectCollisionTypeBox = "CBOX"_i32,
+            kSceneObjectCollisionTypeCylinder = "CCYL"_i32,
+            kSceneObjectCollisionTypeCapsule = "CCAP"_i32,
+            kSceneObjectCollisionTypeCone = "CCON"_i32,
+            kSceneObjectCollisionTypeMultiSphere = "CMUL"_i32,
+            kSceneObjectCollisionTypeConvexHull = "CCVH"_i32,
+            kSceneObjectCollisionTypeConvexMesh = "CCVM"_i32,
+            kSceneObjectCollisionTypeBvhMesh = "CBVM"_i32,
+            kSceneObjectCollisionTypeHeightfield = "CHIG"_i32,
+            kSceneObjectCollisionTypePlane = "CPLN"_i32,
     };
 
     std::ostream& operator<<(std::ostream& out, SceneObjectType type);
@@ -296,6 +305,12 @@ namespace My {
         std::shared_ptr<Image> m_pImage;
         std::vector<Matrix4X4f> m_Transforms;
 
+
+        //for sampler
+        int m_filter;
+        int m_wrapS;
+        int m_wrapT;
+
     public:
         SceneObjectTexture() : BaseSceneObject(SceneObjectType::kSceneObjectTypeTexture), m_nTexCoordIndex(0) {};
         SceneObjectTexture(std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeTexture), m_Name(name), m_nTexCoordIndex(0) {};
@@ -306,9 +321,47 @@ namespace My {
         void AddTransform(Matrix4X4f& matrix) { m_Transforms.push_back(matrix); };
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
-        void LoadTextures() {
-
+        void SetSampler(int filter, int wrapS, int wrapT) { m_filter = filter; m_wrapS = wrapS; m_wrapT = wrapT; };
+        void LoadTexture() {
+            if (!m_pImage)
+            {
+                // we should lookup if the texture has been loaded already to prevent
+                // duplicated load. This could be done in Asset Loader Manager.
+                std::string fullpath = g_pAssetLoader->m_AssetPath + m_Name;
+                Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary(fullpath.c_str());
+                std::string ext = m_Name.substr(m_Name.find_last_of("."));
+                if (ext == ".jpg" || ext == ".jpeg")
+                {
+                    JfifParser jfif_parser;
+                    m_pImage = std::make_shared<Image>(jfif_parser.Parse(buf));
+                }
+                else if (ext == ".png")
+                {
+                    PngParser png_parser;
+                    m_pImage = std::make_shared<Image>(png_parser.Parse(buf));
+                }
+                else if (ext == ".bmp")
+                {
+                    BmpParser bmp_parser;
+                    m_pImage = std::make_shared<Image>(bmp_parser.Parse(buf));
+                }
+                else if (ext == ".tga")
+                {
+                    TgaParser tga_parser;
+                    m_pImage = std::make_shared<Image>(tga_parser.Parse(buf));
+                }
+            }
         }
+
+        const Image& GetTextureImage()
+        {
+            if (!m_pImage)
+            {
+                LoadTexture();
+            }
+
+            return *m_pImage;
+        };
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectTexture& obj);
     };
@@ -374,6 +427,7 @@ namespace My {
         Color       m_pbrEmissive;
         Color       m_pbrNormal;
         int         m_TextureTypeFlag;
+        enum { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kpbrType };
 
     public:
         SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0) {};
@@ -417,23 +471,23 @@ namespace My {
         {
             if (attrib == "pbrdiffuse") {
                 m_pbrBaseColor = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << 0);
+                m_TextureTypeFlag |= (1 << kBaseColor);
             }
             else if (attrib == "pbrmetallicroughness") {
                 m_pbrMetallicRoughness = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << 1);
+                m_TextureTypeFlag |= (1 << kMetallicRoughness);
             }
             else if (attrib == "pbrocclusion") {
                 m_pbrOcclusion = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << 2);
+                m_TextureTypeFlag |= (1 << kOcclusion);
             }
             else if (attrib == "pbremissive") {
                 m_pbrEmissive = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << 3);
+                m_TextureTypeFlag |= (1 << kEmissive);
             }
             else if (attrib == "pbrnormal") {
                 m_pbrNormal = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << 4);
+                m_TextureTypeFlag |= (1 << kNormal);
             }
         };
 
@@ -441,28 +495,61 @@ namespace My {
         {
             if (attrib == "pbrdiffuse") {
                 m_pbrBaseColor = texture;
-                m_TextureTypeFlag |= (1 << 0);
+                m_TextureTypeFlag |= (1 << kBaseColor);
             }
             else if (attrib == "pbrmetallicroughness") {
                 m_pbrMetallicRoughness = texture;
-                m_TextureTypeFlag |= (1 << 1);
+                m_TextureTypeFlag |= (1 << kMetallicRoughness);
             }
             else if (attrib == "pbrocclusion") {
                 m_pbrOcclusion = texture;
-                m_TextureTypeFlag |= (1 << 2);
+                m_TextureTypeFlag |= (1 << kOcclusion);
             }
             else if (attrib == "pbremissive") {
                 m_pbrEmissive = texture;
-                m_TextureTypeFlag |= (1 << 3);
+                m_TextureTypeFlag |= (1 << kEmissive);
             }
             else if (attrib == "pbrnormal") {
                 m_pbrNormal = texture;
-                m_TextureTypeFlag |= (1 << 4);
+                m_TextureTypeFlag |= (1 << kNormal);
+            }
+        };
+
+        void SetSampler(std::string& attrib, int filter, int wrapS, int wrapT)
+        {
+            if (attrib == "pbrdiffuse") {
+                m_pbrBaseColor.ValueMap->SetSampler(filter, wrapS, wrapT);
+            }
+            else if (attrib == "pbrmetallicroughness") {
+                m_pbrMetallicRoughness.ValueMap->SetSampler(filter, wrapS, wrapT);
+            }
+            else if (attrib == "pbrocclusion") {
+                m_pbrOcclusion.ValueMap->SetSampler(filter, wrapS, wrapT);
+            }
+            else if (attrib == "pbremissive") {
+                m_pbrEmissive.ValueMap->SetSampler(filter, wrapS, wrapT);
+            }
+            else if (attrib == "pbrnormal") {
+                m_pbrNormal.ValueMap->SetSampler(filter, wrapS, wrapT);
             }
         };
 
         void LoadTextures() {
-
+            if (TEST_BIT(m_TextureTypeFlag, kBaseColor)) {
+                m_pbrBaseColor.ValueMap->LoadTexture();
+            }
+            if (TEST_BIT(m_TextureTypeFlag, kMetallicRoughness)) {
+                m_pbrMetallicRoughness.ValueMap->LoadTexture();
+            }
+            if (TEST_BIT(m_TextureTypeFlag, kOcclusion)) {
+                m_pbrOcclusion.ValueMap->LoadTexture();
+            }
+            if (TEST_BIT(m_TextureTypeFlag, kEmissive)) {
+                m_pbrEmissive.ValueMap->LoadTexture();
+            }
+            if (TEST_BIT(m_TextureTypeFlag, kNormal)) {
+                m_pbrNormal.ValueMap->LoadTexture();
+            }
         }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectMaterial& obj);
@@ -475,9 +562,10 @@ namespace My {
         bool        m_bVisible;
         bool        m_bShadow;
         bool        m_bMotionBlur;
+        SceneObjectCollisionType m_CollisionType;
 
     public:
-        SceneObjectGeometry(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeGeometry) {};
+        SceneObjectGeometry(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeGeometry), m_CollisionType(SceneObjectCollisionType::kSceneObjectCollisionTypeNone) {};
 
         void SetVisibility(bool visible) { m_bVisible = visible; };
         const bool Visible() { return m_bVisible; };
@@ -485,6 +573,8 @@ namespace My {
         const bool CastShadow() { return m_bShadow; };
         void SetIfMotionBlur(bool motion_blur) { m_bMotionBlur = motion_blur; };
         const bool MotionBlur() { return m_bMotionBlur; };
+        void SetCollisionType(SceneObjectCollisionType collision_type) { m_CollisionType = collision_type; };
+        const SceneObjectCollisionType CollisionType() const { return  m_CollisionType; }
 
         void AddMesh(std::shared_ptr<SceneObjectMesh>& mesh) { m_Mesh.push_back(std::move(mesh)); };
         const std::weak_ptr<SceneObjectMesh> GetMesh() { return (m_Mesh.empty() ? nullptr : m_Mesh[0]); };
@@ -646,6 +736,9 @@ namespace My {
         SceneObjectTransform() { BuildIdentityMatrix(m_matrix); m_bSceneObjectOnly = false; };
 
         SceneObjectTransform(const Matrix4X4f& matrix, const bool object_only = false) { m_matrix = matrix; m_bSceneObjectOnly = object_only; };
+
+        operator Matrix4X4f() { return m_matrix; };
+        operator const Matrix4X4f() const { return m_matrix; };
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectTransform& obj);
     };

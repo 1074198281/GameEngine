@@ -34,10 +34,18 @@ void SceneManager::LoadScene(const char* scene_file_name)
     std::string extension = scene.substr(pos + 1);
     if (extension == "gltf") {
         LoadglTFScene(scene_file_name);
+        m_pScene->LoadResource();
+        m_bDirtyFlag = true;
     }
     else if (extension == "ogex") {
         LoadOgexScene(scene_file_name);
+        m_pScene->LoadResource();
+        m_bDirtyFlag = true;
     }
+    else {
+
+    }
+
 }
 
 void SceneManager::LoadOgexScene(const char* ogex_scene_file_name)
@@ -46,20 +54,40 @@ void SceneManager::LoadOgexScene(const char* ogex_scene_file_name)
 
     OgexParser ogex_parser;
     m_pScene = ogex_parser.Parse(ogex_text);
+
+    if (!m_pScene) {
+        assert(false, "Scene Is Empty!");
+    }
 }
 
 void SceneManager::LoadglTFScene(const char* glTF_scene_file_name)
 {
     std::string glTF_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(glTF_scene_file_name);
-    
-    std::filesystem::path currentpath = std::filesystem::current_path();
-    std::wstring filepath = currentpath.wstring() + Utility::UTF8ToWideString(std::string(glTF_scene_file_name));
 
     glTF::GLTFParser glTF_parser;
     m_pScene = glTF_parser.Parse(glTF_scene_file_name);
+
+    if (!m_pScene) {
+        assert(false, "Scene Is Empty!");
+    }
 }
 
 const Scene& SceneManager::GetSceneForRendering()
 {
     return *m_pScene;
+}
+
+bool SceneManager::IsSceneChanged()
+{
+    return m_bDirtyFlag;
+}
+
+void SceneManager::NotifySceneIsRenderingQueued()
+{
+    m_bDirtyFlag = false;
+}
+
+void SceneManager::ResetScene()
+{
+    m_bDirtyFlag = true;
 }

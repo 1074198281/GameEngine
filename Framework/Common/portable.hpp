@@ -23,6 +23,27 @@ namespace std {
 }
 #endif
 
+#define HAVE_CLAMP
+#ifndef HAVE_CLAMP
+namespace std {
+    template<class T>
+    const T& clamp(const T& v, const T& lo, const T& hi)
+    {
+        return clamp(v, lo, hi, std::less<T>());
+    }
+
+    template<class T, class Compare>
+    const T& clamp(const T& v, const T& lo, const T& hi, Compare comp)
+    {
+        return assert(!comp(hi, lo)),
+            comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+    }
+}
+#endif
+
+namespace My {
+
+
 template <typename T>
 T endian_native_unsigned_int(T net_number)
 {
@@ -49,4 +70,32 @@ T endian_net_unsigned_int(T native_number)
     } while (i != 0);
 
     return result;
+}
+
+namespace details {
+    constexpr int32_t i32(const char* s, int32_t v) {
+        return *s ? i32(s + 1, v * 256 + *s) : v;
+    }
+
+    constexpr uint16_t u16(const char* s, uint16_t v) {
+        return *s ? u16(s + 1, v * 256 + *s) : v;
+    }
+
+    constexpr uint32_t u32(const char* s, uint32_t v) {
+        return *s ? u32(s + 1, v * 256 + *s) : v;
+    }
+}
+
+constexpr int32_t operator "" _i32(const char* s, size_t) {
+    return details::i32(s, 0);
+}
+
+constexpr uint32_t operator "" _u32(const char* s, size_t) {
+    return details::u32(s, 0);
+}
+
+constexpr uint16_t operator "" _u16(const char* s, size_t) {
+    return details::u16(s, 0);
+}
+
 }

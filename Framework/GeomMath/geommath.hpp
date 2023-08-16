@@ -279,7 +279,10 @@ namespace My {
         }
     };
 
+    typedef Matrix<float, 3, 3> Matrix3X3f;
     typedef Matrix<float, 4, 4> Matrix4X4f;
+    typedef Matrix<int32_t, 8, 8> Matrix8X8i;
+    typedef Matrix<float, 8, 8> Matrix8X8f;
 
     template <typename T, int ROWS, int COLS>
     std::ostream& operator<<(std::ostream& out, Matrix<T, ROWS, COLS> matrix)
@@ -371,13 +374,25 @@ namespace My {
         return result;
     }
 
+    template <typename T, int ROWS, int COLS>
+    void MatrixMulByElement(Matrix<T, ROWS, COLS>& result, const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
+    {
+        //ispc::MulByElement(matrix1, matrix2, result, countof(result.data));
+    }
+
+    template <int ROWS, int COLS>
+    void MatrixMulByElementi32(Matrix<int32_t, ROWS, COLS>& result, const Matrix<int32_t, ROWS, COLS>& matrix1, const Matrix<int32_t, ROWS, COLS>& matrix2)
+    {
+        //ispc::MulByElementi32(matrix1, matrix2, result, countof(result.data));
+    }
+
     template <template <typename, int, int> class TT, typename T, int ROWS, int COLS>
     inline void Transpose(TT<T, ROWS, COLS>& result, const TT<T, ROWS, COLS>& matrix1)
     {
         //ispc::Transpose(matrix1, result, ROWS, COLS);
         for(int i = 0; i < ROWS; i++) {
             for(int j = 0; j < COLS; j++) {
-                result.data[i * ROWS + j] = matrix1.data[j * COLS + i];
+                result.data[i][j] = matrix1.data[j][i];
             }
         }
     }
@@ -613,4 +628,17 @@ namespace My {
         matrix = rotation;
     }
 
+    inline Matrix8X8f DCT8X8(const Matrix8X8f& matrix)
+    {
+        Matrix8X8f result;
+        
+        return result;
+    }
+
+    inline Matrix8X8f IDCT8X8(const Matrix8X8f& matrix)
+    {
+        Matrix8X8f result;
+        
+        return result;
+    }
 }
