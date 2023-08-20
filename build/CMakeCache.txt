@@ -18,16 +18,25 @@
 BULLETCOLLISION_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletCollision_Debug.lib
 
 //Path to a library.
+BULLETCOLLISION_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletCollision.lib
+
+//Path to a library.
 BULLETCOLLISION_RELEASE_LIBRARY:FILEPATH=BULLETCOLLISION_RELEASE_LIBRARY-NOTFOUND
 
 //Path to a library.
 BULLETDYNAMICS_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletDynamics_Debug.lib
 
 //Path to a library.
+BULLETDYNAMICS_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/BulletDynamics.lib
+
+//Path to a library.
 BULLETDYNAMICS_RELEASE_LIBRARY:FILEPATH=BULLETDYNAMICS_RELEASE_LIBRARY-NOTFOUND
 
 //Path to a library.
 BULLETLINEARMATH_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/LinearMath_Debug.lib
+
+//Path to a library.
+BULLETLINEARMATH_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/bullet3/Debug/LinearMath.lib
 
 //Path to a library.
 BULLETLINEARMATH_RELEASE_LIBRARY:FILEPATH=BULLETLINEARMATH_RELEASE_LIBRARY-NOTFOUND

@@ -2,6 +2,8 @@
 #include <d3dcompiler.h>
 #include "D3d12GraphicsManager.hpp"
 #include "WindowsApplication.hpp"
+#include "PhysicsManager.hpp"
+#include "SceneObject.hpp"
 
 using namespace My;
 
@@ -17,7 +19,7 @@ int My::D3d12GraphicsManager::Initialize()
     m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
     m_pGraphics->InitializeGraphics();
 
-    m_EyePos = DirectX::XMFLOAT3(0.f, 0.f, -400.f);
+    m_EyePos = DirectX::XMFLOAT3(0.f, 0.f, -10.f);
     DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
     DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
     DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
@@ -32,12 +34,11 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Tick()
 {
-    if (!m_bLoadOK) {
-        Draw();
-        m_bLoadOK = true;
+    if (g_pSceneManager->IsSceneChanged()) {
+        LoadScene();
+        g_pSceneManager->NotifySceneIsRenderingQueued();
     }
-
-    m_pGraphics->UpdateStatus();
+    Draw();
 }
 
 void My::D3d12GraphicsManager::MoveCameraXPositive()
@@ -83,7 +84,7 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
-    LoadScene();
+    m_pGraphics->UpdateStatus();
 }
 
 bool My::D3d12GraphicsManager::LoadScene()
@@ -98,6 +99,8 @@ bool My::D3d12GraphicsManager::LoadScene()
             continue;
         }
         auto pGeometry = Scene.GetGeometry(GeometryNode->GetSceneObjectRef());
+
+        //-----------------------------------------Mesh-----------------------------------------//
         auto pMesh = pGeometry->GetMesh().lock();
         if (!pMesh) {
             assert(false);
@@ -181,6 +184,51 @@ bool My::D3d12GraphicsManager::LoadScene()
         }
         _object.indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
         _object.InstanceCount = 1;
+
+        //-----------------------------------------Material-----------------------------------------//
+        for (int MaterialIndex = 0; MaterialIndex < GeometryNode->GetMaterialCount(); MaterialIndex++) {
+            auto pMaterial = Scene.GetMaterial(GeometryNode->GetMaterialRef(MaterialIndex));
+
+            int type = pMaterial->GetTextureTypeFlag();
+            if (TEST_BIT(type, My::SceneObjectMaterial::TextureType::kBaseColor)) {
+                auto TextureRef = pMaterial->GetTexture("pbrdiffuse");
+                D3dGraphicsCore::Texture pTexture;
+                auto pImage = TextureRef->GetTextureImage();
+                pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), pTexture));
+            }
+            if (TEST_BIT(type, My::SceneObjectMaterial::TextureType::kMetallicRoughness)) {
+                auto TextureRef = pMaterial->GetTexture("pbrmetallicroughness");
+                D3dGraphicsCore::Texture pTexture;
+                auto pImage = TextureRef->GetTextureImage();
+                pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), pTexture));
+            }
+            if (TEST_BIT(type, My::SceneObjectMaterial::TextureType::kOcclusion)) {
+                auto TextureRef = pMaterial->GetTexture("pbrocclusion");
+                D3dGraphicsCore::Texture pTexture;
+                auto pImage = TextureRef->GetTextureImage();
+                pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), pTexture));
+            }
+            if (TEST_BIT(type, My::SceneObjectMaterial::TextureType::kEmissive)) {
+                auto TextureRef = pMaterial->GetTexture("pbremissive");
+                D3dGraphicsCore::Texture pTexture;
+                auto pImage = TextureRef->GetTextureImage();
+                pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), pTexture));
+            }
+            if (TEST_BIT(type, My::SceneObjectMaterial::TextureType::kNormal)) {
+                auto TextureRef = pMaterial->GetTexture("pbrnormal");
+                D3dGraphicsCore::Texture pTexture;
+                auto pImage = TextureRef->GetTextureImage();
+                pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), pTexture));
+            }
+            
+        }
+        
+
 
         m_pGraphics->AddRenderObject(_object);
     }

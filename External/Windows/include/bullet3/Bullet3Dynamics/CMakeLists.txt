@@ -1,7 +1,7 @@
 
-INCLUDE_DIRECTORIES(
-	${BULLET_PHYSICS_SOURCE_DIR}/src
-)
+#INCLUDE_DIRECTORIES(
+#	${BULLET_PHYSICS_SOURCE_DIR}/src
+#)
 
 SET(Bullet3Dynamics_SRCS
 	b3CpuRigidBodyPipeline.cpp

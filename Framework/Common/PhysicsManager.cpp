@@ -120,6 +120,9 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
 
 void My::PhysicsManager::DeleteRigidBody(My::SceneGeometryNode& node)
 {
+    if (!node.UnlinkRigidBody()) {
+        return;
+    }
     btRigidBody* rigidBody = reinterpret_cast<btRigidBody*>(node.UnlinkRigidBody());
     if (rigidBody) {
         m_btDynamicsWorld->removeRigidBody(rigidBody);

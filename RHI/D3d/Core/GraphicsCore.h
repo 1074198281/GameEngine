@@ -6,7 +6,10 @@
 #include "Pipeline/PipelineState.h"
 #include "Common/Matrix4.h"
 #include "GeometryStructure.h"
+#include "Resource/Texture.h"
 #include <array>
+#include <string>
+#include <unordered_map>
 
 namespace D3dGraphicsCore {
 

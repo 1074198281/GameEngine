@@ -114,7 +114,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Framework\Common\Debug\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Framework\Common\Debug\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -157,7 +157,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Framework\Common\Release\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Framework\Common\Release\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -200,7 +200,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Framework\Common\MinSizeRel\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Framework\Common\MinSizeRel\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -242,7 +242,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\Framework\Common\RelWithDebInfo\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\Framework\Common\RelWithDebInfo\Common.lib;..\..\External\Windows\lib\bullet3\Debug\LinearMath.lib;..\..\External\Windows\lib\bullet3\Debug\BulletDynamics.lib;..\..\External\Windows\lib\bullet3\Debug\BulletCollision.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>

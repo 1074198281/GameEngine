@@ -1,19 +1,31 @@
 
-IF(BUILD_BULLET3)
-	SUBDIRS(  Bullet3OpenCL Bullet3Serialize/Bullet2FileLoader Bullet3Dynamics Bullet3Collision Bullet3Geometry )
-ENDIF(BUILD_BULLET3)
 
+cmake_minimum_required(VERSION 2.4.3)
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+cmake_policy(SET CMP0017 NEW)
+#this line has to appear before 'PROJECT' in order to be able to disable incremental linking
+SET(MSVC_INCREMENTAL_DEFAULT ON)
 
-SUBDIRS(   BulletInverseDynamics BulletSoftBody BulletCollision BulletDynamics LinearMath Bullet3Common)
+add_compile_definitions(BT_USE_DOUBLE_PRECISION)
 
+PROJECT(MY_BULLET_PHYSICS)
+FILE (STRINGS "VERSION" BULLET_VERSION)
 
-IF(INSTALL_LIBS)
-	#INSTALL of other files requires CMake 2.6
-	IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
-		IF (APPLE AND BUILD_SHARED_LIBS AND FRAMEWORK)
-			# Don't actually need to install any common files, the frameworks include everything
-		ELSE (APPLE AND BUILD_SHARED_LIBS AND FRAMEWORK)
-			INSTALL(FILES btBulletCollisionCommon.h btBulletDynamicsCommon.h  DESTINATION ${INCLUDE_INSTALL_DIR})
-		ENDIF (APPLE AND BUILD_SHARED_LIBS AND FRAMEWORK)
-	ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
-ENDIF(INSTALL_LIBS)
+#设置库文件的输出目录
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG  ${PROJECT_SOURCE_DIR}/../../lib/bullet3/Debug)
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE  ${PROJECT_SOURCE_DIR}/../../lib/bullet3/Release)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(Bullet3Collision)
+add_subdirectory(Bullet3Common)
+add_subdirectory(Bullet3Dynamics)
+add_subdirectory(Bullet3Geometry)
+add_subdirectory(Bullet3OpenCL)
+add_subdirectory(Bullet3Serialize/Bullet2FileLoader)
+add_subdirectory(BulletCollision)
+add_subdirectory(BulletDynamics)
+add_subdirectory(BulletInverseDynamics)
+add_subdirectory(BulletSoftBody)
+add_subdirectory(clew)
+add_subdirectory(LinearMath)

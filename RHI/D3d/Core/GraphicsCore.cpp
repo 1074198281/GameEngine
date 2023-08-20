@@ -143,6 +143,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
     gfxContext.Finish();
 
     D3dGraphicsCore::Present();
+
+    g_CommandManager.IdleGPU();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeInputLayout()

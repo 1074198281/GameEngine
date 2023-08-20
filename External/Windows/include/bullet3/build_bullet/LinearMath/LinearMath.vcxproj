@@ -1,0 +1,325 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6EE86997-8409-3D94-994B-D294F0AD3F97}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>LinearMath</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LinearMath.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LinearMath</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LinearMath.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LinearMath</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">LinearMath.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">LinearMath</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">LinearMath.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">LinearMath</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/LinearMath/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/LinearMath/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/LinearMath/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/LinearMath/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/LinearMath/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/LinearMath/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/LinearMath/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/LinearMath/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btAlignedAllocator.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btConvexHull.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btConvexHullComputer.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btGeometryUtil.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btPolarDecomposition.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btQuickprof.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btReducedVector.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btSerializer.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btSerializer64.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btThreads.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btVector3.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\TaskScheduler\btTaskScheduler.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\TaskScheduler\btThreadSupportPosix.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\TaskScheduler\btThreadSupportWin32.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btAabbUtil2.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btAlignedAllocator.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btAlignedObjectArray.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btConvexHull.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btConvexHullComputer.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btDefaultMotionState.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btGeometryUtil.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btGrahamScan2dConvexHull.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btHashMap.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btIDebugDraw.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btList.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btMatrix3x3.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btImplicitQRSVD.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btMinMax.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btModifiedGramSchmidt.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btMotionState.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btPolarDecomposition.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btPoolAllocator.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btQuadWord.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btQuaternion.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btQuickprof.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btReducedVector.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btRandom.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btScalar.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btSerializer.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btStackAlloc.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btThreads.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btTransform.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btTransformUtil.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\btVector3.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\LinearMath\TaskScheduler\btThreadSupportInterface.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\ZERO_CHECK.vcxproj">
+      <Project>{411C5196-B595-351E-8964-8D57BA0FB9FA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

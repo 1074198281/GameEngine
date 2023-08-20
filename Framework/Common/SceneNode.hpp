@@ -127,6 +127,7 @@ namespace My {
         using SceneNode::AddSceneObjectRef;
         void AddMaterialRef(const std::string& key) { m_Materials.push_back(key); };
         void AddMaterialRef(const std::string&& key) { m_Materials.push_back(std::move(key)); };
+        size_t GetMaterialCount() { return m_Materials.size(); };
         std::string GetMaterialRef(const size_t index)
         {
             if (index < m_Materials.size()) {

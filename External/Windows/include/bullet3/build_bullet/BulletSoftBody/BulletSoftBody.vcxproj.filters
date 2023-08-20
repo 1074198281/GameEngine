@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidDynamicsWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftMultiBodyDynamicsWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDefaultSoftBodySolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBackwardEulerObjective.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBodySolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyConstraintSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactProjection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyDynamicsWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactConstraint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\poly34.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodySolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableContactConstraint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidCollisionAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidDynamicsWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftMultiBodyDynamicsWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftSoftCollisionAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSparseSDF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodySolvers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDefaultSoftBodySolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btCGProjection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btConjugateGradient.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btConjugateResidual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableGravityForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMassSpringForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableCorotatedForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableNeoHookeanForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableLinearElasticityForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableLagrangianForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btPreconditioner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBackwardEulerObjective.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBodySolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyConstraintSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactProjection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyDynamicsWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactConstraint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btKrylovSolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\poly34.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodySolverVertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodySolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableContactConstraint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{742289A0-4DA9-304F-B8AC-0D01A6A74179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{94D7AB0D-90A3-3A99-AF54-C60CD6646D64}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

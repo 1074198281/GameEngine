@@ -1,5 +1,6 @@
-INCLUDE_DIRECTORIES( ${BULLET_PHYSICS_SOURCE_DIR}/src  )
-
+#INCLUDE_DIRECTORIES(
+#	${BULLET_PHYSICS_SOURCE_DIR}/src
+#)
 SET(BulletInverseDynamics_SRCS
 	IDMath.cpp
 	MultiBodyTree.cpp

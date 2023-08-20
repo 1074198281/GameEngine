@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <d3d12.h>
 #include <DXGI1_4.h>
+#include <unordered_map>
 #include "GraphicsManager.hpp"
 #include "Buffer.hpp"
 #include "Image.hpp"
@@ -37,6 +38,7 @@ namespace My {
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
         DirectX::XMFLOAT3 m_EyePos;
-        bool m_bLoadOK = false;
+        
+
     };
 }

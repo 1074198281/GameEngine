@@ -1,7 +1,7 @@
 #pragma once
-
-#include "D3dCommonDef.h"
 #include "GpuResource.h"
+#include "Core/Common/D3dCommonDef.h"
+
 
 namespace D3dGraphicsCore {
 

@@ -321,6 +321,7 @@ namespace My {
         void AddTransform(Matrix4X4f& matrix) { m_Transforms.push_back(matrix); };
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
+        std::string GetName() { return m_Name; };
         void SetSampler(int filter, int wrapS, int wrapT) { m_filter = filter; m_wrapS = wrapS; m_wrapT = wrapT; };
         void LoadTexture() {
             if (!m_pImage)
@@ -408,6 +409,8 @@ namespace My {
 
     class SceneObjectMaterial : public BaseSceneObject
     {
+    public:
+    enum TextureType { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kpbrType };
     protected:
         std::string m_Name;
         Color       m_BaseColor;
@@ -427,14 +430,15 @@ namespace My {
         Color       m_pbrEmissive;
         Color       m_pbrNormal;
         int         m_TextureTypeFlag;
-        enum { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kpbrType };
 
     public:
         SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0) {};
         SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)), m_TextureTypeFlag(0) {};
         SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Metallic(0.0f), m_Roughness(0.0f), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f), m_TextureTypeFlag(0) {};
+        int GetTextureTypeFlag() { return m_TextureTypeFlag; };
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
+        std::string GetName() { return m_Name; };
         void SetColor(std::string& attrib, Vector4f& color)
         {
             if (attrib == "diffuse") {
@@ -550,6 +554,26 @@ namespace My {
             if (TEST_BIT(m_TextureTypeFlag, kNormal)) {
                 m_pbrNormal.ValueMap->LoadTexture();
             }
+        }
+
+        const std::shared_ptr<SceneObjectTexture> GetTexture(std::string name) const
+        {
+            if (name == "pbrdiffuse") {
+                return m_pbrBaseColor.ValueMap;
+            }
+            else if (name == "pbrmetallicroughness") {
+                return m_pbrMetallicRoughness.ValueMap;
+            }
+            else if (name == "pbrocclusion") {
+                return m_pbrOcclusion.ValueMap;
+            }
+            else if (name == "pbremissive") {
+                return m_pbrEmissive.ValueMap;
+            }
+            else if (name == "pbrnormal") {
+                return m_pbrNormal.ValueMap;
+            }
+            return nullptr;
         }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectMaterial& obj);

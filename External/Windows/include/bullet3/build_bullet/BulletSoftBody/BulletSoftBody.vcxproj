@@ -1,0 +1,335 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{592029F5-44E9-3872-9B41-BBD91B712449}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>BulletSoftBody</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BulletSoftBody.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BulletSoftBody</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BulletSoftBody.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BulletSoftBody</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">BulletSoftBody.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">BulletSoftBody</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">BulletSoftBody.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">BulletSoftBody</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;BT_USE_DOUBLE_PRECISION;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/BulletSoftBody/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/BulletSoftBody/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/BulletSoftBody/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/BulletSoftBody/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/BulletSoftBody/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/BulletSoftBody/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/BulletSoftBody/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/BulletSoftBody/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBody.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyHelpers.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidDynamicsWorld.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftMultiBodyDynamicsWorld.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDefaultSoftBodySolver.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBackwardEulerObjective.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBodySolver.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyConstraintSolver.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactProjection.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyDynamicsWorld.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactConstraint.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\poly34.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBody.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodySolver.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableContactConstraint.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBody.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyData.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyHelpers.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidCollisionAlgorithm.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftRigidDynamicsWorld.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftMultiBodyDynamicsWorld.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftSoftCollisionAlgorithm.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSparseSDF.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodySolvers.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDefaultSoftBodySolver.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btCGProjection.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btConjugateGradient.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btConjugateResidual.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableGravityForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMassSpringForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableCorotatedForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableNeoHookeanForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableLinearElasticityForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableLagrangianForce.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btPreconditioner.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBackwardEulerObjective.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableBodySolver.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyConstraintSolver.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactProjection.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableMultiBodyDynamicsWorld.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btDeformableContactConstraint.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btKrylovSolver.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\poly34.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\btSoftBodySolverVertexBuffer.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBody.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodySolver.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableContactConstraint.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\ZERO_CHECK.vcxproj">
+      <Project>{411C5196-B595-351E-8964-8D57BA0FB9FA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

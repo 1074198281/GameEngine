@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ResolveNugetPackages>false</ResolveNugetPackages>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{47FF4EB5-E037-3904-B01C-6D584C34EB3C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCXXCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeRCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCXXCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeRCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCXXCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeRCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3 -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/include/bullet3/build_bullet/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\Windows.cmake;D:\cmake\cmake\cmake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeCXXCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeRCCompiler.cmake;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\3.23.2\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\ZERO_CHECK.vcxproj">
+      <Project>{411C5196-B595-351E-8964-8D57BA0FB9FA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Serialize\Bullet2FileLoader\Bullet2FileLoader.vcxproj">
+      <Project>{E059C35E-C17B-3862-AE47-22A027995E3C}</Project>
+      <Name>Bullet2FileLoader</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Collision\Bullet3Collision.vcxproj">
+      <Project>{793A0E82-A5E4-3194-AD11-5D52D4E8DF32}</Project>
+      <Name>Bullet3Collision</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Common\Bullet3Common.vcxproj">
+      <Project>{91AE1A94-B479-31F3-807A-DD7AA52EFE31}</Project>
+      <Name>Bullet3Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Dynamics\Bullet3Dynamics.vcxproj">
+      <Project>{8482BB5C-B592-30D2-889D-BE6067ECD4B4}</Project>
+      <Name>Bullet3Dynamics</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Geometry\Bullet3Geometry.vcxproj">
+      <Project>{C71EEF91-2380-3D8B-90BE-4C467967B667}</Project>
+      <Name>Bullet3Geometry</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3OpenCL\Bullet3OpenCL_clew.vcxproj">
+      <Project>{F0FE2799-9CBA-3C7C-8865-1E54F42BAAEC}</Project>
+      <Name>Bullet3OpenCL_clew</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletCollision\BulletCollision.vcxproj">
+      <Project>{E15ED961-EA47-3C1B-8BD4-E6CC1C8CBF73}</Project>
+      <Name>BulletCollision</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletDynamics\BulletDynamics.vcxproj">
+      <Project>{E9B068B9-51AE-3DCE-B6D1-2EEB9702F54D}</Project>
+      <Name>BulletDynamics</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletInverseDynamics\BulletInverseDynamics.vcxproj">
+      <Project>{17C19D74-33A1-311C-8A3D-376C5E72D3B9}</Project>
+      <Name>BulletInverseDynamics</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\BulletSoftBody\BulletSoftBody.vcxproj">
+      <Project>{592029F5-44E9-3872-9B41-BBD91B712449}</Project>
+      <Name>BulletSoftBody</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\LinearMath\LinearMath.vcxproj">
+      <Project>{6EE86997-8409-3D94-994B-D294F0AD3F97}</Project>
+      <Name>LinearMath</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

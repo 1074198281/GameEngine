@@ -6,10 +6,7 @@ using namespace My;
 
 int My::WindowsApplication::Initialize()
 {
-    int result;
-
-    // first call base class initialization
-    result = BaseApplication::Initialize();
+    int result = 0;
 
     if (result != 0)
         exit(result);
@@ -56,15 +53,20 @@ int My::WindowsApplication::Initialize()
 
     m_hWnd = hWnd;
 
+    // first call base class initialization
+    result = BaseApplication::Initialize();
+
     return result;
 }
 
 void My::WindowsApplication::Finalize()
 {
+    BaseApplication::Finalize();
 }
 
 void My::WindowsApplication::Tick()
 {
+    BaseApplication::Tick();
     // this struct holds Windows event messages
     MSG msg;
 

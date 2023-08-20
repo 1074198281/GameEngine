@@ -3,7 +3,7 @@
 #include "MemoryManager.hpp"
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
-//#include "PhysicsManager.hpp"
+#include "PhysicsManager.hpp"
 
 namespace My {
     GfxConfiguration config;
@@ -13,5 +13,5 @@ namespace My {
     AssetLoader* g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
     SceneManager* g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
     InputManager* g_pInputManager = static_cast<InputManager*>(new InputManager);
-    //PhysicsManager* g_pPhysicsManager = static_cast<PhysicsManager*>(new PhysicsManager);
+    PhysicsManager* g_pPhysicsManager = static_cast<PhysicsManager*>(new PhysicsManager);
 }
