@@ -15,7 +15,7 @@
 #include "SamplerManager.h"
 #include "GraphicsCore.h"
 #include "D3dGraphicsCoreManager.h"
-#include "Hash.h"
+#include "Common/Hash.h"
 #include <map>
 
 

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "PixelBuffer.h"
+#include "Resource/PixelBuffer.h"
 
 namespace D3dGraphicsCore {
 

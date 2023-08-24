@@ -1,7 +1,7 @@
 #pragma once
 
-#include "DescriptorHeap.h"
-#include "RootSignature.h"
+#include "Pipeline/DescriptorHeap.h"
+#include "Pipeline/RootSignature.h"
 #include <vector>
 #include <queue>
 

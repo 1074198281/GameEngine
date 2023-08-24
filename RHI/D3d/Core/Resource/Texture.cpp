@@ -17,7 +17,7 @@
 //#include "FileUtility.h"
 #include "GraphicsCore.h"
 #include "D3dGraphicsCoreManager.h"
-#include "CommandContext.h"
+#include "Command/CommandContext.h"
 #include <map>
 #include <thread>
 

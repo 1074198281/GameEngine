@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GpuBuffer.h"
+#include "Resource/GpuBuffer.h"
 
 namespace D3dGraphicsCore {
 

@@ -13,12 +13,12 @@
 
 #include "D3dCommonDef.h"
 #include "GraphicsCommon.h"
-#include "SamplerManager.h"
-#include "CommandSignature.h"
+#include "Resource/SamplerManager.h"
+#include "Command/CommandSignature.h"
 //#include "BitonicSort.h"
-#include "Texture.h"
-#include "PipelineState.h"
-#include "RootSignature.h"
+#include "Resource/Texture.h"
+#include "Pipeline/PipelineState.h"
+#include "Pipeline/RootSignature.h"
 //#include "BufferManager.h"
 
 //#include "CompiledShaders/GenerateMipsLinearCS.h"

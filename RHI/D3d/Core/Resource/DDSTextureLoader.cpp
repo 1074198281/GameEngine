@@ -25,8 +25,8 @@
 #include "GpuResource.h"
 #include "GraphicsCore.h"
 #include "D3dGraphicsCoreManager.h"
-#include "CommandContext.h"
-#include "Utility.h"
+#include "Command/CommandContext.h"
+#include "Common/Utility.h"
 
 struct handle_closer { void operator()(HANDLE h) { if (h) CloseHandle(h); } };
 typedef public std::unique_ptr<void, handle_closer> ScopedHandle;

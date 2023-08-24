@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "GpuResource.h"
+#include "Resource/GpuResource.h"
 #include <vector>
 #include <queue>
 #include <mutex>

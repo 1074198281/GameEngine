@@ -1,6 +1,6 @@
 #include "D3dGraphicsCoreManager.h"
-#include "CommandLineArg.h"
-#include "SystemTime.h"
+#include "Command/CommandLineArg.h"
+#include "Common/SystemTime.h"
 
 #include <cwctype>
 

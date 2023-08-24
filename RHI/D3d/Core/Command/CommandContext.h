@@ -13,20 +13,20 @@
 
 #pragma once
 
-#include "D3dCommonDef.h"
+#include "Common/D3dCommonDef.h"
 #include "CommandListManager.h"
-#include "Color.h"
-#include "PipelineState.h"
-#include "RootSignature.h"
-#include "GpuBuffer.h"
-#include "Texture.h"
-#include "PixelBuffer.h"
-#include "DynamicDescriptorHeap.h"
-#include "LinearAllocator.h"
-#include "CommandSignature.h"
+#include "Common/Color.h"
+#include "Pipeline/PipelineState.h"
+#include "Pipeline/RootSignature.h"
+#include "Resource/GpuBuffer.h"
+#include "Resource/Texture.h"
+#include "Resource/PixelBuffer.h"
+#include "Pipeline/DynamicDescriptorHeap.h"
+#include "Resource/LinearAllocator.h"
+#include "Command/CommandSignature.h"
 #include "GraphicsCore.h"
-#include "GraphicsCommon.h"
-#include "Common.h"
+#include "Common/GraphicsCommon.h"
+#include "Common/Common.h"
 #include <vector>
 #include <queue>
 #include <mutex>

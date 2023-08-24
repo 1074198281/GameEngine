@@ -1,6 +1,6 @@
 #pragma once
 
-#include "D3dCommonDef.h"
+#include "Common/D3dCommonDef.h"
 #include "Pipeline/PipelineState.h"
 #include "Pipeline/DescriptorHeap.h"
 #include "Pipeline/RootSignature.h"

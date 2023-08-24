@@ -11,9 +11,9 @@
 // Author:  James Stanard 
 //
 
-#include "GpuBuffer.h"
+#include "Resource/GpuBuffer.h"
 #include "GraphicsCore.h"
-#include "CommandContext.h"
+#include "Command/CommandContext.h"
 #include "D3dGraphicsCoreManager.h"
 //#include "BufferManager.h"
 

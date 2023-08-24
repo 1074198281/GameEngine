@@ -14,7 +14,7 @@
 #include "D3dGraphicsCoreManager.h"
 #include "PipelineState.h"
 #include "RootSignature.h"
-#include "Hash.h"
+#include "Common/Hash.h"
 #include <map>
 #include <thread>
 #include <mutex>

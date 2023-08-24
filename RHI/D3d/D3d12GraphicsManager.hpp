@@ -9,7 +9,7 @@
 #include "SceneObject.hpp"
 #include "SceneNode.hpp"
 #include "GeometryStructure.h"
-#include "Core/GraphicsCore.h"
+#include "GraphicsCore.h"
 
 
 namespace My {

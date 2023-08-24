@@ -2,10 +2,10 @@ MESSAGE("current path:" ${CMAKE_CURRENT_SOURCE_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Command)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Common)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Pipeline)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Resource)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Command)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Common)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Pipeline)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/Core/Resource)
 
 #Set D3dCore files
 file(GLOB D3d_CORE_HEADER_FILES

@@ -15,7 +15,7 @@
 #include "D3dGraphicsCoreManager.h"
 #include "ColorBuffer.h"
 //#include "GraphicsCommon.h"
-#include "CommandContext.h"
+#include "Command/CommandContext.h"
 
 
 

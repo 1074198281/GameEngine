@@ -12,14 +12,14 @@
 //
 
 
-#include "CommandContext.h"
-#include "ColorBuffer.h"
-#include "DepthBuffer.h"
+#include "Command/CommandContext.h"
+#include "Resource/ColorBuffer.h"
+#include "Resource/DepthBuffer.h"
 #include "D3dGraphicsCoreManager.h"
-#include "DescriptorHeap.h"
+#include "Pipeline/DescriptorHeap.h"
 //#include "EngineProfiling.h"
-#include "UploadBuffer.h"
-#include "ReadbackBuffer.h"
+#include "Resource/UploadBuffer.h"
+#include "Resource/ReadbackBuffer.h"
 
 #pragma warning(push)
 #pragma warning(disable:4100) // unreferenced formal parameters in PIXCopyEventArguments() (WinPixEventRuntime.1.0.200127001)

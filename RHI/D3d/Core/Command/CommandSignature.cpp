@@ -12,8 +12,8 @@
 //
 
 
-#include "CommandSignature.h"
-#include "RootSignature.h"
+#include "Command/CommandSignature.h"
+#include "Pipeline/RootSignature.h"
 #include "GraphicsCore.h"
 #include "D3dGraphicsCoreManager.h"
 
