@@ -1,12 +1,13 @@
 #pragma once
 
-#include "Common/D3dCommonDef.h"
-#include "Pipeline/RootSignature.h"
-#include "Resource/GpuBuffer.h"
-#include "Pipeline/PipelineState.h"
-#include "Common/Matrix4.h"
 #include "GeometryStructure.h"
-#include "Resource/Texture.h"
+#include "Core/Common/D3dCommonDef.h"
+#include "Core/Pipeline/RootSignature.h"
+#include "Core/Resource/GpuBuffer.h"
+#include "Core/Pipeline/PipelineState.h"
+#include "Core/Common/Matrix4.h"
+#include "Core/Resource/Texture.h"
+#include "Core/Pipeline/DescriptorHeap.h"
 #include <array>
 #include <string>
 #include <unordered_map>
@@ -29,6 +30,8 @@ namespace D3dGraphicsCore {
 		void UpdateStatus();
 
 		void AddRenderObject(My::RenderObject _object);
+		DescriptorHandle AllocateTextureDescriptor(int Count = 1);
+		void CopyTextureDescriptors(DescriptorHandle DesHandle, std::vector<unsigned int>& sourceCount, std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& sourceHandle);
 		//extension features
 	private:
 		void GenerateMatrix();
@@ -38,6 +41,7 @@ namespace D3dGraphicsCore {
 		RootSignature m_RootSignature;
 		GraphicsPSO m_PSO;
 		std::vector<My::RenderObject> m_RenderObjects;
+		DescriptorHeap m_TextureHeap;
 
 	private:
 		D3D12_VIEWPORT m_MainViewport;

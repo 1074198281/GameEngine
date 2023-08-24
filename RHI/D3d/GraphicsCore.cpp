@@ -1,5 +1,6 @@
 ﻿#include "GraphicsCore.h"
 #include "D3dGraphicsCoreManager.h"
+#include "GeometryStructure.h"
 #include "MemoryManager.hpp"
 #include <array>
 
@@ -7,6 +8,10 @@
 #include "../Asset/Shaders/CompiledShaders/g_mainVS.h"
 #include "../Asset/Shaders/CompiledShaders/g_main4PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_main4VS.h"
+
+#include "../Asset/Shaders/CompiledShaders/g_cubeTexturePS.h"
+#include "../Asset/Shaders/CompiledShaders/g_cubeTextureVS.h"
+
 
 using namespace DirectX;
 
@@ -31,6 +36,8 @@ D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 
 int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
 {
+    My::InitializeSamplers();
+    m_TextureHeap.Create(L"Texture Heap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 32);
     return 0;
 }
 
@@ -87,8 +94,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateView(DirectX::XMMATRIX mat)
 
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphics()
 {
-    m_RootSignature.Reset(1, 0);
+    m_RootSignature.Reset(2, 1);
     m_RootSignature[0].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_ALL);
+    m_RootSignature[1].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+    m_RootSignature.InitStaticSampler(0, My::g_AnisotropicWarpSampler, D3D12_SHADER_VISIBILITY_PIXEL);
     m_RootSignature.Finalize(L"Mesh RootSignature", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
     m_PSO.SetRootSignature(m_RootSignature);
@@ -98,14 +107,30 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphics()
     m_PSO.SetInputLayout(4, m_InputlayoutPosNormalTangentUV);
     m_PSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
     m_PSO.SetRenderTargetFormat(g_DisplayBuffer[g_CurrentBuffer].GetFormat(), DXGI_FORMAT_UNKNOWN);
-    m_PSO.SetVertexShader(g_pmain4VS, sizeof(g_pmain4VS));
-    m_PSO.SetPixelShader(g_pmain4PS, sizeof(g_pmain4PS));
+    m_PSO.SetVertexShader(g_pcubeTextureVS, sizeof(g_pcubeTextureVS));
+    m_PSO.SetPixelShader(g_pcubeTexturePS, sizeof(g_pcubeTexturePS));
     m_PSO.Finalize();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::AddRenderObject(My::RenderObject _object)
 {
     m_RenderObjects.push_back(_object);
+}
+
+D3dGraphicsCore::DescriptorHandle D3dGraphicsCore::CD3dGraphicsCore::AllocateTextureDescriptor(int Count)
+{
+    DescriptorHandle SRV = m_TextureHeap.Alloc(Count);
+    return SRV;
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::CopyTextureDescriptors(DescriptorHandle DesHandle, std::vector<unsigned int>& sourceCount, std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& sourceHandle)
+{
+    uint32_t DestCount = sourceCount.size();
+    uint32_t* SourceCounts = sourceCount.data();
+    D3D12_CPU_DESCRIPTOR_HANDLE* SourceTextures = sourceHandle.data();
+
+    g_Device->CopyDescriptors(1, &DesHandle, &DestCount,
+        DestCount, SourceTextures, SourceCounts, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
@@ -128,13 +153,14 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
     // 
     gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     
+    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_TextureHeap.GetHeapPointer());
+
     for (auto it = m_RenderObjects.begin(); it != m_RenderObjects.end(); it++) {
         gfxContext.SetVertexBuffer(0, it->VertexBuffer.VertexBufferView());
-        // 
         gfxContext.SetIndexBuffer(it->IndexBuffer.IndexBufferView());
-        // 
         gfxContext.SetDynamicConstantBufferView(0, sizeof(m_ModelViewProjMatrix), &m_ModelViewProjMatrix);
-        // 
+        gfxContext.SetDescriptorTable(1, it->FirstHandle);
+
         gfxContext.DrawIndexedInstanced(it->indexCountPerInstance, it->InstanceCount, 0, 0, 0);
     }
 

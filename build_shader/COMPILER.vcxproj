@@ -306,27 +306,25 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main.cpp" />
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4PS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\cubeTexturePS.hlsl">
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableOptimizations>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableDebuggingInformation>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4VS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DisableOptimizations>
-      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableDebuggingInformation>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\cubeTextureVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4PS.hlsl">
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4VS.hlsl">
     </FXCompile>
     <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\mainPS.hlsl">
     </FXCompile>

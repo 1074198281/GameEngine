@@ -556,21 +556,21 @@ namespace My {
             }
         }
 
-        const std::shared_ptr<SceneObjectTexture> GetTexture(std::string name) const
+        const std::shared_ptr<SceneObjectTexture> GetTexture(TextureType type) const
         {
-            if (name == "pbrdiffuse") {
+            if (type == kBaseColor) {
                 return m_pbrBaseColor.ValueMap;
             }
-            else if (name == "pbrmetallicroughness") {
+            else if (type == kMetallicRoughness) {
                 return m_pbrMetallicRoughness.ValueMap;
             }
-            else if (name == "pbrocclusion") {
+            else if (type == kOcclusion) {
                 return m_pbrOcclusion.ValueMap;
             }
-            else if (name == "pbremissive") {
+            else if (type == kEmissive) {
                 return m_pbrEmissive.ValueMap;
             }
-            else if (name == "pbrnormal") {
+            else if (type == kNormal) {
                 return m_pbrNormal.ValueMap;
             }
             return nullptr;

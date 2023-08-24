@@ -449,7 +449,7 @@ namespace glTF
     class GLTFParser : __implements My::SceneParser
     {
     public:
-        GLTFParser() : m_scene(nullptr) {}
+        GLTFParser() : m_scene(nullptr), m_ChildNodeTag(-1) {}
         ~GLTFParser() { m_meshes.clear(); }
 
         Scene* m_scene;
@@ -467,6 +467,8 @@ namespace glTF
         std::vector<ByteArray> m_buffers;
         std::vector<BufferView> m_bufferViews;
         std::vector<Animation> m_animations;
+
+        int m_ChildNodeTag;
 
     private:
         void ProcessBuffers(json& buffers, ByteArray chunk1bin)
@@ -1177,12 +1179,12 @@ namespace glTF
                 m_scene = &m_scenes[root.at("scene")];
         }
 
-        void GenerateMesh(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, Node currNode)
+        void GenerateMesh(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, glTF::Node* pCurrNode)
         {
             std::shared_ptr<My::SceneGeometryNode> GeoNode;
             std::shared_ptr<My::SceneObjectGeometry> GeoObject;
-            auto& mesh = currNode.mesh;
-            GeoNode = std::make_shared<My::SceneGeometryNode>(currNode.name);
+            auto& mesh = pCurrNode->mesh;
+            GeoNode = std::make_shared<My::SceneGeometryNode>(pCurrNode->name);
             GeoObject = std::make_shared<My::SceneObjectGeometry>();
 
             for (auto meshIt = mesh->primitives.begin(); meshIt != mesh->primitives.end(); meshIt++) {
@@ -1354,31 +1356,53 @@ namespace glTF
 
             GeoNode->AddSceneObjectRef(mesh->name);
             Scene.LUT_Name_GeometryNode.emplace(mesh->name, GeoNode);
-            Scene.GeometryNodes.emplace(currNode.name, GeoNode);
+            Scene.GeometryNodes.emplace(pCurrNode->name, GeoNode);
             Scene.Geometries[mesh->name] = GeoObject;
 
 
             node->AppendChild(GeoNode);
         }
 
-        void GenerateNode(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene)
+        void GenerateNode(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, glTF::Node* pNode)
         {
-            std::shared_ptr<My::BaseSceneNode> StructureNode;
+            if (pNode) {
+                std::shared_ptr<My::BaseSceneNode> StructureNode;
+                StructureNode = std::make_shared<My::SceneEmptyNode>("LinkNode");
 
-            for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
-                StructureNode = std::make_shared<My::SceneEmptyNode>(nodeIt->name);
+                size_t childNodeCount = pNode->children.size();
+                for (auto nodeIt = pNode->children.begin(); nodeIt != pNode->children.end(); nodeIt++) {
+                    std::shared_ptr<My::BaseSceneNode> NextStructureNode;
+                    if ((*nodeIt)->pointsToCamera) {
+                        // TODO: Process Camera Node
+                        NextStructureNode = std::make_shared<My::SceneEmptyNode>("CameraNode");
+                    }
+                    if ((*nodeIt)->mesh) {
+                        NextStructureNode = std::make_shared<My::SceneEmptyNode>("MeshNode");
+                        GenerateMesh(NextStructureNode, Scene, *nodeIt);
+                    }
+                    if ((*nodeIt)->children.size() > 0) {
+                        GenerateNode(NextStructureNode, Scene, *nodeIt);
+                    }
 
-                if (nodeIt->pointsToCamera) {
-                    //camera
+                    StructureNode->AppendChild(std::move(NextStructureNode));
                 }
-                else {
-                    //mesh
-                    GenerateMesh(StructureNode, Scene, *nodeIt);
-                }
-
                 node->AppendChild(std::move(StructureNode));
             }
+            else {
+                for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
+                    std::shared_ptr<My::BaseSceneNode> StructureNode;
+                    StructureNode = std::make_shared<My::SceneEmptyNode>(nodeIt->name);
 
+                    if (nodeIt->pointsToCamera) {
+                        //camera
+                    }
+                    else {
+                        GenerateMesh(StructureNode, Scene, &*nodeIt);
+                    }
+
+                    node->AppendChild(std::move(StructureNode));
+                }
+            }
         }
 
         virtual std::unique_ptr<My::Scene> Parse(const std::string& buf)
@@ -1391,7 +1415,19 @@ namespace glTF
 
             ASSERT(m_scenes.size() == 1);
 
-            GenerateNode(base_node, *pScene);
+            std::shared_ptr<My::BaseSceneNode> StructureNode;
+            StructureNode = std::make_shared<My::SceneEmptyNode>("RootNode");
+            if (m_ChildNodeTag < 0) {
+                // all other nodes belong to the root node
+                GenerateNode(StructureNode, *pScene, nullptr);
+            }
+            else {
+                int RootNodeIndex = m_nodes.size() * (m_nodes.size() - 1) / 2 - (m_ChildNodeTag + 1);
+                // root node exists, some nodes belong to some "LinkNode" 
+                GenerateNode(StructureNode, *pScene, &m_nodes[RootNodeIndex]);
+            }
+
+            base_node->AppendChild(std::move(StructureNode));
 
             return pScene;
         }
