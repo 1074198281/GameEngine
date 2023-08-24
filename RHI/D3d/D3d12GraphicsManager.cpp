@@ -30,6 +30,7 @@ int My::D3d12GraphicsManager::Initialize()
 void My::D3d12GraphicsManager::Finalize()
 {
     m_pGraphics->Finalize();
+    m_pGraphics.reset(nullptr);
 }
 
 void My::D3d12GraphicsManager::Tick()

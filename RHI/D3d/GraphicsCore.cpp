@@ -23,7 +23,7 @@ D3dGraphicsCore::CD3dGraphicsCore::CD3dGraphicsCore()
 
 D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 {
-#if 0
+#if 1
     // for dxgi debug,to solve memory leak 
     IDXGIDebug1* dxgiDebug;
     if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
@@ -49,8 +49,23 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     for (auto it = m_RenderObjects.begin(); it != m_RenderObjects.end(); it++) {
         it->VertexBuffer.Destroy();
         it->IndexBuffer.Destroy();
+        for (auto tex : it->TextureResource)
+        {
+            tex.second.first.Destroy();
+        }
     }
+    m_RenderObjects.clear();
+    m_TextureHeap.Destroy();
 
+#if 0
+    // for dxgi debug,to solve memory leak 
+    IDXGIDebug1* dxgiDebug;
+    if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    {
+        dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+        dxgiDebug->Release();
+    }
+#endif
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::GenerateMatrix()
