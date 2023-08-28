@@ -22,7 +22,7 @@ namespace My {
     class TgaParser : __implements ImageParser
     {
     public:
-        virtual Image Parse(const Buffer& buf)
+        virtual Image Parse(Buffer& buf)
         {
             Image img;
 

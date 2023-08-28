@@ -210,6 +210,11 @@ bool My::D3d12GraphicsManager::LoadScene()
                 }
             }
 
+            if (FirstHandle.IsNull()) {
+                //没有纹理，不需要拷贝
+                //会不会有常量缓冲区还需要以后再看，先把理论这一块补全
+                continue;
+            }
             _object.FirstHandle = FirstHandle;
             m_pGraphics->CopyTextureDescriptors(FirstHandle, sourceCount, sourceHandle);
         }

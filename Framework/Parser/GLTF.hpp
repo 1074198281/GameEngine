@@ -22,6 +22,7 @@
 #include "SceneObject.hpp"
 #include "Scene.hpp"
 #include "utility.hpp"
+#include "geommath.hpp"
 
 #include <string>
 #include <vector>
@@ -863,8 +864,11 @@ namespace glTF
                 {
                     json& children = thisNode["children"];
                     node.children.reserve(children.size());
-                    for (auto& child : children)
+                    for (auto& child : children) {
                         node.children.push_back(&m_nodes[child]);
+                        m_ChildNodeTag += child;
+                    }
+                       
                 }
 
                 if (thisNode.find("matrix") != thisNode.end())
@@ -1183,6 +1187,7 @@ namespace glTF
         {
             std::shared_ptr<My::SceneGeometryNode> GeoNode;
             std::shared_ptr<My::SceneObjectGeometry> GeoObject;
+            std::shared_ptr<My::SceneObjectTransform> GeoTrans;
             auto& mesh = pCurrNode->mesh;
             GeoNode = std::make_shared<My::SceneGeometryNode>(pCurrNode->name);
             GeoObject = std::make_shared<My::SceneObjectGeometry>();
@@ -1359,6 +1364,15 @@ namespace glTF
             Scene.GeometryNodes.emplace(pCurrNode->name, GeoNode);
             Scene.Geometries[mesh->name] = GeoObject;
 
+
+            //Transform
+            if (pCurrNode->hasMatrix) {
+                My::Matrix4X4f mat;
+                for (int i = 0; i < 16; i++) {
+                    memcpy(mat[i], &pCurrNode->matrix[i], sizeof(float));
+                }
+            }
+            
 
             node->AppendChild(GeoNode);
         }
