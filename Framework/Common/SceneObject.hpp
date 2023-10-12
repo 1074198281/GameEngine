@@ -411,6 +411,7 @@ namespace My {
     {
     public:
     enum TextureType { kBaseColor, kMetallicRoughness, kOcclusion, kEmissive, kNormal, kpbrType };
+    enum AlphaMode { ALPHA_NONE, ALPHA_OPAQUE, ALPHA_TYPE };
     protected:
         std::string m_Name;
         Color       m_BaseColor;
@@ -432,14 +433,17 @@ namespace My {
         int         m_TextureTypeFlag;
 
     public:
-        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0) {};
-        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)), m_TextureTypeFlag(0) {};
-        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Metallic(0.0f), m_Roughness(0.0f), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f), m_TextureTypeFlag(0) {};
+        AlphaMode   m_alpha_mode;
+
+    public:
+        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0), m_alpha_mode(ALPHA_NONE) {};
+        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)), m_TextureTypeFlag(0), m_alpha_mode(ALPHA_NONE) {};
+        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Metallic(0.0f), m_Roughness(0.0f), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f), m_TextureTypeFlag(0), m_alpha_mode(ALPHA_NONE) {};
         int GetTextureTypeFlag() { return m_TextureTypeFlag; };
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
         std::string GetName() { return m_Name; };
-        void SetColor(std::string& attrib, Vector4f& color)
+        void SetColor(std::string attrib, Vector4f& color)
         {
             if (attrib == "diffuse") {
                 m_BaseColor = Color(color);
@@ -455,7 +459,7 @@ namespace My {
             }
         };
 
-        void SetParam(std::string& attrib, float param)
+        void SetParam(std::string attrib, float param)
         {
             if (attrib == "metallic") {
                 m_Metallic = Parameter(param);

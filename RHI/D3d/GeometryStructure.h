@@ -5,23 +5,24 @@
 #include "d3dx12.h"
 #include <DirectXMath.h>
 #include <memory>
-#include "Core/Resource/GpuBuffer.h"
-#include "Core/Resource/Texture.h"
-#include "Core/Pipeline/DescriptorHeap.h"
+#include <utility>
+
 
 
 namespace My {
-	typedef struct RenderObject {
-		D3dGraphicsCore::StructuredBuffer VertexBuffer;
-		D3dGraphicsCore::ByteAddressBuffer IndexBuffer;
-		unsigned int indexCountPerInstance;
-		unsigned int InstanceCount;
 
-		unsigned int TextureCount;
-		D3dGraphicsCore::DescriptorHandle FirstHandle;
-		std::unordered_map<std::string, std::pair<D3dGraphicsCore::Texture, D3dGraphicsCore::DescriptorHandle> > TextureResource;
-	} RenderObject;
 
+	//---------------------------------------shaders---------------------------------------//
+	typedef struct ShaderByteCode {
+		const unsigned char* pData;
+		size_t size;
+	}ShaderByteCode;
+	void InitializeShaderByteCodeMap();
+	extern std::unordered_map<std::string, ShaderByteCode> g_VertexShaderByteCodeMap;
+	extern std::unordered_map<std::string, ShaderByteCode> g_PixelShaderByteCodeMap;
+
+
+	//---------------------------------------samplers---------------------------------------//
 	void InitializeSamplers();
 	extern D3D12_SAMPLER_DESC g_PointWarpSampler;
 	extern D3D12_SAMPLER_DESC g_PointClampSampler;
@@ -29,4 +30,11 @@ namespace My {
 	extern D3D12_SAMPLER_DESC g_LinearClampSampler;
 	extern D3D12_SAMPLER_DESC g_AnisotropicWarpSampler;
 	extern D3D12_SAMPLER_DESC g_AnisotropicClampSampler;
+
+	//---------------------------------------inputlayout---------------------------------------//
+	void InitializeInputLayout();
+	extern D3D12_INPUT_ELEMENT_DESC* g_Pos;
+	extern D3D12_INPUT_ELEMENT_DESC* g_PosTex;
+	extern D3D12_INPUT_ELEMENT_DESC* g_PosNorTex;
+	extern D3D12_INPUT_ELEMENT_DESC* g_PosNorTanTex;
 }

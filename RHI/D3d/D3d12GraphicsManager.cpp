@@ -4,6 +4,8 @@
 #include "WindowsApplication.hpp"
 #include "PhysicsManager.hpp"
 #include "SceneObject.hpp"
+#include "GeometryStructure.h"
+#include "RenderObject.h"
 
 using namespace My;
 
@@ -14,16 +16,15 @@ namespace My {
 
 int My::D3d12GraphicsManager::Initialize()
 {
+    My::InitializeSamplers();
+    My::InitializeShaderByteCodeMap();
+    My::InitializeInputLayout();
+
     m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
     m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
     m_pGraphics->StartUp();
     m_pGraphics->InitializeGraphics();
 
-    m_EyePos = DirectX::XMFLOAT3(0.f, 0.f, -10.f);
-    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
-    m_pGraphics->UpdateView(view);
     return 0;
 }
 
@@ -44,38 +45,22 @@ void My::D3d12GraphicsManager::Tick()
 
 void My::D3d12GraphicsManager::MoveCameraXPositive()
 {
-    m_EyePos.x += 1.0f;
-    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
-    m_pGraphics->UpdateView(view);
+
 }
 
 void My::D3d12GraphicsManager::MoveCameraXNegative()
 {
-    m_EyePos.x -= 1.0f;
-    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
-    m_pGraphics->UpdateView(view);
+
 }
 
 void My::D3d12GraphicsManager::MoveCameraYPositive()
 {
-    m_EyePos.y += 1.0f;
-    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
-    m_pGraphics->UpdateView(view);
+
 }
 
 void My::D3d12GraphicsManager::MoveCameraYNegative()
 {
-    m_EyePos.y -= 1.0f;
-    DirectX::XMFLOAT3 lookat(0.f, 0.f, 0.f);
-    DirectX::XMFLOAT3 updir(0.f, 1.f, 0.f);
-    DirectX::XMMATRIX view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&m_EyePos), XMLoadFloat3(&lookat), XMLoadFloat3(&updir));
-    m_pGraphics->UpdateView(view);
+
 }
 
 void My::D3d12GraphicsManager::Clear()
@@ -110,12 +95,14 @@ bool My::D3d12GraphicsManager::LoadScene()
 
         ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
 
-        My::RenderObject _object;
+        std::shared_ptr<My::RenderObject> _object = std::make_shared<My::RenderObject>();
+        _object->SetName(_it.first);
 
         int elementCount = pMesh->GetVertexCount();
         int indexPerCount = 1;
         int vertexPerCount = 0;
         
+        // Create Vertex Buffer Data
         for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
             auto& vtArray = pMesh->GetVertexPropertyArray(groupCount);
             ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
@@ -127,6 +114,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             int _dataCount = 0;
             for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
                 const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
+                SetPrimitiveType(_object->m_InputLayoutType, vtArray.GetAttributeName());
                 int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
                 float* _pData = (float*)vtArray.GetData();
                 for (int j = 0; j < elementCountPerArray; j++) {
@@ -136,8 +124,9 @@ bool My::D3d12GraphicsManager::LoadScene()
             }
             ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
         }
-        _object.VertexBuffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
+        _object->VertexBuffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
 
+        //Create Index Buffer Data
         switch (pMesh->GetIndexArray(0).GetIndexType()) {
         case My::kIndexDataTypeInt8:
         {
@@ -146,7 +135,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt16:
@@ -156,7 +145,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt32:
@@ -166,7 +155,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt64:
@@ -176,19 +165,25 @@ bool My::D3d12GraphicsManager::LoadScene()
             for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
                 pIndexData[i] = _pData[i];
             }
-            _object.IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
         }
         break;
         default:
             ASSERT(false, "Convert Index Type ERROR!");
             break;
         }
-        _object.indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
-        _object.InstanceCount = 1;
-
+        _object->indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
+        _object->InstanceCount = 1;
+        
         //-----------------------------------------Material-----------------------------------------//
+        _object->alphaStatus = false;
         for (int MaterialIndex = 0; MaterialIndex < GeometryNode->GetMaterialCount(); MaterialIndex++) {
             auto pMaterial = Scene.GetMaterial(GeometryNode->GetMaterialRef(MaterialIndex));
+
+            if (!pMaterial->m_alpha_mode) {
+                _object->alphaStatus = true;
+                continue;
+            }
 
             int type = pMaterial->GetTextureTypeFlag();
             D3dGraphicsCore::DescriptorHandle FirstHandle;
@@ -200,13 +195,14 @@ bool My::D3d12GraphicsManager::LoadScene()
                     D3dGraphicsCore::Texture pTexture;
                     auto pImage = TextureRef->GetTextureImage();
                     pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
-                    D3dGraphicsCore::DescriptorHandle handle = m_pGraphics->AllocateTextureDescriptor();
+                    D3dGraphicsCore::DescriptorHandle handle;
+                    //handle = m_pGraphics->AllocateTextureDescriptor();
                     if (FirstHandle.IsNull()) {
                         FirstHandle = handle;
                     }
                     sourceHandle.push_back(pTexture.GetSRV());
                     sourceCount.push_back(1);
-                    _object.TextureResource.insert(std::make_pair(TextureRef->GetName(), std::make_pair(pTexture, handle)));
+                    _object->TextureResource.insert(std::make_pair(TextureRef->GetName(), std::make_pair(pTexture, handle)));
                 }
             }
 
@@ -215,14 +211,32 @@ bool My::D3d12GraphicsManager::LoadScene()
                 //会不会有常量缓冲区还需要以后再看，先把理论这一块补全
                 continue;
             }
-            _object.FirstHandle = FirstHandle;
-            m_pGraphics->CopyTextureDescriptors(FirstHandle, sourceCount, sourceHandle);
+            _object->FirstHandle = FirstHandle;
+            //m_pGraphics->CopyTextureDescriptors(FirstHandle, sourceCount, sourceHandle);
         }
-        
 
 
         m_pGraphics->AddRenderObject(_object);
     }
 
     return true;
+}
+
+void My::D3d12GraphicsManager::SetPrimitiveType(int& type, std::string attrib)
+{
+    if (attrib == "POSITION") {
+        type |= RenderObject::kPosition;
+    }
+    if (attrib == "NORMAL") {
+        type |= RenderObject::kNormal;
+    }
+    if (attrib == "TANGENT") {
+        type |= RenderObject::kTangent;
+    }
+    if (attrib == "TEXCOORD0") {
+        type |= RenderObject::kTexcoord0;
+    }
+    if (attrib == "TEXCOORD1") {
+        type |= RenderObject::kTexcoord1;
+    }
 }

@@ -104,10 +104,11 @@ void My::BaseApplication::SetCommandLineParameters(int argc, char** argv)
 int My::BaseApplication::LoadScene()
 {
 	//g_pSceneManager->LoadScene("Scene/OpenGEX/Example.ogex");
-	g_pSceneManager->LoadScene("Scene/glTF/Cube/glTF/Cube.gltf");
+	//g_pSceneManager->LoadScene("Scene/glTF/Cube/glTF/Cube.gltf");
 	//g_pSceneManager->LoadScene("Scene/glTF/Sponza/glTF/Sponza.gltf");
-	//g_pSceneManager->LoadScene("Scene/glTF/ToyCar/glTF/ToyCar.gltf");
+	g_pSceneManager->LoadScene("Scene/glTF/ToyCar/glTF/ToyCar.gltf");
 	//g_pSceneManager->LoadScene("Scene/glTF/Sponza/Sponza.gltf");
+	//g_pSceneManager->LoadScene("Scene/glTF/EnvironmentTest/glTF/EnvironmentTest.gltf");
 
 	return 0;
 }

@@ -16,6 +16,7 @@
 #include <comdef.h>
 #include <tchar.h>
 #include <string>
+#include <memory>
 
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")

@@ -65,7 +65,7 @@ ret
 // Approximately 10 instruction slots used
 #endif
 
-const BYTE g_pcubeTextureVS[] =
+const unsigned char g_pcubeTextureVS[] =
 {
      68,  88,  66,  67, 180, 113, 
     183,  51,  35, 107, 173, 124, 

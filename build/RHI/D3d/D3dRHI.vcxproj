@@ -331,9 +331,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\UploadBuffer.cpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GeometryStructure.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.h" />
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsCommon.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.h" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsManager.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GeometryStructure.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\ZERO_CHECK.vcxproj">

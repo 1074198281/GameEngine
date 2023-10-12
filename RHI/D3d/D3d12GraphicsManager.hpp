@@ -34,11 +34,9 @@ namespace My {
     private:
         bool LoadScene();
 
-
+    private:
+        void SetPrimitiveType(int& type, std::string attrib);
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
-        DirectX::XMFLOAT3 m_EyePos;
-        
-
     };
 }

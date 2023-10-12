@@ -1346,6 +1346,13 @@ namespace glTF
                 GeoNode->AddMaterialRef(meshIt->material->name);
                 std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
                 
+                My::Vector4f baseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1], meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
+                float metallicFactor = meshIt->material->metallicFactor;
+                float roughnessFactor = meshIt->material->roughnessFactor;
+                GeoMaterial->SetColor("diffuse", baseColorFactor);
+                GeoMaterial->SetParam("metallic", metallicFactor);
+                GeoMaterial->SetParam("roughness", roughnessFactor);
+
                 for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
                     if (!meshIt->material->textures[type]) {
                         continue;
