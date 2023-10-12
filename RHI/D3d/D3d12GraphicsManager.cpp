@@ -176,12 +176,12 @@ bool My::D3d12GraphicsManager::LoadScene()
         _object->InstanceCount = 1;
         
         //-----------------------------------------Material-----------------------------------------//
-        _object->alphaStatus = false;
+        _object->m_alphaStatus = false;
         for (int MaterialIndex = 0; MaterialIndex < GeometryNode->GetMaterialCount(); MaterialIndex++) {
             auto pMaterial = Scene.GetMaterial(GeometryNode->GetMaterialRef(MaterialIndex));
 
             if (!pMaterial->m_alpha_mode) {
-                _object->alphaStatus = true;
+                _object->m_alphaStatus = true;
                 continue;
             }
 
@@ -202,7 +202,10 @@ bool My::D3d12GraphicsManager::LoadScene()
                     }
                     sourceHandle.push_back(pTexture.GetSRV());
                     sourceCount.push_back(1);
-                    _object->TextureResource.insert(std::make_pair(TextureRef->GetName(), std::make_pair(pTexture, handle)));
+                    TextureResource re;
+                    re.Texture = pTexture;
+                    re.Handle = handle;
+                    _object->m_TextureResource.insert(std::make_pair(TextureRef->GetName(), re));
                 }
             }
 
@@ -211,7 +214,7 @@ bool My::D3d12GraphicsManager::LoadScene()
                 //会不会有常量缓冲区还需要以后再看，先把理论这一块补全
                 continue;
             }
-            _object->FirstHandle = FirstHandle;
+            _object->m_FirstHandle = FirstHandle;
             //m_pGraphics->CopyTextureDescriptors(FirstHandle, sourceCount, sourceHandle);
         }
 
