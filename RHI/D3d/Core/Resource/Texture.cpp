@@ -16,8 +16,8 @@
 #include "DDSTextureLoader.h"
 //#include "FileUtility.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
-#include "Command/CommandContext.h"
+#include "../D3dGraphicsCoreManager.h"
+#include "../Command/CommandContext.h"
 #include <map>
 #include <thread>
 

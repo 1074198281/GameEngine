@@ -4,10 +4,9 @@
 #include "WindowsApplication.hpp"
 #include "PhysicsManager.hpp"
 #include "SceneObject.hpp"
-#include "GeometryStructure.h"
-#include "RenderObject.h"
-
-using namespace My;
+#include "StructureSettings.h"
+#include "GraphicsStructure.h"
+#include "ShaderSource.h"
 
 
 namespace My {
@@ -16,14 +15,9 @@ namespace My {
 
 int My::D3d12GraphicsManager::Initialize()
 {
-    My::InitializeSamplers();
-    My::InitializeShaderByteCodeMap();
-    My::InitializeInputLayout();
-
     m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
     m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
     m_pGraphics->StartUp();
-    m_pGraphics->InitializeGraphics();
 
     return 0;
 }
@@ -41,6 +35,187 @@ void My::D3d12GraphicsManager::Tick()
         g_pSceneManager->NotifySceneIsRenderingQueued();
     }
     Draw();
+}
+
+void My::D3d12GraphicsManager::Clear()
+{
+    
+}
+
+void My::D3d12GraphicsManager::Draw()
+{
+
+    m_pGraphics->UpdateStatus();
+}
+
+bool My::D3d12GraphicsManager::LoadScene()
+{
+    auto& Scene = g_pSceneManager->GetSceneForRendering();
+    ASSERT(&Scene, "Scene Is Null Error!");
+
+    for (auto _it : Scene.GeometryNodes) {
+        /* 
+        * 每个GeometryNode相当Primitive，所以通常来说每个Node中只会存在一种Material
+        */
+
+        auto GeometryNode = _it.second;
+
+        if (!GeometryNode->Visible()) {
+            continue;
+        }
+        auto pGeometry = Scene.GetGeometry(GeometryNode->GetSceneObjectRef());
+
+        //-----------------------------------------Mesh-----------------------------------------//
+        auto pMesh = pGeometry->GetMesh().lock();
+        if (!pMesh) {
+            ASSERT(false, "Mesh Is Empty,ERROR!");
+            continue;
+        }
+
+        ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
+
+        std::unique_ptr<D3dGraphicsCore::PrimitiveObject> _object = std::make_unique<D3dGraphicsCore::PrimitiveObject>();
+        _object->name = _it.second->GetSceneObjectRef();
+        _object->PrimitiveType = pMesh->GetPrimitiveType();
+        _object->InputLayoutType = 0;
+
+        int elementCount = pMesh->GetVertexCount();
+        int indexPerCount = 1;
+        int vertexPerCount = 0;
+        
+        for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
+            auto& vtArray = pMesh->GetVertexPropertyArray(groupCount);
+            ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
+            vertexPerCount += vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
+        }
+        float* pVertexData = new float[elementCount * vertexPerCount];
+
+        for (int i = 0; i < elementCount; i++) {
+            int _dataCount = 0;
+            for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
+                const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
+                GenerateInputLayoutType(_object.get(), vtArray.GetAttributeName());
+                int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
+                float* _pData = (float*)vtArray.GetData();
+                for (int j = 0; j < elementCountPerArray; j++) {
+                    pVertexData[i * vertexPerCount + _dataCount] = _pData[i * elementCountPerArray + j];
+                    _dataCount++;
+                }
+            }
+            ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
+        }
+        _object->VertexBuffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
+
+        switch (pMesh->GetIndexArray(0).GetIndexType()) {
+        case My::kIndexDataTypeInt8:
+        {
+            uint8_t* pIndexData = new uint8_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint8_t* _pData = (uint8_t*)pMesh->GetIndexArray(0).GetData();
+            memcpy(pIndexData, _pData, sizeof(uint8_t) * pMesh->GetIndexArray(0).GetIndexCount());
+            //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+            //    pIndexData[i] = _pData[i];
+            //}
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
+        }
+        break;
+        case My::kIndexDataTypeInt16:
+        {
+            uint16_t* pIndexData = new uint16_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint16_t* _pData = (uint16_t*)pMesh->GetIndexArray(0).GetData();
+            memcpy(pIndexData, _pData, sizeof(uint16_t) * pMesh->GetIndexArray(0).GetIndexCount());
+            //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+            //    pIndexData[i] = _pData[i];
+            //}
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
+        }
+        break;
+        case My::kIndexDataTypeInt32:
+        {
+            uint32_t* pIndexData = new uint32_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint32_t* _pData = (uint32_t*)pMesh->GetIndexArray(0).GetData();
+            memcpy(pIndexData, _pData, sizeof(uint32_t) * pMesh->GetIndexArray(0).GetIndexCount());
+            //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+            //    pIndexData[i] = _pData[i];
+            //}
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
+        }
+        break;
+        case My::kIndexDataTypeInt64:
+        {
+            uint64_t* pIndexData = new uint64_t[pMesh->GetIndexArray(0).GetIndexCount()];
+            uint64_t* _pData = (uint64_t*)pMesh->GetIndexArray(0).GetData();
+            memcpy(pIndexData, _pData, sizeof(uint64_t) * pMesh->GetIndexArray(0).GetIndexCount());
+            //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
+            //    pIndexData[i] = _pData[i];
+            //}
+            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
+        }
+        break;
+        default:
+            ASSERT(false, "Convert Index Type ERROR!");
+            break;
+        }
+        _object->indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
+        _object->InstanceCount = 1;
+
+
+        //-----------------------------------------Material-----------------------------------------//
+        ASSERT(GeometryNode->GetMaterialCount() == 1 || GeometryNode->GetMaterialCount() == 0
+            , "Primitive Has More Than One Material!");
+        if (GeometryNode->GetMaterialCount()) {
+            auto pMaterial = Scene.GetMaterial(GeometryNode->GetMaterialRef(0));
+
+            //SRVsHandle用于拷贝默认分配的描述符到设置堆中
+            std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> SRVsHandle;
+
+            int TexturesPerMaterial = 0;
+            int type = pMaterial->GetTextureTypeFlag();
+            for (int i = 0; i < My::SceneObjectMaterial::TextureType::kpbrType; i++) {
+                if (TEST_BIT(type, i)) {
+                    auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
+                    D3dGraphicsCore::Texture* pTexture = new D3dGraphicsCore::Texture();
+                    auto& pImage = TextureRef->GetTextureImage();
+                    pTexture->Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+                    SRVsHandle.push_back(pTexture->GetSRV());
+
+                    //DXSampler sampler;
+                    //sampler.filter = (D3D12_FILTER)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerFilter();
+                    //sampler.wrapS = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapS();
+                    //sampler.wrapT = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapT();
+
+                    D3dGraphicsCore::TextureResource re;
+                    //re.Handle = Handle;
+                    re.pTexture = pTexture;
+                    _object->MaterialResource.TextureResources.push_back(re);
+                    TexturesPerMaterial++;
+                }
+            }
+            int HeapIndex = -2;
+            D3dGraphicsCore::DescriptorHandle FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(TexturesPerMaterial, HeapIndex);
+            ASSERT(HeapIndex > -2, "Descripotr Heap Allocate Failed ERROR!");
+            _object->MaterialResource.TextureCountPerMaterial = TexturesPerMaterial;
+            _object->MaterialResource.FirstHandle = FirstHandle;
+            _object->MaterialResource.DescriptorHeapIndex = HeapIndex;
+            //拷贝，且有材质纹理图
+            if (!FirstHandle.IsNull()) {
+                D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
+            }
+
+            //处理每个Primitive的材质对应的PS和VS
+            _object->MaterialResource.PSO = D3dGraphicsCore::g_DefaultPSO;
+            D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, _object->name);
+            D3dGraphicsCore::SetPipelineSettings(_object->MaterialResource.PSO
+                , _object->InputLayoutType, _object->PrimitiveType);
+            _object->MaterialResource.PSO.Finalize();
+        }
+        else {
+            //没有材质，可能是透明的，参考alphamode的值
+        }
+
+        m_pGraphics->AddPrimitiveObject(std::move(_object));
+    }
+
+    return true;
 }
 
 void My::D3d12GraphicsManager::MoveCameraXPositive()
@@ -63,183 +238,26 @@ void My::D3d12GraphicsManager::MoveCameraYNegative()
 
 }
 
-void My::D3d12GraphicsManager::Clear()
+bool My::D3d12GraphicsManager::GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name)
 {
-    
-}
-
-void My::D3d12GraphicsManager::Draw()
-{
-    m_pGraphics->UpdateStatus();
-}
-
-bool My::D3d12GraphicsManager::LoadScene()
-{
-    auto& Scene = g_pSceneManager->GetSceneForRendering();
-    ASSERT(&Scene, "Scene Is Null Error!");
-
-    for (auto _it : Scene.GeometryNodes) {
-        auto GeometryNode = _it.second;
-
-        if (!GeometryNode->Visible()) {
-            continue;
-        }
-        auto pGeometry = Scene.GetGeometry(GeometryNode->GetSceneObjectRef());
-
-        //-----------------------------------------Mesh-----------------------------------------//
-        auto pMesh = pGeometry->GetMesh().lock();
-        if (!pMesh) {
-            assert(false);
-            continue;
-        }
-
-        ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
-
-        std::shared_ptr<My::RenderObject> _object = std::make_shared<My::RenderObject>();
-        _object->SetName(_it.first);
-
-        int elementCount = pMesh->GetVertexCount();
-        int indexPerCount = 1;
-        int vertexPerCount = 0;
-        
-        // Create Vertex Buffer Data
-        for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
-            auto& vtArray = pMesh->GetVertexPropertyArray(groupCount);
-            ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
-            vertexPerCount += vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
-        }
-        float* pVertexData = new float[elementCount * vertexPerCount];
-
-        for (int i = 0; i < elementCount; i++) {
-            int _dataCount = 0;
-            for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
-                const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
-                SetPrimitiveType(_object->m_InputLayoutType, vtArray.GetAttributeName());
-                int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
-                float* _pData = (float*)vtArray.GetData();
-                for (int j = 0; j < elementCountPerArray; j++) {
-                    pVertexData[i * vertexPerCount + _dataCount] = _pData[i * elementCountPerArray + j];
-                    _dataCount++;
-                }
-            }
-            ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
-        }
-        _object->VertexBuffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
-
-        //Create Index Buffer Data
-        switch (pMesh->GetIndexArray(0).GetIndexType()) {
-        case My::kIndexDataTypeInt8:
-        {
-            uint8_t* pIndexData = new uint8_t[pMesh->GetIndexArray(0).GetIndexCount()];
-            uint8_t* _pData = (uint8_t*)pMesh->GetIndexArray(0).GetData();
-            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
-                pIndexData[i] = _pData[i];
-            }
-            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
-        }
-        break;
-        case My::kIndexDataTypeInt16:
-        {
-            uint16_t* pIndexData = new uint16_t[pMesh->GetIndexArray(0).GetIndexCount()];
-            uint16_t* _pData = (uint16_t*)pMesh->GetIndexArray(0).GetData();
-            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
-                pIndexData[i] = _pData[i];
-            }
-            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
-        }
-        break;
-        case My::kIndexDataTypeInt32:
-        {
-            uint32_t* pIndexData = new uint32_t[pMesh->GetIndexArray(0).GetIndexCount()];
-            uint32_t* _pData = (uint32_t*)pMesh->GetIndexArray(0).GetData();
-            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
-                pIndexData[i] = _pData[i];
-            }
-            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
-        }
-        break;
-        case My::kIndexDataTypeInt64:
-        {
-            uint64_t* pIndexData = new uint64_t[pMesh->GetIndexArray(0).GetIndexCount()];
-            uint64_t* _pData = (uint64_t*)pMesh->GetIndexArray(0).GetData();
-            for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
-                pIndexData[i] = _pData[i];
-            }
-            _object->IndexBuffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
-        }
-        break;
-        default:
-            ASSERT(false, "Convert Index Type ERROR!");
-            break;
-        }
-        _object->indexCountPerInstance = pMesh->GetIndexArray(0).GetIndexCount();
-        _object->InstanceCount = 1;
-        
-        //-----------------------------------------Material-----------------------------------------//
-        _object->m_alphaStatus = false;
-        for (int MaterialIndex = 0; MaterialIndex < GeometryNode->GetMaterialCount(); MaterialIndex++) {
-            auto pMaterial = Scene.GetMaterial(GeometryNode->GetMaterialRef(MaterialIndex));
-
-            if (!pMaterial->m_alpha_mode) {
-                _object->m_alphaStatus = true;
-                continue;
-            }
-
-            int type = pMaterial->GetTextureTypeFlag();
-            D3dGraphicsCore::DescriptorHandle FirstHandle;
-            std::vector<unsigned int> sourceCount;
-            std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> sourceHandle;
-            for (int i = 0; i < My::SceneObjectMaterial::TextureType::kpbrType; i++) {
-                if (TEST_BIT(type, i)) {
-                    auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
-                    D3dGraphicsCore::Texture pTexture;
-                    auto pImage = TextureRef->GetTextureImage();
-                    pTexture.Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
-                    D3dGraphicsCore::DescriptorHandle handle;
-                    //handle = m_pGraphics->AllocateTextureDescriptor();
-                    if (FirstHandle.IsNull()) {
-                        FirstHandle = handle;
-                    }
-                    sourceHandle.push_back(pTexture.GetSRV());
-                    sourceCount.push_back(1);
-                    TextureResource re;
-                    re.Texture = pTexture;
-                    re.Handle = handle;
-                    _object->m_TextureResource.insert(std::make_pair(TextureRef->GetName(), re));
-                }
-            }
-
-            if (FirstHandle.IsNull()) {
-                //没有纹理，不需要拷贝
-                //会不会有常量缓冲区还需要以后再看，先把理论这一块补全
-                continue;
-            }
-            _object->m_FirstHandle = FirstHandle;
-            //m_pGraphics->CopyTextureDescriptors(FirstHandle, sourceCount, sourceHandle);
-        }
-
-
-        m_pGraphics->AddRenderObject(_object);
+    if (name == "POSITION") {
+        _object->InputLayoutType |= (1 << D3dGraphicsCore::kPos);
     }
-
+    else if (name == "NORMAL") {
+        _object->InputLayoutType |= (1 << D3dGraphicsCore::kNormal);
+    }
+    else if (name == "TANGENT") {
+        _object->InputLayoutType |= (1 << D3dGraphicsCore::kTangent);
+    }
+    else if (name == "TEXCOORD0") {
+        _object->InputLayoutType |= (1 << D3dGraphicsCore::kTexcoord0);
+    }
+    else if (name == "TEXCOORD1") {
+        _object->InputLayoutType |= (1 << D3dGraphicsCore::kTexcoord1);
+    }
+    else {
+        ASSERT(false, "Set InputLayout Type Error!")
+        return false;
+    }
     return true;
-}
-
-void My::D3d12GraphicsManager::SetPrimitiveType(int& type, std::string attrib)
-{
-    if (attrib == "POSITION") {
-        type |= RenderObject::kPosition;
-    }
-    if (attrib == "NORMAL") {
-        type |= RenderObject::kNormal;
-    }
-    if (attrib == "TANGENT") {
-        type |= RenderObject::kTangent;
-    }
-    if (attrib == "TEXCOORD0") {
-        type |= RenderObject::kTexcoord0;
-    }
-    if (attrib == "TEXCOORD1") {
-        type |= RenderObject::kTexcoord1;
-    }
 }

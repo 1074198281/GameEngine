@@ -14,7 +14,7 @@
 #pragma once
 
 #include "d3dx12.h"
-#include "Common/Color.h"
+#include "../Color.h"
 
 namespace D3dGraphicsCore {
 

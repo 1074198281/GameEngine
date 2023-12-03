@@ -1,5 +1,6 @@
 #include "FileUtility.h"
-#include "Core/Common/D3dCommonDef.h"
+#include "../D3dCommonDef.h"
+#include "../Utility.h"
 #include <fstream>
 #include <mutex>
 #include <memory>

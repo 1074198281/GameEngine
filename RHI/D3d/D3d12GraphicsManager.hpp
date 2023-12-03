@@ -8,7 +8,7 @@
 #include "Image.hpp"
 #include "SceneObject.hpp"
 #include "SceneNode.hpp"
-#include "GeometryStructure.h"
+#include "StructureSettings.h"
 #include "GraphicsCore.h"
 
 
@@ -33,9 +33,8 @@ namespace My {
 
     private:
         bool LoadScene();
+        bool GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name);
 
-    private:
-        void SetPrimitiveType(int& type, std::string attrib);
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
     };

@@ -14,7 +14,7 @@
 
 #include "UploadBuffer.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 
 
 void D3dGraphicsCore::UploadBuffer::Create(const std::wstring& name, size_t BufferSize)

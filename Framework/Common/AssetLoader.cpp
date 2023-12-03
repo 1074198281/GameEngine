@@ -88,8 +88,10 @@ My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetO
             }
 
             if (fp) {
-                size_t off = fullPath.find_last_of('/');
-                m_AssetPath = fullPath.substr(0, off + 1);
+                if (!m_AssetPath.size()) {
+                    size_t off = fullPath.find_last_of('/');
+                    m_AssetPath = fullPath.substr(0, off + 1);
+                }
                 return (AssetFilePtr)fp;
             }
                 

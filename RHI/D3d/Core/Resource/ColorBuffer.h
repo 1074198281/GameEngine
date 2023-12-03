@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Resource/PixelBuffer.h"
-#include "Common/Color.h"
-#include "Resource/GpuBuffer.h"
+#include "PixelBuffer.h"
+#include "Color.h"
+#include "GpuBuffer.h"
 
 
 namespace D3dGraphicsCore {

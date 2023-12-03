@@ -2,7 +2,8 @@
 #include "AssetLoader.hpp"
 #include "../Framework/Parser/OGEX.hpp"
 #include "../Framework/Parser/GLTF.hpp"
-#include "D3d/Core/Common/Utility.h"
+#include "../Framework/Parser/NC.hpp"
+#include "D3d/Core/Utility.h"
 #include <filesystem>
 
 using namespace My;
@@ -42,6 +43,11 @@ void SceneManager::LoadScene(const char* scene_file_name)
         m_pScene->LoadResource();
         m_bDirtyFlag = true;
     }
+    else if (extension == "NC" || extension == "nc" || extension == "txt") {
+        LoadNCScene(scene_file_name);
+        m_pScene->LoadResource();
+        m_bDirtyFlag = true;
+    }
     else {
 
     }
@@ -51,24 +57,42 @@ void SceneManager::LoadScene(const char* scene_file_name)
 void SceneManager::LoadOgexScene(const char* ogex_scene_file_name)
 {
     std::string ogex_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(ogex_scene_file_name);
+    std::string assetName = std::string(ogex_scene_file_name);
+    g_pAssetLoader->m_AssetName = Utility::RemoveExtension(Utility::RemoveBasePath(assetName));
 
     OgexParser ogex_parser;
-    m_pScene = ogex_parser.Parse(ogex_text);
+    m_pScene = ogex_parser.Parse(ogex_text, g_pAssetLoader->m_AssetName);
 
     if (!m_pScene) {
-        assert(false, "Scene Is Empty!");
+        ASSERT(false, "Scene Is Empty!");
     }
 }
 
 void SceneManager::LoadglTFScene(const char* glTF_scene_file_name)
 {
     std::string glTF_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(glTF_scene_file_name);
+    std::string assetName = std::string(glTF_scene_file_name);
+    g_pAssetLoader->m_AssetName = Utility::RemoveExtension(Utility::RemoveBasePath(assetName));
 
     glTF::GLTFParser glTF_parser;
-    m_pScene = glTF_parser.Parse(glTF_scene_file_name);
+    m_pScene = glTF_parser.Parse(glTF_scene_file_name, g_pAssetLoader->m_AssetName);
 
     if (!m_pScene) {
-        assert(false, "Scene Is Empty!");
+        ASSERT(false, "Scene Is Empty!");
+    }
+}
+
+void SceneManager::LoadNCScene(const char* glTF_scene_file_name)
+{
+    std::string glTF_text = g_pAssetLoader->SyncOpenAndReadTextFileToString(glTF_scene_file_name);
+    std::string assetName = std::string(glTF_scene_file_name);
+    g_pAssetLoader->m_AssetName = Utility::RemoveExtension(Utility::RemoveBasePath(assetName));
+
+    NCParser::NCParser NC_parser;
+    m_pScene = NC_parser.Parse(glTF_scene_file_name, g_pAssetLoader->m_AssetName);
+
+    if (!m_pScene) {
+        ASSERT(false, "Scene Is Empty!");
     }
 }
 

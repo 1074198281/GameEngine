@@ -1,55 +1,63 @@
 #pragma once
-#include <map>
-#include <unordered_map>
-#include "Core/Resource/GpuBuffer.h"
-#include "Core/Resource/Texture.h"
-#include "Core/Pipeline/PipelineState.h"
+#include "StructureSettings.h"
+#include "SceneObject.hpp"
 #include "Core/Pipeline/RootSignature.h"
-#include "Core/Pipeline/DescriptorHeap.h"
+#include "Core/Pipeline/PipelineState.h"
+#include "Core/Resource/Texture.h" 
 
-
-
-namespace My {
+namespace D3dGraphicsCore {
+	/*
+	* -----basic information-----
+	* 顶点/索引缓冲区
+	* 纹理存储，在资源堆中的偏移
+	* 实例化数量/顶点数量
+	* alphamode 透明 模板
+	* 当前对象组件使用了几个纹理
+	* 
+	* ----RootSignature-----
+	* 根参数
+	* 静态采样器
+	* 
+	* -----GraphicsPSO-----
+	* inputlayoutType
+	* 几何图元类型(PrimitiveType)
+	* shaderByteCode
+	
+	*/
 
 	typedef struct TextureResource {
-		std::string TextureName;
-		D3dGraphicsCore::Texture Texture;
-		D3dGraphicsCore::DescriptorHandle Handle;
+		Texture* pTexture;
+		DescriptorHandle Handle;
 	} TextureResource;
 
-	class RenderObject {
+	typedef struct MaterialResource {
+		std::vector<TextureResource> TextureResources;
+		int TextureCountPerMaterial;
+		DescriptorHandle FirstHandle;
+		int DescriptorHeapIndex;
+		GraphicsPSO PSO;
+	} MaterialResource;
+
+	class PrimitiveObject
+	{
 	public:
-		enum { kPosition, kNormal, kTangent, kTexcoord0, kTexcoord1, kInputLayout };
+		PrimitiveObject() {}
+		~PrimitiveObject() {}
+
 	public:
-		RenderObject() {} 
-		~RenderObject() {} 
+		std::string name;
+		
+		D3dGraphicsCore::StructuredBuffer VertexBuffer;
+		D3dGraphicsCore::ByteAddressBuffer IndexBuffer;
+		UINT indexCountPerInstance;
+		UINT InstanceCount;
+		bool alphamode;
 
-    public:
-        void InitializeConstantBuffer();
-        void InitializeSRV();
-		void Finalize();
-		void SetName(std::string name) { m_name = name; }
-	public:
-		std::string m_name;
+		// TextureResources
+		MaterialResource MaterialResource;
 
-		//顶点和索引数据
-		D3dGraphicsCore::StructuredBuffer VertexBuffer;		//顶点缓冲
-		D3dGraphicsCore::ByteAddressBuffer IndexBuffer;		//索引缓冲
-		unsigned int indexCountPerInstance;					//每个实例索引数量
-		unsigned int InstanceCount;							//实例化数量
-
-		//渲染管线状态
-		D3dGraphicsCore::RootSignature m_RootSignature;
-		D3dGraphicsCore::GraphicsPSO m_PSO;
-		int m_InputLayoutType = 0;
-
-		//纹理数据
-		unsigned int m_TextureCount;
-		D3dGraphicsCore::DescriptorHandle m_FirstHandle;
-		std::unordered_map<std::string, TextureResource> m_TextureResource;
-		bool m_alphaStatus;
-
-
+		//GraphicsPSO
+		int InputLayoutType;
+		My::PrimitiveType PrimitiveType;
 	};
-
 }

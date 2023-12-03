@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resource/GpuResource.h"
+#include "GpuResource.h"
 
 namespace D3dGraphicsCore {
 

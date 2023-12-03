@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Color.cpp">
+      <Filter>src\D3dCoreSource</Filter>
+    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Command\CommandAllocatorPool.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
@@ -19,9 +22,6 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\BoundingSphere.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Color.cpp">
-      <Filter>src\D3dCoreSource</Filter>
-    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\FileUtility.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
@@ -29,9 +29,6 @@
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\SystemTime.cpp">
-      <Filter>src\D3dCoreSource</Filter>
-    </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Utility.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\D3dGraphicsCoreManager.cpp">
@@ -79,20 +76,29 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\UploadBuffer.cpp">
       <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsManager.cpp">
-      <Filter>src\D3dSource</Filter>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Utility.cpp">
+      <Filter>src\D3dCoreSource</Filter>
     </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GeometryStructure.cpp">
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsManager.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsStructure.cpp">
+      <Filter>src\D3dSource</Filter>
+    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.cpp">
+      <Filter>src\D3dSource</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSouce.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Color.h">
+      <Filter>include\D3dCoreInclude</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Command\CommandAllocatorPool.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
@@ -108,16 +114,10 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Command\CommandSignature.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common.h">
+      <Filter>include\D3dCoreInclude</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\BoundingSphere.h">
-      <Filter>include\D3dCoreInclude</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Color.h">
-      <Filter>include\D3dCoreInclude</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Common.h">
-      <Filter>include\D3dCoreInclude</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\D3dCommonDef.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\FileUtility.h">
@@ -147,13 +147,13 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Transform.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Utility.h">
-      <Filter>include\D3dCoreInclude</Filter>
-    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\Vector.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Common\VectorMath.h">
+      <Filter>include\D3dCoreInclude</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\D3dCommonDef.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\D3dGraphicsCoreManager.h">
@@ -207,13 +207,22 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Resource\dds.h">
       <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GeometryStructure.h">
-      <Filter>include\D3dInclude</Filter>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Utility.h">
+      <Filter>include\D3dCoreInclude</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.h">
       <Filter>include\D3dInclude</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsStructure.h">
+      <Filter>include\D3dInclude</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.h">
+      <Filter>include\D3dInclude</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSource.h">
+      <Filter>include\D3dInclude</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\StructureSettings.h">
       <Filter>include\D3dInclude</Filter>
     </ClInclude>
   </ItemGroup>

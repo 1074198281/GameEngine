@@ -11,14 +11,16 @@
 // Author:  James Stanard 
 //
 
-#include "D3dCommonDef.h"
+#include "../D3dCommonDef.h"
+#include "../Utility.h"
+#include "../Color.h"
 #include "GraphicsCommon.h"
-#include "Resource/SamplerManager.h"
-#include "Command/CommandSignature.h"
+#include "../Resource/SamplerManager.h"
+#include "../Command/CommandSignature.h"
 //#include "BitonicSort.h"
-#include "Resource/Texture.h"
-#include "Pipeline/PipelineState.h"
-#include "Pipeline/RootSignature.h"
+#include "../Resource/Texture.h"
+#include "../Pipeline/PipelineState.h"
+#include "../Pipeline/RootSignature.h"
 //#include "BufferManager.h"
 
 //#include "CompiledShaders/GenerateMipsLinearCS.h"

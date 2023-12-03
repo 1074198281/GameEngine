@@ -67,6 +67,7 @@ namespace My {
         std::vector<std::string> m_strSearchPath;
     public:
         std::string m_AssetPath;
+        std::string m_AssetName;
 	};
 
     extern AssetLoader* g_pAssetLoader;

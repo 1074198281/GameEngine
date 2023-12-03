@@ -22,9 +22,10 @@ namespace My {
     class TgaParser : __implements ImageParser
     {
     public:
-        virtual Image Parse(Buffer& buf)
+        virtual Image Parse(const Buffer& buf)
         {
             Image img;
+            img.data = nullptr;
 
             const uint8_t* pData = buf.GetData();
             const uint8_t* pDataEnd = buf.GetData() + buf.GetDataSize();

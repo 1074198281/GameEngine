@@ -13,7 +13,7 @@ namespace My {
 		
 		//one cycle of the main loop
 		virtual void Tick() = 0;
-		
+
 		virtual bool IsQuit() = 0;
 
 		virtual void SetCommandLineParameters(int argc, char** argv) = 0;
@@ -21,7 +21,7 @@ namespace My {
 		virtual int LoadScene() = 0;
 
 		virtual void OnDraw() = 0;
-		
+
 		virtual GfxConfiguration& GetConfiguration() = 0;
 	};
 	extern IApplication* g_pApp;

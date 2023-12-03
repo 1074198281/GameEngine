@@ -12,10 +12,10 @@
 //
 
 
-#include "Command/CommandSignature.h"
-#include "Pipeline/RootSignature.h"
+#include "CommandSignature.h"
+#include "../Pipeline/RootSignature.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 
 
 void D3dGraphicsCore::CommandSignature::Finalize(const RootSignature* RootSignature)

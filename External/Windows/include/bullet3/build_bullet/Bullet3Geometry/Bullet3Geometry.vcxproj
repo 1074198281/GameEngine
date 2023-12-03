@@ -61,11 +61,11 @@
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Bullet3Geometry.dir\Debug\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Bullet3Geometry</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Bullet3Geometry_Debug</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\lib\bullet3\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Bullet3Geometry.dir\Release\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Bullet3Geometry</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Bullet3Geometry_Release</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3\build_bullet\Bullet3Geometry\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Bullet3Geometry.dir\MinSizeRel\</IntDir>

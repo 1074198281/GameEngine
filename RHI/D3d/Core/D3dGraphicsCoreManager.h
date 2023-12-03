@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Common/D3dCommonDef.h"
-#include "Pipeline/PipelineState.h"
-#include "Pipeline/DescriptorHeap.h"
-#include "Pipeline/RootSignature.h"
+#include "D3dCommonDef.h"
 
 #include "Command/CommandListManager.h"
 #include "Command/CommandContext.h"
+#include "Pipeline/DescriptorHeap.h"
 #include "Resource/ColorBuffer.h"
+#include "Resource/DepthBuffer.h"
 
 namespace D3dGraphicsCore {
 
@@ -67,6 +66,12 @@ namespace D3dGraphicsCore {
 	extern float s_FrameTime;
 	extern uint64_t s_FrameIndex;
 	extern int64_t s_FrameStartTick;
+
+	extern DepthBuffer g_SceneDepthBuffer;	// D32_FLOAT_S8_UINT
+	extern ColorBuffer g_SceneColorBuffer;	// R11G11B10_FLOAT
+	extern DXGI_FORMAT g_SceneDepthBufferFormat;
+	extern DXGI_FORMAT g_SceneColorBufferFormat;
+	void InitializeBuffers();
 
 	extern ColorBuffer g_PreDisplayBuffer;
 	extern ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];

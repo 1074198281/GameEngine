@@ -12,8 +12,9 @@
 //
 
 #pragma once
+#include "../Utility.h"
+#include "../D3dCommonDef.h"
 
-#include "Core/Common/D3dCommonDef.h"
 
 namespace D3dGraphicsCore {
 

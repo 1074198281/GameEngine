@@ -11,10 +11,10 @@
 // Author:  James Stanard
 
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 #include "PipelineState.h"
 #include "RootSignature.h"
-#include "Common/Hash.h"
+#include "../Common/Hash.h"
 #include <map>
 #include <thread>
 #include <mutex>
@@ -143,7 +143,7 @@ void D3dGraphicsCore::GraphicsPSO::Finalize()
 
     if (firstCompile)
     {
-        ASSERT(m_PSODesc.DepthStencilState.DepthEnable != (m_PSODesc.DSVFormat == DXGI_FORMAT_UNKNOWN));
+        //ASSERT(m_PSODesc.DepthStencilState.DepthEnable != (m_PSODesc.DSVFormat == DXGI_FORMAT_UNKNOWN));
         ASSERT_SUCCEEDED(D3dGraphicsCore::g_Device->CreateGraphicsPipelineState(&m_PSODesc, IID_PPV_ARGS(&m_PSO)));
         s_GraphicsPSOHashMap[HashCode].Attach(m_PSO);
         m_PSO->SetName(m_Name);

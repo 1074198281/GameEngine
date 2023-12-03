@@ -1,6 +1,6 @@
 #include "ReadbackBuffer.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 
 
 void D3dGraphicsCore::ReadbackBuffer::Create(const std::wstring& name, uint32_t NumElements, uint32_t ElementSize)

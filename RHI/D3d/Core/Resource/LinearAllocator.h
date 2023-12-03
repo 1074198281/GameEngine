@@ -22,7 +22,8 @@
 
 #pragma once
 
-#include "Resource/GpuResource.h"
+#include "GpuResource.h"
+#include "../Utility.h"
 #include <vector>
 #include <queue>
 #include <mutex>

@@ -14,8 +14,8 @@
 
 #include "DepthBuffer.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
-#include "Pipeline/DescriptorHeap.h"
+#include "../D3dGraphicsCoreManager.h"
+#include "../Pipeline/DescriptorHeap.h"
 
 
 void D3dGraphicsCore::DepthBuffer::Create(const std::wstring& Name, uint32_t Width, uint32_t Height, DXGI_FORMAT Format, D3D12_GPU_VIRTUAL_ADDRESS VidMemPtr)

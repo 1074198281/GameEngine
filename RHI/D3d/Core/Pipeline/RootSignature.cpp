@@ -13,8 +13,8 @@
 
 #include "RootSignature.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
-#include "Common/Hash.h"
+#include "../D3dGraphicsCoreManager.h"
+#include "../Common/Hash.h"
 #include <map>
 #include <thread>
 #include <mutex>

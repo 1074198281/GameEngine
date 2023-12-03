@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include "BaseApplication.hpp"
+#include "base_math.hpp"
 
 using namespace My;
 

@@ -14,7 +14,7 @@
 #pragma once
 
 #include "d3dx12.h"
-#include "Command/CommandAllocatorPool.h"
+#include "CommandAllocatorPool.h"
 #include <vector>
 #include <queue>
 #include <mutex>

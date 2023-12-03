@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/D3dCommonDef.h"
+#include "Core/D3dCommonDef.h"
 
 namespace CommandLineArgs
 {

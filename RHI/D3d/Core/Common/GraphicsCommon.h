@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resource/SamplerManager.h"
+#include "../Resource/SamplerManager.h"
 
 
 namespace D3dGraphicsCore

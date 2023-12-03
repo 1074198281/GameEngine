@@ -95,17 +95,12 @@ namespace My {
         uint8_t  m_BytesPerPixel;
 
     public:
-        virtual Image Parse(Buffer& buf)
+        virtual Image Parse(const Buffer& buf)
         {
             Image img;
 
-            uint8_t* pData = buf.GetData();
-            uint8_t* pDataEnd = buf.GetData() + buf.GetDataSize();
-
-            bool imageDataStarted = false;
-            bool imageDataEnded = false;
-            uint8_t* imageDataStartPos = nullptr;
-            uint8_t* imageDataEndPos = nullptr;
+            const uint8_t* pData = buf.GetData();
+            const uint8_t* pDataEnd = buf.GetData() + buf.GetDataSize();
 
             const PNG_FILEHEADER* pFileHeader = reinterpret_cast<const PNG_FILEHEADER*>(pData);
             pData += sizeof(PNG_FILEHEADER);
@@ -116,7 +111,6 @@ namespace My {
                 {
                     const PNG_CHUNK_HEADER* pChunkHeader = reinterpret_cast<const PNG_CHUNK_HEADER*>(pData);
                     PNG_CHUNK_TYPE type = static_cast<PNG_CHUNK_TYPE>(endian_net_unsigned_int(static_cast<uint32_t>(pChunkHeader->Type)));
-                    uint32_t chunk_data_size = endian_net_unsigned_int(pChunkHeader->Length);
 
                     std::cout << "============================" << std::endl;
 
@@ -162,11 +156,7 @@ namespace My {
 
                         img.Width = m_Width;
                         img.Height = m_Height;
-                        if (m_ColorType == 2)
-                            img.bitcount = 24;
-                        else
-                            img.bitcount = 32;
-                        //img.bitcount = 32; // currently we fixed at RGBA for rendering
+                        img.bitcount = 32; // currently we fixed at RGBA for rendering
                         img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
                         img.data_size = img.pitch * img.Height;
                         img.data = (R8G8B8A8Unorm*)g_pMemoryManager->Allocate(img.data_size);
@@ -202,40 +192,6 @@ namespace My {
 
                         std::cout << "Compressed Data Length: " << compressed_data_size << std::endl;
 
-                        if (imageDataEnded) {
-                            std::cout << "PNG file looks corrupted. Found IDAT after IEND." << std::endl;
-                            break;
-                        }
-
-                        if (!imageDataStarted)
-                        {
-                            imageDataStarted = true;
-                            imageDataStartPos = pData + sizeof(PNG_CHUNK_HEADER);
-                            imageDataEndPos = imageDataStartPos + chunk_data_size;
-                        }
-                        else
-                        {
-                            // concat the IDAT blocks
-                            memcpy(imageDataEndPos, pData + sizeof(PNG_CHUNK_HEADER), chunk_data_size);
-                            imageDataEndPos += chunk_data_size;
-                        }
-                    }
-                    break;
-                    case PNG_CHUNK_TYPE::IEND:
-                    {
-                        std::cout << "IEND (Image Data End)" << std::endl;
-                        std::cout << "----------------------------" << std::endl;
-
-                        size_t compressed_data_size = imageDataEndPos - imageDataStartPos;
-
-                        if (!imageDataStarted) {
-                            std::cout << "PNG file looks corrupted. Found IEND before IDAT." << std::endl;
-                            break;
-                        }
-                        else {
-                            imageDataEnded = true;
-                        }
-
                         const uint32_t kChunkSize = 256 * 1024;
                         z_stream strm;
                         strm.zalloc = Z_NULL;
@@ -250,7 +206,7 @@ namespace My {
                             break;
                         }
 
-                        const uint8_t* pIn = imageDataStartPos;  // point to the start of the input data buffer
+                        const uint8_t* pIn = pData + sizeof(PNG_CHUNK_HEADER);  // point to the start of the input data buffer
                         uint8_t* pOut = reinterpret_cast<uint8_t*>(img.data);  // point to the start of the input data buffer
                         uint8_t* pDecompressedBuffer = new uint8_t[kChunkSize];
                         uint8_t filter_type = 0;
@@ -258,7 +214,7 @@ namespace My {
                         int current_col = -1;   // -1 means we need read filter type
 
                         do {
-                            uint32_t next_in_size = (compressed_data_size > kChunkSize) ? kChunkSize : (uint32_t)compressed_data_size;
+                            uint32_t next_in_size = (compressed_data_size > kChunkSize) ? kChunkSize : compressed_data_size;
                             if (next_in_size == 0) break;
                             compressed_data_size -= next_in_size;
                             strm.next_in = const_cast<Bytef*>(pIn);
@@ -273,82 +229,88 @@ namespace My {
                                 case Z_DATA_ERROR:
                                 case Z_MEM_ERROR:
                                     zerr(ret);
+                                    (void)inflateEnd(&strm);
+                                    strm.avail_out = 0;
                                     ret = Z_STREAM_END;
+                                    //assert(0);
+                                    return img;
                                 default:
-                                    // now we de-filter the data into image
-                                    uint8_t* p = pDecompressedBuffer;
-                                    while (p - pDecompressedBuffer < (kChunkSize - strm.avail_out))
+                                    ;
+                                }
+
+                                // now we de-filter the data into image
+                                uint8_t* p = pDecompressedBuffer;
+                                while (p - pDecompressedBuffer < (kChunkSize - strm.avail_out))
+                                {
+                                    if (current_col == -1)
                                     {
-                                        if (current_col == -1)
-                                        {
-                                            // we are at start of scan line, get the filter type and advance the pointer
-                                            filter_type = *p;
+                                        // we are at start of scan line, get the filter type and advance the pointer
+                                        filter_type = *p;
+                                    }
+                                    else
+                                    {
+                                        //  prediction filter
+                                        //  X is current value
+                                        //
+                                        //  C  B  D
+                                        //  A  X
+
+                                        uint8_t A, B, C;
+                                        if (current_row == 0) {
+                                            B = C = 0;
                                         }
                                         else
                                         {
-                                            //  prediction filter
-                                            //  X is current value
-                                            //
-                                            //  C  B  D
-                                            //  A  X
+                                            B = *(pOut + img.pitch * (current_row - 1) + current_col);
+                                            C = (current_col < m_BytesPerPixel) ? 0 : *(pOut + img.pitch * (current_row - 1) + current_col - m_BytesPerPixel);
+                                        }
 
-                                            uint8_t A, B, C;
-                                            if (current_row == 0) {
-                                                B = C = 0;
-                                            }
-                                            else
-                                            {
-                                                B = *(pOut + img.pitch * (current_row - 1) + current_col);
-                                                C = (current_col < m_BytesPerPixel) ? 0 : *(pOut + img.pitch * (current_row - 1) + current_col - m_BytesPerPixel);
-                                            }
+                                        A = (current_col < m_BytesPerPixel) ? 0 : *(pOut + img.pitch * current_row + current_col - m_BytesPerPixel);
 
-                                            A = (current_col < m_BytesPerPixel) ? 0 : *(pOut + img.pitch * current_row + current_col - m_BytesPerPixel);
-
-                                            switch (filter_type) {
-                                            case 0:
-                                                *(pOut + img.pitch * current_row + current_col) = *p;
-                                                break;
-                                            case 1:
-                                                *(pOut + img.pitch * current_row + current_col) = *p + A;
-                                                break;
-                                            case 2:
-                                                *(pOut + img.pitch * current_row + current_col) = *p + B;
-                                                break;
-                                            case 3:
-                                                *(pOut + img.pitch * current_row + current_col) = *p + (A + B) / 2;
-                                                break;
-                                            case 4:
-                                            {
-                                                int _p = A + B - C;
-                                                int pa = abs(_p - A);
-                                                int pb = abs(_p - B);
-                                                int pc = abs(_p - C);
-                                                if (pa <= pb && pa <= pc) {
-                                                    *(pOut + img.pitch * current_row + current_col) = *p + A;
-                                                }
-                                                else if (pb <= pc) {
-                                                    *(pOut + img.pitch * current_row + current_col) = *p + B;
-                                                }
-                                                else {
-                                                    *(pOut + img.pitch * current_row + current_col) = *p + C;
-                                                }
-                                            }
+                                        switch (filter_type) {
+                                        case 0:
+                                            *(pOut + img.pitch * current_row + current_col) = *p;
                                             break;
-                                            default:
-                                                std::cout << "[Error] Unknown Filter Type!" << std::endl;
-                                                assert(0);
+                                        case 1:
+                                            *(pOut + img.pitch * current_row + current_col) = *p + A;
+                                            break;
+                                        case 2:
+                                            *(pOut + img.pitch * current_row + current_col) = *p + B;
+                                            break;
+                                        case 3:
+                                            *(pOut + img.pitch * current_row + current_col) = *p + (A + B) / 2;
+                                            break;
+                                        case 4:
+                                        {
+                                            int _p = A + B - C;
+                                            int pa = abs(_p - A);
+                                            int pb = abs(_p - B);
+                                            int pc = abs(_p - C);
+                                            if (pa <= pb && pa <= pc) {
+                                                *(pOut + img.pitch * current_row + current_col) = *p + A;
                                             }
-
+                                            else if (pb <= pc) {
+                                                *(pOut + img.pitch * current_row + current_col) = *p + B;
+                                            }
+                                            else {
+                                                *(pOut + img.pitch * current_row + current_col) = *p + C;
+                                            }
+                                        }
+                                        break;
+                                        default:
+                                            std::cout << "[Error] Unknown Filter Type!" << std::endl;
+                                            assert(0);
                                         }
 
-                                        current_col++;
-                                        if (current_col == m_ScanLineSize) {
-                                            current_col = -1;
-                                            current_row++;
-                                        }
-
-                                        p++;
                                     }
+
+                                    current_col++;
+                                    if (current_col == m_ScanLineSize) {
+                                        current_col = -1;
+                                        current_row++;
+                                    }
+
+                                    p++;
                                 }
 
                             } while (strm.avail_out == 0);
@@ -357,7 +319,13 @@ namespace My {
                         } while (ret != Z_STREAM_END);
 
                         (void)inflateEnd(&strm);
-                        delete[] pDecompressedBuffer;
+                        g_pMemoryManager->Free(pDecompressedBuffer, kChunkSize);
+                    }
+                    break;
+                    case PNG_CHUNK_TYPE::IEND:
+                    {
+                        std::cout << "IEND (Image Data End)" << std::endl;
+                        std::cout << "----------------------------" << std::endl;
                     }
                     break;
                     default:
@@ -366,7 +334,7 @@ namespace My {
                     }
                     break;
                     }
-                    pData += chunk_data_size + sizeof(PNG_CHUNK_HEADER) + 4/* length of CRC */;
+                    pData += endian_net_unsigned_int(pChunkHeader->Length) + sizeof(PNG_CHUNK_HEADER) + 4/* length of CRC */;
                 }
             }
             else {

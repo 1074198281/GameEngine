@@ -13,9 +13,9 @@
 
 
 #include "PixelBuffer.h"
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 //#include "BufferManager.h"
-#include "Command/CommandContext.h"
+#include "../Command/CommandContext.h"
 #include "ReadbackBuffer.h"
 #include <fstream>
 

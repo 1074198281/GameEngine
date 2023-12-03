@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Core/Resource/GpuResource.h"
+#include "GpuResource.h"
 
 namespace D3dGraphicsCore {
 
     class CommandContext;
-    class EsramAllocator;
     class UploadBuffer;
 
     class GpuBuffer : public GpuResource
@@ -19,10 +18,6 @@ namespace D3dGraphicsCore {
 
         void Create(const std::wstring& name, uint32_t NumElements, uint32_t ElementSize,
             const UploadBuffer& srcData, uint32_t srcOffset = 0);
-
-        // Create a buffer in ESRAM.  On Windows, ESRAM is not used.
-        void Create(const std::wstring& name, uint32_t NumElements, uint32_t ElementSize,
-            EsramAllocator& Allocator, const void* initialData = nullptr);
 
         // Sub-Allocate a buffer out of a pre-allocated heap.  If initial data is provided, it will be copied into the buffer using the default command context.
         void CreatePlaced(const std::wstring& name, ID3D12Heap* pBackingHeap, uint32_t HeapOffset, uint32_t NumElements, uint32_t ElementSize,

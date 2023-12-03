@@ -638,7 +638,13 @@ namespace My {
     inline Matrix8X8f IDCT8X8(const Matrix8X8f& matrix)
     {
         Matrix8X8f result;
-        
+        memset(&result, 0, sizeof(float) * 64);
+        float data[64];
+        for (int i = 0; i < 64; i++) {
+            data[i] = .0f;
+        }
+        result = data;
+
         return result;
     }
 }

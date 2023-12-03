@@ -14,15 +14,14 @@
 #pragma once
 
 #include "D3d/Core/Common/FileUtility.h"
-#include "D3d/Core/Common/Utility.h"
-#include "D3d/Core/Common/Functions.inl"
+#include "D3d/Core/Utility.h"
+#include "XM_Functions.h"
 #include "d3dx12.h"
 #include "SceneParser.hpp"
 #include "SceneNode.hpp"
 #include "SceneObject.hpp"
 #include "Scene.hpp"
 #include "utility.hpp"
-#include "geommath.hpp"
 
 #include <string>
 #include <vector>
@@ -269,7 +268,7 @@ namespace glTF
     {
         const float kF32toF16 = (1.0 / (1ull << 56)) * (1.0 / (1ull << 56)); // 2^-112
         union { float f; uint32_t u; } x;
-        x.f = Math::Clamp(f, 0.0f, 1.0f) * kF32toF16;
+        x.f = XM_Math::Clamp(f, 0.0f, 1.0f) * kF32toF16;
         return x.u >> 13;
     }
 
@@ -469,6 +468,7 @@ namespace glTF
         std::vector<BufferView> m_bufferViews;
         std::vector<Animation> m_animations;
 
+        //assistant function
         int m_ChildNodeTag;
 
     private:
@@ -868,7 +868,7 @@ namespace glTF
                         node.children.push_back(&m_nodes[child]);
                         m_ChildNodeTag += child;
                     }
-                       
+                        
                 }
 
                 if (thisNode.find("matrix") != thisNode.end())
@@ -1187,7 +1187,6 @@ namespace glTF
         {
             std::shared_ptr<My::SceneGeometryNode> GeoNode;
             std::shared_ptr<My::SceneObjectGeometry> GeoObject;
-            std::shared_ptr<My::SceneObjectTransform> GeoTrans;
             auto& mesh = pCurrNode->mesh;
             GeoNode = std::make_shared<My::SceneGeometryNode>(pCurrNode->name);
             GeoObject = std::make_shared<My::SceneObjectGeometry>();
@@ -1346,21 +1345,16 @@ namespace glTF
                 GeoNode->AddMaterialRef(meshIt->material->name);
                 std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
                 
-                My::Vector4f baseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1], meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
-                float metallicFactor = meshIt->material->metallicFactor;
-                float roughnessFactor = meshIt->material->roughnessFactor;
-                GeoMaterial->SetColor("diffuse", baseColorFactor);
-                GeoMaterial->SetParam("metallic", metallicFactor);
-                GeoMaterial->SetParam("roughness", roughnessFactor);
-
                 for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
                     if (!meshIt->material->textures[type]) {
                         continue;
                     }
                     std::string textureType = GetTextureType(Material::eTextureType(type));
                     GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
-                    GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
-                        meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
+                    if (meshIt->material->textures[type]->sampler) {
+                        GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
+                            meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
+                    }
                 }
 
                 Scene.Materials[meshIt->material->name] = GeoMaterial;
@@ -1371,15 +1365,6 @@ namespace glTF
             Scene.GeometryNodes.emplace(pCurrNode->name, GeoNode);
             Scene.Geometries[mesh->name] = GeoObject;
 
-
-            //Transform
-            if (pCurrNode->hasMatrix) {
-                My::Matrix4X4f mat;
-                for (int i = 0; i < 16; i++) {
-                    memcpy(mat[i], &pCurrNode->matrix[i], sizeof(float));
-                }
-            }
-            
 
             node->AppendChild(GeoNode);
         }
@@ -1408,8 +1393,7 @@ namespace glTF
                     StructureNode->AppendChild(std::move(NextStructureNode));
                 }
                 node->AppendChild(std::move(StructureNode));
-            }
-            else {
+            } else {
                 for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
                     std::shared_ptr<My::BaseSceneNode> StructureNode;
                     StructureNode = std::make_shared<My::SceneEmptyNode>(nodeIt->name);
@@ -1426,7 +1410,7 @@ namespace glTF
             }
         }
 
-        virtual std::unique_ptr<My::Scene> Parse(const std::string& buf)
+        virtual std::unique_ptr<My::Scene> Parse(const std::string& buf, std::string RootNodeName)
         {
             std::unique_ptr<My::Scene> pScene(new My::Scene("GLTF Scene"));
             std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") + std::string(buf);
@@ -1437,7 +1421,7 @@ namespace glTF
             ASSERT(m_scenes.size() == 1);
 
             std::shared_ptr<My::BaseSceneNode> StructureNode;
-            StructureNode = std::make_shared<My::SceneEmptyNode>("RootNode");
+            StructureNode = std::make_shared<My::SceneEmptyNode>(RootNodeName);
             if (m_ChildNodeTag < 0) {
                 // all other nodes belong to the root node
                 GenerateNode(StructureNode, *pScene, nullptr);

@@ -15,7 +15,7 @@
 #pragma once
 
 #include "d3dx12.h"
-#include "Common/Utility.h"
+#include "../Utility.h"
 
 namespace D3dGraphicsCore {
 

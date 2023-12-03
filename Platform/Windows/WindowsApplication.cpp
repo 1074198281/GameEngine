@@ -6,10 +6,7 @@ using namespace My;
 
 int My::WindowsApplication::Initialize()
 {
-    int result = 0;
-
-    if (result != 0)
-        exit(result);
+    int result;
 
     // get the HINSTANCE of the Console Program
     HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -56,6 +53,9 @@ int My::WindowsApplication::Initialize()
     // first call base class initialization
     result = BaseApplication::Initialize();
 
+    if (result != 0)
+        exit(result);
+
     return result;
 }
 
@@ -67,6 +67,7 @@ void My::WindowsApplication::Finalize()
 void My::WindowsApplication::Tick()
 {
     BaseApplication::Tick();
+
     // this struct holds Windows event messages
     MSG msg;
 
@@ -116,6 +117,7 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         // we will replace this with input manager
         switch (wParam)
         {
+#ifndef USE_DIRECTX_INPUT
         case VK_LEFT:
             g_pInputManager->LeftArrowKeyDown();
             break;
@@ -128,6 +130,7 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         case VK_DOWN:
             g_pInputManager->DownArrowKeyDown();
             break;
+#endif
         case VK_ESCAPE:
             m_bQuit = true;
             break;

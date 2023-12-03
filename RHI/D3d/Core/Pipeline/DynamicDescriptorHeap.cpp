@@ -11,12 +11,12 @@
 // Author:  James Stanard 
 //
 
-#include "Pipeline/DynamicDescriptorHeap.h"
-#include "Command/CommandContext.h"
+#include "DynamicDescriptorHeap.h"
+#include "../Command/CommandContext.h"
 #include "GraphicsCore.h"
-#include "D3dGraphicsCoreManager.h"
-#include "Command/CommandListManager.h"
-#include "Pipeline/RootSignature.h"
+#include "../D3dGraphicsCoreManager.h"
+#include "../Command/CommandListManager.h"
+#include "RootSignature.h"
 
 
 //

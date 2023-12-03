@@ -12,10 +12,10 @@
 //
 
 
-#include "D3dGraphicsCoreManager.h"
+#include "../D3dGraphicsCoreManager.h"
 #include "ColorBuffer.h"
 //#include "GraphicsCommon.h"
-#include "Command/CommandContext.h"
+#include "../Command/CommandContext.h"
 
 
 
