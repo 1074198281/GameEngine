@@ -2,6 +2,7 @@
 #include "XM_Functions.h"
 #include "XM_Scalar.h"
 #include "XMCamera.h"
+#include "XMInput/XMInput.h"
 
 using XM_Math::Vector3;
 using XM_Math::Vector4;
@@ -52,10 +53,10 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
     //float timeScale = Graphics::DebugZoom == 0 ? 1.0f : Graphics::DebugZoom == 1 ? 0.5f : 0.25f;
     float timeScale = 1.0f;
 
-    //if (GameInput::IsFirstPressed(GameInput::kLThumbClick) || GameInput::IsFirstPressed(GameInput::kKey_lshift))
+    //if (XM_Input::IsFirstPressed(XM_Input::kLThumbClick) || XM_Input::IsFirstPressed(XM_Input::kKey_lshift))
     //    m_FineMovement = !m_FineMovement;
 
-    //if (GameInput::IsFirstPressed(GameInput::kRThumbClick))
+    //if (XM_Input::IsFirstPressed(XM_Input::kRThumbClick))
     //    m_FineRotation = !m_FineRotation;
 
     float speedScale = (m_FineMovement ? 0.1f : 1.0f) * timeScale;
@@ -63,37 +64,37 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
 
     float yaw, pitch, forward, strafe, ascent;
     yaw = pitch = forward = strafe = ascent = 0.0f;
-    //yaw = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickX) * m_HorizontalLookSensitivity * panScale;
-    //pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY) * m_VerticalLookSensitivity * panScale;
-    //forward = m_MoveSpeed * speedScale * (
-    //    GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY) +
-    //    (GameInput::IsPressed(GameInput::kKey_w) ? deltaTime : 0.0f) +
-    //    (GameInput::IsPressed(GameInput::kKey_s) ? -deltaTime : 0.0f)
-    //    );
-    //strafe = m_StrafeSpeed * speedScale * (
-    //    GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickX) +
-    //    (GameInput::IsPressed(GameInput::kKey_d) ? deltaTime : 0.0f) +
-    //    (GameInput::IsPressed(GameInput::kKey_a) ? -deltaTime : 0.0f)
-    //    );
-    //ascent = m_StrafeSpeed * speedScale * (
-    //    GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightTrigger) -
-    //    GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftTrigger) +
-    //    (GameInput::IsPressed(GameInput::kKey_e) ? deltaTime : 0.0f) +
-    //    (GameInput::IsPressed(GameInput::kKey_q) ? -deltaTime : 0.0f)
-    //    );
+    yaw = XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogRightStickX) * m_HorizontalLookSensitivity * panScale;
+    pitch = XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogRightStickY) * m_VerticalLookSensitivity * panScale;
+    forward = m_MoveSpeed * speedScale * (
+        XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogLeftStickY) +
+        (XM_Input::IsPressed(XM_Input::kKey_w) ? deltaTime : 0.0f) +
+        (XM_Input::IsPressed(XM_Input::kKey_s) ? -deltaTime : 0.0f)
+        );
+    strafe = m_StrafeSpeed * speedScale * (
+        XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogLeftStickX) +
+        (XM_Input::IsPressed(XM_Input::kKey_d) ? deltaTime : 0.0f) +
+        (XM_Input::IsPressed(XM_Input::kKey_a) ? -deltaTime : 0.0f)
+        );
+    ascent = m_StrafeSpeed * speedScale * (
+        XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogRightTrigger) -
+        XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogLeftTrigger) +
+        (XM_Input::IsPressed(XM_Input::kKey_e) ? deltaTime : 0.0f) +
+        (XM_Input::IsPressed(XM_Input::kKey_q) ? -deltaTime : 0.0f)
+        );
 
-    //if (m_Momentum)
-    //{
-    //    ApplyMomentum(m_LastYaw, yaw, deltaTime);
-    //    ApplyMomentum(m_LastPitch, pitch, deltaTime);
-    //    ApplyMomentum(m_LastForward, forward, deltaTime);
-    //    ApplyMomentum(m_LastStrafe, strafe, deltaTime);
-    //    ApplyMomentum(m_LastAscent, ascent, deltaTime);
-    //}
+    if (m_Momentum)
+    {
+        ApplyMomentum(m_LastYaw, yaw, deltaTime);
+        ApplyMomentum(m_LastPitch, pitch, deltaTime);
+        ApplyMomentum(m_LastForward, forward, deltaTime);
+        ApplyMomentum(m_LastStrafe, strafe, deltaTime);
+        ApplyMomentum(m_LastAscent, ascent, deltaTime);
+    }
 
-    //// don't apply momentum to mouse inputs
-    //yaw += GameInput::GetAnalogInput(GameInput::kAnalogMouseX) * m_MouseSensitivityX;
-    //pitch += GameInput::GetAnalogInput(GameInput::kAnalogMouseY) * m_MouseSensitivityY;
+    // don't apply momentum to mouse inputs
+    yaw += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseX) * m_MouseSensitivityX;
+    pitch += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseY) * m_MouseSensitivityY;
 
     m_CurrentPitch += pitch;
     m_CurrentPitch = DirectX::XMMin(DirectX::XM_PIDIV2, m_CurrentPitch);
@@ -175,21 +176,21 @@ void XM_Camera::OrbitCamera::Update(float deltaTime)
     float yaw, pitch, closeness;
     yaw = pitch = closeness = 0.0f;
     //摇杆输入
-    //yaw = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickX) * timeScale * m_JoystickSensitivityX;
-    //pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY) * timeScale * m_JoystickSensitivityY;
-    //closeness = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY) * timeScale;
+    yaw = XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogLeftStickX) * timeScale * m_JoystickSensitivityX;
+    pitch = XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogLeftStickY) * timeScale * m_JoystickSensitivityY;
+    closeness = XM_Input::GetTimeCorrectedAnalogInput(XM_Input::kAnalogRightStickY) * timeScale;
 
     // 应用上一帧动量来平滑当前相机的运动
-    //if (m_Momentum)
-    //{
-    //    ApplyMomentum(m_LastYaw, yaw, deltaTime);
-    //    ApplyMomentum(m_LastPitch, pitch, deltaTime);
-    //}
+    if (m_Momentum)
+    {
+        ApplyMomentum(m_LastYaw, yaw, deltaTime);
+        ApplyMomentum(m_LastPitch, pitch, deltaTime);
+    }
 
     // don't apply momentum to mouse inputs
-    //yaw += GameInput::GetAnalogInput(GameInput::kAnalogMouseX) * m_MouseSensitivityX;
-    //pitch += GameInput::GetAnalogInput(GameInput::kAnalogMouseY) * m_MouseSensitivityY;
-    //closeness += GameInput::GetAnalogInput(GameInput::kAnalogMouseScroll) * 0.1f;
+    yaw += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseX) * m_MouseSensitivityX;
+    pitch += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseY) * m_MouseSensitivityY;
+    closeness += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseScroll) * 0.1f;
 
     m_CurrentPitch += pitch;
     m_CurrentPitch = DirectX::XMMin(DirectX::XM_PIDIV2, m_CurrentPitch);

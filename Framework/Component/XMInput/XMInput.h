@@ -10,7 +10,7 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "xinput9_1_0.lib")
 
-namespace D3dInput
+namespace XM_Input
 {
     void Initialize();
     void Shutdown();

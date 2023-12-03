@@ -3,7 +3,7 @@
 #include "D3d/Core/Utility.h"
 
 
-namespace D3dInput {
+namespace XM_Input {
     bool s_Buttons[2][kNumDigitalInputs];
     float s_HoldDuration[kNumDigitalInputs] = { 0.0f };
     float s_Analogs[kNumAnalogInputs];
@@ -229,7 +229,7 @@ namespace D3dInput {
 
 }
 
-void D3dInput::Initialize()
+void XM_Input::Initialize()
 {
     ZeroMemory(s_Buttons, sizeof(s_Buttons));
     ZeroMemory(s_Analogs, sizeof(s_Analogs));
@@ -239,14 +239,14 @@ void D3dInput::Initialize()
 #endif
 }
 
-void D3dInput::Shutdown()
+void XM_Input::Shutdown()
 {
 #ifdef USE_KEYBOARD_MOUSE
     KbmShutdown();
 #endif
 }
 
-void D3dInput::Update(float frameDelta)
+void XM_Input::Update(float frameDelta)
 {
     memcpy(s_Buttons[1], s_Buttons[0], sizeof(s_Buttons[0]));
     memset(s_Buttons[0], 0, sizeof(s_Buttons[0]));
@@ -362,42 +362,42 @@ void D3dInput::Update(float frameDelta)
 
 }
 
-bool D3dInput::IsAnyPressed(void)
+bool XM_Input::IsAnyPressed(void)
 {
     return s_Buttons[0] != 0;
 }
 
-bool D3dInput::IsPressed(DigitalInput di)
+bool XM_Input::IsPressed(DigitalInput di)
 {
     return s_Buttons[0][di];
 }
 
-bool D3dInput::IsFirstPressed(DigitalInput di)
+bool XM_Input::IsFirstPressed(DigitalInput di)
 {
     return s_Buttons[0][di] && !s_Buttons[1][di];
 }
 
-bool D3dInput::IsReleased(DigitalInput di)
+bool XM_Input::IsReleased(DigitalInput di)
 {
     return !s_Buttons[0][di];
 }
 
-bool D3dInput::IsFirstReleased(DigitalInput di)
+bool XM_Input::IsFirstReleased(DigitalInput di)
 {
     return !s_Buttons[0][di] && s_Buttons[1][di];
 }
 
-float D3dInput::GetDurationPressed(DigitalInput di)
+float XM_Input::GetDurationPressed(DigitalInput di)
 {
     return s_HoldDuration[di];
 }
 
-float D3dInput::GetAnalogInput(AnalogInput ai)
+float XM_Input::GetAnalogInput(AnalogInput ai)
 {
     return s_Analogs[ai];
 }
 
-float D3dInput::GetTimeCorrectedAnalogInput(AnalogInput ai)
+float XM_Input::GetTimeCorrectedAnalogInput(AnalogInput ai)
 {
     return s_AnalogsTC[ai];
 }

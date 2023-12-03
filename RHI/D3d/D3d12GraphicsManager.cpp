@@ -44,7 +44,6 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
-
     m_pGraphics->UpdateStatus();
 }
 

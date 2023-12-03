@@ -33,6 +33,8 @@ namespace D3dGraphicsCore {
 
 	public:
 		void UpdateStatus();
+		void UpdateCamera();
+		void UpdateRenderingQueue();
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
@@ -43,7 +45,7 @@ namespace D3dGraphicsCore {
 
 	private:
 		XM_Camera::Camera m_Camera;
-		XM_Camera::FlyingFPSCamera m_CameraController;
+		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
 	};

@@ -69,10 +69,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int he
 
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
 {
-    m_Camera.SetAspectRatio(g_DisplayHeight / g_DisplayWidth);
+    m_Camera.SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
     m_Camera.SetFOV(90.f);
     m_Camera.SetZRange(1.0f, 1000.0f);
-
+    m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(m_Camera, XM_Math::Vector3(0.0f, 1.0f, 0.0f));
     
     m_MainViewport.Width = g_DisplayWidth;
     m_MainViewport.Height = g_DisplayHeight;
@@ -116,6 +116,18 @@ void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& contex
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
 {
+    UpdateCamera();
+    UpdateRenderingQueue();
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
+{
+    m_CameraController->Update(0.0f);
+    m_Camera.Update();
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
+{
     GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Render");
 
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
@@ -156,10 +168,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
         
-        XMMATRIX mat(1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
+        auto ViewProjMatrix = m_Camera.GetViewProjMatrix();
+        XM_Math::Matrix4 Model = XM_Math::Matrix4(XM_Math::EIdentityTag::kIdentity);
+        XM_Math::Matrix4 mat = Model * ViewProjMatrix;
+
         gfxContext.SetDynamicConstantBufferView(0, sizeof(mat), &mat);
 
         gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
