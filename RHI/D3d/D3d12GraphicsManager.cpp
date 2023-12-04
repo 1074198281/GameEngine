@@ -200,11 +200,18 @@ bool My::D3d12GraphicsManager::LoadScene()
                 D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
             }
 
-            //处理每个Primitive的材质对应的PS和VS
-            _object->MaterialResource.PSO = D3dGraphicsCore::g_DefaultPSO;
-            D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, _object->name);
+            //处理每个Primitive的材质对应的PS和VS            
             D3dGraphicsCore::SetPipelineSettings(_object->MaterialResource.PSO
-                , _object->InputLayoutType, _object->PrimitiveType);
+                , _object->InputLayoutType, _object->PrimitiveType, _object->name);
+            if (!FirstHandle.IsNull()) {
+                D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, _object->name);
+            }
+            else {
+                continue;
+            }
+            _object->MaterialResource.PSO.SetRenderTargetFormats(1, 
+                &D3dGraphicsCore::g_DisplayBuffer[D3dGraphicsCore::g_CurrentBuffer].GetFormat(), 
+                DXGI_FORMAT_UNKNOWN);
             _object->MaterialResource.PSO.Finalize();
         }
         else {

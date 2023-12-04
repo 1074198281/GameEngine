@@ -30,6 +30,7 @@ namespace D3dGraphicsCore {
 	public:
 		void setCoreHWND(HWND hwnd, int width, int height);
 		void InitializeGraphicsSettings();
+		void FinalizeGraphicsSettings();
 
 	public:
 		void UpdateStatus();

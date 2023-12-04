@@ -307,14 +307,18 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main.cpp" />
     <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\CubePS.hlsl">
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\CubeVS.hlsl">
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\FabricPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\CubeVS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\FabricVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
@@ -322,17 +326,21 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\cubeTexturePS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCarPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\cubeTextureVS.hlsl">
-    </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4PS.hlsl">
-    </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main4VS.hlsl">
-    </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\mainPS.hlsl">
-    </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\mainVS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCarVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ObjectFileOutput>
     </FXCompile>
   </ItemGroup>
   <ItemGroup>

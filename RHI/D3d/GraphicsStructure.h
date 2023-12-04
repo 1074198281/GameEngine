@@ -35,7 +35,7 @@ namespace D3dGraphicsCore {
 
 	void FinalizePipelineTemplates();
 
-	void SetPipelineSettings(GraphicsPSO& PSO, int InputLayoutType, My::PrimitiveType PrimitiveType);
+	void SetPipelineSettings(GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name);
     
 	//---------------------------------------samplers---------------------------------------//
 	extern D3D12_SAMPLER_DESC g_pointWarp;

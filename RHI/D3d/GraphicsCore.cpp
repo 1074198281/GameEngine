@@ -3,6 +3,8 @@
 #include "MemoryManager.hpp"
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
+#include "XMInput/XMInput.h"
+#include "Core/Common/SystemTime.h"
 #include <array>
 
 
@@ -34,6 +36,8 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     InitializeBaseDescriptorHeap();
     InitializePipelineTemplates();
 
+    SystemTime::Initialize();
+    XM_Input::Initialize();
     InitializeGraphicsSettings();
     
     return 0;
@@ -56,6 +60,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
     FinalizeShaderByteMap();
+
+    XM_Input::Shutdown();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int height)
@@ -71,7 +77,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
 {
     m_Camera.SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
     m_Camera.SetFOV(90.f);
-    m_Camera.SetZRange(1.0f, 1000.0f);
+    m_Camera.SetZRange(0.1f, 1000.0f);
+    m_Camera.SetPosition(XM_Math::Vector3(0, 0, 5));
     m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(m_Camera, XM_Math::Vector3(0.0f, 1.0f, 0.0f));
     
     m_MainViewport.Width = g_DisplayWidth;
@@ -85,6 +92,11 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     m_MainScissor.top = 0;
     m_MainScissor.right = g_DisplayWidth;
     m_MainScissor.bottom = g_DisplayHeight;
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::FinalizeGraphicsSettings()
+{
+    m_CameraController.reset(nullptr);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object)
@@ -122,7 +134,9 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
 {
-    m_CameraController->Update(0.0f);
+    float DeltaTime = GetFrameTime();
+    m_CameraController->Update(DeltaTime);
+    XM_Input::Update(DeltaTime);
     m_Camera.Update();
 }
 
@@ -161,20 +175,22 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
         gfxContext.SetRootSignature(g_TemplateRootSignature);
 
-        gfxContext.SetVertexBuffer(0, (*it)->VertexBuffer.VertexBufferView());
-
-        gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
-
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
         
-        auto ViewProjMatrix = m_Camera.GetViewProjMatrix();
+        XM_Math::Matrix4 ProjMatrix = m_Camera.GetProjMatrix();
+        XM_Math::Matrix4 ViewMatrix = m_Camera.GetViewMatrix();
         XM_Math::Matrix4 Model = XM_Math::Matrix4(XM_Math::EIdentityTag::kIdentity);
-        XM_Math::Matrix4 mat = Model * ViewProjMatrix;
-
-        gfxContext.SetDynamicConstantBufferView(0, sizeof(mat), &mat);
+        XM_Math::Matrix4 mat = ProjMatrix * ViewMatrix * Model;
+        DirectX::XMMATRIX Mat = mat.GetMatrix();
+        DirectX::XMMATRIX transposeMat = DirectX::XMMatrixTranspose(mat.GetMatrix());
+        gfxContext.SetDynamicConstantBufferView(kMeshConstant, sizeof(transposeMat), &transposeMat);
 
         gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
+
+        gfxContext.SetVertexBuffer(0, (*it)->VertexBuffer.VertexBufferView());
+
+        gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
 
         gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, (*it)->InstanceCount, 0, 0, 0);
     }

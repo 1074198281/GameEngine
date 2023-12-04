@@ -93,7 +93,7 @@ void D3dGraphicsCore::CopyDescriptors(const DescriptorHandle& DesHandle, const s
 
 void D3dGraphicsCore::InitializePipelineTemplates()
 {
-	g_TemplateRootSignature.Reset(RootBindings::kNumRootBindings, 0); 	//暂时不使用采样器
+	g_TemplateRootSignature.Reset(RootBindings::kNumRootBindings, 1); 	//暂时不使用采样器
 	g_TemplateRootSignature[kMeshConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature[kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -101,6 +101,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature[kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 10, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kCommonCBV].InitAsConstantBuffer(1);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
+	g_TemplateRootSignature.InitStaticSampler(10, g_anisotropicWarp);
 	g_TemplateRootSignature.Finalize(L"TemplateRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	g_DefaultPSO.SetRootSignature(g_TemplateRootSignature);
@@ -117,8 +118,19 @@ void D3dGraphicsCore::FinalizePipelineTemplates()
 	g_DefaultPSO.DestroyAll();
 }
 
-void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, int InputLayoutType, My::PrimitiveType PrimitiveType)
+void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name)
 {
+	std::wstring wName = Utility::UTF8ToWideString(Name);
+	size_t size = wName.size() + 1;
+	const wchar_t* LName = wName.c_str();
+	wchar_t* newname = new wchar_t[wName.size()];
+	wcscpy(newname, LName);
+	PSO = GraphicsPSO(newname);
+	PSO.SetRootSignature(g_TemplateRootSignature);
+	PSO.SetRasterizerState(RasterizerDefault);
+	PSO.SetBlendState(BlendDisable);
+	PSO.SetDepthStencilState(DepthStateDisabled);
+
 	//PrimitiveType
 	D3D12_PRIMITIVE_TOPOLOGY_TYPE d3dType;
 	switch (PrimitiveType) {

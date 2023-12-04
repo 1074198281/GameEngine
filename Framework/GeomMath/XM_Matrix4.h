@@ -60,6 +60,7 @@ namespace XM_Math {
         inline void SetW(Vector4 w) { m_mat.r[3] = w; }
 
         inline operator DirectX::XMMATRIX() const { return m_mat; }
+        inline DirectX::XMMATRIX GetMatrix() const { return m_mat; }
 
         inline Vector4 operator* (Vector3 vec) const { return Vector4(DirectX::XMVector3Transform(vec, m_mat)); }
         inline Vector4 operator* (Vector4 vec) const { return Vector4(DirectX::XMVector4Transform(vec, m_mat)); }

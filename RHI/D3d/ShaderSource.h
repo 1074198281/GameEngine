@@ -6,11 +6,6 @@
 
 typedef unsigned char BYTE;
 
-#include "../Asset/Shaders/CompiledShaders/g_CubeVS.h"
-#include "../Asset/Shaders/CompiledShaders/g_CubePS.h"
-
-
-
 namespace D3dGraphicsCore {
 	class GraphicsPSO;
 

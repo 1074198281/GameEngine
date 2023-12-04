@@ -25,8 +25,8 @@ XM_Camera::FlyingFPSCamera::FlyingFPSCamera(Camera& camera, Vector3 worldUp) : C
 
     m_HorizontalLookSensitivity = 2.0f;
     m_VerticalLookSensitivity = 2.0f;
-    m_MoveSpeed = 1000.0f;
-    m_StrafeSpeed = 1000.0f;
+    m_MoveSpeed = 100.0f;
+    m_StrafeSpeed = 100.0f;
     m_MouseSensitivityX = 1.0f;
     m_MouseSensitivityY = 1.0f;
 
@@ -53,11 +53,11 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
     //float timeScale = Graphics::DebugZoom == 0 ? 1.0f : Graphics::DebugZoom == 1 ? 0.5f : 0.25f;
     float timeScale = 1.0f;
 
-    //if (XM_Input::IsFirstPressed(XM_Input::kLThumbClick) || XM_Input::IsFirstPressed(XM_Input::kKey_lshift))
-    //    m_FineMovement = !m_FineMovement;
+    if (XM_Input::IsFirstPressed(XM_Input::kLThumbClick) || XM_Input::IsFirstPressed(XM_Input::kKey_lshift))
+        m_FineMovement = !m_FineMovement;
 
-    //if (XM_Input::IsFirstPressed(XM_Input::kRThumbClick))
-    //    m_FineRotation = !m_FineRotation;
+    if (XM_Input::IsFirstPressed(XM_Input::kRThumbClick))
+        m_FineRotation = !m_FineRotation;
 
     float speedScale = (m_FineMovement ? 0.1f : 1.0f) * timeScale;
     float panScale = (m_FineRotation ? 0.5f : 1.0f) * timeScale;
@@ -93,8 +93,11 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
     }
 
     // don't apply momentum to mouse inputs
-    yaw += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseX) * m_MouseSensitivityX;
-    pitch += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseY) * m_MouseSensitivityY;
+    if (XM_Input::IsPressed(XM_Input::kMouse0)) {
+        yaw += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseX) * m_MouseSensitivityX;
+        pitch += XM_Input::GetAnalogInput(XM_Input::kAnalogMouseY) * m_MouseSensitivityY;
+    }
+
 
     m_CurrentPitch += pitch;
     m_CurrentPitch = DirectX::XMMin(DirectX::XM_PIDIV2, m_CurrentPitch);
