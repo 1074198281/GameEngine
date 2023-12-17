@@ -94,6 +94,18 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSouce.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCamera.cpp">
+      <Filter>src\D3dComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCameraController.cpp">
+      <Filter>src\D3dComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMImageLoader\XMWICImageLoader.cpp">
+      <Filter>src\D3dComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMInput\XmInput.cpp">
+      <Filter>src\D3dComponents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\Core\Color.h">
@@ -225,6 +237,18 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\StructureSettings.h">
       <Filter>include\D3dInclude</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCamera.h">
+      <Filter>include\D3dComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCameraController.h">
+      <Filter>include\D3dComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMImageLoader\XMWICImageLoader.h">
+      <Filter>include\D3dComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMInput\XMInput.h">
+      <Filter>include\D3dComponents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\CMakeLists.txt" />
@@ -232,6 +256,9 @@
   <ItemGroup>
     <Filter Include="include">
       <UniqueIdentifier>{6847D71B-A24F-3496-82E7-8BB4B5425D23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\D3dComponents">
+      <UniqueIdentifier>{63DD422B-B2F2-3F73-AEFD-3CFF45E5B09C}</UniqueIdentifier>
     </Filter>
     <Filter Include="include\D3dCoreInclude">
       <UniqueIdentifier>{8E6CF591-4E3A-33C3-BA70-8EDF713814D1}</UniqueIdentifier>
@@ -241,6 +268,9 @@
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{0223CF65-C97C-32F2-A51D-3456975357CC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\D3dComponents">
+      <UniqueIdentifier>{15AD6C3F-8BC8-3EE0-BFA3-13073C116ABA}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\D3dCoreSource">
       <UniqueIdentifier>{99E55590-4D4E-358A-8C34-39188280C646}</UniqueIdentifier>

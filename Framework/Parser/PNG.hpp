@@ -9,6 +9,7 @@
 #include "ImageParser.hpp"
 #include "portable.hpp"
 #include "zlib.h"
+#include "utility.hpp"
 
 namespace My {
 #pragma pack(push, 1)
@@ -95,17 +96,85 @@ namespace My {
         uint8_t  m_BytesPerPixel;
 
     public:
-        virtual Image Parse(const Buffer& buf)
+        virtual Image Parse(Buffer& buf)
         {
             Image img;
+            bool bEnd = false;
 
-            const uint8_t* pData = buf.GetData();
-            const uint8_t* pDataEnd = buf.GetData() + buf.GetDataSize();
+            uint8_t* pData = buf.GetData();
+            uint8_t* pDataEnd = buf.GetData() + buf.GetDataSize();
 
             const PNG_FILEHEADER* pFileHeader = reinterpret_cast<const PNG_FILEHEADER*>(pData);
             pData += sizeof(PNG_FILEHEADER);
             if (pFileHeader->Signature == endian_net_unsigned_int((uint64_t)0x89504E470D0A1A0A)) {
                 std::cout << "Asset is PNG file" << std::endl;
+
+#if USE_DIRECTX_TOOLKIT
+                std::cout << "Using DirectX ToolKit,Only Get Image Size" << std::endl;
+                const PNG_CHUNK_HEADER* pChunkHeader = reinterpret_cast<const PNG_CHUNK_HEADER*>(pData);
+                PNG_CHUNK_TYPE type = static_cast<PNG_CHUNK_TYPE>(endian_net_unsigned_int(static_cast<uint32_t>(pChunkHeader->Type)));
+
+                std::cout << "============================" << std::endl;
+
+                if (type != PNG_CHUNK_TYPE::IHDR) {
+                    std::cout << "PNG File Error Not PNG File!" << std::endl;
+                    assert(false);
+                    return img;
+                }
+
+                std::cout << "IHDR (Image Header)" << std::endl;
+                std::cout << "----------------------------" << std::endl;
+                const PNG_IHDR_HEADER* pIHDRHeader = reinterpret_cast<const PNG_IHDR_HEADER*>(pData);
+                m_Width = endian_net_unsigned_int(pIHDRHeader->Width);
+                m_Height = endian_net_unsigned_int(pIHDRHeader->Height);
+                m_BitDepth = pIHDRHeader->BitDepth;
+                m_ColorType = pIHDRHeader->ColorType;
+                m_CompressionMethod = pIHDRHeader->CompressionMethod;
+                m_FilterMethod = pIHDRHeader->FilterMethod;
+                m_InterlaceMethod = pIHDRHeader->InterlaceMethod;
+
+                switch (m_ColorType)
+                {
+                case 0:  // grayscale
+                    m_BytesPerPixel = (m_BitDepth + 7) >> 3;
+                    break;
+                case 2:  // rgb true color
+                    m_BytesPerPixel = (m_BitDepth * 3) >> 3;
+                    break;
+                case 3:  // indexed
+                    m_BytesPerPixel = (m_BitDepth + 7) >> 3;
+                    break;
+                case 4:  // grayscale with alpha
+                    m_BytesPerPixel = (m_BitDepth * 2) >> 3;
+                    break;
+                case 6:
+                    m_BytesPerPixel = (m_BitDepth * 4) >> 3;
+                    break;
+                default:
+                    std::cout << "Unkown Color Type: " << m_ColorType << std::endl;
+                    assert(0);
+                }
+
+                m_ScanLineSize = m_BytesPerPixel * m_Width;
+
+
+                img.Width = m_Width;
+                img.Height = m_Height;
+                img.bitcount = 32; // currently we fixed at RGBA for rendering
+                img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
+                img.data_size = img.pitch * img.Height;
+                img.data = (R8G8B8A8Unorm*)g_pMemoryManager->Allocate(img.data_size);
+
+                std::cout << "Width: " << m_Width << std::endl;
+                std::cout << "Height: " << m_Height << std::endl;
+                std::cout << "Bit Depth: " << (int)m_BitDepth << std::endl;
+                std::cout << "Color Type: " << (int)m_ColorType << std::endl;
+                std::cout << "Compression Method: " << (int)m_CompressionMethod << std::endl;
+                std::cout << "Filter Method: " << (int)m_FilterMethod << std::endl;
+                std::cout << "Interlace Method: " << (int)m_InterlaceMethod << std::endl;
+
+                return img;
+#endif
 
                 while (pData < pDataEnd)
                 {
@@ -206,9 +275,10 @@ namespace My {
                             break;
                         }
 
-                        const uint8_t* pIn = pData + sizeof(PNG_CHUNK_HEADER);  // point to the start of the input data buffer
+                        uint8_t* pIn = pData + sizeof(PNG_CHUNK_HEADER);  // point to the start of the input data buffer
                         uint8_t* pOut = reinterpret_cast<uint8_t*>(img.data);  // point to the start of the input data buffer
                         uint8_t* pDecompressedBuffer = new uint8_t[kChunkSize];
+                        memset(pDecompressedBuffer, 0, kChunkSize);
                         uint8_t filter_type = 0;
                         int current_row = 0;
                         int current_col = -1;   // -1 means we need read filter type
@@ -217,7 +287,7 @@ namespace My {
                             uint32_t next_in_size = (compressed_data_size > kChunkSize) ? kChunkSize : compressed_data_size;
                             if (next_in_size == 0) break;
                             compressed_data_size -= next_in_size;
-                            strm.next_in = const_cast<Bytef*>(pIn);
+                            strm.next_in = reinterpret_cast<Bytef*>(pIn);
                             strm.avail_in = next_in_size;
                             do {
                                 strm.avail_out = kChunkSize; // 256K
@@ -232,7 +302,7 @@ namespace My {
                                     (void)inflateEnd(&strm);
                                     strm.avail_out = 0;
                                     ret = Z_STREAM_END;
-                                    //assert(0);
+                                    assert(0);
                                     return img;
                                 default:
                                     ;
@@ -324,6 +394,7 @@ namespace My {
                     break;
                     case PNG_CHUNK_TYPE::IEND:
                     {
+                        bEnd = true;
                         std::cout << "IEND (Image Data End)" << std::endl;
                         std::cout << "----------------------------" << std::endl;
                     }
@@ -341,6 +412,7 @@ namespace My {
                 std::cout << "File is not a PNG file!" << std::endl;
             }
 
+            assert(bEnd);
             return img;
         }
     };

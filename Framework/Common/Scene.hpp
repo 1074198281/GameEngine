@@ -11,6 +11,7 @@ namespace My {
         std::shared_ptr<SceneObjectMaterial> m_pDefaultMaterial;
 
     public:
+        std::string m_AssetPath;
         std::shared_ptr<BaseSceneNode> SceneGraph;
 
         std::unordered_multimap<std::string, std::shared_ptr<SceneCameraNode>>       CameraNodes;

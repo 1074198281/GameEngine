@@ -2,7 +2,7 @@
 #include "XM_Functions.h"
 #include "XM_Scalar.h"
 #include "XMCamera.h"
-#include "XMInput/XMInput.h"
+#include "../XMInput/XMInput.h"
 
 using XM_Math::Vector3;
 using XM_Math::Vector4;

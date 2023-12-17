@@ -107,7 +107,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_DefaultPSO.SetRootSignature(g_TemplateRootSignature);
 	g_DefaultPSO.SetRasterizerState(RasterizerDefault);
 	g_DefaultPSO.SetBlendState(BlendDisable);
-	g_DefaultPSO.SetDepthStencilState(DepthStateDisabled);
+	g_DefaultPSO.SetDepthStencilState(DepthStateReadWriteLess);
 	//g_DefaultPSO.SetInputLayout(4, g_PosNorTanTex);
 	//g_DefaultPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 }
@@ -129,7 +129,7 @@ void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, con
 	PSO.SetRootSignature(g_TemplateRootSignature);
 	PSO.SetRasterizerState(RasterizerDefault);
 	PSO.SetBlendState(BlendDisable);
-	PSO.SetDepthStencilState(DepthStateDisabled);
+	PSO.SetDepthStencilState(DepthStateReadWriteLess);
 
 	//PrimitiveType
 	D3D12_PRIMITIVE_TOPOLOGY_TYPE d3dType;

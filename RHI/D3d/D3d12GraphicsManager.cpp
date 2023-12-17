@@ -7,7 +7,9 @@
 #include "StructureSettings.h"
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
+#include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 
+#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
 namespace My {
     extern IApplication* g_pApp;
@@ -44,6 +46,7 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
+
     m_pGraphics->UpdateStatus();
 }
 
@@ -173,8 +176,20 @@ bool My::D3d12GraphicsManager::LoadScene()
                 if (TEST_BIT(type, i)) {
                     auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
                     D3dGraphicsCore::Texture* pTexture = new D3dGraphicsCore::Texture();
+                    std::wstring TexturePath = Utility::UTF8ToWideString(Scene.m_AssetPath + TextureRef->GetName());
                     auto& pImage = TextureRef->GetTextureImage();
+#ifdef USE_DIRECTX_TOOLKIT
+                    uint32_t width = pImage.Width;
+                    uint32_t height = pImage.Height;
+                    uint64_t ImageSize = 0;
+                    void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), width, height, ImageSize);
+                    ASSERT(ImageSize == pImage.data_size, "Image Size ERROR!");
+                    memcpy(pImage.data, pTexData, ImageSize);
                     pTexture->Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data);
+#else
+                    pTexture->Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pImage.data); 
+#endif
+                    pTexture->SetName(Utility::UTF8ToWideString(TextureRef->GetName()));
                     SRVsHandle.push_back(pTexture->GetSRV());
 
                     //DXSampler sampler;
@@ -209,9 +224,9 @@ bool My::D3d12GraphicsManager::LoadScene()
             else {
                 continue;
             }
-            _object->MaterialResource.PSO.SetRenderTargetFormats(1, 
+            _object->MaterialResource.PSO.SetRenderTargetFormats(1,
                 &D3dGraphicsCore::g_DisplayBuffer[D3dGraphicsCore::g_CurrentBuffer].GetFormat(), 
-                DXGI_FORMAT_UNKNOWN);
+                DSV_FORMAT);
             _object->MaterialResource.PSO.Finalize();
         }
         else {

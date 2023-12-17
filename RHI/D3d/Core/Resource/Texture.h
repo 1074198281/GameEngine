@@ -34,6 +34,7 @@ namespace D3dGraphicsCore {
         uint32_t GetHeight() const { return m_Height; }
         uint32_t GetDepth() const { return m_Depth; }
 
+        void SetName(std::wstring name) { m_pResource->SetName(name.c_str()); }
     protected:
 
         uint32_t m_Width;

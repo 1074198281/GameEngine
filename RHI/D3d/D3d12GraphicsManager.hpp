@@ -5,11 +5,11 @@
 #include <unordered_map>
 #include "GraphicsManager.hpp"
 #include "Buffer.hpp"
-#include "Image.hpp"
 #include "SceneObject.hpp"
 #include "SceneNode.hpp"
 #include "StructureSettings.h"
 #include "GraphicsCore.h"
+#include "RenderObject.h"
 
 
 namespace My {

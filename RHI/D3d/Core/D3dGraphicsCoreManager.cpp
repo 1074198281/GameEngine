@@ -9,6 +9,7 @@
 #endif
 
 DXGI_FORMAT SwapChainFormat = DXGI_FORMAT_R10G10B10A2_UNORM;
+#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
 namespace D3dGraphicsCore
 {
@@ -44,6 +45,7 @@ namespace D3dGraphicsCore
     int64_t s_FrameStartTick = 0;
     ColorBuffer g_PreDisplayBuffer;
     ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
+    DepthBuffer g_DepthBuffer(1.0f);
     UINT g_CurrentBuffer = 0;
     IDXGISwapChain1* s_SwapChain1 = nullptr;
     RootSignature s_PresentRS;
@@ -473,6 +475,8 @@ void D3dGraphicsCore::InitializeDisplay(void)
     }
 
     g_PreDisplayBuffer.Create(L"PreDisplay Buffer", g_DisplayWidth, g_DisplayHeight, 1, SwapChainFormat);
+
+    g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
 }
 
 void D3dGraphicsCore::ShutdownDisplay()
@@ -484,6 +488,7 @@ void D3dGraphicsCore::ShutdownDisplay()
         g_DisplayBuffer[i].Destroy();
 
     g_PreDisplayBuffer.Destroy();
+    g_DepthBuffer.Destroy();
 }
 
 void D3dGraphicsCore::Resize(uint32_t width, uint32_t height)

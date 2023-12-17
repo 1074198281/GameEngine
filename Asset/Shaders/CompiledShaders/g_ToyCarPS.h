@@ -7,8 +7,8 @@
 //
 // Name                                 Type  Format         Dim      ID      HLSL Bind  Count
 // ------------------------------ ---------- ------- ----------- ------- -------------- ------
-// MySampler                         sampler      NA          NA      S0             s0      1 
-// MyTexture0                        texture  float4          2d      T0             t0      1 
+// MySampler                         sampler      NA          NA      S0            s10      1 
+// MyTexture0                        texture  float4          2d      T0             t0      5 
 //
 //
 //
@@ -29,21 +29,21 @@
 //
 ps_5_1
 dcl_globalFlags refactoringAllowed
-dcl_sampler S0[0:0], mode_default, space=0
-dcl_resource_texture2d (float,float,float,float) T0[0:0], space=0
+dcl_sampler S0[10:10], mode_default, space=0
+dcl_resource_texture2d (float,float,float,float) T0[0:4], space=0
 dcl_input_ps linear v2.xy
 dcl_output o0.xyzw
-sample o0.xyzw, v2.xyxx, T0[0].xyzw, S0[0]
+sample o0.xyzw, v2.xyxx, T0[0].xyzw, S0[10]
 ret 
 // Approximately 2 instruction slots used
 #endif
 
 const BYTE g_pToyCarPS[] =
 {
-     68,  88,  66,  67, 245,  94, 
-    118, 135,   2, 179,   9, 169, 
-    191,  13, 112, 165, 122,  89, 
-    103,  45,   1,   0,   0,   0, 
+     68,  88,  66,  67, 211,  14, 
+    216, 132, 243, 168,  18,  18, 
+    223,  41, 110, 203, 145, 235, 
+    238, 230,   1,   0,   0,   0, 
     220,   2,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
       8,   1,   0,   0, 124,   1, 
@@ -63,14 +63,14 @@ const BYTE g_pToyCarPS[] =
     140,   0,   0,   0,   3,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
+      0,   0,  10,   0,   0,   0, 
       1,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,   0, 150,   0, 
       0,   0,   2,   0,   0,   0, 
       5,   0,   0,   0,   4,   0, 
       0,   0, 255, 255, 255, 255, 
-      0,   0,   0,   0,   1,   0, 
+      0,   0,   0,   0,   5,   0, 
       0,   0,  12,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,  77, 121,  83,  97, 
@@ -117,12 +117,12 @@ const BYTE g_pToyCarPS[] =
      34,   0,   0,   0, 106,   8, 
       0,   1,  90,   0,   0,   6, 
      70, 110,  48,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,   0,   0, 
+      0,   0,  10,   0,   0,   0, 
+     10,   0,   0,   0,   0,   0, 
       0,   0,  88,  24,   0,   7, 
      70, 126,  48,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
-      0,   0,   0,   0,  85,  85, 
+      4,   0,   0,   0,  85,  85, 
       0,   0,   0,   0,   0,   0, 
      98,  16,   0,   3,  50,  16, 
      16,   0,   2,   0,   0,   0, 
@@ -134,7 +134,7 @@ const BYTE g_pToyCarPS[] =
       0,   0,  70, 126,  32,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   0,   0,  96,  32,   0, 
-      0,   0,   0,   0,   0,   0, 
+      0,   0,   0,   0,  10,   0, 
       0,   0,  62,   0,   0,   1, 
      83,  84,  65,  84, 148,   0, 
       0,   0,   2,   0,   0,   0, 

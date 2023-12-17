@@ -40,15 +40,6 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMCamera\XMCamera.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMCamera\XMCameraController.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMInput\XmInput.cpp">
-      <Filter>Component</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Allocator.hpp">
@@ -138,14 +129,8 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\NC.hpp">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMCamera\XMCamera.h">
-      <Filter>Component</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMCamera\XMCameraController.h">
-      <Filter>Component</Filter>
-    </ClInclude>
-    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component\XMInput\XMInput.h">
-      <Filter>Component</Filter>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\DDS.hpp">
+      <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Functions.h">
       <Filter>Math</Filter>
@@ -177,14 +162,14 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\geommath.hpp">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\half_float.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Component">
-      <UniqueIdentifier>{694EDFF0-E594-3719-83C9-E40B6F8AF0B7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{CF45F0C9-155F-3A63-8671-CE699FDFF24B}</UniqueIdentifier>
     </Filter>

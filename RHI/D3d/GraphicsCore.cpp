@@ -3,8 +3,9 @@
 #include "MemoryManager.hpp"
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
-#include "XMInput/XMInput.h"
+#include "D3dComponents/XMInput/XMInput.h"
 #include "Core/Common/SystemTime.h"
+#include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 #include <array>
 
 
@@ -39,6 +40,7 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     SystemTime::Initialize();
     XM_Input::Initialize();
     InitializeGraphicsSettings();
+    D3dGraphicsCore::WICLoader::InitializeWICLoader();
     
     return 0;
 }
@@ -57,6 +59,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
             itTex->pTexture = nullptr;
         }
     }
+    D3dGraphicsCore::WICLoader::FinalizeWICLoader();
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
     FinalizeShaderByteMap();
@@ -83,8 +86,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     
     m_MainViewport.Width = g_DisplayWidth;
     m_MainViewport.Height = g_DisplayHeight;
-    m_MainViewport.MinDepth = 0.0f;
-    m_MainViewport.MaxDepth = 1.0f;
+    
+    /*
+    * 这里minDepth为1.0，maxDepth为0.0，因为深度测试。
+    */
+    m_MainViewport.MinDepth = 1.0f;
+    m_MainViewport.MaxDepth = 0.0f;
     m_MainViewport.TopLeftX = 0.0f;
     m_MainViewport.TopLeftY = 0.0f;
 
@@ -143,15 +150,16 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
 {
     GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Render");
-
+    
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-
     gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
 
     g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::Color(204.0f / 255.0f, 229.0f / 255.0f, 255.0f / 255.0f));
+    
+    gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV(), g_DepthBuffer.GetDSV());
     gfxContext.ClearColor(g_DisplayBuffer[g_CurrentBuffer]);
-
-    gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
+    gfxContext.ClearDepthAndStencil(g_DepthBuffer);
 
     RenderAllObjects(gfxContext);
 
@@ -172,12 +180,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
             continue;
         }
         SetPrimitiveType(gfxContext, (*it)->PrimitiveType);
-        gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
         gfxContext.SetRootSignature(g_TemplateRootSignature);
 
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
         
+        auto cc = m_Camera.GetClearDepth();
         XM_Math::Matrix4 ProjMatrix = m_Camera.GetProjMatrix();
         XM_Math::Matrix4 ViewMatrix = m_Camera.GetViewMatrix();
         XM_Math::Matrix4 Model = XM_Math::Matrix4(XM_Math::EIdentityTag::kIdentity);
@@ -188,11 +196,13 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
 
         gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
 
+        gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
+
         gfxContext.SetVertexBuffer(0, (*it)->VertexBuffer.VertexBufferView());
 
         gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
 
-        gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, (*it)->InstanceCount, 0, 0, 0);
+        gfxContext.DrawIndexed((*it)->indexCountPerInstance, 0, 0);
     }
 
 }

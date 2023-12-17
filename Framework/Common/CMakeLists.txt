@@ -21,6 +21,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../Parser/JPEG.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../Parser/PNG.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../Parser/TGA.hpp
 ${CMAKE_CURRENT_SOURCE_DIR}/../Parser/NC.hpp
+${CMAKE_CURRENT_SOURCE_DIR}/../Parser/DDS.hpp
 )
 source_group(Parser FILES ${PARSER_HPP})
 

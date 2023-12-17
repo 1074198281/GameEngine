@@ -84,6 +84,7 @@ namespace D3dGraphicsCore
     D3D12_DEPTH_STENCIL_DESC DepthStateReadOnly;
     D3D12_DEPTH_STENCIL_DESC DepthStateReadOnlyReversed;
     D3D12_DEPTH_STENCIL_DESC DepthStateTestEqual;
+    D3D12_DEPTH_STENCIL_DESC DepthStateReadWriteLess;
 
     CommandSignature DispatchIndirectCommandSignature(1);
     CommandSignature DrawIndirectCommandSignature(1);
@@ -228,6 +229,9 @@ void D3dGraphicsCore::InitializeCommonState(void)
 
     DepthStateTestEqual = DepthStateReadOnly;
     DepthStateTestEqual.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL;
+
+    DepthStateReadWriteLess = DepthStateReadWrite;
+    DepthStateReadWriteLess.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
 
     D3D12_BLEND_DESC alphaBlend = {};
     alphaBlend.IndependentBlendEnable = FALSE;

@@ -1414,6 +1414,7 @@ namespace glTF
         {
             std::unique_ptr<My::Scene> pScene(new My::Scene("GLTF Scene"));
             std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") + std::string(buf);
+            pScene->m_AssetPath = gltfpath.substr(0, gltfpath.find_last_of('/') + 1);
             ParseGLTFFile(Utility::UTF8ToWideString(gltfpath));
 
             std::shared_ptr<My::BaseSceneNode> base_node = pScene->SceneGraph;

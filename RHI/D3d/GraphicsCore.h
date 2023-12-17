@@ -14,8 +14,8 @@
 #include "ShaderSource.h"
 #include "RenderObject.h"
 
-#include "../Component/XMCamera/XMCamera.h"
-#include "../Component/XMCamera/XMCameraController.h"
+#include "D3dComponents/XMCamera/XMCamera.h"
+#include "D3dComponents/XMCamera/XMCameraController.h"
 
 
 namespace D3dGraphicsCore {

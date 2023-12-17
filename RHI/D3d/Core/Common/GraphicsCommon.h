@@ -54,6 +54,7 @@ namespace D3dGraphicsCore
     extern D3D12_DEPTH_STENCIL_DESC DepthStateReadOnly;
     extern D3D12_DEPTH_STENCIL_DESC DepthStateReadOnlyReversed;
     extern D3D12_DEPTH_STENCIL_DESC DepthStateTestEqual;
+    extern D3D12_DEPTH_STENCIL_DESC DepthStateReadWriteLess;
 
     extern CommandSignature DispatchIndirectCommandSignature;
     extern CommandSignature DrawIndirectCommandSignature;

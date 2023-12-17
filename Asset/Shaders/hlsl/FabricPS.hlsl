@@ -1,5 +1,5 @@
-Texture2D<float4> MyTexture0 : register(t0);
-SamplerState MySampler : register(s0);
+Texture2D<float4> MyTexture0[3] : register(t0);
+SamplerState MySampler : register(s10);
 
 struct VertexOut
 {
@@ -9,6 +9,6 @@ struct VertexOut
 };
 float4 main(VertexOut pin) : SV_Target
 {
-    float4 result = MyTexture0.Sample(MySampler, pin.Tex);
+    float4 result = MyTexture0[0].Sample(MySampler, pin.Tex);
     return result;
 }

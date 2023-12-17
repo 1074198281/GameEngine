@@ -90,11 +90,11 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -121,13 +121,13 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Release"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -154,13 +154,13 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -188,11 +188,11 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -339,6 +339,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsStructure.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSouce.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCamera.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCameraController.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMImageLoader\XMWICImageLoader.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMInput\XMInput.h" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCamera.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMCamera\XMCameraController.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMImageLoader\XMWICImageLoader.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3dComponents\XMInput\XmInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\ZERO_CHECK.vcxproj">
