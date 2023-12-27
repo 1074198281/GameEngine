@@ -306,41 +306,327 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\main.cpp" />
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\CubePS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\Algorithm\Lighting.hlsl">
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\CubeVS.hlsl">
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\Cube\Cube_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\FabricPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\Cube\Cube_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\FabricVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCar\Fabric_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCarPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCar\Fabric_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
     </FXCompile>
-    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCarVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_p%(Filename)</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ObjectFileOutput>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCar\ToyCar_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ToyCar\ToyCar_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Bishop_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Bishop_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Bishop_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Bishop_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Castle_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Castle_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Castle_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Castle_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Chessboard_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Chessboard_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\King_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\King_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\King_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\King_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Knight_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Knight_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Knight_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Knight_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Body_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Body_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Body_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Body_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Top_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Top_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Top_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Pawn_Top_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Queen_Black_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Queen_Black_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Queen_White_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\ABeautifulGame\Queen_White_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\EnvironmentTest\DielectricSpheresMat_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\EnvironmentTest\DielectricSpheresMat_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\EnvironmentTest\MetallicSpheresMat_PS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\EnvironmentTest\MetallicSpheresMat_VS.hlsl">
+      <EntryPointName>main</EntryPointName>
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>5.1</ShaderModel>
+      <HeaderFileOutput>$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h</HeaderFileOutput>
+      <VariableName>g_p%(Filename)</VariableName>
+      <ObjectFileOutput></ObjectFileOutput>
     </FXCompile>
   </ItemGroup>
   <ItemGroup>

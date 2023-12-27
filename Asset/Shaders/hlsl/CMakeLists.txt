@@ -1,25 +1,7 @@
 #add Shaders source
 
-#MESSAGE("HLSL PROPERTIES CONFIG")
-
-#find_program(HLSL_COMPILER_PATH fxc.exe PATHS "C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64")
-#if(NOT HLSL_COMPILER_PATH)
-#    message(FATAL_ERROR "Could not find HLSL compiler (fxc.exe)")
-#endif()
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_TYPE PixelShader)
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_MODEL 4.0)
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_ENTRYPOINT main)
-
-#编译头文件
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_OUTPUT_HEADER_FILE_DIRECTORY "${PROJECT_SOURCE_DIR}/Asset/Shaders/CompiledShaders")
-
-#不需要二进制文件，直接使用头文件
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_OUTPUT_OBJECT_FILE_DIRECTORY "${PROJECT_SOURCE_DIR}/Asset/Shaders/CompiledShaders")
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_VARIABLE_NAME "g_mainVS")
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_DISABLE_OPTIMIZATIONS ON)
-#set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/mainVS.hlsl PROPERTIES VS_SHADER_ENABLE_DEBUG ON)
-
-
+MESSAGE("HLSL PROPERTIES CONFIG")
+MESSAGE("CMAKE CURRENT DIRECTORY : " ${CMAKE_CURRENT_SOURCE_DIR})
 
 #add extra hlsl project
 cmake_minimum_required(VERSION 3.18)
@@ -28,11 +10,70 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(Shader_Compiler VERSION 1.0 LANGUAGES CXX)
 
-file(GLOB SHADER_COMPILER
-${CMAKE_CURRENT_SOURCE_DIR}/*.hlsl)
+file(GLOB ALGORITHM_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.hlsl)
 
-set(SOURCE_FILE ${SHADER_COMPILER})
+file(GLOB CUBE_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Cube/*.hlsl)
 
-set(MAIN main.cpp)
+file(GLOB TOYCAR_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/ToyCar/*.hlsl)
 
-add_executable(COMPILER ${MAIN} ${SOURCE_FILE})
+file(GLOB ABEAUTIFULGAME_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/ABeautifulGame/*.hlsl)
+
+file(GLOB ENVIRONMENTTEST_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/EnvironmentTest/*.hlsl)
+
+file(GLOB MAIN_FILE
+${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+
+source_group(Algorithm FILES ${ALGORITHM_FILES})
+source_group(Cube FILES ${CUBE_FILES})
+source_group(ToyCar FILES ${TOYCAR_FILES})
+source_group(ABeautifulGame FILES ${ABEAUTIFULGAME_FILES})
+source_group(EnvironmentTest FILES ${ENVIRONMENTTEST_FILES})
+
+
+set(SHADER_FILES 
+${ALGORITHM_FILES}
+${CUBE_FILES}
+${TOYCAR_FILES}
+${ABEAUTIFULGAME_FILES}
+${ENVIRONMENTTEST_FILES}
+)
+
+# 设置 HLSL 文件的属性
+foreach(PER_SHADER_FILE ${SHADER_FILES})
+    get_filename_component(FILE_NAME ${PER_SHADER_FILE} NAME)
+    
+    # 判断文件名是否以 "_VS" 结尾
+    if(FILE_NAME MATCHES "_VS.hlsl$")
+        set_source_files_properties(${PER_SHADER_FILE}
+            PROPERTIES
+            VS_SHADER_ENTRYPOINT "main"
+            VS_SHADER_TYPE "Vertex"
+            VS_SHADER_MODEL "5.1"
+            VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
+            VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
+            VS_SHADER_OBJECT_FILE_NAME ""
+        )
+    # 判断文件名是否以 "_PS" 结尾
+    elseif(FILE_NAME MATCHES "_PS.hlsl$")
+        set_source_files_properties(${PER_SHADER_FILE}
+            PROPERTIES
+            VS_SHADER_ENTRYPOINT "main"
+            VS_SHADER_TYPE "Pixel"
+            VS_SHADER_MODEL "5.1"
+            VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
+            VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
+            VS_SHADER_OBJECT_FILE_NAME ""
+        )
+    endif()
+endforeach()
+
+
+add_executable(COMPILER 
+${MAIN_FILE}
+${SHADER_FILES}
+)
