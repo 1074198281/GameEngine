@@ -1,12 +1,12 @@
 #include "ShaderSource.h"
 #include "Core/Pipeline/PipelineState.h"
 
-#include "../Asset/Shaders/CompiledShaders/g_CubeVS.h"
-#include "../Asset/Shaders/CompiledShaders/g_CubePS.h"
-#include "../Asset/Shaders/CompiledShaders/g_ToyCarVS.h"
-#include "../Asset/Shaders/CompiledShaders/g_ToyCarPS.h"
-#include "../Asset/Shaders/CompiledShaders/g_FabricVS.h"
-#include "../Asset/Shaders/CompiledShaders/g_FabricPS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Cube_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Cube_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_ToyCar_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_ToyCar_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Fabric_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Fabric_PS.h"
 
 
 namespace D3dGraphicsCore {
@@ -41,8 +41,8 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 #endif // TOSTRING
 #define TOSTRING( NAME ) #NAME
 #define GENERATE_SHADER_BYTE_CODE( NAME ) \
-	ShaderByteCode NAME##VS = { g_p##NAME##VS, sizeof(g_p##NAME##VS) }; \
-	ShaderByteCode NAME##PS = { g_p##NAME##PS, sizeof(g_p##NAME##PS) }; \
+	ShaderByteCode NAME##VS = { g_p##NAME##_VS, sizeof(g_p##NAME##_VS) }; \
+	ShaderByteCode NAME##PS = { g_p##NAME##_PS, sizeof(g_p##NAME##_PS) }; \
 	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##VS), NAME##VS)); \
 	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##PS), NAME##PS)); \
 

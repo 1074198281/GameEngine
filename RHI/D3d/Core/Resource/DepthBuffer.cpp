@@ -30,6 +30,8 @@ void D3dGraphicsCore::DepthBuffer::Create(const std::wstring& Name, uint32_t Wid
 
     D3D12_CLEAR_VALUE ClearValue = {};
     ClearValue.Format = Format;
+    ClearValue.DepthStencil.Depth = m_ClearDepth;
+    ClearValue.DepthStencil.Stencil = m_ClearStencil;
     CreateTextureResource(D3dGraphicsCore::g_Device, Name, ResourceDesc, ClearValue, VidMemPtr);
     CreateDerivedViews(D3dGraphicsCore::g_Device, Format);
 }

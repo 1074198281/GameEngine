@@ -20,7 +20,7 @@ namespace D3dGraphicsCore {
         void FinalizeWICLoader();
 
         // Helper function to load a PNG image using WIC and get image data pointer
-        void* LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint64_t& imageSize);
+        void* LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint32_t& pitch, uint64_t& imageSize);
 
         // WIC Factory
         extern Microsoft::WRL::ComPtr<IWICImagingFactory> g_WICFactory;

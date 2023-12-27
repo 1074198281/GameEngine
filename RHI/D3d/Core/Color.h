@@ -143,4 +143,7 @@ namespace D3dColor {
         return a << 24 | b << 16 | g << 8 | r;
     }
 
+    extern Color g_ColorBlack;
+    extern Color g_WhiteBlack;
+
 }

@@ -6,6 +6,7 @@
 #include "D3dComponents/XMInput/XMInput.h"
 #include "Core/Common/SystemTime.h"
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
+#include "ShaderConstants.h"
 #include <array>
 
 
@@ -154,12 +155,13 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
 
-    g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::Color(204.0f / 255.0f, 229.0f / 255.0f, 255.0f / 255.0f));
-    
+    //g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::Color(204.0f / 255.0f, 229.0f / 255.0f, 255.0f / 255.0f));
+    g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::g_ColorBlack);
+
     gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
     gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV(), g_DepthBuffer.GetDSV());
     gfxContext.ClearColor(g_DisplayBuffer[g_CurrentBuffer]);
-    gfxContext.ClearDepthAndStencil(g_DepthBuffer);
+    gfxContext.ClearDepth(g_DepthBuffer);
 
     RenderAllObjects(gfxContext);
 
@@ -184,17 +186,30 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
 
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
-        
-        auto cc = m_Camera.GetClearDepth();
-        XM_Math::Matrix4 ProjMatrix = m_Camera.GetProjMatrix();
-        XM_Math::Matrix4 ViewMatrix = m_Camera.GetViewMatrix();
-        XM_Math::Matrix4 Model = XM_Math::Matrix4(XM_Math::EIdentityTag::kIdentity);
-        XM_Math::Matrix4 mat = ProjMatrix * ViewMatrix * Model;
-        DirectX::XMMATRIX Mat = mat.GetMatrix();
-        DirectX::XMMATRIX transposeMat = DirectX::XMMatrixTranspose(mat.GetMatrix());
-        gfxContext.SetDynamicConstantBufferView(kMeshConstant, sizeof(transposeMat), &transposeMat);
 
-        gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
+        // Material Constants
+        {
+            ConstantMaterial MatCbv;
+            MatCbv.EyePos = XMFLOAT4(m_Camera.GetPosition().GetX(), m_Camera.GetPosition().GetY(), m_Camera.GetPosition().GetZ(), 1.0f);
+            MatCbv.GlobalInfiniteLightPos = XMFLOAT4(0.0f, 10000.0f, -10000.0f, 1.0f);
+            MatCbv.LightNum = 0;
+            gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(ConstantMaterial), &MatCbv);
+        }
+
+        // Material Shader Resource
+        {
+            gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
+        }
+
+        // Common Constant Buffer
+        {
+            ConstantBufferView cbv;
+            cbv.ModelMatrix = DirectX::XMMatrixIdentity();
+            cbv.ViewMatrix = m_Camera.GetViewMatrix();
+            cbv.ProjMatrix = m_Camera.GetProjMatrix();
+
+            gfxContext.SetDynamicConstantBufferView(kCommonCBV, sizeof(ConstantBufferView), &cbv);
+        }
 
         gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
 
@@ -202,7 +217,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
 
         gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
 
-        gfxContext.DrawIndexed((*it)->indexCountPerInstance, 0, 0);
+        gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, 1, 0, 0, 0);
     }
 
 }

@@ -231,6 +231,9 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.h">
       <Filter>include\D3dInclude</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderConstants.h">
+      <Filter>include\D3dInclude</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSource.h">
       <Filter>include\D3dInclude</Filter>
     </ClInclude>

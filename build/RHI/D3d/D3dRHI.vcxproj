@@ -332,6 +332,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsStructure.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\RenderObject.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderConstants.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\ShaderSource.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\StructureSettings.h" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\D3d12GraphicsManager.cpp" />

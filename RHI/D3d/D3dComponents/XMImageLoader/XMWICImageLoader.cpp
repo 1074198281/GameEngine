@@ -47,7 +47,7 @@ void D3dGraphicsCore::WICLoader::FinalizeWICLoader()
 }
 
 
-void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint64_t& imageSize)
+void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint32_t& pitch, uint64_t& imageSize)
 {
     using namespace Microsoft::WRL;
     HRESULT hr;
@@ -87,6 +87,7 @@ void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath
 
     // Calculate buffer size
     UINT stride = width * 4; // Assuming 32bpp
+    pitch = stride;
     uint64_t bufferSize = (uint64_t)stride * (uint64_t)height;
     imageSize = bufferSize;
 
@@ -100,7 +101,7 @@ void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath
     hr = g_FormatConverter->CopyPixels(nullptr, stride, bufferSize, static_cast<BYTE*>(imageDataBuffer));
     if (FAILED(hr)) {
         free(imageDataBuffer);
-        ASSERT(false, "Copy Pixel to Buffer Failed ERROR!");
+        ASSERT(false, "Copy Pixels to Buffer Failed ERROR!");
         return nullptr;
     }
 

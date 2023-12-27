@@ -28,6 +28,7 @@ namespace D3dGraphicsCore {
 	typedef struct TextureResource {
 		Texture* pTexture;
 		DescriptorHandle Handle;
+		void* pImageData;
 	} TextureResource;
 
 	typedef struct MaterialResource {
@@ -37,6 +38,12 @@ namespace D3dGraphicsCore {
 		int DescriptorHeapIndex;
 		GraphicsPSO PSO;
 	} MaterialResource;
+
+	typedef struct LightResource {
+		XMFLOAT4 LightColor;
+	} LightResource;
+
+
 
 	class PrimitiveObject
 	{
@@ -54,6 +61,7 @@ namespace D3dGraphicsCore {
 		bool alphamode;
 
 		// TextureResources
+		std::string MaterialName;
 		MaterialResource MaterialResource;
 
 		//GraphicsPSO

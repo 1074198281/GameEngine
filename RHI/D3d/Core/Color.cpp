@@ -17,6 +17,11 @@
 
 using DirectX::XMVECTORU32;
 
+namespace D3dColor {
+    Color g_ColorBlack(0.0f, 0.0f, 0.0f, 1.0f);
+    Color g_WhiteBlack(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 uint32_t D3dColor::Color::R11G11B10F(bool RoundToEven) const
 {
 #if 1
