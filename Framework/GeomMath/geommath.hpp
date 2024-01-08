@@ -647,4 +647,45 @@ namespace My {
 
         return result;
     }
+
+
+
+    inline Matrix4X4f BuildScaleMatrix(float x, float y, float z, float w)
+    {
+        Matrix4X4f trans;
+        float v[16] = {
+            x, 0.0f, 0.0f, 0.0f,
+            0.0f, y, 0.0f, 0.0f,
+            0.0f, 0.0f, z, 0.0f,
+            0.0f, 0.0f, 0.0f, w 
+        };
+        trans = v;
+        return trans;
+    }
+
+    inline Matrix4X4f BuildRotationMatrix(float x, float y, float z, float w)
+    {
+        Matrix4X4f trans;
+        float v[16] = {
+            1 - 2 * y * y - 2 * z * z, 2 * x * y + 2 * w * z, 2 * x * z - 2 * w * y, 0.0f,
+            2 * x * y - 2 * w * z, 1 - 2 * x * x - 2 * z * z, 2 * y * z + 2 * w * x, 0.0f,
+            2 * x * z + 2 * w * y, 2 * y * z - 2 * w * x, 1 - 2 * x * x - 2 * y * y, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+        trans = v;
+        return trans;
+    }
+
+    inline Matrix4X4f BuildTranslationMatrix(float x, float y, float z, float w)
+    {
+        Matrix4X4f trans;
+        float v[16] = {
+            1.0f, 0.0f, 0.0f, x,
+            0.0f, 1.0f, 0.0f, y,
+            0.0f, 0.0f, 1.0f, z,
+            0.0f, 0.0f, 0.0f, 1.0f
+        };
+        trans = v;
+        return trans;
+    }
 }

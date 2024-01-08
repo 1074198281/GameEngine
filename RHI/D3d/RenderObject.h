@@ -59,6 +59,7 @@ namespace D3dGraphicsCore {
 		UINT indexCountPerInstance;
 		UINT InstanceCount;
 		bool alphamode;
+		DirectX::XMFLOAT4X4* transform;
 
 		// TextureResources
 		std::string MaterialName;

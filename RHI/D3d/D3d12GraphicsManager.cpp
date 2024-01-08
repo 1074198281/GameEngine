@@ -241,6 +241,11 @@ bool My::D3d12GraphicsManager::LoadScene()
                 //没有材质，可能是透明的，参考alphamode的值
             }
 
+            //transform
+            auto mat = GeometryNode->GetCalculatedTransform();
+            _object->transform = new DirectX::XMFLOAT4X4();
+            memcpy(_object->transform, &*mat, 16 * sizeof(float));
+
             m_pGraphics->AddPrimitiveObject(std::move(_object));
         }
     }

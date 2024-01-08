@@ -22,6 +22,7 @@
 #include "SceneObject.hpp"
 #include "Scene.hpp"
 #include "utility.hpp"
+#include "geommath.hpp"
 
 #include <string>
 #include <vector>
@@ -218,6 +219,7 @@ namespace glTF
             };
         };
         int32_t linearIdx; // Assists with mapping scene nodes to flat arrays
+        int32_t ParentIdx;
     };
 
     struct Skin
@@ -449,7 +451,7 @@ namespace glTF
     class GLTFParser : __implements My::SceneParser
     {
     public:
-        GLTFParser() : m_scene(nullptr), m_ChildNodeTag(-1) {}
+        GLTFParser() : m_scene(nullptr) {}
         ~GLTFParser() { m_meshes.clear(); }
 
         Scene* m_scene;
@@ -467,9 +469,6 @@ namespace glTF
         std::vector<ByteArray> m_buffers;
         std::vector<BufferView> m_bufferViews;
         std::vector<Animation> m_animations;
-
-        //assistant function
-        int m_ChildNodeTag;
 
     private:
         void ProcessBuffers(json& buffers, ByteArray chunk1bin)
@@ -839,6 +838,7 @@ namespace glTF
                 node.flags = 0;
                 node.mesh = nullptr;
                 node.linearIdx = -1;
+                node.ParentIdx = -1;
 
                 if (thisNode.find("camera") != thisNode.end()) {
                     node.name = thisNode.at("name");
@@ -865,8 +865,8 @@ namespace glTF
                     json& children = thisNode["children"];
                     node.children.reserve(children.size());
                     for (auto& child : children) {
+                        m_nodes[child].ParentIdx = nodeIdx - 1;
                         node.children.push_back(&m_nodes[child]);
-                        m_ChildNodeTag += child;
                     }
                         
                 }
@@ -1183,7 +1183,7 @@ namespace glTF
                 m_scene = &m_scenes[root.at("scene")];
         }
 
-        void GenerateMesh(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, glTF::Node* pCurrNode)
+        std::shared_ptr<My::BaseSceneNode> ProcessNodeMesh(My::Scene& Scene, glTF::Node* pCurrNode)
         {
             std::shared_ptr<My::SceneGeometryNode> GeoNode;
             std::shared_ptr<My::SceneObjectGeometry> GeoObject;
@@ -1360,54 +1360,70 @@ namespace glTF
                 Scene.Materials[meshIt->material->name] = GeoMaterial;
             }
 
+            //Transform
+            if (pCurrNode->hasMatrix) {
+                My::Matrix4X4f mat;
+                memcpy(mat, pCurrNode->matrix, 16 * sizeof(float));
+                std::shared_ptr<My::SceneObjectTransform> trans;
+                trans = std::make_shared<My::SceneObjectTransform>(mat);
+                GeoNode->AppendChild(std::move(trans));
+            }
+            else {
+                My::Matrix4X4f mat;
+                std::shared_ptr<My::SceneObjectTransform> trans;
+                My::Matrix4X4f scale;
+                if (pCurrNode->scale[0] < 0.01 && pCurrNode->scale[1] < 0.01 && pCurrNode->scale[2] < 0.01) {
+                    scale = My::BuildScaleMatrix(1.0f, 1.0f, 1.0f, 1.0f);
+                }
+                else {
+                    scale = My::BuildScaleMatrix(pCurrNode->scale[0], pCurrNode->scale[1], pCurrNode->scale[2], 1.0f);
+                }
+                auto rotation = My::BuildRotationMatrix(pCurrNode->rotation[0], pCurrNode->rotation[1], pCurrNode->rotation[2], pCurrNode->rotation[3]);
+                auto translation = My::BuildTranslationMatrix(pCurrNode->translation[0], pCurrNode->translation[1], pCurrNode->translation[2], 1.0f);
+                mat = translation * rotation * scale;
+                trans = std::make_shared<My::SceneObjectTransform>(mat);
+                GeoNode->AppendChild(std::move(trans));
+            }
+
+
             GeoNode->AddSceneObjectRef(mesh->name);
             Scene.LUT_Name_GeometryNode.emplace(mesh->name, GeoNode);
             Scene.GeometryNodes.emplace(pCurrNode->name, GeoNode);
             Scene.Geometries[mesh->name] = GeoObject;
 
-
-            node->AppendChild(GeoNode);
+            return GeoNode;
         }
 
-        void GenerateNode(std::shared_ptr<My::BaseSceneNode> node, My::Scene& Scene, glTF::Node* pNode)
+        void ProcessCurrentNode(std::shared_ptr<My::BaseSceneNode>& node, My::Scene& Scene, glTF::Node* pNode)
         {
-            if (pNode) {
-                std::shared_ptr<My::BaseSceneNode> StructureNode;
-                StructureNode = std::make_shared<My::SceneEmptyNode>("LinkNode");
+            std::shared_ptr<My::BaseSceneNode> newNode;
+            if (pNode->pointsToCamera) {
+                // TODO: Multi Camera Support
+                newNode = std::make_shared<My::SceneCameraNode>(pNode->name);
+            }
+            else {
+                newNode = ProcessNodeMesh(Scene, pNode);
+            }
 
-                size_t childNodeCount = pNode->children.size();
-                for (auto nodeIt = pNode->children.begin(); nodeIt != pNode->children.end(); nodeIt++) {
-                    std::shared_ptr<My::BaseSceneNode> NextStructureNode;
-                    if ((*nodeIt)->pointsToCamera) {
-                        // TODO: Process Camera Node
-                        NextStructureNode = std::make_shared<My::SceneEmptyNode>("CameraNode");
-                    }
-                    if ((*nodeIt)->mesh) {
-                        NextStructureNode = std::make_shared<My::SceneEmptyNode>("MeshNode");
-                        GenerateMesh(NextStructureNode, Scene, *nodeIt);
-                    }
-                    if ((*nodeIt)->children.size() > 0) {
-                        GenerateNode(NextStructureNode, Scene, *nodeIt);
-                    }
-
-                    StructureNode->AppendChild(std::move(NextStructureNode));
-                }
-                node->AppendChild(std::move(StructureNode));
-            } else {
-                for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
-                    std::shared_ptr<My::BaseSceneNode> StructureNode;
-                    StructureNode = std::make_shared<My::SceneEmptyNode>(nodeIt->name);
-
-                    if (nodeIt->pointsToCamera) {
-                        //camera
-                    }
-                    else {
-                        GenerateMesh(StructureNode, Scene, &*nodeIt);
-                    }
-
-                    node->AppendChild(std::move(StructureNode));
+            if (pNode->children.size()) {
+                for (auto child : pNode->children) {
+                    ProcessCurrentNode(newNode, Scene, child);
                 }
             }
+
+            node->AppendChild(std::move(newNode));
+        }
+
+        void ProcessRootParentNode(std::shared_ptr<My::BaseSceneNode>& node, My::Scene& Scene, glTF::Node* pNode)
+        {
+            ASSERT(!pNode->camera && !pNode->mesh && pNode->children.size());
+
+            std::shared_ptr<My::BaseSceneNode> pRootNode = std::make_shared<My::BaseSceneNode>(pNode->name);
+
+            for (auto childIt = pNode->children.begin(); childIt != pNode->children.end(); childIt++) {
+                ProcessCurrentNode(pRootNode, Scene, *childIt);
+            }
+            node->AppendChild(std::move(pRootNode));
         }
 
         virtual std::unique_ptr<My::Scene> Parse(const std::string& buf, std::string RootNodeName)
@@ -1423,14 +1439,23 @@ namespace glTF
 
             std::shared_ptr<My::BaseSceneNode> StructureNode;
             StructureNode = std::make_shared<My::SceneEmptyNode>(RootNodeName);
-            if (m_ChildNodeTag < 0) {
-                // all other nodes belong to the root node
-                GenerateNode(StructureNode, *pScene, nullptr);
-            }
-            else {
-                int RootNodeIndex = m_nodes.size() * (m_nodes.size() - 1) / 2 - (m_ChildNodeTag + 1);
-                // root node exists, some nodes belong to some "LinkNode" 
-                GenerateNode(StructureNode, *pScene, &m_nodes[RootNodeIndex]);
+            
+            for (auto nodeIt = m_nodes.begin(); nodeIt != m_nodes.end(); nodeIt++) {
+                if (nodeIt->ParentIdx >= 0) {
+                    //子节点由顶层父节点递归更新值
+                    continue;
+                }
+                if (!nodeIt->mesh && !nodeIt->camera) {
+                    if (!nodeIt->children.size()) {
+                        std::cout << "Blank Node, Nothing In It! ERROR!" << "Node Name: " << nodeIt->name << std::endl;
+                        //__debugbreak();
+                        continue;
+                    }
+                    ProcessRootParentNode(StructureNode, *pScene, &*nodeIt);
+                    continue;
+                }
+
+                ProcessCurrentNode(StructureNode, *pScene, &*nodeIt);
             }
 
             base_node->AppendChild(std::move(StructureNode));

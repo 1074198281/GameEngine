@@ -204,7 +204,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         // Common Constant Buffer
         {
             ConstantBufferView cbv;
-            cbv.ModelMatrix = DirectX::XMMatrixIdentity();
+            cbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
+            //cbv.ModelMatrix = XMMatrixIdentity();
             cbv.ViewMatrix = m_Camera.GetViewMatrix();
             cbv.ProjMatrix = m_Camera.GetProjMatrix();
 
