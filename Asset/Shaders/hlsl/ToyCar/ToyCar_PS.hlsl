@@ -26,10 +26,6 @@ struct VertexOut
     float2 Tex : TEXCOORD;
 };
 
-#ifdef LAMBERT
-
-// 有很明显的各向同性
-
 float4 main(VertexOut pin) : SV_Target
 {
     float LumenIns = 1.0f;
@@ -39,25 +35,6 @@ float4 main(VertexOut pin) : SV_Target
     float3 LightDir = normalize((gGlobalInfiniteLightPos - WorldPos).xyz);
     
     float3 NormalDir = normalize(mul(float4(pin.Normal, 0.0f), transpose(gModelMatrix)).xyz);
-    
-    float3 diffuseReflection = LumenIns * LightColor.xyz * max(0.0f, dot(LightDir, NormalDir));
-    
-    return float4(diffuseReflection, 1.0f);
+
+    return LambertLighting(LumenIns, LightColor, LightDir, NormalDir);
 }
-
-#else
-
-struct VertexOut
-{
-    float4 PosH : SV_POSITION;
-    float3 Normal : NORMAL;
-    float2 Tex : TEXCOORD;
-};
-
-float4 main(VertexOut pin) : SV_Target
-{
-    float4 result = tex0[0].Sample(sam, pin.Tex);
-    return result;
-}
-
-#endif
