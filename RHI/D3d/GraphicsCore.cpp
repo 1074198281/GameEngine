@@ -100,6 +100,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     m_MainScissor.top = 0;
     m_MainScissor.right = g_DisplayWidth;
     m_MainScissor.bottom = g_DisplayHeight;
+
+    m_GlobalLightPosition = XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::FinalizeGraphicsSettings()
@@ -132,6 +134,13 @@ void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& contex
     }
 
     context.SetPrimitiveTopology(d3dType);
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateGlobalLightPosition(XMFLOAT4 pos)
+{
+    m_GlobalLightPosition.x += pos.x;
+    m_GlobalLightPosition.y += pos.y;
+    m_GlobalLightPosition.z += pos.z;
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
@@ -191,7 +200,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         {
             ConstantMaterial MatCbv;
             MatCbv.EyePos = XMFLOAT4(m_Camera.GetPosition().GetX(), m_Camera.GetPosition().GetY(), m_Camera.GetPosition().GetZ(), 1.0f);
-            MatCbv.GlobalInfiniteLightPos = XMFLOAT4(0.0f, 10000.0f, -10000.0f, 1.0f);
+            MatCbv.GlobalInfiniteLightPos = m_GlobalLightPosition;
             MatCbv.LightNum = 0;
             gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(ConstantMaterial), &MatCbv);
         }

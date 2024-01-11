@@ -267,24 +267,24 @@ bool My::D3d12GraphicsManager::LoadScene()
     return true;
 }
 
-void My::D3d12GraphicsManager::MoveCameraXPositive()
+void My::D3d12GraphicsManager::UpArrowKeyDown()
 {
-
+    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
 }
 
-void My::D3d12GraphicsManager::MoveCameraXNegative()
+void My::D3d12GraphicsManager::DownArrowKeyDown()
 {
-
+    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f)));
 }
 
-void My::D3d12GraphicsManager::MoveCameraYPositive()
+void My::D3d12GraphicsManager::LeftArrowKeyDown()
 {
-
+    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
 }
 
-void My::D3d12GraphicsManager::MoveCameraYNegative()
+void My::D3d12GraphicsManager::RightArrowKeyDown()
 {
-
+    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
 }
 
 bool My::D3d12GraphicsManager::GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name)

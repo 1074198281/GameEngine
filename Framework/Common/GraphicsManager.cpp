@@ -26,18 +26,18 @@ void GraphicsManager::Draw()
 {
 }
 
-void GraphicsManager::MoveCameraXPositive()
+void GraphicsManager::UpArrowKeyDown()
 {
 }
 
-void GraphicsManager::MoveCameraXNegative()
+void GraphicsManager::DownArrowKeyDown()
 {
 }
 
-void GraphicsManager::MoveCameraYPositive()
+void GraphicsManager::LeftArrowKeyDown()
 {
 }
 
-void GraphicsManager::MoveCameraYNegative()
+void GraphicsManager::RightArrowKeyDown()
 {
 }

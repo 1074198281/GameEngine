@@ -19,7 +19,7 @@ namespace My {
 
 	void InputManager::UpArrowKeyDown()
 	{
-		g_pGraphicsManager->MoveCameraYPositive();
+		g_pGraphicsManager->UpArrowKeyDown();
 	}
 
 	void InputManager::UpArrowKeyUp()
@@ -29,7 +29,7 @@ namespace My {
 
 	void InputManager::DownArrowKeyDown()
 	{
-		g_pGraphicsManager->MoveCameraYNegative();
+		g_pGraphicsManager->DownArrowKeyDown();
 	}
 
 	void InputManager::DownArrowKeyUp()
@@ -39,7 +39,7 @@ namespace My {
 
 	void InputManager::LeftArrowKeyDown()
 	{
-		g_pGraphicsManager->MoveCameraXNegative();
+		g_pGraphicsManager->LeftArrowKeyDown();
 	}
 
 	void InputManager::LeftArrowKeyUp()
@@ -49,7 +49,7 @@ namespace My {
 
 	void InputManager::RightArrowKeyDown()
 	{
-		g_pGraphicsManager->MoveCameraXPositive();
+		g_pGraphicsManager->RightArrowKeyDown();
 	}
 
 	void InputManager::RightArrowKeyUp()

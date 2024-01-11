@@ -33,6 +33,7 @@ namespace D3dGraphicsCore {
 		void FinalizeGraphicsSettings();
 
 	public:
+		void UpdateGlobalLightPosition(XMFLOAT4 pos);
 		void UpdateStatus();
 		void UpdateCamera();
 		void UpdateRenderingQueue();
@@ -49,6 +50,8 @@ namespace D3dGraphicsCore {
 		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
+
+		XMFLOAT4 m_GlobalLightPosition;
 	};
 
 }

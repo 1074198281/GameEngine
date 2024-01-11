@@ -24,10 +24,10 @@ namespace My {
         virtual void Clear();
         virtual void Draw();
 
-        virtual void MoveCameraXPositive();
-        virtual void MoveCameraXNegative();
-        virtual void MoveCameraYPositive();
-        virtual void MoveCameraYNegative();
+        virtual void UpArrowKeyDown();
+        virtual void DownArrowKeyDown();
+        virtual void LeftArrowKeyDown();
+        virtual void RightArrowKeyDown();
     public:
 
 
