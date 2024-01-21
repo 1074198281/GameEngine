@@ -28,6 +28,8 @@ namespace My {
         virtual void DownArrowKeyDown();
         virtual void LeftArrowKeyDown();
         virtual void RightArrowKeyDown();
+        virtual void NumPadKeyDown(int64_t key);
+        virtual void NumPadKeyUp(int64_t key);
     public:
 
 

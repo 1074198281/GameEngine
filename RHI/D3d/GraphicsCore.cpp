@@ -80,7 +80,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int he
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
 {
     m_Camera.SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
-    m_Camera.SetFOV(90.f);
+    m_Camera.SetFOV(120.f);
     m_Camera.SetZRange(0.1f, 1000.0f);
     m_Camera.SetPosition(XM_Math::Vector3(0, 0, 5));
     m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(m_Camera, XM_Math::Vector3(0.0f, 1.0f, 0.0f));
@@ -200,8 +200,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         {
             ConstantMaterial MatCbv;
             MatCbv.EyePos = XMFLOAT4(m_Camera.GetPosition().GetX(), m_Camera.GetPosition().GetY(), m_Camera.GetPosition().GetZ(), 1.0f);
-            MatCbv.GlobalInfiniteLightPos = m_GlobalLightPosition;
-            MatCbv.LightNum = 0;
+            MatCbv.LightNum = 1;
+            MatCbv.LightPosition[0] = m_GlobalLightPosition;
             gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(ConstantMaterial), &MatCbv);
         }
 

@@ -130,6 +130,18 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         case VK_DOWN:
             g_pInputManager->DownArrowKeyDown();
             break;
+        case VK_NUMPAD0:
+        case VK_NUMPAD1:
+        case VK_NUMPAD2:
+        case VK_NUMPAD3:
+        case VK_NUMPAD4:
+        case VK_NUMPAD5:
+        case VK_NUMPAD6:
+        case VK_NUMPAD7:
+        case VK_NUMPAD8:
+        case VK_NUMPAD9:
+            g_pInputManager->NumPadKeyDown(wParam);
+            break;
 #endif
         case VK_ESCAPE:
             m_bQuit = true;

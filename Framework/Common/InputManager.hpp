@@ -19,6 +19,8 @@ namespace My {
         void LeftArrowKeyUp();
         void RightArrowKeyDown();
         void RightArrowKeyUp();
+        void NumPadKeyDown(long long key);
+        void NumPadKeyUp(long long key);
     };
     extern InputManager* g_pInputManager;
 }

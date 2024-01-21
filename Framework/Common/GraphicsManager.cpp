@@ -41,3 +41,11 @@ void GraphicsManager::LeftArrowKeyDown()
 void GraphicsManager::RightArrowKeyDown()
 {
 }
+
+void GraphicsManager::NumPadKeyDown(int64_t key)
+{
+}
+
+void GraphicsManager::NumPadKeyUp(int64_t key)
+{
+}

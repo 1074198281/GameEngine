@@ -56,4 +56,14 @@ namespace My {
 	{
 
 	}
+
+	void InputManager::NumPadKeyDown(long long key)
+	{
+		g_pGraphicsManager->NumPadKeyDown(key);
+	}
+
+	void InputManager::NumPadKeyUp(long long key)
+	{
+		g_pGraphicsManager->NumPadKeyUp(key);
+	}
 }

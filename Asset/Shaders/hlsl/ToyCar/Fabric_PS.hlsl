@@ -6,9 +6,8 @@ SamplerState sam : register(s10);
 cbuffer cbMaterialConstants : register(b0)
 {
     float4 gEyePos;
-    float4 gGlobalInfiniteLightPos;
-    int gLightNum;
     float4 gLightDir[MAX_LIGHT_NUM];
+    int gLightNum;
 };
 
 cbuffer cbCommon : register(b1)
@@ -28,13 +27,29 @@ struct VertexOut
 
 float4 main(VertexOut pin) : SV_Target
 {
-    float LumenIns = 1.0f;
-    float4 LightColor = tex0[0].Sample(sam, pin.Tex);
+    float LumenIns = 1.0;
+    float4 LightColor = float4(1.0, 1.0, 1.0, 1.0);
     
     float4 WorldPos = pin.PosL.xyzw / pin.PosL.w;
-    float3 LightDir = normalize((gGlobalInfiniteLightPos - WorldPos).xyz);
+    float3 defaultLightPos = gLightDir[0].xyz;
+    float3 LightDir = normalize((defaultLightPos - WorldPos.xyz));
     
     float3 NormalDir = normalize(mul(float4(pin.Normal, 0.0f), transpose(gModelMatrix)).xyz);
     
+#ifdef LAMBERT
     return LambertLighting(LumenIns, LightColor, LightDir, NormalDir);
+#endif
+#ifdef PBR
+    MaterialProperties mat;
+    mat.Albedo = pow(abs(tex0[0].Sample(sam, pin.Tex).rgb), 2.2);
+    mat.metallic = tex0[1].Sample(sam, pin.Tex).b;
+    mat.roughness = tex0[1].Sample(sam, pin.Tex).g;
+    mat.AO = tex0[1].Sample(sam, pin.Tex).r;
+    InputLayout input;
+    input.CameraPos = gEyePos.xyz;
+    input.WorldPos = WorldPos.xyz;
+    input.Normal = NormalDir;
+    input.TexCoord = pin.Tex;
+    return PBROutput(input, mat, gLightDir, gLightNum);
+#endif
 }
