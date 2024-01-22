@@ -41,10 +41,14 @@ namespace D3dGraphicsCore {
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
 	private:
+		void LoadIBLTextures();
+		void LoadIBLDDSImage(std::string ImagePath, std::string suffix);
+
 		void RenderAllObjects(GraphicsContext& gfxContext);
 	private:
 		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
 
+		std::unique_ptr<IBLImageResource> m_IBLResource;
 	private:
 		XM_Camera::Camera m_Camera;
 		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;

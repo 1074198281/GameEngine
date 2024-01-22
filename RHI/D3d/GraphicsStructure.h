@@ -21,11 +21,13 @@ namespace D3dGraphicsCore {
 	extern unsigned int g_FreeDescriptorsInCurrentHeap;
 	const unsigned int g_DescriptorCountPerHeap = 1024;
 	const D3D12_DESCRIPTOR_HEAP_TYPE g_DescriptorsType = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	extern UINT64 g_DescriptorSize;
 	void InitializeBaseDescriptorHeap();
 	void FinalizeBaseDescriptorHeap();
 	DescriptorHandle AllocateFromDescriptorHeap(int Count, int& iCurrentHeapIndex);
 	void ReleaseHeapByIndex(int HeapIndex);
 	void CopyDescriptors(const DescriptorHandle& DesHandle, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& SrcHandle, const UINT DescriptorsCount);
+	void OffsetDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE& handle, int offset = 1);
 
 	//---------------------------------------pipeline---------------------------------------//
 	extern RootSignature g_TemplateRootSignature;

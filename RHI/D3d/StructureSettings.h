@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Resource/Texture.h"
 #include <vector>
 #include <math.h>
 #include <unordered_map>
@@ -46,7 +47,16 @@ namespace D3dGraphicsCore {
 		D3D12_TEXTURE_ADDRESS_MODE wrapT;
 	} DXSampler;
 
+	typedef struct IBLImageMap
+	{
+		Texture* pSpecular = nullptr;
+		Texture* pDiffuse = nullptr;
+	} IBLImageMap;
 
-
-
+	typedef struct IBLImageResource
+	{
+		int IBLImageCount = 0;
+		int HeapIndex = -1;
+		std::unordered_map<std::string, std::unique_ptr<IBLImageMap> > IBLImages;
+	} IBLImageResource;
 }

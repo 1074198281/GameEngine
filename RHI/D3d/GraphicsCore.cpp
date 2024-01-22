@@ -43,6 +43,8 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     InitializeGraphicsSettings();
     D3dGraphicsCore::WICLoader::InitializeWICLoader();
     
+    LoadIBLTextures();
+
     return 0;
 }
 

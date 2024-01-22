@@ -12,6 +12,7 @@ namespace D3dGraphicsCore {
 	std::unordered_map<unsigned int, std::unique_ptr<DescriptorHeap>> g_DescriptorHeaps;
 	unsigned int g_CurrentHeapIndex = 0;
 	unsigned int g_FreeDescriptorsInCurrentHeap = g_DescriptorCountPerHeap;
+	UINT64 g_DescriptorSize = 0;
 
 	RootSignature g_TemplateRootSignature;
     GraphicsPSO g_DefaultPSO(L"Default PSO");
@@ -37,6 +38,7 @@ void D3dGraphicsCore::InitializeBaseDescriptorHeap()
 	g_BaseDescriptorHeap = newHeap.get();
 	g_DescriptorHeaps.emplace(g_CurrentHeapIndex, std::move(newHeap));
 	g_FreeDescriptorsInCurrentHeap = g_DescriptorCountPerHeap;
+	g_DescriptorSize = g_Device->GetDescriptorHandleIncrementSize(g_DescriptorsType);
 }
 
 void D3dGraphicsCore::FinalizeBaseDescriptorHeap()
@@ -89,6 +91,11 @@ void D3dGraphicsCore::CopyDescriptors(const DescriptorHandle& DesHandle, const s
 
 	g_Device->CopyDescriptors(1, &DesHandle, &DescriptorsCount,
 		DescriptorsCount, SrcHandle.data(), SourceCounts.data(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void D3dGraphicsCore::OffsetDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE& handle, int offset)
+{
+	handle.ptr += offset * g_DescriptorSize;
 }
 
 void D3dGraphicsCore::InitializePipelineTemplates()

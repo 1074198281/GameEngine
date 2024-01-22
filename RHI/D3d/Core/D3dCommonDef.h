@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utility.h"
 #include "d3dx12.h"
 #include <dxgi.h>
 #include <dxgi1_4.h>
@@ -42,7 +43,7 @@ public:
 #define ThrowIfFailed(x)                                              \
 {                                                                     \
     HRESULT hr__ = (x);                                               \
-    std::wstring wfn = UTF8ToWideString(__FILE__);           \
+    std::wstring wfn = Utility::UTF8ToWideString(__FILE__);           \
     if(FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); } \
 }
 #endif
