@@ -25,6 +25,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/ABeautifulGame/*.hlsl)
 file(GLOB ENVIRONMENTTEST_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/EnvironmentTest/*.hlsl)
 
+file(GLOB SKYBOX_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/SkyBox/*.hlsl)
+
+file(GLOB PRESENT_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Present/*.hlsl)
+
 file(GLOB MAIN_FILE
 ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
@@ -33,7 +39,8 @@ source_group(Cube FILES ${CUBE_FILES})
 source_group(ToyCar FILES ${TOYCAR_FILES})
 source_group(ABeautifulGame FILES ${ABEAUTIFULGAME_FILES})
 source_group(EnvironmentTest FILES ${ENVIRONMENTTEST_FILES})
-
+source_group(SkyBox FILES ${SKYBOX_FILES})
+source_group(Present FILES ${PRESENT_FILES})
 
 set(SHADER_FILES 
 ${ALGORITHM_FILES}
@@ -41,6 +48,8 @@ ${CUBE_FILES}
 ${TOYCAR_FILES}
 ${ABEAUTIFULGAME_FILES}
 ${ENVIRONMENTTEST_FILES}
+${SKYBOX_FILES}
+${PRESENT_FILES}
 )
 
 # 设置 HLSL 文件的属性
@@ -51,6 +60,8 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
     if(FILE_NAME MATCHES "_VS.hlsl$")
         set_source_files_properties(${PER_SHADER_FILE}
             PROPERTIES
+            VS_SHADER_DISABLE_OPTIMIZATIONS "true"
+            VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Vertex"
             VS_SHADER_MODEL "5.1"
@@ -62,6 +73,8 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
     elseif(FILE_NAME MATCHES "_PS.hlsl$")
         set_source_files_properties(${PER_SHADER_FILE}
             PROPERTIES
+            VS_SHADER_DISABLE_OPTIMIZATIONS "true"
+            VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Pixel"
             VS_SHADER_MODEL "5.1"

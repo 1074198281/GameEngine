@@ -37,6 +37,7 @@ namespace D3dGraphicsCore {
 		void UpdateStatus();
 		void UpdateCamera();
 		void UpdateRenderingQueue();
+		
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
@@ -44,7 +45,9 @@ namespace D3dGraphicsCore {
 		void LoadIBLTextures();
 		void LoadIBLDDSImage(std::string ImagePath, std::string suffix);
 
-		void RenderAllObjects(GraphicsContext& gfxContext);
+		void RenderAllObjects();
+		void RenderCubeMap();
+		
 	private:
 		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
 

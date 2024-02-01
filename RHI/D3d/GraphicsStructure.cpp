@@ -2,6 +2,7 @@
 #include "MemoryManager.hpp"
 #include "StructureSettings.h"
 #include "Core/Common/GraphicsCommon.h"
+#include "Core/D3dGraphicsCoreManager.h"
 
 //namespace D3dGraphicsCore {
 //	ID3D12Device* g_Device;
@@ -15,7 +16,10 @@ namespace D3dGraphicsCore {
 	UINT64 g_DescriptorSize = 0;
 
 	RootSignature g_TemplateRootSignature;
+	RootSignature g_PresentRootSignature;
     GraphicsPSO g_DefaultPSO(L"Default PSO");
+	GraphicsPSO g_SkyBoxPSO(L"SkyBox PSO");
+	GraphicsPSO g_PresentPSO(L"Present PSO");
 
 	D3D12_SAMPLER_DESC g_pointWarp;
 	D3D12_SAMPLER_DESC g_pointClamp;
@@ -93,14 +97,19 @@ void D3dGraphicsCore::CopyDescriptors(const DescriptorHandle& DesHandle, const s
 		DescriptorsCount, SrcHandle.data(), SourceCounts.data(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
-void D3dGraphicsCore::OffsetDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE& handle, int offset)
+void D3dGraphicsCore::OffsetDescriptorHandle(DescriptorHandle& handle, int offset)
 {
-	handle.ptr += offset * g_DescriptorSize;
+	handle += offset * g_DescriptorSize;
 }
 
 void D3dGraphicsCore::InitializePipelineTemplates()
 {
-	g_TemplateRootSignature.Reset(RootBindings::kNumRootBindings, 1); 	//暂时不使用采样器
+	SamplerDesc DefaultSamplerDesc;
+	DefaultSamplerDesc.MaxAnisotropy = 8;
+
+	SamplerDesc CubeMapSamplerDesc = DefaultSamplerDesc;
+
+	g_TemplateRootSignature.Reset(RootBindings::kNumRootBindings, 2); 	//暂时不使用采样器
 	g_TemplateRootSignature[kMeshConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature[kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -108,8 +117,16 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature[kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 10, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kCommonCBV].InitAsConstantBuffer(1);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
-	g_TemplateRootSignature.InitStaticSampler(10, g_anisotropicWarp);
+	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
+	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);
+	g_TemplateRootSignature.InitStaticSampler(12, CubeMapSamplerDesc);
 	g_TemplateRootSignature.Finalize(L"TemplateRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
+	g_PresentRootSignature.Reset(1, 2);
+	g_PresentRootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_PresentRootSignature.InitStaticSampler(16, g_linearWarp);
+	g_PresentRootSignature.InitStaticSampler(17, g_linearClamp);
+	g_PresentRootSignature.Finalize(L"PresentRootSig");
 
 	g_DefaultPSO.SetRootSignature(g_TemplateRootSignature);
 	g_DefaultPSO.SetRasterizerState(RasterizerDefault);
@@ -117,6 +134,30 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_DefaultPSO.SetDepthStencilState(DepthStateReadWriteLess);
 	//g_DefaultPSO.SetInputLayout(4, g_PosNorTanTex);
 	//g_DefaultPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+
+	//SkyBox
+	auto RasterizerSkyBox = RasterizerDefault;
+	RasterizerSkyBox.CullMode = D3D12_CULL_MODE_NONE;
+	g_SkyBoxPSO.SetRootSignature(g_TemplateRootSignature);
+	g_SkyBoxPSO.SetRasterizerState(RasterizerSkyBox);
+	g_SkyBoxPSO.SetDepthStencilState(DepthStateReadWrite);
+	g_SkyBoxPSO.SetBlendState(BlendDisable);
+	g_SkyBoxPSO.SetInputLayout(0, nullptr);
+	SetShaderByteCode(g_SkyBoxPSO, "SkyBox");
+	g_SkyBoxPSO.SetRenderTargetFormat(g_SceneColorBufferFormat, DSV_FORMAT);
+	g_SkyBoxPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	g_SkyBoxPSO.Finalize();
+
+	g_PresentPSO.SetRootSignature(g_PresentRootSignature);
+	g_PresentPSO.SetRasterizerState(RasterizerTwoSided);
+	g_PresentPSO.SetBlendState(BlendDisable);
+	g_PresentPSO.SetDepthStencilState(DepthStateDisabled);
+	g_PresentPSO.SetSampleMask(0xFFFFFFFF);
+	g_PresentPSO.SetInputLayout(0, nullptr);
+	SetShaderByteCode(g_PresentPSO, "Present");
+	g_PresentPSO.SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);
+	g_PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	g_PresentPSO.Finalize();
 }
 
 void D3dGraphicsCore::FinalizePipelineTemplates()

@@ -132,6 +132,18 @@
     <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\EnvironmentTest\MetallicSpheresMat_VS.hlsl">
       <Filter>EnvironmentTest</Filter>
     </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\SkyBox\SkyBox_PS.hlsl">
+      <Filter>SkyBox</Filter>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\SkyBox\SkyBox_VS.hlsl">
+      <Filter>SkyBox</Filter>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\Present\Present_PS.hlsl">
+      <Filter>Present</Filter>
+    </FXCompile>
+    <FXCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Asset\Shaders\hlsl\Present\Present_VS.hlsl">
+      <Filter>Present</Filter>
+    </FXCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ABeautifulGame">
@@ -145,6 +157,12 @@
     </Filter>
     <Filter Include="EnvironmentTest">
       <UniqueIdentifier>{98AA0590-9A28-3C6E-9C9E-08F0105C4B94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Present">
+      <UniqueIdentifier>{C95F9EFD-04A5-3476-9B7D-6C0F1554362E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SkyBox">
+      <UniqueIdentifier>{CFD2ABE5-FCE4-33F9-84C2-66F56788860A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{B28A35E5-AB63-33C1-9E52-328F03D46ED1}</UniqueIdentifier>

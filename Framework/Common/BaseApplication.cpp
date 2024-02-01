@@ -107,6 +107,7 @@ int My::BaseApplication::LoadScene()
 	//g_pSceneManager->LoadScene("Scene/glTF/Cube/glTF/Cube.gltf");
 	//g_pSceneManager->LoadScene("Scene/glTF/Sponza/glTF/Sponza.gltf");
 	g_pSceneManager->LoadScene("Scene/glTF/ToyCar/glTF/ToyCar.gltf");
+	//g_pSceneManager->LoadScene("Scene/glTF/MetalRoughSpheresOut/glTF/MetalRoughSpheres.gltf");
 	//g_pSceneManager->LoadScene("Scene/glTF/Sponza/Sponza.gltf");
 	//g_pSceneManager->LoadScene("Scene/glTF/ABeautifulGame/glTF/ABeautifulGame.gltf");		//这个需要处理一下jpeg算法，DCT和IDCT离散余弦变换和逆离散余弦变换
 	//g_pSceneManager->LoadScene("Scene/glTF/BoomBoxWithAxes/glTF/BoomBoxWithAxes.gltf");

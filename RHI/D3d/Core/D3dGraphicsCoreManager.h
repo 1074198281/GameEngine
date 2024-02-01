@@ -73,12 +73,12 @@ namespace D3dGraphicsCore {
 	extern DXGI_FORMAT g_SceneColorBufferFormat;
 	void InitializeBuffers();
 
+	extern DXGI_FORMAT g_SwapChainFormat;
 	extern ColorBuffer g_PreDisplayBuffer;
 	extern ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
 	extern DepthBuffer g_DepthBuffer;
 	extern UINT g_CurrentBuffer;
 	extern IDXGISwapChain1* s_SwapChain1;
-	extern RootSignature s_PresentRS;
 
 	void InitializeDisplay(void);
 	void ShutdownDisplay();

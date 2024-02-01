@@ -9,8 +9,6 @@
 #include "ShaderSource.h"
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 
-#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
-
 namespace My {
     extern IApplication* g_pApp;
 }
@@ -233,7 +231,7 @@ bool My::D3d12GraphicsManager::LoadScene()
                     continue;
                 }
                 _object->MaterialResource.PSO.SetRenderTargetFormats(1,
-                    &D3dGraphicsCore::g_DisplayBuffer[D3dGraphicsCore::g_CurrentBuffer].GetFormat(),
+                    &D3dGraphicsCore::g_SceneColorBuffer.GetFormat(),
                     DSV_FORMAT);
                 _object->MaterialResource.PSO.Finalize();
             }

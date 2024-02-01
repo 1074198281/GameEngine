@@ -11,6 +11,7 @@
 #include "Core/Pipeline/DescriptorHeap.h"
 #include "Core/D3dGraphicsCoreManager.h"
 
+#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
 namespace D3dGraphicsCore {
 	//------------------------------------DescriptorHeap------------------------------------//
@@ -27,11 +28,14 @@ namespace D3dGraphicsCore {
 	DescriptorHandle AllocateFromDescriptorHeap(int Count, int& iCurrentHeapIndex);
 	void ReleaseHeapByIndex(int HeapIndex);
 	void CopyDescriptors(const DescriptorHandle& DesHandle, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& SrcHandle, const UINT DescriptorsCount);
-	void OffsetDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE& handle, int offset = 1);
+	void OffsetDescriptorHandle(DescriptorHandle& handle, int offset = 1);
 
 	//---------------------------------------pipeline---------------------------------------//
 	extern RootSignature g_TemplateRootSignature;
+	extern RootSignature g_PresentRootSignature;
     extern GraphicsPSO g_DefaultPSO;
+	extern GraphicsPSO g_SkyBoxPSO;
+	extern GraphicsPSO g_PresentPSO;
 
 	void InitializePipelineTemplates();
 

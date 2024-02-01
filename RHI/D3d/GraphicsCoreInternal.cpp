@@ -56,7 +56,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string ImagePath, s
 	std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
 	std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE HeapHandle = AllocateFromDescriptorHeap(2, HeapIndex);
+	DescriptorHandle HeapHandle = AllocateFromDescriptorHeap(2, HeapIndex);
+	if (m_IBLResource->FirstHandle.IsNull()) {
+		m_IBLResource->FirstHandle = HeapHandle;
+	}
 	HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, Utility::UTF8ToWideString(specularImage).c_str(), size, false,
 		pSpecularTex->GetAddressOf(), HeapHandle);
 	if (FAILED(hr)) {

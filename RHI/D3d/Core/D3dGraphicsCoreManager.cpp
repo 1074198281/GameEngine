@@ -8,7 +8,6 @@
 #include <winreg.h>		// To read the registry
 #endif
 
-DXGI_FORMAT SwapChainFormat = DXGI_FORMAT_R10G10B10A2_UNORM;
 #define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
 namespace D3dGraphicsCore
@@ -43,12 +42,20 @@ namespace D3dGraphicsCore
     float s_FrameTime = 0.0f;
     uint64_t s_FrameIndex = 0;
     int64_t s_FrameStartTick = 0;
+    ColorBuffer g_SceneColorBuffer;	// R11G11B10_FLOAT
+    DXGI_FORMAT g_SceneColorBufferFormat = DXGI_FORMAT_R11G11B10_FLOAT;
+    DXGI_FORMAT g_SwapChainFormat = DXGI_FORMAT_R10G10B10A2_UNORM;
     ColorBuffer g_PreDisplayBuffer;
     ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
     DepthBuffer g_DepthBuffer(1.0f);
     UINT g_CurrentBuffer = 0;
     IDXGISwapChain1* s_SwapChain1 = nullptr;
-    RootSignature s_PresentRS;
+}
+
+void D3dGraphicsCore::InitializeBuffers()
+{
+    g_SceneColorBuffer.Destroy();
+    g_SceneColorBuffer.Create(L"Scene Buffer", g_DisplayWidth, g_DisplayHeight, 1, g_SceneColorBufferFormat);
 }
 
 uint32_t GetDesiredGPUVendor()
@@ -426,7 +433,7 @@ void D3dGraphicsCore::InitializeDisplay(void)
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.Width = g_DisplayWidth;
     swapChainDesc.Height = g_DisplayHeight;
-    swapChainDesc.Format = SwapChainFormat;
+    swapChainDesc.Format = g_SwapChainFormat;
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapChainDesc.BufferCount = SWAP_CHAIN_BUFFER_COUNT;
     swapChainDesc.SampleDesc.Count = 1;
@@ -474,7 +481,7 @@ void D3dGraphicsCore::InitializeDisplay(void)
         g_DisplayBuffer[i].CreateFromSwapChain(L"Primary SwapChain Buffer", DisplayPlane.Detach());
     }
 
-    g_PreDisplayBuffer.Create(L"PreDisplay Buffer", g_DisplayWidth, g_DisplayHeight, 1, SwapChainFormat);
+    g_PreDisplayBuffer.Create(L"PreDisplay Buffer", g_DisplayWidth, g_DisplayHeight, 1, g_SwapChainFormat);
 
     g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
 }
@@ -500,13 +507,13 @@ void D3dGraphicsCore::Resize(uint32_t width, uint32_t height)
 
     DEBUGPRINT("Changing display resolution to %ux%u", width, height);
 
-    g_PreDisplayBuffer.Create(L"PreDisplay Buffer", width, height, 1, SwapChainFormat);
+    g_PreDisplayBuffer.Create(L"PreDisplay Buffer", width, height, 1, g_SwapChainFormat);
 
     for (uint32_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
         g_DisplayBuffer[i].Destroy();
 
     ASSERT(s_SwapChain1 != nullptr);
-    ASSERT_SUCCEEDED(s_SwapChain1->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, width, height, SwapChainFormat, 0));
+    ASSERT_SUCCEEDED(s_SwapChain1->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, width, height, g_SwapChainFormat, 0));
 
     for (uint32_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
     {

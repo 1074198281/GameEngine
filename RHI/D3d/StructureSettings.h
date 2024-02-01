@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Resource/Texture.h"
+#include "Core/Pipeline/DescriptorHeap.h"
 #include <vector>
 #include <math.h>
 #include <unordered_map>
@@ -55,6 +56,9 @@ namespace D3dGraphicsCore {
 
 	typedef struct IBLImageResource
 	{
+		DescriptorHandle FirstHandle;
+		float SpecularIBLRange;
+		float SpecularIBLBias;
 		int IBLImageCount = 0;
 		int HeapIndex = -1;
 		std::unordered_map<std::string, std::unique_ptr<IBLImageMap> > IBLImages;

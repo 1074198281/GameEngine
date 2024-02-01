@@ -62,6 +62,13 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
             itTex->pTexture = nullptr;
         }
     }
+    for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
+        delete it->second->pDiffuse;
+        delete it->second->pSpecular;
+        it->second->pDiffuse = nullptr;
+        it->second->pSpecular = nullptr;
+        it->second.reset();
+    }
     D3dGraphicsCore::WICLoader::FinalizeWICLoader();
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
@@ -77,6 +84,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int he
     g_DisplayHeight = height;
 
     Initialize(false);
+    InitializeBuffers();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
@@ -91,10 +99,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     m_MainViewport.Height = g_DisplayHeight;
     
     /*
-    * 这里minDepth为1.0，maxDepth为0.0，因为深度测试。
+    * 这里minDepth为0.0，maxDepth为1.0，因为深度测试。
     */
-    m_MainViewport.MinDepth = 1.0f;
-    m_MainViewport.MaxDepth = 0.0f;
+    m_MainViewport.MinDepth = 0.0f;
+    m_MainViewport.MaxDepth = 1.0f;
     m_MainViewport.TopLeftX = 0.0f;
     m_MainViewport.TopLeftY = 0.0f;
 
@@ -161,32 +169,50 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
 {
-    GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Render");
-    
-    gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    RenderAllObjects();
+    RenderCubeMap();
+
+    DescriptorHandle Handle;
+    int HeapIdx;
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
+    HandleVec.push_back(g_SceneColorBuffer.GetSRV());
+    Handle = AllocateFromDescriptorHeap(1, HeapIdx);
+    CopyDescriptors(Handle, HandleVec, 1);
+
+    GraphicsContext& gfxContext = GraphicsContext::Begin(L"Render Display Buffer");
+    gfxContext.SetRootSignature(g_PresentRootSignature);
+    gfxContext.SetPipelineState(g_PresentPSO);
+    gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET);
     gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
-
-    //g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::Color(204.0f / 255.0f, 229.0f / 255.0f, 255.0f / 255.0f));
-    g_DisplayBuffer[g_CurrentBuffer].SetClearColor(D3dColor::g_ColorBlack);
-
-    gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
-    gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV(), g_DepthBuffer.GetDSV());
-    gfxContext.ClearColor(g_DisplayBuffer[g_CurrentBuffer]);
-    gfxContext.ClearDepth(g_DepthBuffer);
-
-    RenderAllObjects(gfxContext);
-
+    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[HeapIdx]->GetHeapPointer());
+    gfxContext.SetDescriptorTable(0, Handle);
+    gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
+    gfxContext.Draw(3);
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT, true);
-
     gfxContext.Finish();
 
     D3dGraphicsCore::Present();
-
+    
     g_CommandManager.IdleGPU();
+    InitializeBuffers();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxContext)
+void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
 {
+    GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Render");
+
+    //g_SceneColorBuffer.SetClearColor(D3dColor::g_ColorBlack);
+    gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
+
+    gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV());
+    gfxContext.ClearColor(g_SceneColorBuffer);
+    gfxContext.ClearDepth(g_DepthBuffer);
+
+
     for (auto it = m_PrimitiveObjects.begin(); it != m_PrimitiveObjects.end(); it++) {
         if ((*it)->MaterialResource.FirstHandle.IsNull()) {
             //没有材质，透明
@@ -198,7 +224,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
 
-        // Material Constants
+        // Material Constants --  register 0
         {
             ConstantMaterial MatCbv;
             MatCbv.EyePos = XMFLOAT4(m_Camera.GetPosition().GetX(), m_Camera.GetPosition().GetY(), m_Camera.GetPosition().GetZ(), 1.0f);
@@ -207,12 +233,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
             gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(ConstantMaterial), &MatCbv);
         }
 
-        // Material Shader Resource
+        // Material Shader Resource --  register 0
         {
             gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
         }
 
-        // Common Constant Buffer
+        // Common Constant Buffer --  register 1
         {
             ConstantBufferView cbv;
             cbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
@@ -232,4 +258,49 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects(GraphicsContext& gfxCon
         gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, 1, 0, 0, 0);
     }
 
+    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+
+    gfxContext.Finish();
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
+{
+    m_IBLResource->SpecularIBLRange = 0.0f;
+    auto specularTex = m_IBLResource->IBLImages["Atrium"]->pSpecular;
+    if (specularTex) {
+        ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
+        const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();
+        m_IBLResource->SpecularIBLRange = std::max(0.0f, (float)texDesc.MipLevels - 1);
+        m_IBLResource->SpecularIBLBias = std::min(m_IBLResource->SpecularIBLBias, m_IBLResource->SpecularIBLRange);
+    }
+
+    __declspec(align(16)) struct SkyboxVSCB
+    {
+        XM_Math::Matrix4 ProjInverse;
+        XM_Math::Matrix3 ViewInverse;
+    } skyVSCB;
+    skyVSCB.ProjInverse = Invert(m_Camera.GetProjMatrix());
+    skyVSCB.ViewInverse = Invert(m_Camera.GetViewMatrix()).Get3x3();
+
+    __declspec(align(16)) struct SkyboxPSCB
+    {
+        float TextureLevel;
+    } skyPSCB;
+    skyPSCB.TextureLevel = m_IBLResource->SpecularIBLBias;
+
+    //Common SRVs for cubemap -- register 10 
+    GraphicsContext& gfxContext = GraphicsContext::Begin(L"CubeMap Render");
+    gfxContext.SetRootSignature(g_TemplateRootSignature);
+    gfxContext.SetPipelineState(g_SkyBoxPSO);
+    gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV_ReadOnly());
+    gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
+
+    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_IBLResource->HeapIndex]->GetHeapPointer());
+    gfxContext.SetDynamicConstantBufferView(kMeshConstant, sizeof(SkyboxVSCB), &skyVSCB);
+    gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(SkyboxPSCB), &skyPSCB);
+    gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->FirstHandle);
+    gfxContext.Draw(3);
+    gfxContext.Finish();
 }

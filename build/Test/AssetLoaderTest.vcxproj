@@ -98,11 +98,11 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";_IBL_RESOURCE_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures";CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";_IBL_RESOURCE_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures\";CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -139,13 +139,13 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";_IBL_RESOURCE_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures";CMAKE_INTDIR="Release"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";_IBL_RESOURCE_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures\";CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -182,13 +182,13 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";_IBL_RESOURCE_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures";CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";_IBL_RESOURCE_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures\";CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
@@ -226,11 +226,11 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <UseFullPaths>false</UseFullPaths>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine";_IBL_RESOURCE_DIRECTORY="G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures";CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;USE_DIRECTX_TOOLKIT;NOMINMAX;_WORKING_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine\";_IBL_RESOURCE_DIRECTORY=\"G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Asset/IBLTextures\";CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
