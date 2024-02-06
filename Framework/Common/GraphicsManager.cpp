@@ -49,3 +49,11 @@ void GraphicsManager::NumPadKeyDown(int64_t key)
 void GraphicsManager::NumPadKeyUp(int64_t key)
 {
 }
+
+void GraphicsManager::FunctionKeyDown(int64_t key)
+{
+}
+
+void GraphicsManager::FunctionKeyUp(int64_t key)
+{
+}

@@ -1371,13 +1371,7 @@ namespace glTF
             else {
                 My::Matrix4X4f mat;
                 std::shared_ptr<My::SceneObjectTransform> trans;
-                My::Matrix4X4f scale;
-                if (pCurrNode->scale[0] < 0.01 && pCurrNode->scale[1] < 0.01 && pCurrNode->scale[2] < 0.01) {
-                    scale = My::BuildScaleMatrix(1.0f, 1.0f, 1.0f, 1.0f);
-                }
-                else {
-                    scale = My::BuildScaleMatrix(pCurrNode->scale[0], pCurrNode->scale[1], pCurrNode->scale[2], 1.0f);
-                }
+                auto scale = My::BuildScaleMatrix(pCurrNode->scale[0], pCurrNode->scale[1], pCurrNode->scale[2], 1.0f);
                 auto rotation = My::BuildRotationMatrix(pCurrNode->rotation[0], pCurrNode->rotation[1], pCurrNode->rotation[2], pCurrNode->rotation[3]);
                 auto translation = My::BuildTranslationMatrix(pCurrNode->translation[0], pCurrNode->translation[1], pCurrNode->translation[2], 1.0f);
                 mat = translation * rotation * scale;

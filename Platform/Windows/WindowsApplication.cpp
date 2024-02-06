@@ -142,7 +142,14 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         case VK_NUMPAD9:
             g_pInputManager->NumPadKeyDown(wParam);
             break;
+        case VK_PRIOR:
+        case VK_NEXT:
+            g_pInputManager->FunctionKeyDown(wParam);
+            break;
 #endif
+        case 0x52:
+            g_pInputManager->FunctionKeyDown(wParam);
+            break;
         case VK_ESCAPE:
             m_bQuit = true;
             break;

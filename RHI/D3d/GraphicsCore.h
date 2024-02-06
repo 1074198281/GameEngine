@@ -36,6 +36,7 @@ namespace D3dGraphicsCore {
 		void UpdateGlobalLightPosition(XMFLOAT4 pos);
 		void UpdateStatus();
 		void UpdateCamera();
+		void UpdateCameraParams(int64_t key);
 		void UpdateRenderingQueue();
 		
 

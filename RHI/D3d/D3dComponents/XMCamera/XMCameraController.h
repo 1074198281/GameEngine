@@ -3,6 +3,7 @@
 #include "XM_Matrix3.h"
 #include "XM_Matrix4.h"
 #include "XM_Vector.h"
+#include <iostream>
 
 namespace XM_Camera {
     using XM_Math::Vector3;
@@ -26,7 +27,7 @@ namespace XM_Camera {
 
         // Helper function
         static void ApplyMomentum(float& oldValue, float& newValue, float deltaTime);
-
+        
     protected:
         Camera& m_TargetCamera;
 
@@ -47,6 +48,15 @@ namespace XM_Camera {
         void EnableMomentum(bool enable) { m_Momentum = enable; }
 
         void SetHeadingPitchAndPosition(float heading, float pitch, const Vector3& position);
+
+        enum CameraSpeedStatus{ SpeedUp, SpeedDown, SpeedStatus};
+        inline void ApplyCameraParams(CameraSpeedStatus status)
+        {
+            m_MoveSpeed = m_StrafeSpeed = status == SpeedUp ? m_StrafeSpeed * 10 : m_StrafeSpeed / 10;
+#ifdef _DEBUG
+            std::cout << "Current Move Speed: " << m_MoveSpeed << std::endl;
+#endif // _DEBUG
+        }
 
     private:
 

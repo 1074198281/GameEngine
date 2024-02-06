@@ -315,6 +315,15 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
     }
 }
 
+void My::D3d12GraphicsManager::FunctionKeyDown(int64_t key)
+{
+    m_pGraphics->UpdateCameraParams(key);
+}
+void My::D3d12GraphicsManager::FunctionKeyUp(int64_t key)
+{
+
+}
+
 void My::D3d12GraphicsManager::NumPadKeyUp(int64_t key)
 {
 

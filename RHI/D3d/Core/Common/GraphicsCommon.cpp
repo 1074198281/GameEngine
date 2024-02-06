@@ -231,7 +231,7 @@ void D3dGraphicsCore::InitializeCommonState(void)
     DepthStateTestEqual.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL;
 
     DepthStateReadWriteLess = DepthStateReadWrite;
-    DepthStateReadWriteLess.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+    DepthStateReadWriteLess.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 
     D3D12_BLEND_DESC alphaBlend = {};
     alphaBlend.IndependentBlendEnable = FALSE;

@@ -111,6 +111,15 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
 
     Matrix3 orientation = Matrix3(m_WorldEast, m_WorldUp, -m_WorldNorth) * Matrix3::MakeYRotation(m_CurrentHeading) * Matrix3::MakeXRotation(m_CurrentPitch);
     Vector3 position = orientation * Vector3(strafe, ascent, -forward) + m_TargetCamera.GetPosition();
+    Vector3 CamPos = m_TargetCamera.GetPosition();
+    if (fabs(position.GetX() - CamPos.GetX()) < FLT_EPSILON && 
+        fabs(position.GetY() - CamPos.GetY()) < FLT_EPSILON &&
+        fabs(position.GetZ() - CamPos.GetZ()) < FLT_EPSILON) {
+        m_TargetCamera.m_bIsCameraMove = false;
+    }
+    else {
+        m_TargetCamera.m_bIsCameraMove = true;
+    }
     m_TargetCamera.SetTransform(AffineTransform(orientation, position));
     m_TargetCamera.Update();
 }

@@ -81,6 +81,8 @@ namespace XM_Camera {
         //Frustum m_FrustumVS;		// View-space view frustum
         //Frustum m_FrustumWS;		// World-space view frustum
 
+    public:
+        bool m_bIsCameraMove;
     };
 
     class Camera : public BaseCamera

@@ -140,7 +140,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	RasterizerSkyBox.CullMode = D3D12_CULL_MODE_NONE;
 	g_SkyBoxPSO.SetRootSignature(g_TemplateRootSignature);
 	g_SkyBoxPSO.SetRasterizerState(RasterizerSkyBox);
-	g_SkyBoxPSO.SetDepthStencilState(DepthStateReadWrite);
+	g_SkyBoxPSO.SetDepthStencilState(DepthStateReadWriteLess);
 	g_SkyBoxPSO.SetBlendState(BlendDisable);
 	g_SkyBoxPSO.SetInputLayout(0, nullptr);
 	SetShaderByteCode(g_SkyBoxPSO, "SkyBox");

@@ -162,9 +162,47 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
 {
     float DeltaTime = GetFrameTime();
-    m_CameraController->Update(DeltaTime);
     XM_Input::Update(DeltaTime);
-    m_Camera.Update();
+    m_CameraController->Update(DeltaTime);
+    
+#ifdef _DEBUG
+    if (m_Camera.m_bIsCameraMove) {
+        std::cout << "Current Camera Position: X: " << m_Camera.GetPosition().GetX()
+            << " Y:" << m_Camera.GetPosition().GetY()
+            << " Z:" << m_Camera.GetPosition().GetZ()
+            << std::endl;
+    }
+#endif // _DEBUG
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
+{
+    switch (key)
+    {
+    case VK_PRIOR:
+        m_CameraController->ApplyCameraParams(XM_Camera::FlyingFPSCamera::SpeedUp);
+        break;
+    case VK_NEXT:
+        m_CameraController->ApplyCameraParams(XM_Camera::FlyingFPSCamera::SpeedDown);
+        break;
+    default:
+        break;
+    }
+
+    switch (key)
+    {
+    case 0x52:
+    {
+        //reset cameta position
+        XM_Math::Vector3 position = XM_Math::Vector3(0.0f, 0.0f, 5.0f);
+        XM_Math::Matrix3 orientation = XM_Math::Matrix3(XM_Math::Vector3(1, 0, 0), XM_Math::Vector3(0, 1, 0), XM_Math::Vector3(0, 0, 1));
+        m_Camera.SetTransform(XM_Math::AffineTransform(orientation, position));
+        m_Camera.Update();
+    }
+    break;
+    default:
+        break;
+    }
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
