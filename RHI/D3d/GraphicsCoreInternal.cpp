@@ -43,10 +43,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string ImagePath, s
 	std::string imageName = ImagePath.substr(pos + 1);
 	imageName = imageName.substr(0, imageName.size() - suffix_offset);
 
-	Texture *pSpecularTex, *pDiffuseTex;
+	std::unique_ptr<Texture> pSpecularTex, pDiffuseTex;
 
-	pSpecularTex = new Texture();
-	pDiffuseTex = new Texture();
+	pSpecularTex = std::make_unique<Texture>();
+	pDiffuseTex = std::make_unique<Texture>();
 
 	uint32_t width = 0;
 	uint32_t height = 0;
@@ -79,7 +79,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string ImagePath, s
 	ASSERT(HeapIndex == m_IBLResource->HeapIndex, "TEXTURE RESOURCE NOT IN ONE DESCRIPTOR HEAP! ERROR!");
 
 	std::unique_ptr<IBLImageMap> map = std::make_unique<IBLImageMap>();
-	map->pSpecular = pSpecularTex;
-	map->pDiffuse = pDiffuseTex;
+	map->pSpecular = std::move(pSpecularTex);
+	map->pDiffuse = std::move(pDiffuseTex);
 	m_IBLResource->IBLImages.emplace(imageName, std::move(map));
 }

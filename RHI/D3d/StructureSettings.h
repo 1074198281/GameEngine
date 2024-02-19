@@ -50,8 +50,8 @@ namespace D3dGraphicsCore {
 
 	typedef struct IBLImageMap
 	{
-		Texture* pSpecular = nullptr;
-		Texture* pDiffuse = nullptr;
+		std::unique_ptr<Texture> pSpecular;
+		std::unique_ptr<Texture> pDiffuse;
 	} IBLImageMap;
 
 	typedef struct IBLImageResource

@@ -62,12 +62,14 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
             itTex->pTexture = nullptr;
         }
     }
-    for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
-        delete it->second->pDiffuse;
-        delete it->second->pSpecular;
-        it->second->pDiffuse = nullptr;
-        it->second->pSpecular = nullptr;
-        it->second.reset();
+    if (m_IBLResource) {
+        for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
+            it->second->pDiffuse->Destroy();
+            it->second->pSpecular->Destroy();
+            it->second->pDiffuse.reset();
+            it->second->pSpecular.reset();
+            it->second.reset();
+        }
     }
     D3dGraphicsCore::WICLoader::FinalizeWICLoader();
     FinalizePipelineTemplates();
@@ -303,8 +305,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
 
 void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
 {
+    if (!m_IBLResource) {
+        return;
+    }
+
     m_IBLResource->SpecularIBLRange = 0.0f;
-    auto specularTex = m_IBLResource->IBLImages["Atrium"]->pSpecular;
+    auto& specularTex = m_IBLResource->IBLImages["Atrium"]->pSpecular;
     if (specularTex) {
         ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
         const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();
@@ -330,6 +336,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
     GraphicsContext& gfxContext = GraphicsContext::Begin(L"CubeMap Render");
     gfxContext.SetRootSignature(g_TemplateRootSignature);
     gfxContext.SetPipelineState(g_SkyBoxPSO);
+    gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
     gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV_ReadOnly());
