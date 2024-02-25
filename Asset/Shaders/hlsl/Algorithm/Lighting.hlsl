@@ -11,47 +11,37 @@ float4 LambertLighting(float Insensity, float4 LightColor, float3 LightDir, floa
 
 #ifdef PBR
 
-/*
-pbr relative
-[out] float4 pixelColor
-[in]  float2 TexCoord
-[in]  float3 WorldPos
-[in]  float3 Normal
-
-float3 CameraPos        Ïà»úÎ»ÖÃ
-
-//Material
-float3 Albedo           ·´ÉäÂÊ£¨½ğÊô²ÄÖÊ±íÃæµÄÑÕÉ«£©
-float metallic          ½ğÊô¶È
-float roughness         ´Ö²Ú¶È
-float AO                »·¾³¹âÕÚ±Î
-
-float attenuation       ¹âÔ´Ë¥¼õÏµÊı
-*/
-
-struct MaterialProperties
+struct SurfaceProperties
 {
-    float3 Albedo;
-    float metallic;
+    float4 PositionWorld;
+    float3 Normal_Vec;
+    float3 View_Vec;
+    float N_dot_V;
     float roughness;
-    float AO;
+    float roughness_sq;
+    float roughness_mul_4;
+    
+    float3 Albedo;
+    float Metallic;
+    float Roughness;
+    float AmbientOcclusion;
 };
 
-struct InputLayout
+// in light properties, position is in the world coordinate
+struct LightProperties
 {
-    float3 WorldPos;
-    float3 CameraPos;
-    float3 Normal;
-    float2 TexCoord;
+    float4 LightPosition[MAX_LIGHT_NUM];
+    float4 LightColor[MAX_LIGHT_NUM];
+    int LightNum;
 };
 
-static const float3 F0 = float3(0.04, 0.04, 0.04);     //·Çµç½éÖÊ½ğÊô¶ÈÈÏÎªÊÇÒ»¸ö³£Á¿0.04
+static const float3 F0 = float3(0.04, 0.04, 0.04);     
 static const float PI = 3.14159265358979;
 
 float3 LinearTosRGB(float3 input)
 {
-    input = input / (input + float3(1.0, 1.0, 1.0)); // É«µ÷Ó³Éä
-    input = pow(abs(input), float3(1.0 / 2.2, 1.0 / 2.2, 1.0 / 2.2)); // Ù¤ÂíĞ£Õı
+    input = input / (input + float3(1.0, 1.0, 1.0)); 
+    input = pow(abs(input), float3(1.0 / 2.2, 1.0 / 2.2, 1.0 / 2.2)); 
     return input;
 }
 
@@ -62,10 +52,19 @@ float3 sRGBToLinear(float3 input)
     return input;
 }
 
+/*
+* FresnalSchlick is reflectance on the surface
+* FresnelSchlickRoughness used for IBL 
+*/
+
 float3 FresnalSchlick(float costheta, float3 F0)
 {
-    //¼ÆËã¸ß¹âÓëÂş·´ÉäµÄ±ÈÀı£¬¸ù¾İ·ÆÄù¶û·½³Ì
     return F0 + (1.0 - F0) * pow(1.0 - costheta, 5.0);
+}
+
+float3 FresnelSchlickRoughness(float costheta, float3 F0, float roughness)
+{
+    return F0 + (max(float3(1.0 - roughness), F0) - F0) * pow(1.0 - costheta, 5.0);
 }
 
 float DistributionGGX(float3 Normal, float3 HalfVec, float roughness)
@@ -101,6 +100,62 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
     return ggx1 * ggx2;
 }
 
+float Pow5(float x)
+{
+    float xSquare = x * x;
+    return xSquare * xSquare * x;
+}
+
+// calculate hhomegeneous coordinates, trans (x, y, z, w) to (x', y', z', 1.0)
+float4 HomogeneousCoordinates(float4 position)
+{
+    return position / position.w;
+}
+
+float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties light)
+{
+    float3 irradiance = float3(0.0, 0.0, 0.0);
+    // calculate direct and indirect lighting
+    for (int lightIdx = 0; lightIdx < light.LightNum; lightIdx++)
+    {
+        // direct lighting
+        float4 Light_Position = HomogeneousCoordinates(light.LightPosition[lightIdx]);
+        float4 World_Position = HomogeneousCoordinates(surface.PositionWorld);
+        float3 Light_Vec = normalize(Light_Position.xyz - World_Position.xyz);
+        float3 Half_Vec = normalize(Light_Vec + surface.View_Vec);
+        float N_dot_L = dot(surface.Normal_Vec, Light_Vec);
+
+        float distance = length(World_Position - Light_Position);
+        float attenuation = 1.0 / (distance * distance);
+        float3 radiance = light.LightColor[lightIdx] * attenuation;
+
+        // indirect lighting, based on Cook-Torrence
+        
+        // calc metal albedo, interpolate by metallic to calculate albedo
+        float3 F_Value = lerp(F0, surface.Albedo, surface.Metallic);
+        float3 F = FresnalSchlick(surface.N_dot_V, F_Value);
+        
+        // calc Normal Distribution by GGX
+        float3 D = DistributionGGX(surface.Normal_Vec, Half_Vec, surface.Roughness);
+        
+        // calc Geometry Distribution by Smith
+        float3 G = GeometrySmith(surface.Normal_Vec, surface.View_Vec, Light_Vec, surface.Roughness);
+        
+        // calc specular FDG / 4(n * view)(n * light);
+        float3 specular = F * D * G / max(0.001, 4 * saturate(surface.N_dot_V) * saturate(N_dot_L));
+
+        // calc kd, F = kS
+        float3 kD = (1 - F) * (1 - surface.Metallic);
+
+        // calc diffuse
+        float3 diffuse = kD * surface.Albedo / PI;
+        
+        irradiance += (diffuse + specular) * radiance * N_dot_L;
+    }
+    return irradiance;
+}
+
+#if 0
 
 float3 DirectLighting(InputLayout input, MaterialProperties mat, float4 LightPosition[MAX_LIGHT_NUM], int LightNum)
 {
@@ -111,7 +166,7 @@ float3 DirectLighting(InputLayout input, MaterialProperties mat, float4 LightPos
     float3 LightOut = float3(0.0, 0.0, 0.0);
     for (int light = 0; light < LightNum; light++)
     {
-        //¼ÆËã¹âÕÕË¥¼õ£¬·´Æ½·½Ë¥¼õ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½Ë¥ï¿½ï¿½
         float3 CurrentLightPosition = LightPosition[light].xyz;
         float3 L_vec = normalize(CurrentLightPosition - input.WorldPos);
         float3 Half_vec = normalize(L_vec + View_vec);
@@ -120,7 +175,7 @@ float3 DirectLighting(InputLayout input, MaterialProperties mat, float4 LightPos
         float attenuation = 1.0f / (distance * distance);
         float3 radiance = LightColor * 1;
 
-        //¼ÆËãDFGÖĞµÄF
+        //ï¿½ï¿½ï¿½ï¿½DFGï¿½Ğµï¿½F
         float3 F = lerp(F0, mat.Albedo, mat.metallic);
         F = FresnalSchlick(max(dot(Half_vec, View_vec), 0.0f), F);
         
@@ -159,5 +214,6 @@ float4 PBROutput(InputLayout input, MaterialProperties mat, float4 LightPosition
 
     return pixelColor;
 }
+#endif
 
 #endif
