@@ -1,10 +1,18 @@
-
+#define MAX_LIGHT_NUM 16
 
 cbuffer cbCommon : register(b1)
 {
+    float4 gLightPosition[MAX_LIGHT_NUM];
+    float4 gLightColor[MAX_LIGHT_NUM];
     float4x4 gModelMatrix;
     float4x4 gViewMatrix;
     float4x4 gProjMatrix;
+    float4 gViewerPos;
+    float3 SunDirection;
+    float3 SunInsensity;
+    int gLightNum;
+    float IBLRange;
+    float IBLBias;
 };
 
 struct VertexIn

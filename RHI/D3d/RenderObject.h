@@ -36,6 +36,10 @@ namespace D3dGraphicsCore {
 		int TextureCountPerMaterial;
 		DescriptorHandle FirstHandle;
 		int DescriptorHeapIndex;
+		float BaseColorFactor[4];
+		float MetallicRoughnessFactor[2];
+		float EmissiveFactor[3];
+		float NormalScaleFactor;
 		GraphicsPSO PSO;
 	} MaterialResource;
 

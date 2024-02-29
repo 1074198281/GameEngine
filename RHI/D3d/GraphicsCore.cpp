@@ -44,6 +44,7 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     D3dGraphicsCore::WICLoader::InitializeWICLoader();
     
     LoadIBLTextures();
+    InitializeDefaultTexture();
 
     return 0;
 }
@@ -75,6 +76,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
     FinalizeShaderByteMap();
+    FinalizeDefaultTexture();
 
     XM_Input::Shutdown();
 }
@@ -93,7 +95,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
 {
     m_Camera.SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
     m_Camera.SetFOV(120.f);
-    m_Camera.SetZRange(0.1f, 1000.0f);
+    m_Camera.SetZRange(0.01f, 1000.0f);
     m_Camera.SetPosition(XM_Math::Vector3(0, 0, 5));
     m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(m_Camera, XM_Math::Vector3(0.0f, 1.0f, 0.0f));
     
@@ -264,13 +266,21 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
         gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
             g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
 
-        // Material Constants --  register 0
+        // Material Constants --  register 0 / cb0
         {
-            ConstantMaterial MatCbv;
-            MatCbv.EyePos = XMFLOAT4(m_Camera.GetPosition().GetX(), m_Camera.GetPosition().GetY(), m_Camera.GetPosition().GetZ(), 1.0f);
-            MatCbv.LightNum = 1;
-            MatCbv.LightPosition[0] = m_GlobalLightPosition;
-            gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(ConstantMaterial), &MatCbv);
+            MaterialConstants MatCbv;
+            memset(&MatCbv, 0, sizeof(MaterialConstants));
+            MatCbv.BaseColorFactor[0] = (*it)->MaterialResource.BaseColorFactor[0];
+            MatCbv.BaseColorFactor[1] = (*it)->MaterialResource.BaseColorFactor[1];
+            MatCbv.BaseColorFactor[2] = (*it)->MaterialResource.BaseColorFactor[2];
+            MatCbv.BaseColorFactor[3] = (*it)->MaterialResource.BaseColorFactor[3];
+            MatCbv.MetallicRoughnessFactor[0] = (*it)->MaterialResource.MetallicRoughnessFactor[0];
+            MatCbv.MetallicRoughnessFactor[1] = (*it)->MaterialResource.MetallicRoughnessFactor[1];
+            MatCbv.EmissiveFactor[0] = (*it)->MaterialResource.EmissiveFactor[0];
+            MatCbv.EmissiveFactor[1] = (*it)->MaterialResource.EmissiveFactor[1];
+            MatCbv.EmissiveFactor[2] = (*it)->MaterialResource.EmissiveFactor[2];
+            MatCbv.NormalTextureScale = (*it)->MaterialResource.NormalScaleFactor;
+            gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
         }
 
         // Material Shader Resource --  register 0
@@ -278,15 +288,21 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
             gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
         }
 
-        // Common Constant Buffer --  register 1
+        // Common Constant Buffer --  register 1 / cb1
         {
-            ConstantBufferView cbv;
-            cbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
-            //cbv.ModelMatrix = XMMatrixIdentity();
-            cbv.ViewMatrix = m_Camera.GetViewMatrix();
-            cbv.ProjMatrix = m_Camera.GetProjMatrix();
 
-            gfxContext.SetDynamicConstantBufferView(kCommonCBV, sizeof(ConstantBufferView), &cbv);
+            CommonConstants CommonCbv;
+            memset(&CommonCbv, 0, sizeof(CommonCbv));
+            CommonCbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
+            CommonCbv.ViewMatrix = m_Camera.GetViewMatrix();
+            CommonCbv.ProjMatrix = m_Camera.GetProjMatrix();
+            gfxContext.SetDynamicConstantBufferView(kCommonCBV, sizeof(CommonConstants), &CommonCbv);
+        }
+
+        // irradiance -- register 11
+        {
+            gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_IBLResource->HeapIndex]->GetHeapPointer());
+            gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->FirstHandle);
         }
 
         gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
@@ -311,6 +327,11 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
 
     m_IBLResource->SpecularIBLRange = 0.0f;
     auto& specularTex = m_IBLResource->IBLImages["Atrium"]->pSpecular;
+    //auto& specularTex = m_IBLResource->IBLImages["CloudCommons"]->pSpecular;
+    //auto& specularTex = m_IBLResource->IBLImages["DGarden"]->pSpecular;
+    //auto& specularTex = m_IBLResource->IBLImages["Garage"]->pSpecular;
+    //auto& specularTex = m_IBLResource->IBLImages["MSPath"]->pSpecular;
+    //auto& specularTex = m_IBLResource->IBLImages["Stonewall"]->pSpecular;
     if (specularTex) {
         ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
         const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();

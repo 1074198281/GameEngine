@@ -47,7 +47,7 @@ void D3dGraphicsCore::WICLoader::FinalizeWICLoader()
 }
 
 
-void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint32_t& pitch, uint64_t& imageSize)
+void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint32_t& pitch, uint64_t& imageSize, DXGI_FORMAT& format)
 {
     using namespace Microsoft::WRL;
     HRESULT hr;
@@ -72,6 +72,8 @@ void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath
     if (FAILED(hr)) {
         return nullptr;
     }
+
+    format = GetFormatByFrame();
 
     // Get image information
     hr = g_FirstFrame->GetSize(&width, &height);
@@ -110,4 +112,32 @@ void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath
     g_FirstFrame.Reset();
 
     return imageDataBuffer;
+}
+
+DXGI_FORMAT D3dGraphicsCore::WICLoader::GetFormatByFrame()
+{
+    HRESULT hr;
+    DXGI_FORMAT dxgiFormat = DXGI_FORMAT_UNKNOWN;
+
+    // 获取像素格式信息
+    WICPixelFormatGUID pixelFormat;
+    hr = g_FirstFrame->GetPixelFormat(&pixelFormat);
+    // 根据获取的 GUID 判断 DXGI_FORMAT
+    if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat32bppRGBA)) {
+        dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
+    else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat32bppBGRA)) {
+        dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
+    else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat24bppRGB)) {
+        dxgiFormat = DXGI_FORMAT_B8G8R8X8_UNORM;
+    }
+    else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat24bppBGR)) {
+        dxgiFormat = DXGI_FORMAT_B8G8R8X8_UNORM;
+    }
+    else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat8bppGray)) {
+        dxgiFormat = DXGI_FORMAT_R8_UNORM;
+    }
+
+    return dxgiFormat;
 }

@@ -10,6 +10,7 @@
 #include "Core/Pipeline/PipelineState.h"
 #include "Core/Pipeline/DescriptorHeap.h"
 #include "Core/D3dGraphicsCoreManager.h"
+#include "Core/Resource/Texture.h"
 
 #define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
@@ -29,6 +30,17 @@ namespace D3dGraphicsCore {
 	void ReleaseHeapByIndex(int HeapIndex);
 	void CopyDescriptors(const DescriptorHandle& DesHandle, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& SrcHandle, const UINT DescriptorsCount);
 	void OffsetDescriptorHandle(DescriptorHandle& handle, int offset = 1);
+
+	//-------------------------------------baseTextures-------------------------------------//
+
+	extern Texture g_DefaultBaseColorTexture;
+	extern Texture g_DefaultRoughnessMetallicTexture;
+	extern Texture g_DefaultOcclusionTexture;
+	extern Texture g_DefaultEmissiveTexture;
+	extern Texture g_DefaultNormalTexture;
+	void InitializeDefaultTexture();
+	void FinalizeDefaultTexture();
+
 
 	//---------------------------------------pipeline---------------------------------------//
 	extern RootSignature g_TemplateRootSignature;

@@ -8,6 +8,7 @@
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
+#include "GraphicsStructure.h"
 
 namespace My {
     extern IApplication* g_pApp;
@@ -177,7 +178,8 @@ bool My::D3d12GraphicsManager::LoadScene()
                         std::wstring TexturePath = Utility::UTF8ToWideString(Scene.m_AssetPath + TextureRef->GetName());
                         auto& pImage = TextureRef->GetTextureImage();
 #ifdef USE_DIRECTX_TOOLKIT
-                        void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), pImage.Width, pImage.Height, pImage.pitch, pImage.data_size);
+                        DXGI_FORMAT format;
+                        void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), pImage.Width, pImage.Height, pImage.pitch, pImage.data_size, format);
                         //pImage.data = reinterpret_cast<R8G8B8A8Unorm*>(g_pMemoryManager->Allocate(pImage.data_size));
                         //memcpy_s(pImage.data, pImage.data_size, pTexData, pImage.data_size);
                         pTexture->Create2D(pImage.pitch, pImage.Width, pImage.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pTexData);
@@ -198,14 +200,59 @@ bool My::D3d12GraphicsManager::LoadScene()
                         re.pImageData = pTexData;
                         _object->MaterialResource.TextureResources.push_back(re);
                         TexturesPerMaterial++;
+                    } else {
+                        switch (i) {
+                        case My::SceneObjectMaterial::kBaseColor:
+                            SRVsHandle.push_back(D3dGraphicsCore::g_DefaultBaseColorTexture.GetSRV());
+                            break;
+                        case My::SceneObjectMaterial::kMetallicRoughness:
+                            SRVsHandle.push_back(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture.GetSRV());
+                            break;
+                        case My::SceneObjectMaterial::kOcclusion:
+                            SRVsHandle.push_back(D3dGraphicsCore::g_DefaultOcclusionTexture.GetSRV());
+                            break;
+                        case My::SceneObjectMaterial::kEmissive:
+                            SRVsHandle.push_back(D3dGraphicsCore::g_DefaultEmissiveTexture.GetSRV());
+                            break;
+                        case My::SceneObjectMaterial::kNormal:
+                            SRVsHandle.push_back(D3dGraphicsCore::g_DefaultNormalTexture.GetSRV());
+                            break;
+                        default:
+                            ASSERT(false, "NO BLANK DESCRIPTOR TO FILL HEAP,ERROR!");
+                            break;
+                        }
+
+                        D3dGraphicsCore::TextureResource re;
+                        //re.Handle = Handle;
+                        re.pTexture = nullptr;
+                        re.pImageData = nullptr;
+                        _object->MaterialResource.TextureResources.push_back(re);
+                        TexturesPerMaterial++;
                     }
                 }
+
+                // factor param
+                _object->MaterialResource.BaseColorFactor[0] = pMaterial->GetBaseColorFactor()[0];
+                _object->MaterialResource.BaseColorFactor[1] = pMaterial->GetBaseColorFactor()[1];
+                _object->MaterialResource.BaseColorFactor[2] = pMaterial->GetBaseColorFactor()[2];
+                _object->MaterialResource.BaseColorFactor[3] = pMaterial->GetBaseColorFactor()[3];
+
+                _object->MaterialResource.EmissiveFactor[0] = pMaterial->GetEmissivsFactor()[0];
+                _object->MaterialResource.EmissiveFactor[1] = pMaterial->GetEmissivsFactor()[1];
+                _object->MaterialResource.EmissiveFactor[2] = pMaterial->GetEmissivsFactor()[2];
+
+                _object->MaterialResource.MetallicRoughnessFactor[0] = pMaterial->GetMetallicFactor();
+                _object->MaterialResource.MetallicRoughnessFactor[1] = pMaterial->GetRoughnessFactor();
+
+                _object->MaterialResource.NormalScaleFactor = pMaterial->GetNormalScaleFactor();
+
                 int HeapIndex = -2;
                 D3dGraphicsCore::DescriptorHandle FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(TexturesPerMaterial, HeapIndex);
                 ASSERT(HeapIndex > -2, "Descripotr Heap Allocate Failed ERROR!");
                 _object->MaterialResource.TextureCountPerMaterial = TexturesPerMaterial;
                 _object->MaterialResource.FirstHandle = FirstHandle;
                 _object->MaterialResource.DescriptorHeapIndex = HeapIndex;
+
                 //拷贝，且有材质纹理图
                 if (!FirstHandle.IsNull()) {
                     D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
@@ -223,7 +270,7 @@ bool My::D3d12GraphicsManager::LoadScene()
                 if (!FirstHandle.IsNull()) {
                     std::cout << "----------------------------" << std::endl;
                     std::cout << "Mesh " << _object->name << " Add Material " << _object->MaterialName << std::endl;
-                    D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, _object->MaterialName);
+                    D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, "Model");
                 }
                 else {
                     std::cout << "----------------------------" << std::endl;

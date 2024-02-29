@@ -62,5 +62,10 @@ namespace D3dGraphicsCore {
 		int IBLImageCount = 0;
 		int HeapIndex = -1;
 		std::unordered_map<std::string, std::unique_ptr<IBLImageMap> > IBLImages;
+
+		DescriptorHandle BRDF_LUT_Handle;
+		std::unique_ptr<Texture> BRDF_LUT_Image;
+		int BRDFHeapIndex;
+		int BRDF_offset;
 	} IBLImageResource;
 }

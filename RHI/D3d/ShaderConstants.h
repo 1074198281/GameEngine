@@ -27,4 +27,28 @@ namespace D3dGraphicsCore {
 		int LightNum;
 	} ConstantMaterial;
 
+
+	// Model_PS -- cb0
+	__declspec(align(16)) typedef struct MaterialConstants {
+		float BaseColorFactor[4];
+		float MetallicRoughnessFactor[2];
+		float EmissiveFactor[3];
+		float NormalTextureScale;
+		float padding[2];
+	} MaterialConstants;
+
+	 __declspec(align(16)) typedef struct CommonConstants {
+		XMFLOAT4 LightPosition[MAX_LIGHT_NUM];
+		XMFLOAT4 LightColor[MAX_LIGHT_NUM];
+		XMMATRIX ModelMatrix;
+		XMMATRIX ViewMatrix;
+		XMMATRIX ProjMatrix;
+		XMFLOAT4 ViewerPos;
+		XMFLOAT3 SunDirection;
+		XMFLOAT3 SunInsensity;
+		int LightNum;
+		float IBLRange;
+		float IBLBias;
+		float padding[3];
+	} CommonConstants;
 }

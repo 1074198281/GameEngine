@@ -64,7 +64,7 @@ float3 FresnalSchlick(float costheta, float3 F0)
 
 float3 FresnelSchlickRoughness(float costheta, float3 F0, float roughness)
 {
-    return F0 + (max(float3(1.0 - roughness), F0) - F0) * pow(1.0 - costheta, 5.0);
+    return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(1.0 - costheta, 5.0);
 }
 
 float DistributionGGX(float3 Normal, float3 HalfVec, float roughness)
@@ -127,13 +127,13 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
 
         float distance = length(World_Position - Light_Position);
         float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.LightColor[lightIdx] * attenuation;
+        float3 radiance = light.LightColor[lightIdx].rgb * attenuation;
 
         // indirect lighting, based on Cook-Torrence
         
         // calc metal albedo, interpolate by metallic to calculate albedo
         float3 F_Value = lerp(F0, surface.Albedo, surface.Metallic);
-        float3 F = FresnalSchlick(surface.N_dot_V, F_Value);
+        float3 F = FresnalSchlick(surface.N_dot_V, surface.Albedo);
         
         // calc Normal Distribution by GGX
         float3 D = DistributionGGX(surface.Normal_Vec, Half_Vec, surface.Roughness);

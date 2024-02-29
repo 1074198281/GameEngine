@@ -1346,10 +1346,53 @@ namespace glTF
                 std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
                 
                 for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
+                    std::string name;
+                    switch (type)
+                    {
+                    case Material::eTextureType::kBaseColor:
+                    {
+                        name = "diffuse";
+                        My::Vector4f BaseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1]
+                            , meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
+                        GeoMaterial->SetColor(name, BaseColorFactor);
+                    }
+                    break;
+                    case Material::eTextureType::kMetallicRoughness:
+                    {
+                        name = "metallic";
+                        GeoMaterial->SetParam(name, meshIt->material->metallicFactor);
+                        name = "roughness";
+                        GeoMaterial->SetParam(name, meshIt->material->roughnessFactor);
+                    }
+                    break;
+                    case Material::eTextureType::kOcclusion:
+                    {
+                        
+                    }
+                    break;
+                    case Material::eTextureType::kEmissive:
+                    {
+                        name = "emission";
+                        My::Vector4f EmissiveFactor = My::Vector4f(meshIt->material->emissiveFactor[0], meshIt->material->emissiveFactor[1],
+                            meshIt->material->emissiveFactor[2], meshIt->material->emissiveFactor[3]);
+                        GeoMaterial->SetColor(name, EmissiveFactor);
+                    }
+                    break;
+                    case Material::eTextureType::kNormal:
+                    {
+                        name = "normal";
+                        GeoMaterial->SetParam(name, meshIt->material->normalTextureScale);
+                    }
+                    break;
+                    default:
+                        break;
+                    }
+
                     if (!meshIt->material->textures[type]) {
                         continue;
                     }
                     std::string textureType = GetTextureType(Material::eTextureType(type));
+                    
                     GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
                     if (meshIt->material->textures[type]->sampler) {
                         GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,

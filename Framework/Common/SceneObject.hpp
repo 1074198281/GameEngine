@@ -420,6 +420,7 @@ namespace My {
         Parameter   m_Metallic;
         Parameter   m_Roughness;
         Normal      m_Normal;
+        Parameter   m_NormalScale;
         Parameter   m_Specular;
         Parameter   m_AmbientOcclusion;
         Color       m_Opacity;
@@ -470,7 +471,10 @@ namespace My {
                 m_Specular = Parameter(param);
             }
             else if (attrib == "ambient") {
-                m_AmbientOcclusion = Parameter(param);;
+                m_AmbientOcclusion = Parameter(param);
+            }
+            else if (attrib == "normal") {
+                m_NormalScale = Parameter(param);
             }
         };
 
@@ -577,6 +581,31 @@ namespace My {
                 return m_pbrNormal.ValueMap;
             }
             return nullptr;
+        }
+
+        const Vector4f GetBaseColorFactor() const
+        {
+            return m_BaseColor.Value;
+        }
+
+        const float GetMetallicFactor() const
+        {
+            return m_Metallic.Value;
+        }
+
+        const float GetRoughnessFactor() const
+        {
+            return m_Roughness.Value;
+        }
+
+        const Vector4f GetEmissivsFactor() const
+        {
+            return m_Emission.Value;
+        }
+
+        const float GetNormalScaleFactor() const
+        {
+            return m_NormalScale.Value;
         }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectMaterial& obj);

@@ -31,6 +31,22 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures()
 		}
 	}
 	m_IBLResource->IBLImageCount = fileCount;
+
+
+	// Load BRDF_LUT Image
+	uint32_t width = 0;
+	uint32_t height = 0;
+	uint32_t pitch = 0;
+	uint64_t size = 0;
+	std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
+	m_IBLResource->BRDF_LUT_Image = std::make_unique<Texture>();
+	m_IBLResource->BRDF_LUT_Handle = AllocateFromDescriptorHeap(1, m_IBLResource->BRDFHeapIndex);
+	HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, Utility::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
+		m_IBLResource->BRDF_LUT_Image->GetAddressOf(), m_IBLResource->BRDF_LUT_Handle);
+	if (FAILED(hr)) {
+		ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+	}
+	m_IBLResource->BRDF_offset = m_IBLResource->IBLImageCount;
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string ImagePath, std::string suffix)
@@ -42,6 +58,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string ImagePath, s
 	size_t pos = std::max(ImagePath.find_last_of('/'), ImagePath.find_last_of('\\'));
 	std::string imageName = ImagePath.substr(pos + 1);
 	imageName = imageName.substr(0, imageName.size() - suffix_offset);
+
+	if (m_IBLResource->IBLImages.find(imageName) != m_IBLResource->IBLImages.end()) {
+		return;
+	}
 
 	std::unique_ptr<Texture> pSpecularTex, pDiffuseTex;
 

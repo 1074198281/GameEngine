@@ -15,6 +15,12 @@ namespace D3dGraphicsCore {
 	unsigned int g_FreeDescriptorsInCurrentHeap = g_DescriptorCountPerHeap;
 	UINT64 g_DescriptorSize = 0;
 
+	Texture g_DefaultBaseColorTexture;
+	Texture g_DefaultRoughnessMetallicTexture;
+	Texture g_DefaultOcclusionTexture;
+	Texture g_DefaultEmissiveTexture;
+	Texture g_DefaultNormalTexture;
+
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
     GraphicsPSO g_DefaultPSO(L"Default PSO");
@@ -102,6 +108,51 @@ void D3dGraphicsCore::OffsetDescriptorHandle(DescriptorHandle& handle, int offse
 	handle += offset * g_DescriptorSize;
 }
 
+void D3dGraphicsCore::InitializeDefaultTexture()
+{
+	const UINT paddingSize = 16;
+	const UINT textureWidth = 1;
+	const UINT textureHeight = 1;
+	const UINT pixelSize = 4; // RGBA8，每像素4字节
+
+	UINT8 WhiteTextureData[paddingSize];
+	UINT8 BlackTextureData[paddingSize];
+	UINT8 NormalTextureData[paddingSize];
+	memset(WhiteTextureData, 0, paddingSize * sizeof(UINT8));
+	memset(BlackTextureData, 0, paddingSize * sizeof(UINT8));
+	memset(NormalTextureData, 0, paddingSize * sizeof(UINT8));
+
+	WhiteTextureData[0] = 255;
+	WhiteTextureData[1] = 255;
+	WhiteTextureData[2] = 255;
+	WhiteTextureData[3] = 255;
+
+	BlackTextureData[0] = 0;
+	BlackTextureData[1] = 0;
+	BlackTextureData[2] = 0;
+	BlackTextureData[3] = 255;
+
+	NormalTextureData[0] = 128;
+	NormalTextureData[1] = 128;
+	NormalTextureData[2] = 255;
+	NormalTextureData[3] = 255;
+
+	g_DefaultBaseColorTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultRoughnessMetallicTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultOcclusionTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultEmissiveTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, BlackTextureData);
+	g_DefaultNormalTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, NormalTextureData);
+}
+
+void D3dGraphicsCore::FinalizeDefaultTexture()
+{
+	g_DefaultBaseColorTexture.Destroy();
+	g_DefaultRoughnessMetallicTexture.Destroy();
+	g_DefaultOcclusionTexture.Destroy();
+	g_DefaultEmissiveTexture.Destroy();
+	g_DefaultNormalTexture.Destroy();
+}
+
 void D3dGraphicsCore::InitializePipelineTemplates()
 {
 	SamplerDesc DefaultSamplerDesc;
@@ -114,7 +165,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature[kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kMaterialSamplers].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 10, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 15, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[kCommonCBV].InitAsConstantBuffer(1);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);

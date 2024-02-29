@@ -11,6 +11,8 @@
 #include "../Asset/Shaders/CompiledShaders/g_SkyBox_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Present_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Present_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Model_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_Model_PS.h"
 
 
 
@@ -56,6 +58,7 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	GENERATE_SHADER_BYTE_CODE(Fabric);
 	GENERATE_SHADER_BYTE_CODE(SkyBox);
 	GENERATE_SHADER_BYTE_CODE(Present);
+	GENERATE_SHADER_BYTE_CODE(Model);
 
 
 #undef TOSTRING
