@@ -10,7 +10,7 @@ Texture2D<float4> NormalTexture : register(t4);
 
 TextureCube<float3> RadianceIBLTexture : register(t10);
 TextureCube<float3> IrradianceIBLTexture : register(t11);
-Texture2D<float4> BRDF_LUT : register(t22);
+Texture2D<float4> BRDF_LUT : register(t12);
 
 SamplerState DefaultSampler : register(s10);
 
@@ -117,6 +117,8 @@ float4 main(VertexOut pin) : SV_Target
 
     // add IBL part
     colorResult += CalculateIBL(surface);
+    
+    colorResult = LinearTosRGB(colorResult);
 
     return float4(colorResult, 1.0);
 #endif

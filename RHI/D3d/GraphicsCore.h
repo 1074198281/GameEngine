@@ -38,13 +38,13 @@ namespace D3dGraphicsCore {
 		void UpdateCamera();
 		void UpdateCameraParams(int64_t key);
 		void UpdateRenderingQueue();
-		
+		void UpdateCubemapIndex();
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
 	private:
 		void LoadIBLTextures();
-		void LoadIBLDDSImage(std::string ImagePath, std::string suffix);
+		void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
 
 		void RenderAllObjects();
 		void RenderCubeMap();

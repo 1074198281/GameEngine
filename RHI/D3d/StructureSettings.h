@@ -50,18 +50,24 @@ namespace D3dGraphicsCore {
 
 	typedef struct IBLImageMap
 	{
+		std::string name;
 		std::unique_ptr<Texture> pSpecular;
 		std::unique_ptr<Texture> pDiffuse;
 	} IBLImageMap;
 
 	typedef struct IBLImageResource
 	{
+		DescriptorHeap IBLDescriptorHeap;
+		DescriptorHandle IBLFirstHandle;
+		int CurrentCubemapIndex = -1;
+		int LastCubemapIndex = -1;
+
 		DescriptorHandle FirstHandle;
 		float SpecularIBLRange;
 		float SpecularIBLBias;
 		int IBLImageCount = 0;
 		int HeapIndex = -1;
-		std::unordered_map<std::string, std::unique_ptr<IBLImageMap> > IBLImages;
+		std::unordered_map<int, std::unique_ptr<IBLImageMap> > IBLImages;
 
 		DescriptorHandle BRDF_LUT_Handle;
 		std::unique_ptr<Texture> BRDF_LUT_Image;

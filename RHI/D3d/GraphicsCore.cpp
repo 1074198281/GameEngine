@@ -209,8 +209,25 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
     }
 }
 
+void D3dGraphicsCore::CD3dGraphicsCore::UpdateCubemapIndex()
+{
+    m_IBLResource->CurrentCubemapIndex = (++m_IBLResource->CurrentCubemapIndex) % (m_IBLResource->IBLImageCount / 2);
+}
+
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
 {
+    if (m_IBLResource->CurrentCubemapIndex != m_IBLResource->LastCubemapIndex) {
+        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> image_handle_vec;
+        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> brdf_handle_vec;
+        DescriptorHandle handle = m_IBLResource->IBLFirstHandle;
+        OffsetDescriptorHandle(handle, m_IBLResource->CurrentCubemapIndex * 2);
+        image_handle_vec.push_back(handle);
+        OffsetDescriptorHandle(handle);
+        image_handle_vec.push_back(handle);
+        CopyDescriptors(m_IBLResource->FirstHandle, image_handle_vec, 2);
+        m_IBLResource->LastCubemapIndex = m_IBLResource->CurrentCubemapIndex;
+    }
+
     RenderAllObjects();
     RenderCubeMap();
 
@@ -326,12 +343,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
     }
 
     m_IBLResource->SpecularIBLRange = 0.0f;
-    auto& specularTex = m_IBLResource->IBLImages["Atrium"]->pSpecular;
-    //auto& specularTex = m_IBLResource->IBLImages["CloudCommons"]->pSpecular;
-    //auto& specularTex = m_IBLResource->IBLImages["DGarden"]->pSpecular;
-    //auto& specularTex = m_IBLResource->IBLImages["Garage"]->pSpecular;
-    //auto& specularTex = m_IBLResource->IBLImages["MSPath"]->pSpecular;
-    //auto& specularTex = m_IBLResource->IBLImages["Stonewall"]->pSpecular;
+    auto& specularTex = m_IBLResource->IBLImages[m_IBLResource->CurrentCubemapIndex]->pSpecular;
+
     if (specularTex) {
         ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
         const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();

@@ -314,28 +314,29 @@ bool My::D3d12GraphicsManager::LoadScene()
 
 void My::D3d12GraphicsManager::UpArrowKeyDown()
 {
-    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
+    
 }
 
 void My::D3d12GraphicsManager::DownArrowKeyDown()
 {
-    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f)));
+    
 }
 
 void My::D3d12GraphicsManager::LeftArrowKeyDown()
 {
-    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
+    
 }
 
 void My::D3d12GraphicsManager::RightArrowKeyDown()
 {
-    m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
+    
 }
 
 void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
 {
     switch (key) {
     case VK_NUMPAD0:
+        m_pGraphics->UpdateCubemapIndex();
         break;
     case VK_NUMPAD1:
         break;
@@ -347,15 +348,19 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
         m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, 100.0f, 1.0f));
         break;
     case VK_NUMPAD5:
+        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD6:
         m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, -100.0f, 1.0f));
         break;
     case VK_NUMPAD7:
+        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD8:
+        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD9:
+        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
         break;
     default:
         ASSERT(false, "RECIEVE UNKOWN NUMPAD INPUT! ERROR!");
