@@ -2,7 +2,7 @@ G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/CMakeFiles/ALL_BUILD.
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/CMakeFiles/ZERO_CHECK.dir
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/RHI/D3d/CMakeFiles/D3dRHI.dir
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/RHI/D2d/CMakeFiles/D2dRHI.dir
-G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/Common/CMakeFiles/Common.dir
+G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/CMakeFiles/Framework.dir
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/CMakeFiles/Empty.dir
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/CMakeFiles/WindowsApplication.dir
 G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Windows/CMakeFiles/MyGameEngineD3d12.dir

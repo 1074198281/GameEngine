@@ -26,6 +26,10 @@ namespace My {
             WPARAM wParam,
             LPARAM lParam);
 
+        int InitializeImGUI();
+
+        void FinalizeImGUI();
+
     private:
         HWND m_hWnd;
     };

@@ -16,6 +16,8 @@ namespace My {
         virtual void Clear();
         virtual void Draw();
 
+        virtual void Resize(uint32_t width, uint32_t height);
+
         virtual void UpArrowKeyDown();
         virtual void DownArrowKeyDown();
         virtual void LeftArrowKeyDown();
@@ -25,6 +27,8 @@ namespace My {
         virtual void FunctionKeyDown(int64_t key);
         virtual void FunctionKeyUp(int64_t key);
 
+        virtual void StartGUIFrame();
+        virtual void EndGUIFrame();
     };
 
     extern GraphicsManager* g_pGraphicsManager;

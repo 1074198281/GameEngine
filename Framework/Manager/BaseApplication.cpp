@@ -82,12 +82,14 @@ void My::BaseApplication::Finalize()
 // One cycle of the main loop
 void My::BaseApplication::Tick()
 {
+	g_pGraphicsManager->StartGUIFrame();
 	g_pInputManager->Tick();
 	g_pGraphicsManager->Tick();
 	g_pPhysicsManager->Tick();
 	g_pSceneManager->Tick();
 	g_pAssetLoader->Tick();
 	g_pMemoryManager->Tick();
+	g_pGraphicsManager->EndGUIFrame();
 }
 
 bool My::BaseApplication::IsQuit()
@@ -114,4 +116,14 @@ int My::BaseApplication::LoadScene()
 	//g_pSceneManager->LoadScene("Scene/NC/tar.txt");
 
 	return 0;
+}
+
+void My::BaseApplication::StartGUIFrame()
+{
+	g_pGraphicsManager->StartGUIFrame();
+}
+
+void My::BaseApplication::EndGUIFrame()
+{
+	g_pGraphicsManager->EndGUIFrame();
 }

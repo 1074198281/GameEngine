@@ -27,6 +27,8 @@ namespace D3dGraphicsCore {
 
 		int StartUp();
 		void Finalize();
+
+		void Resize(uint32_t width, uint32_t height);
 	public:
 		void setCoreHWND(HWND hwnd, int width, int height);
 		void InitializeGraphicsSettings();
@@ -39,6 +41,7 @@ namespace D3dGraphicsCore {
 		void UpdateCameraParams(int64_t key);
 		void UpdateRenderingQueue();
 		void UpdateCubemapIndex();
+		void UpdatePresent();
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
@@ -54,7 +57,7 @@ namespace D3dGraphicsCore {
 
 		std::unique_ptr<IBLImageResource> m_IBLResource;
 	private:
-		XM_Camera::Camera m_Camera;
+		std::unique_ptr<XM_Camera::Camera> m_Camera;
 		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;

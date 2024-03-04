@@ -82,7 +82,7 @@ namespace D3dGraphicsCore {
 
 	void InitializeDisplay(void);
 	void ShutdownDisplay();
-	void Resize(uint32_t width, uint32_t height);
+	void DisplayResize(uint32_t width, uint32_t height);
 	void Present(void);
 }
 

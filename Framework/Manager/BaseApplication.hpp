@@ -26,6 +26,10 @@ namespace My {
     protected:
         virtual void OnDraw() {};
 
+        void StartGUIFrame();
+
+        void EndGUIFrame();
+
     protected:
         // Flag if need quit the main loop of the application
         static bool m_bQuit;

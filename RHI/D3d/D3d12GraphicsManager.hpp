@@ -23,6 +23,7 @@ namespace My {
 
         virtual void Clear();
         virtual void Draw();
+        virtual void Resize(uint32_t width, uint32_t height);
 
         virtual void UpArrowKeyDown();
         virtual void DownArrowKeyDown();
@@ -32,6 +33,9 @@ namespace My {
         virtual void NumPadKeyUp(int64_t key);
         virtual void FunctionKeyDown(int64_t key);
         virtual void FunctionKeyUp(int64_t key);
+
+        virtual void StartGUIFrame();
+        virtual void EndGUIFrame();
     public:
 
 
@@ -39,6 +43,7 @@ namespace My {
         bool LoadScene();
         bool GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name);
 
+        int InitializeD3dImGUI();
     private:
         std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
     };

@@ -1,5 +1,10 @@
 #include "WindowsApplication.hpp"
 #include "InputManager.hpp"
+
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+
 #include <tchar.h>
 
 using namespace My;
@@ -45,10 +50,10 @@ int My::WindowsApplication::Initialize()
         hInstance,                        // application handle
         this);                            // pass pointer to current object
 
-// display the window on the screen
-    ShowWindow(hWnd, SW_SHOW);
-
     m_hWnd = hWnd;
+
+    // initialize ImGUI
+    result = InitializeImGUI();
 
     // first call base class initialization
     result = BaseApplication::Initialize();
@@ -56,11 +61,15 @@ int My::WindowsApplication::Initialize()
     if (result != 0)
         exit(result);
 
+    // display the window on the screen
+    ShowWindow(hWnd, SW_SHOW);
+
     return result;
 }
 
 void My::WindowsApplication::Finalize()
 {
+    FinalizeImGUI();
     BaseApplication::Finalize();
 }
 
@@ -83,9 +92,16 @@ void My::WindowsApplication::Tick()
     }
 }
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+
 // this is the main message handler for the program
 LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) {
+        return true;
+    }
+
     WindowsApplication* pThis;
     if (message == WM_NCCREATE)
     {
@@ -111,7 +127,6 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         pThis->OnDraw();
     }
     break;
-
     case WM_KEYDOWN:
     {
         // we will replace this with input manager
@@ -158,7 +173,11 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         }
     }
     break;
-
+    case WM_SIZE:
+    {
+        g_pGraphicsManager->Resize((UINT)(UINT64)lParam & 0xFFFF, (UINT)(UINT64)lParam >> 16);
+    }
+    break;
     // this message is read when the window is closed
     case WM_DESTROY:
     {
@@ -173,3 +192,25 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
+int My::WindowsApplication::InitializeImGUI()
+{
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplWin32_Init(m_hWnd);
+
+    return 0;
+}
+
+void My::WindowsApplication::FinalizeImGUI()
+{
+    ImGui_ImplDX12_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+}

@@ -498,7 +498,7 @@ void D3dGraphicsCore::ShutdownDisplay()
     g_DepthBuffer.Destroy();
 }
 
-void D3dGraphicsCore::Resize(uint32_t width, uint32_t height)
+void D3dGraphicsCore::DisplayResize(uint32_t width, uint32_t height)
 {
     g_CommandManager.IdleGPU();
 
@@ -506,8 +506,10 @@ void D3dGraphicsCore::Resize(uint32_t width, uint32_t height)
     g_DisplayHeight = height;
 
     DEBUGPRINT("Changing display resolution to %ux%u", width, height);
-
+    g_PreDisplayBuffer.Destroy();
     g_PreDisplayBuffer.Create(L"PreDisplay Buffer", width, height, 1, g_SwapChainFormat);
+    g_DepthBuffer.Destroy();
+    g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
 
     for (uint32_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
         g_DisplayBuffer[i].Destroy();
@@ -526,6 +528,7 @@ void D3dGraphicsCore::Resize(uint32_t width, uint32_t height)
 
     g_CommandManager.IdleGPU();
 
+    InitializeBuffers();
     //ResizeDisplayDependentBuffers(g_NativeWidth, g_NativeHeight);
 }
 

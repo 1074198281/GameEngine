@@ -219,6 +219,9 @@ GameEngine_SOURCE_DIR:STATIC=G:/Engine_file/gameEngine/GameEngineStart/GameEngin
 HLSL_COMPILER_PATH:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x64/fxc.exe
 
 //Path to a library.
+IMGUI_DEBUG_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/ImGUI/Debug/ImGUI_Debug.lib
+
+//Path to a library.
 OPENDDL_LIBRARY:FILEPATH=G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/OpenDDL.lib
 
 //Path to a library.
@@ -306,7 +309,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=12
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=10
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib

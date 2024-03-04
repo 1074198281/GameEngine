@@ -10,17 +10,23 @@
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 #include "GraphicsStructure.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx12.h"
+
 namespace My {
     extern IApplication* g_pApp;
 }
 
 int My::D3d12GraphicsManager::Initialize()
 {
+    int result = 0;
     m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
     m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
     m_pGraphics->StartUp();
+    result = InitializeD3dImGUI();
 
-    return 0;
+    return result;
 }
 
 void My::D3d12GraphicsManager::Finalize()
@@ -45,8 +51,12 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
-
     m_pGraphics->UpdateStatus();
+}
+
+void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
+{
+    m_pGraphics->Resize(width, height);
 }
 
 bool My::D3d12GraphicsManager::LoadScene()
@@ -403,4 +413,36 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(D3dGraphicsCore::Primitiv
         return false;
     }
     return true;
+}
+
+int My::D3d12GraphicsManager::InitializeD3dImGUI()
+{
+    D3dGraphicsCore::DescriptorHandle ImGUIHandle;
+    int HeapIdx = -1;
+    ImGUIHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    if (HeapIdx == -1) {
+        ASSERT(false, "Allocate Descriptor From Heap For ImGUI Failed! ERROR!");
+        return -1;
+    }
+    
+    ImGui_ImplDX12_Init(D3dGraphicsCore::g_Device, SWAP_CHAIN_BUFFER_COUNT, D3dGraphicsCore::g_SwapChainFormat,
+        D3dGraphicsCore::g_DescriptorHeaps[HeapIdx]->GetHeapPointer(),
+        // You'll need to designate a descriptor from your descriptor heap for Dear ImGui to use internally for its font texture's SRV
+        ImGUIHandle,
+        ImGUIHandle);
+
+    return 0;
+}
+
+void My::D3d12GraphicsManager::StartGUIFrame()
+{
+    ImGui_ImplDX12_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    ImGui::ShowDemoWindow(); // Show demo window! :)
+}
+
+void My::D3d12GraphicsManager::EndGUIFrame()
+{
+    m_pGraphics->UpdatePresent();
 }

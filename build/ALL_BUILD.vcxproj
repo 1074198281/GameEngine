@@ -69,7 +69,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\ImGUI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Math;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\ImGUI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Math;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\ImGUI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Math;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <Midl>
-      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Component;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\bullet3;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\zlib;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\WinPix;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\External\Windows\include\ImGUI;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Math;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Windows;G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -177,10 +177,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{21C74807-5E84-303B-AC7D-C537C76DC18E}</Project>
       <Name>AssetLoaderTest</Name>
     </ProjectReference>
-    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Common\Common.vcxproj">
-      <Project>{1F2C1C0A-EFA8-35D4-873C-403F89B165E5}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D2d\D2dRHI.vcxproj">
       <Project>{B10519F1-3485-3B48-88DB-145DE31D8449}</Project>
       <Name>D2dRHI</Name>
@@ -192,6 +188,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\Empty.vcxproj">
       <Project>{71667EE9-4B28-3058-8D39-DA2E4AB8D432}</Project>
       <Name>Empty</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Framework.vcxproj">
+      <Project>{BAD860B6-1CBE-3E0F-945B-A24ACADEE646}</Project>
+      <Name>Framework</Name>
     </ProjectReference>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Windows\MyGameEngineD3d12.vcxproj">
       <Project>{36E746DB-95D4-39B8-B93B-6AEDB5FC9C86}</Project>

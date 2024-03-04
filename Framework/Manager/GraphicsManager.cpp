@@ -26,6 +26,10 @@ void GraphicsManager::Draw()
 {
 }
 
+void GraphicsManager::Resize(uint32_t width, uint32_t height)
+{
+}
+
 void GraphicsManager::UpArrowKeyDown()
 {
 }
@@ -55,5 +59,13 @@ void GraphicsManager::FunctionKeyDown(int64_t key)
 }
 
 void GraphicsManager::FunctionKeyUp(int64_t key)
+{
+}
+
+void GraphicsManager::StartGUIFrame()
+{
+}
+
+void GraphicsManager::EndGUIFrame()
 {
 }

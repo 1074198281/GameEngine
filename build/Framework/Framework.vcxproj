@@ -22,31 +22,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{71667EE9-4B28-3058-8D39-DA2E4AB8D432}</ProjectGuid>
+    <ProjectGuid>{BAD860B6-1CBE-3E0F-945B-A24ACADEE646}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
-    <ProjectName>Empty</ProjectName>
+    <ProjectName>Framework</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
@@ -59,30 +59,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Empty.dir\Debug\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Empty</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Empty.dir\Release\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Empty</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\MinSizeRel\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Empty.dir\MinSizeRel\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Empty</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\RelWithDebInfo\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Empty.dir\RelWithDebInfo\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Empty</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
-    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Framework.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Framework</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Framework.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Framework</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Framework.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Framework</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Framework.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Framework</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -113,19 +105,9 @@
       <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
-    <Link>
-      <AdditionalDependencies>..\..\Framework\Debug\Framework.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\zlibd.lib;..\..\RHI\D3d\Debug\D3dRHI.lib;..\..\..\External\Windows\lib\zlibd.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;..\..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;..\..\..\External\Windows\lib\ImGUI\Debug\ImGUI_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <Lib>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/Debug/Empty.lib</ImportLibrary>
-      <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/Debug/Empty.pdb</ProgramDataBaseFile>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -156,19 +138,9 @@
       <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
-    <Link>
-      <AdditionalDependencies>..\..\Framework\Release\Framework.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\zlibd.lib;..\..\RHI\D3d\Release\D3dRHI.lib;..\..\..\External\Windows\lib\zlibd.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;..\..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;..\..\..\External\Windows\lib\ImGUI\Debug\ImGUI_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <Lib>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/Release/Empty.lib</ImportLibrary>
-      <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/Release/Empty.pdb</ProgramDataBaseFile>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
@@ -199,19 +171,9 @@
       <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
-    <Link>
-      <AdditionalDependencies>..\..\Framework\MinSizeRel\Framework.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\zlibd.lib;..\..\RHI\D3d\MinSizeRel\D3dRHI.lib;..\..\..\External\Windows\lib\zlibd.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;..\..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;..\..\..\External\Windows\lib\ImGUI\Debug\ImGUI_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <Lib>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/MinSizeRel/Empty.lib</ImportLibrary>
-      <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/MinSizeRel/Empty.pdb</ProgramDataBaseFile>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
@@ -241,26 +203,16 @@
       <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
-    <Link>
-      <AdditionalDependencies>..\..\Framework\RelWithDebInfo\Framework.lib;..\..\..\External\Windows\lib\xg.lib;..\..\..\External\Windows\lib\OpenDDL.lib;..\..\..\External\Windows\lib\OpenGEX.lib;..\..\..\External\Windows\lib\zlibd.lib;..\..\RHI\D3d\RelWithDebInfo\D3dRHI.lib;..\..\..\External\Windows\lib\zlibd.lib;d3d12.lib;dxguid.lib;dxgi.lib;d3dcompiler.lib;..\..\..\External\Windows\lib\bullet3\Debug\LinearMath_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletDynamics_Debug.lib;..\..\..\External\Windows\lib\bullet3\Debug\BulletCollision_Debug.lib;..\..\..\External\Windows\lib\ImGUI\Debug\ImGUI_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib;G:/Engine_file/gameEngine/GameEngineStart/GameEngine/External/Windows/lib/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    <Lib>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/RelWithDebInfo/Empty.lib</ImportLibrary>
-      <ProgramDataBaseFile>G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/RelWithDebInfo/Empty.pdb</ProgramDataBaseFile>
-      <SubSystem>Console</SubSystem>
-    </Link>
-    <ProjectReference>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
-    </ProjectReference>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Empty\CMakeLists.txt">
+    <CustomBuild Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Platform/Empty/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Framework/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/CMakeFiles/generate.stamp
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -269,11 +221,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Platform/Empty/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Framework/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/CMakeFiles/generate.stamp
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -282,11 +234,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Platform/Empty/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Framework/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/CMakeFiles/generate.stamp
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -295,11 +247,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Platform/Empty/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule G:/Engine_file/gameEngine/GameEngineStart/GameEngine/Framework/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Platform/Empty/CMakeFiles/generate.stamp
+D:\cmake\cmake\cmake\bin\cmake.exe -SG:/Engine_file/gameEngine/GameEngineStart/GameEngine -BG:/Engine_file/gameEngine/GameEngineStart/GameEngine/build --check-stamp-file G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build/Framework/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -308,12 +260,72 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Platform\Empty\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Platform\Empty\EmptyApplication.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm\ColorSpaceConversion.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm\DDS_Compress_Decompress.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm\HuffmanTree.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Algorithm\half_float.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Buffer.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\GfxConfiguration.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Image.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Mesh.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\cbuffer.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\portable.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\shader_base.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\utility.hpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Image.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\main.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Functions.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Header.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Matrix3.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Matrix4.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Quaternion.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Scalar.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Transform.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\XM_Vector.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\base_math.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\geommath.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\GeomMath\half_float.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface\IApplication.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface\IRuntimeModule.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface\ImageParser.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface\Interface.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Interface\SceneParser.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\Allocator.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\AssetLoader.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseApplication.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\GraphicsManager.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\InputManager.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\MemoryManager.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\PhysicsManager.hpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\Allocator.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\AssetLoader.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseApplication.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\GraphicsManager.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\InputManager.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\MemoryManager.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\PhysicsManager.cpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\BMP.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\DDS.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\GLTF.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\ImageParserHeader.h" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\JPEG.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\NC.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\OGEX.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\PNG.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Parser\TGA.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\Scene.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneManager.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNode.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObject.hpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\Scene.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneManager.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObject.cpp" />
+    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\ZERO_CHECK.vcxproj">
@@ -321,14 +333,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </ProjectReference>
-    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\RHI\D3d\D3dRHI.vcxproj">
-      <Project>{84A5672F-23CF-3EED-AE2C-157F50E3DEB7}</Project>
-      <Name>D3dRHI</Name>
-    </ProjectReference>
-    <ProjectReference Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\build\Framework\Framework.vcxproj">
-      <Project>{BAD860B6-1CBE-3E0F-945B-A24ACADEE646}</Project>
-      <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

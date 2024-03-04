@@ -7,6 +7,8 @@
 #include "Core/Common/SystemTime.h"
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 #include "ShaderConstants.h"
+
+#include "imgui_impl_dx12.h"
 #include <array>
 
 
@@ -81,6 +83,14 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     XM_Input::Shutdown();
 }
 
+void D3dGraphicsCore::CD3dGraphicsCore::Resize(uint32_t width, uint32_t height)
+{
+    DisplayResize(width, height);
+    m_Camera.reset();
+    m_CameraController.reset();
+    InitializeGraphicsSettings();
+}
+
 void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int height)
 {
     g_hWnd = hwnd;
@@ -93,11 +103,16 @@ void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int he
 
 void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
 {
-    m_Camera.SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
-    m_Camera.SetFOV(120.f);
-    m_Camera.SetZRange(0.01f, 1000.0f);
-    m_Camera.SetPosition(XM_Math::Vector3(0, 0, 5));
-    m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(m_Camera, XM_Math::Vector3(0.0f, 1.0f, 0.0f));
+    if (!m_Camera) {
+        m_Camera = std::make_unique<XM_Camera::Camera>();
+        m_Camera->SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
+        m_Camera->SetFOV(120.f);
+        m_Camera->SetZRange(0.01f, 1000.0f);
+        m_Camera->SetPosition(XM_Math::Vector3(0, 0, 5));
+    }
+    if (!m_CameraController) {
+        m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(*m_Camera.get(), XM_Math::Vector3(0.0f, 1.0f, 0.0f));
+    }
     
     m_MainViewport.Width = g_DisplayWidth;
     m_MainViewport.Height = g_DisplayHeight;
@@ -170,10 +185,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
     m_CameraController->Update(DeltaTime);
     
 #ifdef _DEBUG
-    if (m_Camera.m_bIsCameraMove) {
-        std::cout << "Current Camera Position: X: " << m_Camera.GetPosition().GetX()
-            << " Y:" << m_Camera.GetPosition().GetY()
-            << " Z:" << m_Camera.GetPosition().GetZ()
+    if (m_Camera->m_bIsCameraMove) {
+        std::cout << "Current Camera Position: X: " << m_Camera->GetPosition().GetX()
+            << " Y:" << m_Camera->GetPosition().GetY()
+            << " Z:" << m_Camera->GetPosition().GetZ()
             << std::endl;
     }
 #endif // _DEBUG
@@ -200,8 +215,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
         //reset cameta position
         XM_Math::Vector3 position = XM_Math::Vector3(0.0f, 0.0f, 5.0f);
         XM_Math::Matrix3 orientation = XM_Math::Matrix3(XM_Math::Vector3(1, 0, 0), XM_Math::Vector3(0, 1, 0), XM_Math::Vector3(0, 0, 1));
-        m_Camera.SetTransform(XM_Math::AffineTransform(orientation, position));
-        m_Camera.Update();
+        m_Camera->SetTransform(XM_Math::AffineTransform(orientation, position));
+        m_Camera->Update();
     }
     break;
     default:
@@ -249,11 +264,21 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
     gfxContext.SetDescriptorTable(0, Handle);
     gfxContext.SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
     gfxContext.Draw(3);
+
+    {
+        gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[0]->GetHeapPointer());
+        ImGui::Render();
+        ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), gfxContext.GetCommandList());
+    }
+
     gfxContext.TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT, true);
     gfxContext.Finish();
+}
 
+void D3dGraphicsCore::CD3dGraphicsCore::UpdatePresent()
+{
     D3dGraphicsCore::Present();
-    
+
     g_CommandManager.IdleGPU();
     InitializeBuffers();
 }
@@ -311,8 +336,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
             CommonConstants CommonCbv;
             memset(&CommonCbv, 0, sizeof(CommonCbv));
             CommonCbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
-            CommonCbv.ViewMatrix = m_Camera.GetViewMatrix();
-            CommonCbv.ProjMatrix = m_Camera.GetProjMatrix();
+            CommonCbv.ViewMatrix = m_Camera->GetViewMatrix();
+            CommonCbv.ProjMatrix = m_Camera->GetProjMatrix();
             gfxContext.SetDynamicConstantBufferView(kCommonCBV, sizeof(CommonConstants), &CommonCbv);
         }
 
@@ -357,8 +382,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
         XM_Math::Matrix4 ProjInverse;
         XM_Math::Matrix3 ViewInverse;
     } skyVSCB;
-    skyVSCB.ProjInverse = Invert(m_Camera.GetProjMatrix());
-    skyVSCB.ViewInverse = Invert(m_Camera.GetViewMatrix()).Get3x3();
+    skyVSCB.ProjInverse = Invert(m_Camera->GetProjMatrix());
+    skyVSCB.ViewInverse = Invert(m_Camera->GetViewMatrix()).Get3x3();
 
     __declspec(align(16)) struct SkyboxPSCB
     {
