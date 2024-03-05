@@ -273,6 +273,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\GfxConfiguration.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Image.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Mesh.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\ParameterValuemap.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\cbuffer.h" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\portable.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\shader_base.h" />
@@ -298,6 +299,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\Allocator.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\AssetLoader.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseApplication.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseSceneNode.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseSceneObject.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\GraphicsManager.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\InputManager.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\MemoryManager.hpp" />
@@ -321,7 +324,20 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\Scene.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneManager.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNode.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeCamera.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeGeometry.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeLight.hpp" />
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObject.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectCamera.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectGeometry.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectIndexArray.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectLight.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectMaterial.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectMesh.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTexture.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTransform.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTypeDef.hpp" />
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectVertexArray.hpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\Scene.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneManager.cpp" />
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObject.cpp" />

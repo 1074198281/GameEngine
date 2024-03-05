@@ -1,4 +1,5 @@
 #include "SceneObject.hpp"
+#include "BaseSceneObject.hpp"
 
 namespace My {
     std::ostream& operator<<(std::ostream& out, SceneObjectType type)

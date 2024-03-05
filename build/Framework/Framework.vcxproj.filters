@@ -66,6 +66,9 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\Mesh.hpp">
       <Filter>include\Common</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\ParameterValuemap.hpp">
+      <Filter>include\Common</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Common\cbuffer.h">
       <Filter>include\Common</Filter>
     </ClInclude>
@@ -135,6 +138,12 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseApplication.hpp">
       <Filter>include\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseSceneNode.hpp">
+      <Filter>include\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\BaseSceneObject.hpp">
+      <Filter>include\Manager</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\Manager\GraphicsManager.hpp">
       <Filter>include\Manager</Filter>
     </ClInclude>
@@ -183,7 +192,46 @@
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNode.hpp">
       <Filter>include\SceneGraph</Filter>
     </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeCamera.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeGeometry.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneNodeLight.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
     <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObject.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectCamera.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectGeometry.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectIndexArray.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectLight.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectMaterial.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectMesh.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTexture.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTransform.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectTypeDef.hpp">
+      <Filter>include\SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\Framework\SceneGraph\SceneObjectVertexArray.hpp">
       <Filter>include\SceneGraph</Filter>
     </ClInclude>
   </ItemGroup>

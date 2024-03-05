@@ -8,6 +8,51 @@ GameEngine代码主要参考了https://zhuanlan.zhihu.com/p/510064704专栏内�
 
 该项目主体由**dx12**支持，且暂时**没有**考虑跨平台和vulkan支持，所以主要在windows上使用，IDE使用VS2022。
 
+## 0 项目构建
+
+项目中目前使用的三方库包括bullet3,ImGUI,OGEX。所有的三方库文件都存储在External/Windows/include下。
+
+编译得到的.lib文件存储在External/Windows/lib下。
+
+### 0.1 bullet3
+
+在bullet3文件夹下创建build文件夹，并在其中执行cmake。在项目目录下打开cmd/powershell。
+
+`cd External/Windows/include/bullet3`
+`mkdir build`
+`cd build`
+`cmake ..`
+`./MY_BULLET_PHYSICS.sln`
+
+编译即可。
+
+### 0.2 ImGUI
+
+在ImGUI下创建build文件夹，并在其中执行cmake。
+
+`cd External/Windows/include/ImGUI`
+`mkdir build`
+`cd build`
+`cmake ..`
+`./ImGUI.sln`
+
+编译即可。
+
+### 0.3 OGEX
+
+OGEX的lib文件直接存放在lib文件夹下，可以直接使用。由于对应的cpp文件丢失，编译方式需要参考知乎文档中的内容。
+
+### 0.4 项目构建
+
+在项目根目录下执行：
+
+`mkdir build`
+`cd build`
+`cmake ..`
+`./GameEngine.sln`
+
+即可打开项目工程。
+
 ## 1 文件结构
 
 ### 1.1 Asset
@@ -39,21 +84,33 @@ External文件夹主要存放了三方库的头文件和编译的lib与bin文件
 
 Framework主要存放了引擎框架上的一些文件。
 
-#### 1.5.1 Common
+#### 1.5.1 Algorithm
 
-Common文件夹主要存放了一些上层管理器和通用结构、类的声明。
+Algorithm主要保存了算法相关的一些文件。
 
-#### 1.5.2 GeomMath
+#### 1.5.2 Common
+
+Common文件夹主要存放了一些通用结构、类和一些常用的工具函数的声明、实现。
+
+#### 1.5.3 GeomMath
 
 GeomMath主要存放了数学库相关的文件。
 
-#### 1.5.3 Interface
+#### 1.5.4 Interface
 
 Interface主要存放了父类接口的声明。通常这些为纯虚类。
 
-#### 1.5.4 Parser
+#### 1.5.5 Manager
+
+Manager主要存放了管理器父类的一些接口。
+
+#### 1.5.6 Parser
 
 Parser主要是存放了一些解释器相关的文件。
+
+#### 1.5.7 SceneGraph
+
+SceneGraph主要保存了场景相关的一些文件。
 
 ### 1.6 Platform
 

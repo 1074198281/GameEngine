@@ -85,9 +85,6 @@
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCore.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
-    <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsCoreInternal.cpp">
-      <Filter>src\D3dSource</Filter>
-    </ClCompile>
     <ClCompile Include="G:\Engine_file\gameEngine\GameEngineStart\GameEngine\RHI\D3d\GraphicsStructure.cpp">
       <Filter>src\D3dSource</Filter>
     </ClCompile>
