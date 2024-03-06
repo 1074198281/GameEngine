@@ -40,6 +40,11 @@ namespace D3dGraphicsCore {
 		float MetallicRoughnessFactor[2];
 		float EmissiveFactor[3];
 		float NormalScaleFactor;
+		float BaseColorTextureTransform[5];
+		float MetallicRoughnessTextureTransform[5];
+		float OcclusionTransform[5];
+		float EmissiveTextureTransform[5];
+		float NormalTextureTransform[5];
 		GraphicsPSO PSO;
 	} MaterialResource;
 

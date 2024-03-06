@@ -31,10 +31,21 @@ namespace D3dGraphicsCore {
 	// Model_PS -- cb0
 	__declspec(align(16)) typedef struct MaterialConstants {
 		float BaseColorFactor[4];
-		float MetallicRoughnessFactor[2];
 		float EmissiveFactor[3];
 		float NormalTextureScale;
-		float padding[2];
+		float MetallicRoughnessFactor[2];
+		float padding0[2];
+		float BaseColorTextureTransform[4];
+		float MetallicRoughnessTextureTransform[4];
+		float OcclusionTransform[4];
+		float EmissiveTextureTransform[4];
+		float NormalTextureTransform[4];
+		float BaseColorRotation;
+		float MetallicRoughnessRotation;
+		float OcclusionRotation;
+		float EmissiveRotation;
+		float NormalRotation;
+		float padding1[3];
 	} MaterialConstants;
 
 	 __declspec(align(16)) typedef struct CommonConstants {

@@ -1,6 +1,5 @@
 #include "../Algorithm/Lighting.hlsl"
-
-Texture2D<float4> tex0[5] : register(t0);
+#include "../Algorithm/CommonMath.hlsl"
 
 Texture2D<float4> BaseColorTexture : register(t0);
 Texture2D<float4> MetallicRoughnessTexture : register(t1);
@@ -20,6 +19,18 @@ cbuffer cbMaterialConstants : register(b0)
     float3 EmissiveFactor;
     float NormalTextureScale;
     float2 MetallicRoughnessFactor;
+    float2 padding0;
+    float4 BaseColorTextureTransform;
+    float4 MetallicRoughnessTextureTransform;
+    float4 OcclusionTransform;
+    float4 EmissiveTextureTransform;
+    float4 NormalTextureTransform;
+    float BaseColorRotation;
+    float MetallicRoughnessRotation;
+    float OcclusionRotation;
+    float EmissiveRotation;
+    float NormalRotation;
+    float3 padding1;
 };
 
 cbuffer cbCommon : register(b1)
@@ -85,13 +96,18 @@ float4 main(VertexOut pin) : SV_Target
 #ifdef PBR
     float3 colorResult = float3(0.0, 0.0, 0.0);
 
-    float4 baseColor = BaseColorFactor * BaseColorTexture.Sample(DefaultSampler, pin.TextureUV);
-    float metallic = MetallicRoughnessFactor.x * MetallicRoughnessTexture.Sample(DefaultSampler, pin.TextureUV).b;
-    float roughness = MetallicRoughnessFactor.y * MetallicRoughnessTexture.Sample(DefaultSampler, pin.TextureUV).g;
-    float ambientocclusion = OcclusionTexture.Sample(DefaultSampler, pin.TextureUV).r;
-    float3 emissive = EmissiveFactor * EmissiveTexture.Sample(DefaultSampler, pin.TextureUV).rgb;
+    float4 baseColor = BaseColorFactor * BaseColorTexture.Sample(
+    DefaultSampler, getTransformedUV(BaseColorTextureTransform[0], BaseColorTextureTransform[2], BaseColorRotation, pin.TextureUV));
+    float metallic = MetallicRoughnessFactor.x * MetallicRoughnessTexture.Sample(
+    DefaultSampler, getTransformedUV(MetallicRoughnessTextureTransform[0], MetallicRoughnessTextureTransform[2], MetallicRoughnessRotation, pin.TextureUV)).b;
+    float roughness = MetallicRoughnessFactor.y * MetallicRoughnessTexture.Sample(
+    DefaultSampler, getTransformedUV(MetallicRoughnessTextureTransform[0], MetallicRoughnessTextureTransform[2], MetallicRoughnessRotation, pin.TextureUV)).g;
+    float ambientocclusion = OcclusionTexture.Sample(
+    DefaultSampler, getTransformedUV(OcclusionTransform[0], OcclusionTransform[2], OcclusionRotation, pin.TextureUV)).r;
+    float3 emissive = EmissiveFactor * EmissiveTexture.Sample(
+    DefaultSampler, getTransformedUV(EmissiveTextureTransform[0], EmissiveTextureTransform[2], EmissiveRotation, pin.TextureUV)).rgb;
     float3 normal = normalize(pin.WorldNormal);
-
+    
     SurfaceProperties surface;
     surface.PositionWorld = HomogeneousCoordinates(pin.WorldPosition);
     surface.Normal_Vec = normal;
@@ -118,7 +134,7 @@ float4 main(VertexOut pin) : SV_Target
     // add IBL part
     colorResult += CalculateIBL(surface);
     
-    colorResult = LinearTosRGB(colorResult);
+    //colorResult = LinearTosRGB(colorResult);
 
     return float4(colorResult, 1.0);
 #endif

@@ -239,9 +239,62 @@ bool My::D3d12GraphicsManager::LoadScene()
                         _object->MaterialResource.TextureResources.push_back(re);
                         TexturesPerMaterial++;
                     }
+
+                    // texture transform
+                    My::TextureTransform trans = pMaterial->GetTextureTransform(My::SceneObjectMaterial::TextureType(i));
+                    switch (i) {
+                    case My::SceneObjectMaterial::kBaseColor:
+                    {
+                        _object->MaterialResource.BaseColorTextureTransform[0] = trans.offset[0];
+                        _object->MaterialResource.BaseColorTextureTransform[1] = trans.offset[1];
+                        _object->MaterialResource.BaseColorTextureTransform[2] = trans.scale[0];
+                        _object->MaterialResource.BaseColorTextureTransform[3] = trans.scale[1];
+                        _object->MaterialResource.BaseColorTextureTransform[4] = trans.rotation;
+                    }
+                    break;
+                    case My::SceneObjectMaterial::kMetallicRoughness:
+                    {
+                        _object->MaterialResource.MetallicRoughnessTextureTransform[0] = trans.offset[0];
+                        _object->MaterialResource.MetallicRoughnessTextureTransform[1] = trans.offset[1];
+                        _object->MaterialResource.MetallicRoughnessTextureTransform[2] = trans.scale[0];
+                        _object->MaterialResource.MetallicRoughnessTextureTransform[3] = trans.scale[1];
+                        _object->MaterialResource.MetallicRoughnessTextureTransform[4] = trans.rotation;
+                    }
+                    break;
+                    case My::SceneObjectMaterial::kOcclusion:
+                    {
+                        _object->MaterialResource.OcclusionTransform[0] = trans.offset[0];
+                        _object->MaterialResource.OcclusionTransform[1] = trans.offset[1];
+                        _object->MaterialResource.OcclusionTransform[2] = trans.scale[0];
+                        _object->MaterialResource.OcclusionTransform[3] = trans.scale[1];
+                        _object->MaterialResource.OcclusionTransform[4] = trans.rotation;
+                    }
+                    break;
+                    case My::SceneObjectMaterial::kEmissive:
+                    {
+                        _object->MaterialResource.EmissiveTextureTransform[0] = trans.offset[0];
+                        _object->MaterialResource.EmissiveTextureTransform[1] = trans.offset[1];
+                        _object->MaterialResource.EmissiveTextureTransform[2] = trans.scale[0];
+                        _object->MaterialResource.EmissiveTextureTransform[3] = trans.scale[1];
+                        _object->MaterialResource.EmissiveTextureTransform[4] = trans.rotation;
+                    }
+                    break;
+                    case My::SceneObjectMaterial::kNormal: 
+                    {
+                        _object->MaterialResource.NormalTextureTransform[0] = trans.offset[0];
+                        _object->MaterialResource.NormalTextureTransform[1] = trans.offset[1];
+                        _object->MaterialResource.NormalTextureTransform[2] = trans.scale[0];
+                        _object->MaterialResource.NormalTextureTransform[3] = trans.scale[1];
+                        _object->MaterialResource.NormalTextureTransform[4] = trans.rotation;
+                    }
+                    break;
+                    default:
+                        ASSERT(false, "TEXTURE TRANSFORM ERROR!");
+                        break;
+                    }
                 }
 
-                // factor param
+                // factor param / 
                 _object->MaterialResource.BaseColorFactor[0] = pMaterial->GetBaseColorFactor()[0];
                 _object->MaterialResource.BaseColorFactor[1] = pMaterial->GetBaseColorFactor()[1];
                 _object->MaterialResource.BaseColorFactor[2] = pMaterial->GetBaseColorFactor()[2];

@@ -315,6 +315,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
         {
             MaterialConstants MatCbv;
             memset(&MatCbv, 0, sizeof(MaterialConstants));
+            // factor param
             MatCbv.BaseColorFactor[0] = (*it)->MaterialResource.BaseColorFactor[0];
             MatCbv.BaseColorFactor[1] = (*it)->MaterialResource.BaseColorFactor[1];
             MatCbv.BaseColorFactor[2] = (*it)->MaterialResource.BaseColorFactor[2];
@@ -325,6 +326,38 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
             MatCbv.EmissiveFactor[1] = (*it)->MaterialResource.EmissiveFactor[1];
             MatCbv.EmissiveFactor[2] = (*it)->MaterialResource.EmissiveFactor[2];
             MatCbv.NormalTextureScale = (*it)->MaterialResource.NormalScaleFactor;
+
+            // transform param
+            MatCbv.BaseColorTextureTransform[0] = (*it)->MaterialResource.BaseColorTextureTransform[0];
+            MatCbv.BaseColorTextureTransform[1] = (*it)->MaterialResource.BaseColorTextureTransform[1];
+            MatCbv.BaseColorTextureTransform[2] = (*it)->MaterialResource.BaseColorTextureTransform[2];
+            MatCbv.BaseColorTextureTransform[3] = (*it)->MaterialResource.BaseColorTextureTransform[3];
+            MatCbv.BaseColorRotation = (*it)->MaterialResource.BaseColorTextureTransform[4];
+
+            MatCbv.MetallicRoughnessTextureTransform[0] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[0];
+            MatCbv.MetallicRoughnessTextureTransform[1] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[1];
+            MatCbv.MetallicRoughnessTextureTransform[2] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[2];
+            MatCbv.MetallicRoughnessTextureTransform[3] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[3];
+            MatCbv.MetallicRoughnessRotation = (*it)->MaterialResource.MetallicRoughnessTextureTransform[4];
+
+            MatCbv.OcclusionTransform[0] = (*it)->MaterialResource.OcclusionTransform[0];
+            MatCbv.OcclusionTransform[1] = (*it)->MaterialResource.OcclusionTransform[1];
+            MatCbv.OcclusionTransform[2] = (*it)->MaterialResource.OcclusionTransform[2];
+            MatCbv.OcclusionTransform[3] = (*it)->MaterialResource.OcclusionTransform[3];
+            MatCbv.OcclusionRotation = (*it)->MaterialResource.OcclusionTransform[4];
+
+            MatCbv.EmissiveTextureTransform[0] = (*it)->MaterialResource.EmissiveTextureTransform[0];
+            MatCbv.EmissiveTextureTransform[1] = (*it)->MaterialResource.EmissiveTextureTransform[1];
+            MatCbv.EmissiveTextureTransform[2] = (*it)->MaterialResource.EmissiveTextureTransform[2];
+            MatCbv.EmissiveTextureTransform[3] = (*it)->MaterialResource.EmissiveTextureTransform[3];
+            MatCbv.EmissiveRotation = (*it)->MaterialResource.EmissiveTextureTransform[4];
+
+            MatCbv.NormalTextureTransform[0] = (*it)->MaterialResource.NormalTextureTransform[0];
+            MatCbv.NormalTextureTransform[1] = (*it)->MaterialResource.NormalTextureTransform[1];
+            MatCbv.NormalTextureTransform[2] = (*it)->MaterialResource.NormalTextureTransform[2];
+            MatCbv.NormalTextureTransform[3] = (*it)->MaterialResource.NormalTextureTransform[3];
+            MatCbv.NormalRotation = (*it)->MaterialResource.NormalTextureTransform[4];
+
             gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
         }
 

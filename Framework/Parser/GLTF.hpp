@@ -145,6 +145,7 @@ namespace glTF
         Texture* textures[kNumTextures];
         uint32_t index;
 
+        float TextureTransform[5 * kNumTextures];
     };
 
     struct Primitive
@@ -567,6 +568,7 @@ namespace glTF
                 material.flags = 0;
                 material.alphaCutoff = floatToHalf(0.5f);
                 material.normalTextureScale = 1.0f;
+                memset(&material.TextureTransform, 0, sizeof(float) * 5 * 5);
 
                 if (thisMaterial.find("name") != thisMaterial.end()) {
                     material.name = thisMaterial.at("name");
@@ -611,11 +613,11 @@ namespace glTF
 
                     if (metallicRoughness.find("baseColorTexture") != metallicRoughness.end())
                         material.baseColorUV = ReadTextureInfo(metallicRoughness.at("baseColorTexture"),
-                            material.textures[Material::kBaseColor]);
+                            Material::kBaseColor, material);
 
                     if (metallicRoughness.find("metallicRoughnessTexture") != metallicRoughness.end())
                         material.metallicRoughnessUV = ReadTextureInfo(metallicRoughness.at("metallicRoughnessTexture"),
-                            material.textures[Material::kMetallicRoughness]);
+                            Material::kMetallicRoughness, material);
                 }
 
                 if (thisMaterial.find("doubleSided") != thisMaterial.end())
@@ -629,15 +631,15 @@ namespace glTF
 
                 if (thisMaterial.find("occlusionTexture") != thisMaterial.end())
                     material.occlusionUV = ReadTextureInfo(thisMaterial.at("occlusionTexture"),
-                        material.textures[Material::kOcclusion]);
+                        Material::kOcclusion, material);
 
                 if (thisMaterial.find("emissiveTexture") != thisMaterial.end())
                     material.emissiveUV = ReadTextureInfo(thisMaterial.at("emissiveTexture"),
-                        material.textures[Material::kEmissive]);
+                        Material::kEmissive, material);
 
                 if (thisMaterial.find("normalTexture") != thisMaterial.end())
                     material.normalUV = ReadTextureInfo(thisMaterial.at("normalTexture"),
-                        material.textures[Material::kNormal]);
+                        Material::kNormal, material);
 
                 m_materials.push_back(material);
             }
@@ -1054,12 +1056,35 @@ namespace glTF
             }
         }
 
-        uint32_t ReadTextureInfo(json& info_json, glTF::Texture*& info)
+        uint32_t ReadTextureInfo(json& info_json, glTF::Material::eTextureType Type, glTF::Material& material)
         {
-            info = nullptr;
+            material.textures[Type] = nullptr;
 
-            if (info_json.find("index") != info_json.end())
-                info = &m_textures[info_json.at("index")];
+            if (info_json.find("index") != info_json.end()) {
+                material.textures[Type] = &m_textures[info_json.at("index")];
+            }
+
+            material.TextureTransform[0 + 5 * Type] = 0;
+            material.TextureTransform[1 + 5 * Type] = 0;
+            material.TextureTransform[2 + 5 * Type] = 1;
+            material.TextureTransform[3 + 5 * Type] = 1;
+            material.TextureTransform[4 + 5 * Type] = 0;
+
+            if (info_json.find("extensions") != info_json.end()) {
+                json& extensions = info_json.at("extensions");
+                if (extensions.find("KHR_texture_transform") != extensions.end()) {
+                    json& textureTransform = extensions.at("KHR_texture_transform");
+                    if (textureTransform.find("offset") != textureTransform.end()) {
+                        ReadFloats(textureTransform.at("offset"), &material.TextureTransform[0 + 5 * Type]);
+                    }
+                    if (textureTransform.find("scale") != textureTransform.end()) {
+                        ReadFloats(textureTransform.at("scale"), &material.TextureTransform[2 + 5 * Type]);
+                    }
+                    if (textureTransform.find("rotation") != textureTransform.end()) {
+                        ReadFloats(textureTransform.at("rotation"), &material.TextureTransform[4 + 5 * Type]);
+                    }
+                }
+            }
 
             if (info_json.find("texCoord") != info_json.end())
                 return info_json.at("texCoord");
@@ -1347,11 +1372,13 @@ namespace glTF
                 
                 for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
                     std::string name;
+                    std::string pbrname;
                     switch (type)
                     {
                     case Material::eTextureType::kBaseColor:
                     {
                         name = "diffuse";
+                        pbrname = "pbrdiffuse";
                         My::Vector4f BaseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1]
                             , meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
                         GeoMaterial->SetColor(name, BaseColorFactor);
@@ -1363,16 +1390,18 @@ namespace glTF
                         GeoMaterial->SetParam(name, meshIt->material->metallicFactor);
                         name = "roughness";
                         GeoMaterial->SetParam(name, meshIt->material->roughnessFactor);
+                        pbrname = "pbrmetallicroughness";
                     }
                     break;
                     case Material::eTextureType::kOcclusion:
                     {
-                        
+                        pbrname = "pbrocclusion";
                     }
                     break;
                     case Material::eTextureType::kEmissive:
                     {
                         name = "emission";
+                        pbrname = "pbremissive";
                         My::Vector4f EmissiveFactor = My::Vector4f(meshIt->material->emissiveFactor[0], meshIt->material->emissiveFactor[1],
                             meshIt->material->emissiveFactor[2], meshIt->material->emissiveFactor[3]);
                         GeoMaterial->SetColor(name, EmissiveFactor);
@@ -1381,6 +1410,7 @@ namespace glTF
                     case Material::eTextureType::kNormal:
                     {
                         name = "normal";
+                        pbrname = "pbrnormal";
                         GeoMaterial->SetParam(name, meshIt->material->normalTextureScale);
                     }
                     break;
@@ -1394,6 +1424,14 @@ namespace glTF
                     std::string textureType = GetTextureType(Material::eTextureType(type));
                     
                     GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
+                    My::TextureTransform trans;
+                    memset(&trans, 0, sizeof(My::TextureTransform));
+                    trans.offset[0] = meshIt->material->TextureTransform[0 + type * 5];
+                    trans.offset[1] = meshIt->material->TextureTransform[1 + type * 5];
+                    trans.scale[0] = meshIt->material->TextureTransform[2 + type * 5];
+                    trans.scale[1] = meshIt->material->TextureTransform[3 + type * 5];
+                    trans.rotation = meshIt->material->TextureTransform[4 + type * 5];
+                    GeoMaterial->SetTextureTransform(pbrname, trans);
                     if (meshIt->material->textures[type]->sampler) {
                         GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
                             meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
