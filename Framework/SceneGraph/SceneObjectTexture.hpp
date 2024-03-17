@@ -41,12 +41,13 @@ namespace My {
         int GetSamplerWrapS() { return m_wrapS; };
         int GetSamplerWrapT() { return m_wrapT; };
         void LoadTexture() {
+            AssetLoader assetLoader;
             if (!m_pImage)
             {
                 // we should lookup if the texture has been loaded already to prevent
                 // duplicated load. This could be done in Asset Loader Manager.
-                std::string fullpath = g_pAssetLoader->m_AssetPath + m_Name;
-                Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary(fullpath.c_str());
+                std::string fullpath = m_Name;
+                Buffer buf = assetLoader.SyncOpenAndReadBinary(fullpath.c_str());
                 std::string ext = m_Name.substr(m_Name.find_last_of("."));
                 if (ext == ".jpg" || ext == ".jpeg")
                 {

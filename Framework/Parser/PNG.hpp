@@ -6,7 +6,7 @@
 #include <queue>
 #include <algorithm>
 //#include "config.h"
-#include "ImageParser.hpp"
+#include "IImageParser.hpp"
 #include "portable.hpp"
 #include "zlib.h"
 #include "utility.hpp"
@@ -99,6 +99,7 @@ namespace My {
         virtual Image Parse(Buffer& buf)
         {
             Image img;
+            img.data = nullptr;
             bool bEnd = false;
 
             uint8_t* pData = buf.GetData();
@@ -163,7 +164,7 @@ namespace My {
                 img.bitcount = 32; // currently we fixed at RGBA for rendering
                 img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
                 img.data_size = img.pitch * img.Height;
-                img.data = (R8G8B8A8Unorm*)g_pMemoryManager->Allocate(img.data_size);
+                img.data = (R8G8B8A8Unorm*)new uint8_t[img.data_size];
 
                 std::cout << "Width: " << m_Width << std::endl;
                 std::cout << "Height: " << m_Height << std::endl;
@@ -228,7 +229,7 @@ namespace My {
                         img.bitcount = 32; // currently we fixed at RGBA for rendering
                         img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
                         img.data_size = img.pitch * img.Height;
-                        img.data = (R8G8B8A8Unorm*)g_pMemoryManager->Allocate(img.data_size);
+                        img.data = (R8G8B8A8Unorm*)new uint8_t[img.data_size];
 
                         std::cout << "Width: " << m_Width << std::endl;
                         std::cout << "Height: " << m_Height << std::endl;
@@ -389,7 +390,7 @@ namespace My {
                         } while (ret != Z_STREAM_END);
 
                         (void)inflateEnd(&strm);
-                        g_pMemoryManager->Free(pDecompressedBuffer, kChunkSize);
+                        delete pDecompressedBuffer;
                     }
                     break;
                     case PNG_CHUNK_TYPE::IEND:

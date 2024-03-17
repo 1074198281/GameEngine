@@ -1,7 +1,7 @@
 #include <unordered_map>
 #include "OpenGEX.h"
 #include "portable.hpp"
-#include "SceneParser.hpp"
+#include "ISceneParser.hpp"
 
 namespace My {
     class OgexParser : __implements SceneParser

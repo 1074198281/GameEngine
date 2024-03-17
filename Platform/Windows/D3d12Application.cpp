@@ -1,21 +1,33 @@
-#include "WindowsApplication.hpp"
-#include "D3d/D3d12GraphicsManager.hpp"
-#include "MemoryManager.hpp"
-#include "AssetLoader.hpp"
-#include "SceneManager.hpp"
-#include "InputManager.hpp"
-#include "PhysicsManager.hpp"
+#include "D3d12Application.hpp"
 #include <tchar.h>
 
-using namespace My;
 
-namespace My {
-    GfxConfiguration config(8, 8, 8, 8, 32, 0, 0, 960, 540, _T("Game Engine From Scratch (Windows)"));
-    IApplication* g_pApp = static_cast<IApplication*>(new WindowsApplication(config));
-    GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new D3d12GraphicsManager);
-    MemoryManager* g_pMemoryManager = static_cast<MemoryManager*>(new MemoryManager);
-    AssetLoader* g_pAssetLoader = static_cast<AssetLoader*>(new AssetLoader);
-    SceneManager* g_pSceneManager = static_cast<SceneManager*>(new SceneManager);
-    InputManager* g_pInputManager = static_cast<InputManager*>(new InputManager);
-    PhysicsManager* g_pPhysicsManager = static_cast<PhysicsManager*>(new PhysicsManager);
+void My::D3d12Application::Finalize()
+{
+
+}
+
+int My::D3d12Application::CreateMainWindow()
+{
+	WindowsApplication::CreateMainWindow();
+
+
+    auto getFramebufferSize = [this](uint32_t& width, uint32_t& height) {
+        GetFrameBufferSize(width, height);
+    };
+
+    auto getWindowHandler = [this]() -> HWND {
+        return (HWND)GetMainWindow();
+    };
+
+    auto getGfxConfigHandler = [this]() { return GetConfiguration(); };
+
+    // 设置回调函数
+    m_GraphicsRHI.SetQueryFrameBufferSize(getFramebufferSize);
+    m_GraphicsRHI.SetGetWindowHandleProc(getWindowHandler);
+    m_GraphicsRHI.SetGetGfxconfiguration(getGfxConfigHandler);
+
+    m_GraphicsRHI.StartUp();
+
+	return 0;
 }

@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#include <functional>
+#include "GfxConfiguration.h"
 #include "Core/D3dCommonDef.h"
 #include "Core/Pipeline/RootSignature.h"
 #include "Core/Resource/GpuBuffer.h"
@@ -20,7 +22,12 @@
 
 namespace D3dGraphicsCore {
 
+	// CD3dGraphicsCore pretends to be D3DRHI
 	class CD3dGraphicsCore {
+		using QueryFrameBufferSize = std::function<void(uint32_t&, uint32_t&)>;
+		using GetWindowHandleProc = std::function<HWND()>;
+		using GetGfxconfiguration = std::function<const My::GfxConfiguration&()>;
+
 	public:
 		CD3dGraphicsCore();
 		~CD3dGraphicsCore();
@@ -29,8 +36,20 @@ namespace D3dGraphicsCore {
 		void Finalize();
 
 		void Resize(uint32_t width, uint32_t height);
+
+		void SetQueryFrameBufferSize(const QueryFrameBufferSize& func) {
+			m_fQueryFrameBufferSize = func;
+		}
+
+		void SetGetWindowHandleProc(const GetWindowHandleProc& func) {
+			m_fGetWindowHandleProc = func;
+		}
+
+		void SetGetGfxconfiguration(const GetGfxconfiguration& func) {
+			m_fGetGfxconfiguration = func;
+		}
 	public:
-		void setCoreHWND(HWND hwnd, int width, int height);
+		
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
 
@@ -45,13 +64,16 @@ namespace D3dGraphicsCore {
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
+
 	private:
 		void LoadIBLTextures();
 		void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
 
 		void RenderAllObjects();
 		void RenderCubeMap();
-		
+
+	private:
+		void InitializeCoreHWND();
 	private:
 		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
 
@@ -63,6 +85,10 @@ namespace D3dGraphicsCore {
 		D3D12_RECT m_MainScissor;
 
 		XMFLOAT4 m_GlobalLightPosition;
+	private:
+		QueryFrameBufferSize m_fQueryFrameBufferSize;
+		GetWindowHandleProc m_fGetWindowHandleProc;
+		GetGfxconfiguration m_fGetGfxconfiguration;
 	};
 
 }

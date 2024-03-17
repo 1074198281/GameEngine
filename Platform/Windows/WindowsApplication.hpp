@@ -17,8 +17,13 @@ namespace My {
         // One cycle of the main loop
         virtual void Tick();
 
-        inline HWND GetMainWindow() const { return m_hWnd; };
+        int CreateMainWindow() override;
 
+        void* GetMainWindow() override;
+
+        inline HWND GetMainWindowHWND() const { return m_hWnd; };
+
+        void GetFrameBufferSize(uint32_t& width, uint32_t& height);
     private:
         // the WindowProc function prototype
         static LRESULT CALLBACK WindowProc(HWND hWnd,

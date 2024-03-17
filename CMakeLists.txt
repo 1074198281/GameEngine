@@ -132,6 +132,10 @@ MESSAGE("---------- Starting Platform Make ----------")
 add_subdirectory(Platform)
 MESSAGE("---------- Platform Make End ----------")
 
+MESSAGE("---------- Starting Viewer Make ----------")
+add_subdirectory(Viewer)
+MESSAGE("---------- Platform Viewer End ----------")
+
 MESSAGE("---------- Starting Test Make ----------")
 add_subdirectory(Test)
 MESSAGE("---------- Test Make End ----------")

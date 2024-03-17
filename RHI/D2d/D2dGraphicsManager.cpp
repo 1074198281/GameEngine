@@ -5,16 +5,11 @@
 
 using namespace My;
 
-
-namespace My {
-    extern IApplication* g_pApp;
-}
-
 HRESULT My::D2dGraphicsManager::CreateGraphicsResources()
 {
     HRESULT hr = S_OK;
 
-    HWND hWnd = reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow();
+    HWND hWnd = (HWND)reinterpret_cast<WindowsApplication*>(m_pApp)->GetMainWindow();
 
     if (m_pRenderTarget == nullptr)
     {

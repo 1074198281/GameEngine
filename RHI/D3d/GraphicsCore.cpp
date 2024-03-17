@@ -8,6 +8,7 @@
 #include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 #include "Core/Resource/DDSTextureLoader.h"
 #include "ShaderConstants.h"
+#include "cbuffer.h"
 
 #include "imgui_impl_dx12.h"
 #include <array>
@@ -37,6 +38,7 @@ D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 
 int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
 {
+    InitializeCoreHWND();
     InitializeInputLayout();
     InitializeSamplers();
     InitializeShaderByteMap();
@@ -94,8 +96,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::Resize(uint32_t width, uint32_t height)
     InitializeGraphicsSettings();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::setCoreHWND(HWND hwnd, int width, int height)
+void D3dGraphicsCore::CD3dGraphicsCore::InitializeCoreHWND()
 {
+    HWND hwnd;
+    uint32_t width, height;
+    m_fQueryFrameBufferSize(width, height);
+    hwnd = m_fGetWindowHandleProc();
     g_hWnd = hwnd;
     g_DisplayWidth = width;
     g_DisplayHeight = height;
@@ -361,7 +367,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
             gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
         }
 
-        // Material Shader Resource --  register 0
+        // Material Shader Resource --  register 0 / t0 - t4
         {
             gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
         }

@@ -4,31 +4,18 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "IRuntimeModule.hpp"
+#include "IAssetLoader.hpp"
 #include "Buffer.hpp"
 
 namespace My {
-	class AssetLoader : public IRuntimeModule {
+	class AssetLoader : public IAssetLoader {
     public:
-        virtual ~AssetLoader() {};
+        ~AssetLoader() override = default;
 
-        virtual int Initialize();
-        virtual void Finalize();
+        int Initialize() override;
+        void Finalize() override;
 
-        virtual void Tick();
-
-        typedef void* AssetFilePtr;
-
-        enum AssetOpenMode {
-            MY_OPEN_TEXT   = 0, /// Open In Text Mode
-            MY_OPEN_BINARY = 1, /// Open In Binary Mode 
-        };
-
-        enum AssetSeekBase {
-            MY_SEEK_SET = 0, /// SEEK_SET
-            MY_SEEK_CUR = 1, /// SEEK_CUR
-            MY_SEEK_END = 2  /// SEEK_END
-        };
+        void Tick() override;
 
         bool AddSearchPath(const char *path);
 
@@ -36,11 +23,11 @@ namespace My {
 
         bool FileExists(const char *filePath);
 
-        AssetFilePtr OpenFile(const char* name, AssetOpenMode mode);
+        AssetFilePtr OpenFile(const char* name, AssetOpenMode mode) override;
 
-        Buffer SyncOpenAndReadText(const char *filePath);
+        Buffer SyncOpenAndReadText(const char *filePath) override;
 
-        Buffer SyncOpenAndReadBinary(const char *filePath);
+        Buffer SyncOpenAndReadBinary(const char *filePath) override;
 
         size_t SyncRead(const AssetFilePtr& fp, Buffer& buf);
 
@@ -50,7 +37,7 @@ namespace My {
 
         int32_t Seek(AssetFilePtr fp, long offset, AssetSeekBase where);
 
-        inline std::string SyncOpenAndReadTextFileToString(const char* fileName)
+        inline std::string SyncOpenAndReadTextFileToString(const char* fileName) override
         {
             std::string result;
             Buffer buffer = SyncOpenAndReadText(fileName);
@@ -67,8 +54,5 @@ namespace My {
         std::vector<std::string> m_strSearchPath;
     public:
         std::string m_AssetPath;
-        std::string m_AssetName;
 	};
-
-    extern AssetLoader* g_pAssetLoader;
 }

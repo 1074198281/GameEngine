@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Interface.hpp"
-#include "IRuntimeModule.hpp"
 #include "GfxConfiguration.h"
 
 namespace My {
 	
-	__Interface IApplication : __implements IRuntimeModule {
+	__Interface IApplication {
 	public:
 		virtual int Initialize() = 0;
 		virtual void Finalize() = 0;
@@ -18,11 +17,12 @@ namespace My {
 
 		virtual void SetCommandLineParameters(int argc, char** argv) = 0;
 
-		virtual int LoadScene() = 0;
+		virtual int GetCommandLineParametersCount() = 0;
 
-		virtual void OnDraw() = 0;
+		virtual const char* GetCommandLineParameters(int index) = 0;
+
+		virtual int CreateMainWindow() = 0;
 
 		virtual GfxConfiguration& GetConfiguration() = 0;
 	};
-	extern IApplication* g_pApp;
 }

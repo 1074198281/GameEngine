@@ -45,6 +45,52 @@ uint FIRSTBITHIGH_SLOW(uint input)
 #define ATTR_OFFS			offsetof
 
 #define unistruct	struct
+
+
+namespace My {
+	enum LightType { Omni = 0, Spot = 1, Infinity = 2, Area = 3 };
+#define MAX_LIGHT_NUM 16
+
+	//// Ê¹ÓÃhandleÀ´ÃèÊöÃ¿¸öÖ¡ÖÐÎÆÀí×ÊÔ´
+	//// ÀíÂÛÉÏdx12¿ÉÒÔÓÉD3D12_DESCRIPTOR_CPU_HANDLEÀ´Ö§³Ö
+
+	//typedef size_t TextureHandle;
+	//typedef struct Texture {
+	//	TextureHandle Handle;
+	//} Texture;
+
+	//typedef struct MaterialTextures {
+	//	Texture DiffuseMap;
+	//	Texture MetallicRoughnessMap;
+	//	Texture AmbientOcclusionMap;
+	//	Texture EmissiveMap;
+	//	Texture NormalMap;
+	//} MaterialTextures;
+
+	//typedef struct GlobalTextures {
+	//	Texture SkyBoxMap;
+	//	Texture SkyBoxDiffuseMap;
+	//	Texture BRDF_LUT_Map;
+	//} GlobalTextures;
+
+	typedef std::string Texture;
+	typedef struct MaterialTextures {
+		Texture DiffuseMap;
+		Texture MetallicRoughnessMap;
+		Texture AmbientOcclusionMap;
+		Texture EmissiveMap;
+		Texture NormalMap;
+	} MaterialTextures;
+
+	typedef struct GlobalTextures {
+		Texture SkyBoxMap;
+		Texture SkyBoxDiffuseMap;
+		Texture BRDF_LUT_Map;
+	} GlobalTextures;
+
+}
+
+
 #endif
 
 #endif

@@ -317,10 +317,10 @@ void D3dGraphicsCore::InitializeSamplers()
 
 void D3dGraphicsCore::InitializeInputLayout()
 {
-	g_Pos = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(sizeof(D3D12_INPUT_ELEMENT_DESC));
-	g_PosTex = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(2 * sizeof(D3D12_INPUT_ELEMENT_DESC));
-	g_PosNorTex = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(3 * sizeof(D3D12_INPUT_ELEMENT_DESC));
-	g_PosNorTanTex = (D3D12_INPUT_ELEMENT_DESC*)My::g_pMemoryManager->Allocate(4 * sizeof(D3D12_INPUT_ELEMENT_DESC));
+	g_Pos = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC;
+	g_PosTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[2];
+	g_PosNorTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[3];
+	g_PosNorTanTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[4];
 
 	g_Pos[0] =  { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 } ;
 

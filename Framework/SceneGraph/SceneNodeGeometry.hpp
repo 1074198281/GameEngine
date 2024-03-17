@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseSceneNode.hpp"
+#include "SceneObjectGeometry.hpp"
 #include <ostream>
 #include <vector>
 #include <string>

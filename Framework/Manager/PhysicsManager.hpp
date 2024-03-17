@@ -3,13 +3,14 @@
 #define BT_USE_DOUBLE_PRECISION 1
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
-#include "IRuntimeModule.hpp"
+#include "IPhysicsManager.hpp"
 #include "SceneManager.hpp"
 #include <vector>
 
 namespace My {
-	class PhysicsManager : __implements IRuntimeModule {
+	class PhysicsManager : __implements IPhysicsManager {
 	public:
+		~PhysicsManager() override = default;
 		virtual int Initialize();
 		virtual void Finalize();
 		virtual void Tick();
@@ -31,6 +32,4 @@ namespace My {
 
 		std::vector<btCollisionShape*> m_btCollisionShapes;
 	};
-
-	extern PhysicsManager* g_pPhysicsManager;
 }

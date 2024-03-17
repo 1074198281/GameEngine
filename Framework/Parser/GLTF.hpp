@@ -13,11 +13,7 @@
 
 #pragma once
 
-#include "D3d/Core/Common/FileUtility.h"
-#include "D3d/Core/Utility.h"
-#include "XM_Functions.h"
-#include "d3dx12.h"
-#include "SceneParser.hpp"
+#include "ISceneParser.hpp"
 #include "SceneNode.hpp"
 #include "SceneObject.hpp"
 #include "Scene.hpp"
@@ -29,11 +25,12 @@
 #include <fstream>
 #include <memory>
 #include <xutility>
+#include <algorithm>
 
-
-#ifndef _WIN32
-#define _WIN32
-#endif
+//
+//#ifndef _WIN32
+//#define _WIN32
+//#endif
 #pragma warning(push)
 #pragma warning(disable : 4100) // unreferenced formal parameter
 #include "json.hpp"
@@ -99,9 +96,12 @@ namespace glTF
 
     struct Sampler
     {
-        D3D12_FILTER filter;
-        D3D12_TEXTURE_ADDRESS_MODE wrapS;
-        D3D12_TEXTURE_ADDRESS_MODE wrapT;
+        //D3D12_FILTER filter;
+        int filter;
+        //D3D12_TEXTURE_ADDRESS_MODE wrapS;
+        int wrapS;
+        //D3D12_TEXTURE_ADDRESS_MODE wrapT;
+        int wrapT;
     };
 
     struct Texture
@@ -271,7 +271,7 @@ namespace glTF
     {
         const float kF32toF16 = (1.0 / (1ull << 56)) * (1.0 / (1ull << 56)); // 2^-112
         union { float f; uint32_t u; } x;
-        x.f = XM_Math::Clamp(f, 0.0f, 1.0f) * kF32toF16;
+        x.f = std::clamp(f, 0.0f, 1.0f) * kF32toF16;
         return x.u >> 13;
     }
 
@@ -308,7 +308,8 @@ namespace glTF
             vertexDataType = My::kVertexDataTypeMatrix2;
             break;
         default:
-            ASSERT("Vertex Type Parse Error!");
+            assert(false);
+            printf("Vertex Type Parse Error!");
             break;
         }
         return vertexDataType;
@@ -340,7 +341,8 @@ namespace glTF
             indexDataType = My::kIndexDataTypeInt32;
             break;
         default:
-            ASSERT("Parse Index Data Type Error!");
+            assert(false);
+            printf("Parse Index Data Type Error!");
             break;
         }
         return indexDataType;
@@ -363,7 +365,8 @@ namespace glTF
             dataSize = 2;
             break;
         case 4:
-            ASSERT("ComponentType Signed Int Should Not Happen!");
+            assert(false);
+            printf("ComponentType Signed Int Should Not Happen!");
             dataSize = 4;
             break;
         case 5:
@@ -373,7 +376,8 @@ namespace glTF
             dataSize = 4;
             break;
         default:
-            ASSERT("Parse ComponentType Error");
+            assert(false);
+            printf("Parse ComponentType Error");
             break;
         }
         return dataSize;
@@ -432,20 +436,24 @@ namespace glTF
             stringType = "pbrnormal";
             break;
         default:
-            ASSERT(false, "Parse Material Texture Type Error!");
+            assert(false);
+            printf("Parse Material Texture Type Error!");
             break;
         }
         return stringType;
     }
 
-    D3D12_TEXTURE_ADDRESS_MODE GLtoD3DTextureAddressMode(int32_t glWrapMode)
+    int32_t GLtoD3DTextureAddressMode(int32_t glWrapMode)
     {
         switch (glWrapMode)
         {
-        default: ERROR("Unexpected sampler wrap mode");
-        case 33071: return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-        case 33648: return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
-        case 10497: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+        default: assert("Unexpected sampler wrap mode");
+        //case 33071: return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+        case 33071: return 3;
+        //case 33648: return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+        case 33648: return 2;
+        //case 10497: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+        case 10497: return 1;
         }
     }
 
@@ -456,7 +464,7 @@ namespace glTF
         ~GLTFParser() { m_meshes.clear(); }
 
         Scene* m_scene;
-        std::wstring m_basePath;
+        std::string m_basePath;
         std::vector<Scene> m_scenes;
         std::vector<Node> m_nodes;
         std::vector<Camera> m_cameras;
@@ -483,16 +491,20 @@ namespace glTF
                 if (thisBuffer.find("uri") != thisBuffer.end())
                 {
                     const std::string& uri = thisBuffer.at("uri");
-                    std::wstring filepath = m_basePath + std::wstring(uri.begin(), uri.end());
+                    std::string filepath = m_basePath + std::string(uri.begin(), uri.end());
 
-                    ByteArray ba = Utility::ReadFileSync(filepath);
-                    ASSERT(ba->size() > 0, "Missing bin file %ws", filepath.c_str());
+                    ByteArray ba = My::ReadFileSyncDirectly(filepath.c_str());
+                    assert(ba->size() > 0);
+                    printf("Missing bin file %s", filepath.c_str());
                     m_buffers.push_back(ba);
                 }
                 else
                 {
-                    ASSERT(it == buffers.begin(), "Only the 1st buffer allowed to be internal");
-                    ASSERT(chunk1bin->size() > 0, "GLB chunk1 missing data or not a GLB file");
+                    //ASSERT(it == buffers.begin(), "Only the 1st buffer allowed to be internal");
+                    assert(it == buffers.begin());
+                    printf("Only the 1st buffer allowed to be internal");
+                    assert(chunk1bin->size() > 0);
+                    printf("GLB chunk1 missing data or not a GLB file");
                     m_buffers.push_back(chunk1bin);
                 }
             }
@@ -678,9 +690,12 @@ namespace glTF
                 json& thisSampler = it.value();
 
                 glTF::Sampler& sampler = m_samplers[samplerIdx++];
-                sampler.filter = D3D12_FILTER_ANISOTROPIC;
-                sampler.wrapS = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-                sampler.wrapT = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+                //sampler.filter = D3D12_FILTER_ANISOTROPIC;
+                sampler.filter = 0x55;
+                //sampler.wrapS = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+                sampler.wrapS = 1;
+                //sampler.wrapT = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+                sampler.wrapT = 1;
 
                 /*
                 // Who cares what is provided?  It's about what you can afford, generally
@@ -718,11 +733,14 @@ namespace glTF
                 }
                 else if (thisImage.find("bufferView") != thisImage.end())
                 {
-                    Utility::Printf("GLB image at buffer view %d with mime type %s\n", thisImage.at("bufferView").get<uint32_t>(), thisImage.at("mimeType").get<std::string>().c_str());
+                    //assert(false);
+                    printf("GLB image at buffer view %d with mime type %s\n", thisImage.at("bufferView").get<uint32_t>(), thisImage.at("mimeType").get<std::string>().c_str());
+                    //Utility::Printf("GLB image at buffer view %d with mime type %s\n", thisImage.at("bufferView").get<uint32_t>(), thisImage.at("mimeType").get<std::string>().c_str());
                 }
                 else
                 {
-                    ASSERT(0);
+                    assert(false);
+                    //ASSERT(0);
                 }
             }
         }
@@ -796,7 +814,8 @@ namespace glTF
                     ReadFloats(positionAccessor.at("min"), prim.minPos);
                     ReadFloats(positionAccessor.at("max"), prim.maxPos);
 
-                    prim.mode = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+                    //prim.mode = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+                    prim.mode = 4;
                     prim.indices = nullptr;
                     prim.material = nullptr;
                     prim.minIndex = 0;
@@ -858,7 +877,7 @@ namespace glTF
 
                 if (thisNode.find("skin") != thisNode.end())
                 {
-                    ASSERT(node.mesh != nullptr);
+                    assert(node.mesh != nullptr);
                     node.mesh->skin = thisNode.at("skin");
                 }
 
@@ -1014,7 +1033,7 @@ namespace glTF
                     camera.ymag = orthographic["ymag"];
                     camera.znear = orthographic["znear"];
                     camera.zfar = orthographic["zfar"];
-                    ASSERT(camera.zfar > camera.znear);
+                    assert(camera.zfar > camera.znear);
                 }
 
                 m_cameras.push_back(camera);
@@ -1094,7 +1113,7 @@ namespace glTF
 
 
     public:
-        void ParseGLTFFile(const std::wstring& filepath)
+        void ParseGLTFFile(const std::string& filepath)
         {
             // TODO:  add GLB support by extracting JSON section and BIN sections
             //https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#glb-file-format-specification
@@ -1102,9 +1121,9 @@ namespace glTF
             ByteArray gltfFile;
             ByteArray chunk1Bin;
 
-            std::wstring fileExt = Utility::ToLower(Utility::GetFileExtension(filepath));
+            std::string fileExt = My::ToLower(My::GetFileExtension(filepath));
 
-            if (fileExt == L"glb")
+            if (fileExt == "glb")
             {
                 std::ifstream glbFile(filepath, std::ios::in | std::ios::binary);
                 struct GLBHeader
@@ -1116,12 +1135,14 @@ namespace glTF
                 glbFile.read((char*)&header, sizeof(GLBHeader));
                 if (strncmp(header.magic, "glTF", 4) != 0)
                 {
-                    Utility::Printf("Error:  Invalid glTF binary format\n");
+                    //Utility::Printf("Error:  Invalid glTF binary format\n");
+                    printf("Error:  Invalid glTF binary format\n");
                     return;
                 }
                 if (header.version != 2)
                 {
-                    Utility::Printf("Error:  Only glTF 2.0 is supported\n");
+                    //Utility::Printf("Error:  Only glTF 2.0 is supported\n");
+                    printf("Error:  Only glTF 2.0 is supported\n");
                     return;
                 }
 
@@ -1131,7 +1152,8 @@ namespace glTF
                 glbFile.read((char*)&chunk0Type, 4);
                 if (strncmp(chunk0Type, "JSON", 4) != 0)
                 {
-                    Utility::Printf("Error: Expected chunk0 to contain JSON\n");
+                    //Utility::Printf("Error: Expected chunk0 to contain JSON\n");
+                    printf("Error: Expected chunk0 to contain JSON\n");
                     return;
                 }
                 gltfFile = std::make_shared<std::vector<unsigned char>>(chunk0Length + 1);
@@ -1144,7 +1166,8 @@ namespace glTF
                 glbFile.read((char*)&chunk1Type, 4);
                 if (strncmp(chunk1Type, "BIN", 3) != 0)
                 {
-                    Utility::Printf("Error: Expected chunk1 to contain BIN\n");
+                    //Utility::Printf("Error: Expected chunk1 to contain BIN\n");
+                    printf("Error: Expected chunk1 to contain BIN\n");
                     return;
                 }
 
@@ -1153,10 +1176,10 @@ namespace glTF
             }
             else
             {
-                ASSERT(fileExt == L"gltf");
+                assert(fileExt == "gltf");
 
                 // Null terminate the string (just in case)
-                gltfFile = Utility::ReadFileSync(filepath);
+                gltfFile = My::ReadFileSyncDirectly(filepath.c_str());
                 if (gltfFile->size() == 0)
                     return;
 
@@ -1167,12 +1190,13 @@ namespace glTF
             json root = json::parse((const char*)gltfFile->data());
             if (!root.is_object())
             {
-                Utility::Printf("Invalid glTF file: %s\n", filepath.c_str());
+                //Utility::Printf("Invalid glTF file: %s\n", filepath.c_str());
+                printf("Invalid glTF file: %s\n", filepath.c_str());
                 return;
             }
 
             // Strip off file name to get root path to other related files
-            m_basePath = Utility::GetBasePath(filepath);
+            m_basePath = My::GetBasePath(filepath);
 
             // Parse all state
 
@@ -1245,7 +1269,8 @@ namespace glTF
                     GeoMesh->SetPrimitiveType(My::PrimitiveType::kPrimitiveTypeTriFan);
                     break;
                 default:
-                    ASSERT("GLTF Mesh Type Parse Error!");
+                    assert(false);
+                    printf("GLTF Mesh Type Parse Error!");
                     break;
                 }
 
@@ -1491,7 +1516,7 @@ namespace glTF
 
         void ProcessRootParentNode(std::shared_ptr<My::BaseSceneNode>& node, My::Scene& Scene, glTF::Node* pNode)
         {
-            ASSERT(!pNode->camera && !pNode->mesh && pNode->children.size());
+            assert(!pNode->camera && !pNode->mesh && pNode->children.size());
 
             std::shared_ptr<My::BaseSceneNode> pRootNode = std::make_shared<My::BaseSceneNode>(pNode->name);
 
@@ -1506,11 +1531,11 @@ namespace glTF
             std::unique_ptr<My::Scene> pScene(new My::Scene("GLTF Scene"));
             std::string gltfpath = _WORKING_DIRECTORY + std::string("/Asset/") + std::string(buf);
             pScene->m_AssetPath = gltfpath.substr(0, gltfpath.find_last_of('/') + 1);
-            ParseGLTFFile(Utility::UTF8ToWideString(gltfpath));
+            ParseGLTFFile(gltfpath);
 
             std::shared_ptr<My::BaseSceneNode> base_node = pScene->SceneGraph;
 
-            ASSERT(m_scenes.size() == 1);
+            assert(m_scenes.size() == 1);
 
             std::shared_ptr<My::BaseSceneNode> StructureNode;
             StructureNode = std::make_shared<My::SceneEmptyNode>(RootNodeName);

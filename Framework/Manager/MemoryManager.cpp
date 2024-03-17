@@ -1,8 +1,8 @@
 #include "MemoryManager.hpp"
 #include <malloc.h>
 
-extern "C" void* malloc(size_t size);
-extern "C" void  free(void* p);
+//extern "C" void* malloc(size_t size);
+//extern "C" void  free(void* p);
 
 
 #ifndef ALIGN

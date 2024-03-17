@@ -1,5 +1,6 @@
 #include <iostream>
 #include "PhysicsManager.hpp"
+#include "BaseApplication.hpp"
 
 int My::PhysicsManager::Initialize()
 {
@@ -34,10 +35,12 @@ void My::PhysicsManager::Finalize()
 
 void My::PhysicsManager::Tick()
 {
-	if (g_pSceneManager->IsSceneChanged())
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+    auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
+	if (pSceneManager->IsSceneChanged())
 	{
-		g_pPhysicsManager->ClearRigidBodies();
-		g_pPhysicsManager->CreateRigidBodies();
+        pPhysicsManager->ClearRigidBodies();
+        pPhysicsManager->CreateRigidBodies();
 	}
 
 	m_btDynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
@@ -135,7 +138,8 @@ void My::PhysicsManager::DeleteRigidBody(My::SceneGeometryNode& node)
 
 int My::PhysicsManager::CreateRigidBodies()
 {
-    auto& scene = g_pSceneManager->GetSceneForRendering();
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+    auto& scene = pSceneManager->GetSceneForRendering();
 
     // Geometries
     for (auto _it : scene.GeometryNodes)
@@ -152,7 +156,9 @@ int My::PhysicsManager::CreateRigidBodies()
 
 void My::PhysicsManager::ClearRigidBodies()
 {
-    auto& scene = g_pSceneManager->GetSceneForRendering();
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+
+    auto& scene = pSceneManager->GetSceneForRendering();
 
     // Geometries
     for (auto _it : scene.GeometryNodes)

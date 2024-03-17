@@ -16,26 +16,28 @@ namespace My {
     class D3d12GraphicsManager : public GraphicsManager
     {
     public:
-        virtual int Initialize();
-        virtual void Finalize();
+        //~D3d12GraphicsManager() final {}
 
-        virtual void Tick();
+        int Initialize() final;
+        void Finalize() final;
 
-        virtual void Clear();
-        virtual void Draw();
-        virtual void Resize(uint32_t width, uint32_t height);
+        void Tick() final;
 
-        virtual void UpArrowKeyDown();
-        virtual void DownArrowKeyDown();
-        virtual void LeftArrowKeyDown();
-        virtual void RightArrowKeyDown();
-        virtual void NumPadKeyDown(int64_t key);
-        virtual void NumPadKeyUp(int64_t key);
-        virtual void FunctionKeyDown(int64_t key);
-        virtual void FunctionKeyUp(int64_t key);
+        void Clear() final;
+        void Draw() final;
+        void Resize(uint32_t width, uint32_t height) final;
 
-        virtual void StartGUIFrame();
-        virtual void EndGUIFrame();
+        void UpArrowKeyDown() final;
+        void DownArrowKeyDown() final;
+        void LeftArrowKeyDown() final;
+        void RightArrowKeyDown() final;
+        void NumPadKeyDown(int64_t key) final;
+        void NumPadKeyUp(int64_t key) final;
+        void FunctionKeyDown(int64_t key) final;
+        void FunctionKeyUp(int64_t key) final;
+
+        void StartGUIFrame() final;
+        void EndGUIFrame() final;
     public:
 
 
@@ -44,7 +46,5 @@ namespace My {
         bool GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name);
 
         int InitializeD3dImGUI();
-    private:
-        std::unique_ptr<D3dGraphicsCore::CD3dGraphicsCore> m_pGraphics;
     };
 }

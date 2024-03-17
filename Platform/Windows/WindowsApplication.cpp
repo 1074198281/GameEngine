@@ -1,5 +1,4 @@
 #include "WindowsApplication.hpp"
-#include "InputManager.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -7,11 +6,54 @@
 
 #include <tchar.h>
 
-using namespace My;
 
 int My::WindowsApplication::Initialize()
 {
     int result;
+
+    // initialize ImGUI
+    result = InitializeImGUI();
+
+    // first call base class initialization
+    result = BaseApplication::Initialize();
+
+    if (result != 0)
+        exit(result);
+
+    // display the window on the screen
+    ShowWindow(m_hWnd, SW_SHOW);
+
+    return result;
+}
+
+void My::WindowsApplication::Finalize()
+{
+    FinalizeImGUI();
+    BaseApplication::Finalize();
+}
+
+void My::WindowsApplication::Tick()
+{
+    BaseApplication::Tick();
+
+    // this struct holds Windows event messages
+    MSG msg;
+
+    // we use PeekMessage instead of GetMessage here
+    // because we should not block the thread at anywhere
+    // except the engine execution driver module 
+    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+        // translate keystroke messages into the right format
+        TranslateMessage(&msg);
+
+        // send the message to the WindowProc function
+        DispatchMessage(&msg);
+    }
+}
+
+int My::WindowsApplication::CreateMainWindow()
+{
+    int result = 0;
 
     // get the HINSTANCE of the Console Program
     HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -52,44 +94,21 @@ int My::WindowsApplication::Initialize()
 
     m_hWnd = hWnd;
 
-    // initialize ImGUI
-    result = InitializeImGUI();
-
-    // first call base class initialization
-    result = BaseApplication::Initialize();
-
-    if (result != 0)
-        exit(result);
-
-    // display the window on the screen
-    ShowWindow(hWnd, SW_SHOW);
-
     return result;
 }
 
-void My::WindowsApplication::Finalize()
+void* My::WindowsApplication::GetMainWindow()
 {
-    FinalizeImGUI();
-    BaseApplication::Finalize();
+    return m_hWnd;
 }
 
-void My::WindowsApplication::Tick()
+void My::WindowsApplication::GetFrameBufferSize(uint32_t& width, uint32_t& height)
 {
-    BaseApplication::Tick();
+    RECT rect;
+    GetClientRect(m_hWnd, &rect);
 
-    // this struct holds Windows event messages
-    MSG msg;
-
-    // we use PeekMessage instead of GetMessage here
-    // because we should not block the thread at anywhere
-    // except the engine execution driver module 
-    if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-        // translate keystroke messages into the right format
-        TranslateMessage(&msg);
-
-        // send the message to the WindowProc function
-        DispatchMessage(&msg);
-    }
+    width = rect.right - rect.left;
+    height = rect.bottom - rect.top;
 }
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -122,11 +141,6 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
     // sort through and find what code to run for the message given
     switch (message)
     {
-    case WM_PAINT:
-    {
-        pThis->OnDraw();
-    }
-    break;
     case WM_KEYDOWN:
     {
         // we will replace this with input manager
@@ -134,16 +148,16 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         {
 #ifndef USE_DIRECTX_INPUT
         case VK_LEFT:
-            g_pInputManager->LeftArrowKeyDown();
+            pThis->m_pInputManager->LeftArrowKeyDown();
             break;
         case VK_RIGHT:
-            g_pInputManager->RightArrowKeyDown();
+            pThis->m_pInputManager->RightArrowKeyDown();
             break;
         case VK_UP:
-            g_pInputManager->UpArrowKeyDown();
+            pThis->m_pInputManager->UpArrowKeyDown();
             break;
         case VK_DOWN:
-            g_pInputManager->DownArrowKeyDown();
+            pThis->m_pInputManager->DownArrowKeyDown();
             break;
         case VK_NUMPAD0:
         case VK_NUMPAD1:
@@ -155,15 +169,15 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
         case VK_NUMPAD7:
         case VK_NUMPAD8:
         case VK_NUMPAD9:
-            g_pInputManager->NumPadKeyDown(wParam);
+            pThis->m_pInputManager->NumPadKeyDown(wParam);
             break;
         case VK_PRIOR:
         case VK_NEXT:
-            g_pInputManager->FunctionKeyDown(wParam);
+            pThis->m_pInputManager->FunctionKeyDown(wParam);
             break;
 #endif
         case 0x52:
-            g_pInputManager->FunctionKeyDown(wParam);
+            pThis->m_pInputManager->FunctionKeyDown(wParam);
             break;
         case VK_ESCAPE:
             m_bQuit = true;
@@ -175,7 +189,7 @@ LRESULT CALLBACK My::WindowsApplication::WindowProc(HWND hWnd, UINT message, WPA
     break;
     case WM_SIZE:
     {
-        g_pGraphicsManager->Resize((UINT)(UINT64)lParam & 0xFFFF, (UINT)(UINT64)lParam >> 16);
+        pThis->m_pGraphicsManager->Resize((UINT)(UINT64)lParam & 0xFFFF, (UINT)(UINT64)lParam >> 16);
     }
     break;
     // this message is read when the window is closed

@@ -1,5 +1,6 @@
 #include "InputManager.hpp"
 #include "GraphicsManager.hpp"
+#include "BaseApplication.hpp"
 
 namespace My {
 	int InputManager::Initialize()
@@ -19,7 +20,8 @@ namespace My {
 
 	void InputManager::UpArrowKeyDown()
 	{
-		g_pGraphicsManager->UpArrowKeyDown();
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->UpArrowKeyDown();
 	}
 
 	void InputManager::UpArrowKeyUp()
@@ -29,7 +31,8 @@ namespace My {
 
 	void InputManager::DownArrowKeyDown()
 	{
-		g_pGraphicsManager->DownArrowKeyDown();
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->DownArrowKeyDown();
 	}
 
 	void InputManager::DownArrowKeyUp()
@@ -39,7 +42,8 @@ namespace My {
 
 	void InputManager::LeftArrowKeyDown()
 	{
-		g_pGraphicsManager->LeftArrowKeyDown();
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->LeftArrowKeyDown();
 	}
 
 	void InputManager::LeftArrowKeyUp()
@@ -49,7 +53,8 @@ namespace My {
 
 	void InputManager::RightArrowKeyDown()
 	{
-		g_pGraphicsManager->RightArrowKeyDown();
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->RightArrowKeyDown();
 	}
 
 	void InputManager::RightArrowKeyUp()
@@ -59,21 +64,25 @@ namespace My {
 
 	void InputManager::NumPadKeyDown(long long key)
 	{
-		g_pGraphicsManager->NumPadKeyDown(key);
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->NumPadKeyDown(key);
 	}
 
 	void InputManager::NumPadKeyUp(long long key)
 	{
-		g_pGraphicsManager->NumPadKeyUp(key);
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->NumPadKeyUp(key);
 	}
 
 	void InputManager::FunctionKeyDown(long long key)
 	{
-		g_pGraphicsManager->FunctionKeyDown(key);
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->FunctionKeyDown(key);
 	}
 
 	void InputManager::FunctionKeyUp(long long key)
 	{
-		g_pGraphicsManager->FunctionKeyUp(key);
+		IGraphicsManager* pGraphicsManager = reinterpret_cast<BaseApplication*>(m_pApp)->GetGraphicsManager();
+		pGraphicsManager->FunctionKeyUp(key);
 	}
 }

@@ -1,10 +1,10 @@
 #pragma once
-#include "IRuntimeModule.hpp"
+#include "IMemoryManager.hpp"
 #include "Allocator.hpp"
 #include <new>
 
 namespace My {
-    class MemoryManager : __implements IRuntimeModule
+    class MemoryManager : __implements IMemoryManager
     {
     public:
         template<typename T, typename... Arguments>
@@ -21,7 +21,7 @@ namespace My {
         }
 
     public:
-        virtual ~MemoryManager() {}
+        ~MemoryManager() override = default;
 
         virtual int Initialize();
         virtual void Finalize();
@@ -36,6 +36,4 @@ namespace My {
     private:
         static Allocator* LookUpAllocator(size_t size);
     };
-
-    extern MemoryManager* g_pMemoryManager;
 }

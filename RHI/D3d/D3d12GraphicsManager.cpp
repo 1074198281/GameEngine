@@ -2,6 +2,7 @@
 #include <d3dcompiler.h>
 #include "D3d12GraphicsManager.hpp"
 #include "WindowsApplication.hpp"
+#include "D3d12Application.hpp"
 #include "PhysicsManager.hpp"
 #include "SceneObject.hpp"
 #include "StructureSettings.h"
@@ -14,16 +15,10 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 
-namespace My {
-    extern IApplication* g_pApp;
-}
-
 int My::D3d12GraphicsManager::Initialize()
 {
     int result = 0;
-    m_pGraphics = std::make_unique<D3dGraphicsCore::CD3dGraphicsCore>();
-    m_pGraphics->setCoreHWND(reinterpret_cast<WindowsApplication*>(g_pApp)->GetMainWindow(), g_pApp->GetConfiguration().screenWidth, g_pApp->GetConfiguration().screenHeight);
-    m_pGraphics->StartUp();
+
     result = InitializeD3dImGUI();
 
     return result;
@@ -31,15 +26,16 @@ int My::D3d12GraphicsManager::Initialize()
 
 void My::D3d12GraphicsManager::Finalize()
 {
-    m_pGraphics->Finalize();
-    m_pGraphics.reset(nullptr);
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.Finalize();
 }
 
 void My::D3d12GraphicsManager::Tick()
 {
-    if (g_pSceneManager->IsSceneChanged()) {
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+    if (pSceneManager->IsSceneChanged()) {
         LoadScene();
-        g_pSceneManager->NotifySceneIsRenderingQueued();
+        pSceneManager->NotifySceneIsRenderingQueued();
     }
     Draw();
 }
@@ -51,17 +47,21 @@ void My::D3d12GraphicsManager::Clear()
 
 void My::D3d12GraphicsManager::Draw()
 {
-    m_pGraphics->UpdateStatus();
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.UpdateStatus();
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
 {
-    m_pGraphics->Resize(width, height);
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.Resize(width, height);
 }
 
 bool My::D3d12GraphicsManager::LoadScene()
 {
-    auto& Scene = g_pSceneManager->GetSceneForRendering();
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+    auto& Scene = pSceneManager->GetSceneForRendering();
     ASSERT(&Scene, "Scene Is Null Error!");
 
     if (Scene.GeometryNodes.size()) {
@@ -354,7 +354,7 @@ bool My::D3d12GraphicsManager::LoadScene()
             _object->transform = new DirectX::XMFLOAT4X4();
             memcpy(_object->transform, &*mat, 16 * sizeof(float));
 
-            m_pGraphics->AddPrimitiveObject(std::move(_object));
+            m_GraphicsRHI.AddPrimitiveObject(std::move(_object));
         }
     }
     
@@ -397,9 +397,10 @@ void My::D3d12GraphicsManager::RightArrowKeyDown()
 
 void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
 {
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     switch (key) {
     case VK_NUMPAD0:
-        m_pGraphics->UpdateCubemapIndex();
+        m_GraphicsRHI.UpdateCubemapIndex();
         break;
     case VK_NUMPAD1:
         break;
@@ -408,22 +409,22 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
     case VK_NUMPAD3:
         break;
     case VK_NUMPAD4:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, 100.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, 100.0f, 1.0f));
         break;
     case VK_NUMPAD5:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD6:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, -100.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, -100.0f, 1.0f));
         break;
     case VK_NUMPAD7:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD8:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
         break;
     case VK_NUMPAD9:
-        m_pGraphics->UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
+        m_GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
         break;
     default:
         ASSERT(false, "RECIEVE UNKOWN NUMPAD INPUT! ERROR!");
@@ -432,7 +433,8 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
 
 void My::D3d12GraphicsManager::FunctionKeyDown(int64_t key)
 {
-    m_pGraphics->UpdateCameraParams(key);
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.UpdateCameraParams(key);
 }
 void My::D3d12GraphicsManager::FunctionKeyUp(int64_t key)
 {
@@ -497,5 +499,6 @@ void My::D3d12GraphicsManager::StartGUIFrame()
 
 void My::D3d12GraphicsManager::EndGUIFrame()
 {
-    m_pGraphics->UpdatePresent();
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.UpdatePresent();
 }

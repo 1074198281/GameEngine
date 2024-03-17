@@ -48,6 +48,8 @@ namespace D3dGraphicsCore {
 		float padding1[3];
 	} MaterialConstants;
 
+
+
 	 __declspec(align(16)) typedef struct CommonConstants {
 		XMFLOAT4 LightPosition[MAX_LIGHT_NUM];
 		XMFLOAT4 LightColor[MAX_LIGHT_NUM];

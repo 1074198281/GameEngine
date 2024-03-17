@@ -1,35 +1,48 @@
 #pragma once
-#include "Image.hpp"
-#include "IRuntimeModule.hpp"
+#include "IGraphicsManager.hpp"
+#include "Scene.hpp"
+#include "FrameStructure.hpp"
 
 namespace My {
-    class GraphicsManager : __implements IRuntimeModule
+    class GraphicsManager : __implements IGraphicsManager
     {
     public:
-        virtual ~GraphicsManager() {}
+         ~GraphicsManager() override = default;
 
-        virtual int Initialize();
-        virtual void Finalize();
+        int Initialize() override;
+        void Finalize() override;
 
-        virtual void Tick();
+        void Tick() override;
 
-        virtual void Clear();
-        virtual void Draw();
+        void Clear() override;
+        void Draw() override;
 
-        virtual void Resize(uint32_t width, uint32_t height);
+        void Present() override;
 
-        virtual void UpArrowKeyDown();
-        virtual void DownArrowKeyDown();
-        virtual void LeftArrowKeyDown();
-        virtual void RightArrowKeyDown();
-        virtual void NumPadKeyDown(int64_t key);
-        virtual void NumPadKeyUp(int64_t key);
-        virtual void FunctionKeyDown(int64_t key);
-        virtual void FunctionKeyUp(int64_t key);
+        void Resize(uint32_t width, uint32_t height) override;
 
-        virtual void StartGUIFrame();
-        virtual void EndGUIFrame();
+        void UpArrowKeyDown() override;
+        void DownArrowKeyDown() override;
+        void LeftArrowKeyDown() override;
+        void RightArrowKeyDown() override;
+        void NumPadKeyDown(int64_t key) override;
+        void NumPadKeyUp(int64_t key) override;
+        void FunctionKeyDown(int64_t key) override;
+        void FunctionKeyUp(int64_t key) override;
+
+
+    protected:
+        virtual void BeginScene(const Scene& scene);
+        virtual void EndScene();
+
+        virtual void BeginFrame(Frame& frame) {}
+        virtual void EndFrame(Frame& frame) {}
+        virtual void StartGUIFrame() {}
+        virtual void EndGUIFrame() {}
+
+    private:
+        std::vector<Frame> m_Frames;
+        uint64_t m_nSceneRevision;
+        uint32_t m_nFrameIndex;
     };
-
-    extern GraphicsManager* g_pGraphicsManager;
 }

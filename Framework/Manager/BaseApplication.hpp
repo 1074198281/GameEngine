@@ -4,31 +4,47 @@
 #include "MemoryManager.hpp"
 #include "AssetLoader.hpp"
 #include "SceneManager.hpp"
+#include "InputManager.hpp"
+#include "PhysicsManager.hpp"
 
 namespace My {
     class BaseApplication : __implements IApplication
     {
     public:
-        BaseApplication(GfxConfiguration& cfg);
-        virtual int Initialize();
-        virtual void Finalize();
+        BaseApplication() = default;
+        explicit BaseApplication(GfxConfiguration& cfg);
+        int Initialize() override;
+        void Finalize() override;
         // One cycle of the main loop
-        virtual void Tick();
+        void Tick() override;
 
-        virtual bool IsQuit();
+        bool IsQuit() override;
 
-        inline GfxConfiguration& GetConfiguration() { return m_Config; };
+        inline GfxConfiguration& GetConfiguration() { return m_Config; }
 
-        virtual int LoadScene();
+        virtual int CreateMainWindow() { return 0; }
 
-        virtual void SetCommandLineParameters(int argc, char** argv);
+        virtual void* GetMainWindow() { return nullptr; }
 
-    protected:
-        virtual void OnDraw() {};
+    public:
+        void SetCommandLineParameters(int argc, char** argv) override;
+        int GetCommandLineParametersCount() override;
+        const char* GetCommandLineParameters(int index) override;
+    
+    public:
+        void RegisterManagerModule(IGraphicsManager* mgr);
+        void RegisterManagerModule(IMemoryManager* mgr);
+        void RegisterManagerModule(IAssetLoader* mgr);
+        void RegisterManagerModule(IInputManager* mgr);
+        void RegisterManagerModule(ISceneManager* mgr);
+        void RegisterManagerModule(IPhysicsManager* mgr);
 
-        void StartGUIFrame();
-
-        void EndGUIFrame();
+        IGraphicsManager* GetGraphicsManager() { return m_pGraphicsManager; }
+        IMemoryManager* GetMemoryManager() { return m_pMemoryManager; }
+        IAssetLoader* GetAssetLoader() { return m_pAssetLoader; }
+        IInputManager* GetInputManager() { return m_pInputManager; }
+        ISceneManager* GetSceneManager() { return m_pSceneManager; }
+        IPhysicsManager* GetPhysicsManager() { return m_pPhysicsManager; }
 
     protected:
         // Flag if need quit the main loop of the application
@@ -38,8 +54,13 @@ namespace My {
         int m_nArgC;
         char** m_ppArgV;
 
-    private:
-        // hide the default construct to enforce a configuration
-        BaseApplication() {};
+        IGraphicsManager* m_pGraphicsManager;
+        IMemoryManager* m_pMemoryManager;
+        IAssetLoader* m_pAssetLoader;
+        IInputManager* m_pInputManager;
+        ISceneManager* m_pSceneManager;
+        IPhysicsManager* m_pPhysicsManager;
+
+        std::vector<IRuntimeModule*> m_RuntimeModule;
     };
 }

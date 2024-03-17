@@ -54,7 +54,7 @@ bool My::AssetLoader::FileExists(const char *filePath)
     return false;
 }
 
-My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetOpenMode mode)
+My::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetOpenMode mode)
 {
     FILE *fp = nullptr;
     // loop N times up the hierarchy, testing at each level
@@ -106,50 +106,51 @@ My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetO
 My::Buffer My::AssetLoader::SyncOpenAndReadText(const char *filePath)
 {
     AssetFilePtr fp = OpenFile(filePath, MY_OPEN_TEXT);
-    Buffer* pBuff = nullptr;
+    Buffer buff;
 
     if (fp) {
         size_t length = GetSize(fp);
 
-        pBuff = new Buffer(length + 1);
-        fread(pBuff->m_pData, length, 1, static_cast<FILE*>(fp));
-        pBuff->m_pData[length] = '\0';
-
-        CloseFile(fp);
-    } else {
-        fprintf(stderr, "Error opening file '%s'\n", filePath);
-        pBuff = new Buffer();
-    }
-
+        uint8_t* data = new uint8_t[length + 1];
+        length = fread(data, 1, length, static_cast<FILE*>(fp));
 #ifdef DEBUG
-    fprintf(stderr, "Read file '%s', %d bytes\n", filePath, length);
+        fprintf(stderr, "Read file '%s', %zu bytes\n", filePath, length);
 #endif
 
-    return *pBuff;
+        data[length] = '\0';
+        buff.SetData(data, length + 1);
+
+        CloseFile(fp);
+    }
+    else {
+        fprintf(stderr, "Error opening file '%s'\n", filePath);
+    }
+
+    return buff;
 }
 
 My::Buffer My::AssetLoader::SyncOpenAndReadBinary(const char *filePath)
 {
     AssetFilePtr fp = OpenFile(filePath, MY_OPEN_BINARY);
-    Buffer* pBuff = nullptr;
+    Buffer buff;
 
     if (fp) {
         size_t length = GetSize(fp);
 
-        pBuff = new Buffer(length);
-        fread(pBuff->m_pData, length, 1, static_cast<FILE*>(fp));
+        uint8_t* data = new uint8_t[length];
+        fread(data, length, 1, static_cast<FILE*>(fp));
+#ifdef DEBUG
+        fprintf(stderr, "Read file '%s', %zu bytes\n", filePath, length);
+#endif
+        buff.SetData(data, length);
 
         CloseFile(fp);
-    } else {
+    }
+    else {
         fprintf(stderr, "Error opening file '%s'\n", filePath);
-        pBuff = new Buffer();
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "Read file '%s', %d bytes\n", filePath, length);
-#endif
-
-    return *pBuff;
+    return buff;
 }
 
 void My::AssetLoader::CloseFile(AssetFilePtr& fp)

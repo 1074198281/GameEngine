@@ -1,12 +1,14 @@
 #pragma once
 
-#include "IRuntimeModule.hpp"
+#include "IInputManager.hpp"
+
 
 namespace My {
 
-    class InputManager : __implements IRuntimeModule
+    class InputManager : __implements IInputManager
     {
     public:
+        ~InputManager() override = default;
         virtual int Initialize();
         virtual void Finalize();
         virtual void Tick();
@@ -24,5 +26,4 @@ namespace My {
         void FunctionKeyDown(long long key);
         void FunctionKeyUp(long long key);
     };
-    extern InputManager* g_pInputManager;
 }
