@@ -4,6 +4,8 @@
 
 int My::PhysicsManager::Initialize()
 {
+    m_nSceneRevision = 0;
+
 	//build broadphase
 	m_btBroadphase = new btDbvtBroadphase();
 
@@ -37,10 +39,12 @@ void My::PhysicsManager::Tick()
 {
     auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
     auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
-	if (pSceneManager->IsSceneChanged())
+    auto rev = pSceneManager->GetSceneRevision();
+	if (m_nSceneRevision != rev)
 	{
         pPhysicsManager->ClearRigidBodies();
         pPhysicsManager->CreateRigidBodies();
+        m_nSceneRevision = rev;
 	}
 
 	m_btDynamicsWorld->stepSimulation(1.0f / 60.0f, 10);

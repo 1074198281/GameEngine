@@ -4,7 +4,7 @@
 #include "Scene.hpp"
 
 namespace My {
-	__Interface ISceneManager : public IRuntimeModule{	
+	__Interface ISceneManager : public IRuntimeModule {	
 	public:
 		ISceneManager() = default;
 		virtual ~ISceneManager() = default;
@@ -14,11 +14,7 @@ namespace My {
 		virtual void Tick() {} 
 
 	public:
-		virtual void LoadScene(const char* scene_file_name) = 0;
-
-		virtual bool IsSceneChanged() = 0;
-
-		virtual void NotifySceneIsRenderingQueued() = 0;
+		virtual int LoadScene(const char* scene_file_name) = 0;
 
 		virtual const Scene& GetSceneForRendering() = 0;
 

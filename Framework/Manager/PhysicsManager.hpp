@@ -24,6 +24,8 @@ namespace My {
 		Matrix4X4f GetRigidBodyTransform(void* rigidBody);
 
 	protected:
+		uint64_t m_nSceneRevision;
+
 		btBroadphaseInterface* m_btBroadphase;
 		btDefaultCollisionConfiguration* m_btCollisionConfiguration;
 		btCollisionDispatcher* m_btDispatcher;

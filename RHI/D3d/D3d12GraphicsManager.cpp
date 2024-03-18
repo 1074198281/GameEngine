@@ -33,10 +33,10 @@ void My::D3d12GraphicsManager::Finalize()
 void My::D3d12GraphicsManager::Tick()
 {
     auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
-    if (pSceneManager->IsSceneChanged()) {
-        LoadScene();
-        pSceneManager->NotifySceneIsRenderingQueued();
-    }
+    //if (pSceneManager->IsSceneChanged()) {
+    //    LoadScene();
+    //    pSceneManager->NotifySceneIsRenderingQueued();
+    //}
     Draw();
 }
 

@@ -13,16 +13,13 @@ namespace My {
 		void Tick() override;
 
 	public:
-		void LoadScene(const char* scene_file_name) override;
+		int LoadScene(const char* scene_file_name) override;
 
 	public:
 		void LoadglTFScene(const char* glTF_scene_file_name);
 		void LoadOgexScene(const char* ogex_scene_file_name);
 
 	public:
-		bool IsSceneChanged() override;
-		void NotifySceneIsRenderingQueued() override;
-
 		const Scene& GetSceneForRendering() override;
 		uint64_t GetSceneRevision() override;
 

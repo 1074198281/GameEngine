@@ -23,7 +23,7 @@ void SceneManager::Tick()
 {
 }
 
-void SceneManager::LoadScene(const char* scene_file_name)
+int SceneManager::LoadScene(const char* scene_file_name)
 {
     // now we only has ogex scene parser, call it directly
     std::string scene(scene_file_name);
@@ -39,8 +39,13 @@ void SceneManager::LoadScene(const char* scene_file_name)
     }
     else {
         printf("Invalid Or Unsupported File Extension!");
+        assert(false);
+        return -1;
     }
+
     m_nSceneRevision++;
+
+    return 0;
 }
 
 void SceneManager::LoadOgexScene(const char* ogex_scene_file_name)

@@ -26,5 +26,5 @@ namespace My {
 		//bool RenderToTexture = false;
 		//bool EnableMSAA = false;
 		//bool ClearRT = false;
-	};
+	} Frame;
 }
