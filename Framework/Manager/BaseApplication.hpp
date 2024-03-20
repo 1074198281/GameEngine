@@ -6,6 +6,7 @@
 #include "SceneManager.hpp"
 #include "InputManager.hpp"
 #include "PhysicsManager.hpp"
+#include "MyViewer.hpp"
 
 namespace My {
     class BaseApplication : __implements IApplication
@@ -38,6 +39,7 @@ namespace My {
         void RegisterManagerModule(IInputManager* mgr);
         void RegisterManagerModule(ISceneManager* mgr);
         void RegisterManagerModule(IPhysicsManager* mgr);
+        void RegisterManagerModule(IGameLogic* mgr);
 
         IGraphicsManager* GetGraphicsManager() { return m_pGraphicsManager; }
         IMemoryManager* GetMemoryManager() { return m_pMemoryManager; }
@@ -60,6 +62,7 @@ namespace My {
         IInputManager* m_pInputManager;
         ISceneManager* m_pSceneManager;
         IPhysicsManager* m_pPhysicsManager;
+        IGameLogic* m_pGameLogicManager;
 
         std::vector<IRuntimeModule*> m_RuntimeModule;
     };

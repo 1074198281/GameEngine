@@ -38,12 +38,13 @@ void GraphicsManager::Tick()
         }
     }
 
-    BeginFrame(m_Frames[m_nFrameIndex]);
-    ImGui::NewFrame();
+    //assert(m_Frames.size());
+    //BeginFrame(m_Frames[m_nFrameIndex]);
+    //ImGui::NewFrame();
     Draw();
-    ImGui::EndFrame();
-    ImGui::Render();
-    EndFrame(m_Frames[m_nFrameIndex]);
+    //ImGui::EndFrame();
+    //ImGui::Render();
+    //EndFrame(m_Frames[m_nFrameIndex]);
     Present();
 }
 
@@ -52,10 +53,6 @@ void GraphicsManager::Clear()
 }
 
 void GraphicsManager::Draw()
-{
-}
-
-void GraphicsManager::Present()
 {
 }
 

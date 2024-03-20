@@ -31,11 +31,11 @@ int SceneManager::LoadScene(const char* scene_file_name)
     std::string extension = scene.substr(pos + 1);
     if (extension == "gltf") {
         LoadglTFScene(scene_file_name);
-        m_pScene->LoadResource();
+        //m_pScene->LoadResource();
     }
     else if (extension == "ogex") {
         LoadOgexScene(scene_file_name);
-        m_pScene->LoadResource();
+        //m_pScene->LoadResource();
     }
     else {
         printf("Invalid Or Unsupported File Extension!");

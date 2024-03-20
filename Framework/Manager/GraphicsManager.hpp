@@ -17,7 +17,7 @@ namespace My {
         void Clear() override;
         void Draw() override;
 
-        void Present() override;
+        void Present() override {};
 
         void Resize(uint32_t width, uint32_t height) override;
 

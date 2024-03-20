@@ -18,6 +18,7 @@
 int My::D3d12GraphicsManager::Initialize()
 {
     int result = 0;
+    GraphicsManager::Initialize();
 
     result = InitializeD3dImGUI();
 
@@ -28,16 +29,6 @@ void My::D3d12GraphicsManager::Finalize()
 {
     auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     m_GraphicsRHI.Finalize();
-}
-
-void My::D3d12GraphicsManager::Tick()
-{
-    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
-    //if (pSceneManager->IsSceneChanged()) {
-    //    LoadScene();
-    //    pSceneManager->NotifySceneIsRenderingQueued();
-    //}
-    Draw();
 }
 
 void My::D3d12GraphicsManager::Clear()
@@ -55,6 +46,12 @@ void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
 {
     auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     m_GraphicsRHI.Resize(width, height);
+}
+
+void My::D3d12GraphicsManager::Present()
+{
+    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    m_GraphicsRHI.UpdatePresent();
 }
 
 bool My::D3d12GraphicsManager::LoadScene()

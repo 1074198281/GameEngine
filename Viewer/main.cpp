@@ -7,6 +7,7 @@
 #include "GraphicsManager.hpp"
 #include "PhysicsManager.hpp"
 #include "MemoryManager.hpp"
+#include "MyViewer.hpp"
 #include "D3d12Application.hpp"
 #include "D3d/D3d12Config.hpp"
 
@@ -20,6 +21,8 @@ int main(int argc, char** argv) {
 
 	app.SetCommandLineParameters(argc, argv);
 
+	MyViewerLogic gameLogic;
+
 	AssetLoader assetLoader;
 	TGraphicsManager graphicsManager;
 	MemoryManager memoryManager;
@@ -27,6 +30,7 @@ int main(int argc, char** argv) {
 	PhysicsManager physicsManager;
 	InputManager inputManager;
 
+	app.RegisterManagerModule(&gameLogic);
 	app.RegisterManagerModule(&assetLoader);
 	app.RegisterManagerModule(&graphicsManager);
 	app.RegisterManagerModule(&inputManager);

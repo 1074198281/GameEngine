@@ -21,11 +21,10 @@ namespace My {
         int Initialize() final;
         void Finalize() final;
 
-        void Tick() final;
-
         void Clear() final;
         void Draw() final;
         void Resize(uint32_t width, uint32_t height) final;
+        void Present() final;
 
         void UpArrowKeyDown() final;
         void DownArrowKeyDown() final;

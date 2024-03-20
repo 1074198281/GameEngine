@@ -76,6 +76,10 @@ namespace My {
 	inline size_t GetSize(void* fp)
 	{
 		FILE* _fp = static_cast<FILE*>(fp);
+		assert(_fp);
+		if (!_fp) {
+			return 0;
+		}
 
 		long pos = ftell(_fp);
 		fseek(_fp, 0, SEEK_END);
@@ -99,7 +103,6 @@ namespace My {
 		size_t data_size = GetSize(file);
 		data.resize(data_size);
 		size_t size = fread(data.data(), data_size, 1, static_cast<FILE*>(file));
-		assert(size == data_size);
 		std::shared_ptr<std::vector<uint8_t>> ret = std::make_shared<std::vector<uint8_t>>(data);
 		return ret;
 	}

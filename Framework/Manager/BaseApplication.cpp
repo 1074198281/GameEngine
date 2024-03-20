@@ -110,3 +110,10 @@ void My::BaseApplication::RegisterManagerModule(IPhysicsManager* mgr)
 	mgr->SetAppPtr(this);
 	m_RuntimeModule.push_back(mgr);
 }
+
+void My::BaseApplication::RegisterManagerModule(IGameLogic* mgr)
+{
+	m_pGameLogicManager = mgr;
+	mgr->SetAppPtr(this);
+	m_RuntimeModule.push_back(mgr);
+}
