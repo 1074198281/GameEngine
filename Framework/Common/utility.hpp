@@ -89,17 +89,18 @@ namespace My {
 		return length;
 	}
 
-	inline std::shared_ptr<std::vector<uint8_t>> ReadFileSyncDirectly(const char* file_name)
+	inline std::shared_ptr<std::vector<uint8_t>> ReadFileSyncDirectly(const char* file_name, bool isBinary = false)
 	{
 		FILE* file;
 		std::vector<uint8_t> data;
-		file = fopen(file_name, "r");
-		if (file != nullptr) {
-			// file_name is Text file
-		} else if (!file) {
-			// file_name may be Binary file
+		if (!isBinary) {
+			file = fopen(file_name, "r");
+		}
+		else {
 			file = fopen(file_name, "rb");
 		}
+		
+		assert(file);
 		size_t data_size = GetSize(file);
 		data.resize(data_size);
 		size_t size = fread(data.data(), data_size, 1, static_cast<FILE*>(file));
