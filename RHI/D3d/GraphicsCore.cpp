@@ -58,7 +58,6 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
 
 void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
 {
-    Shutdown();
     ShutdownDisplay();
     DestroyCommonState();
     for (auto it = m_PrimitiveObjects.begin(); it != m_PrimitiveObjects.end(); it++) {
@@ -68,6 +67,9 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
         for (auto itTex = p->MaterialResource.TextureResources.begin(); itTex != p->MaterialResource.TextureResources.end(); itTex++) {
             delete itTex->pTexture;
             itTex->pTexture = nullptr;
+            if (itTex->pImageData) {
+                delete itTex->pImageData;
+            }
         }
     }
     if (m_IBLResource) {
@@ -78,6 +80,10 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
             it->second->pSpecular.reset();
             it->second.reset();
         }
+        m_IBLResource->BRDF_LUT_Image->Destroy();
+        m_IBLResource->BRDF_LUT_Image.reset();
+        m_IBLResource->IBLDescriptorHeap.Destroy();
+        m_IBLResource->IBLImages.clear();
     }
     D3dGraphicsCore::WICLoader::FinalizeWICLoader();
     FinalizePipelineTemplates();
@@ -86,6 +92,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     FinalizeDefaultTexture();
 
     XM_Input::Shutdown();
+    Shutdown();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::Resize(uint32_t width, uint32_t height)

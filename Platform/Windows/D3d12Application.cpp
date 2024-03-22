@@ -4,7 +4,7 @@
 
 void My::D3d12Application::Finalize()
 {
-
+    BaseApplication::Finalize();
 }
 
 int My::D3d12Application::CreateMainWindow()

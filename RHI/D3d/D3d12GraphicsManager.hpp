@@ -18,13 +18,13 @@ namespace My {
     public:
         //~D3d12GraphicsManager() final {}
 
-        int Initialize() final;
-        void Finalize() final;
+        int Initialize() override;
+        void Finalize() override;
 
-        void Clear() final;
-        void Draw() final;
-        void Resize(uint32_t width, uint32_t height) final;
-        void Present() final;
+        void Clear() override;
+        void Draw() override;
+        void Resize(uint32_t width, uint32_t height) override;
+        void Present() override;
 
         void UpArrowKeyDown() final;
         void DownArrowKeyDown() final;
@@ -35,8 +35,8 @@ namespace My {
         void FunctionKeyDown(int64_t key) final;
         void FunctionKeyUp(int64_t key) final;
 
-        void StartGUIFrame() final;
-        void EndGUIFrame() final;
+        void StartGUIFrame() override;
+        void EndGUIFrame() override;
     public:
 
 

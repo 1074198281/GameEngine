@@ -214,7 +214,10 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 void D3dGraphicsCore::FinalizePipelineTemplates()
 {
 	g_TemplateRootSignature.DestroyAll();
+	g_PresentRootSignature.DestroyAll();
 	g_DefaultPSO.DestroyAll();
+	g_SkyBoxPSO.DestroyAll();
+	g_PresentPSO.DestroyAll();
 }
 
 void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name)

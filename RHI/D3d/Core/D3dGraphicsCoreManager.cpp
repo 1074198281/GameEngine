@@ -407,11 +407,12 @@ void D3dGraphicsCore::Shutdown(void)
 
     //DestroyCommonState();
 
-#if defined(_GAMING_DESKTOP) && defined(_DEBUG)
+#if defined(_DEBUG)
     ID3D12DebugDevice* debugInterface;
     if (SUCCEEDED(g_Device->QueryInterface(&debugInterface)))
     {
-        debugInterface->ReportLiveDeviceObjects(D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+        debugInterface->ReportLiveDeviceObjects( D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
+        __debugbreak();
         debugInterface->Release();
     }
 #endif
@@ -495,6 +496,7 @@ void D3dGraphicsCore::ShutdownDisplay()
         g_DisplayBuffer[i].Destroy();
 
     g_PreDisplayBuffer.Destroy();
+    g_SceneColorBuffer.Destroy();
     g_DepthBuffer.Destroy();
 }
 

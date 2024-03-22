@@ -18,6 +18,7 @@ int GraphicsManager::Initialize()
 
 void GraphicsManager::Finalize()
 {
+    EndScene();
 }
 
 void GraphicsManager::Tick()
@@ -41,7 +42,9 @@ void GraphicsManager::Tick()
     //assert(m_Frames.size());
     //BeginFrame(m_Frames[m_nFrameIndex]);
     //ImGui::NewFrame();
+    StartGUIFrame();
     Draw();
+    EndGUIFrame();
     //ImGui::EndFrame();
     //ImGui::Render();
     //EndFrame(m_Frames[m_nFrameIndex]);

@@ -38,6 +38,10 @@ ADD_DEFINITIONS(-D_WORKING_DIRECTORY=\"${WORKING_DIRECTORY}\")
 set(IBL_RESOURCE_DIRECTORY ${PROJECT_SOURCE_DIR}/Asset/IBLTextures)
 MESSAGE("IBL Resource directory: " ${IBL_RESOURCE_DIRECTORY})
 ADD_DEFINITIONS(-D_IBL_RESOURCE_DIRECTORY=\"${IBL_RESOURCE_DIRECTORY}\")
+# add Asset resource menu
+set(ASSET_RESOURCE_DIRECTORY ${PROJECT_SOURCE_DIR}/Asset)
+MESSAGE("ASSET Resource directory: " ${ASSET_RESOURCE_DIRECTORY})
+ADD_DEFINITIONS(-D_ASSET_RESOURCE_DIRECTORY=\"${ASSET_RESOURCE_DIRECTORY}\")
 
 # 添加库
 set(MYGE_TARGET_PLATFORM "Windows")
@@ -117,6 +121,9 @@ ENDIF(${WIN32})
 
 # add RHI includes
 include_directories("${PROJECT_SOURCE_DIR}/RHI")
+
+# add Viewer include
+include_directories("${PROJECT_SOURCE_DIR}/Viewer")
 
 
 # -----------------------------------------------------

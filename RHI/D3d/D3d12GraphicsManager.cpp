@@ -27,6 +27,7 @@ int My::D3d12GraphicsManager::Initialize()
 
 void My::D3d12GraphicsManager::Finalize()
 {
+    GraphicsManager::Finalize();
     auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     m_GraphicsRHI.Finalize();
 }
@@ -208,30 +209,45 @@ bool My::D3d12GraphicsManager::LoadScene()
                         _object->MaterialResource.TextureResources.push_back(re);
                         TexturesPerMaterial++;
                     } else {
+                        D3dGraphicsCore::TextureResource re;
                         switch (i) {
-                        case My::SceneObjectMaterial::kBaseColor:
+                        case My::SceneObjectMaterial::kBaseColor: 
+                        {
                             SRVsHandle.push_back(D3dGraphicsCore::g_DefaultBaseColorTexture.GetSRV());
-                            break;
+                            re.pTexture = &D3dGraphicsCore::g_DefaultBaseColorTexture;
+                        }
+                        break;
                         case My::SceneObjectMaterial::kMetallicRoughness:
+                        {
                             SRVsHandle.push_back(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture.GetSRV());
-                            break;
+                            re.pTexture = &D3dGraphicsCore::g_DefaultRoughnessMetallicTexture;
+                        }
+                        break;
                         case My::SceneObjectMaterial::kOcclusion:
+                        {
                             SRVsHandle.push_back(D3dGraphicsCore::g_DefaultOcclusionTexture.GetSRV());
-                            break;
+                            re.pTexture = &D3dGraphicsCore::g_DefaultOcclusionTexture;
+                        }
+                        break;
                         case My::SceneObjectMaterial::kEmissive:
+                        {
                             SRVsHandle.push_back(D3dGraphicsCore::g_DefaultEmissiveTexture.GetSRV());
-                            break;
+                            re.pTexture = &D3dGraphicsCore::g_DefaultEmissiveTexture;
+                        }
+                        break;
                         case My::SceneObjectMaterial::kNormal:
+                        {
                             SRVsHandle.push_back(D3dGraphicsCore::g_DefaultNormalTexture.GetSRV());
-                            break;
+                            re.pTexture = &D3dGraphicsCore::g_DefaultNormalTexture;
+                        }
+                        break;
                         default:
                             ASSERT(false, "NO BLANK DESCRIPTOR TO FILL HEAP,ERROR!");
                             break;
                         }
 
-                        D3dGraphicsCore::TextureResource re;
+                        
                         //re.Handle = Handle;
-                        re.pTexture = nullptr;
                         re.pImageData = nullptr;
                         _object->MaterialResource.TextureResources.push_back(re);
                         TexturesPerMaterial++;
@@ -496,6 +512,6 @@ void My::D3d12GraphicsManager::StartGUIFrame()
 
 void My::D3d12GraphicsManager::EndGUIFrame()
 {
-    auto& m_GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
-    m_GraphicsRHI.UpdatePresent();
+    ImGui::EndFrame();
+    ImGui::Render();
 }
