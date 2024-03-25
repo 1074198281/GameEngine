@@ -75,13 +75,13 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
         ASSERT(pMesh->GetIndexGroupCount() == 1, "Index Group Count more than one!");
 
-        D3dDrawBatchContext dbc;
-        dbc.m_PrimitiveType = pMesh->GetPrimitiveType();
-        dbc.BatchIndex = batch_index;
-        dbc.m_inputlayout = 0;
+        std::shared_ptr<D3dDrawBatchContext> dbc = std::make_shared<D3dDrawBatchContext>();
+        dbc->m_PrimitiveType = pMesh->GetPrimitiveType();
+        dbc->BatchIndex = batch_index;
+        dbc->m_inputlayout = 0;
 
-        std::unique_ptr<D3dGraphicsCore::PrimitiveObject> _object = std::make_unique<D3dGraphicsCore::PrimitiveObject>();
-        _object->PrimitiveType = pMesh->GetPrimitiveType();
+        //std::unique_ptr<D3dGraphicsCore::PrimitiveObject> _object = std::make_unique<D3dGraphicsCore::PrimitiveObject>();
+        //_object->PrimitiveType = pMesh->GetPrimitiveType();
 
         int elementCount = pMesh->GetVertexCount();
         int vertexPerCount = 0;
@@ -96,7 +96,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             int _dataCount = 0;
             for (int groupCount = 0; groupCount < pMesh->GetVertexPropertiesCount(); groupCount++) {
                 const SceneObjectVertexArray& vtArray = pMesh->GetVertexPropertyArray(groupCount);
-                GenerateInputLayoutType(dbc.m_inputlayout, vtArray.GetAttributeName());
+                GenerateInputLayoutType(dbc->m_inputlayout, vtArray.GetAttributeName());
                 int elementCountPerArray = vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
                 float* _pData = (float*)vtArray.GetData();
                 for (int j = 0; j < elementCountPerArray; j++) {
@@ -106,8 +106,11 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             }
             ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
         }
-        dbc.m_vertex_buffer.Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
+        std::unique_ptr<D3dGraphicsCore::StructuredBuffer> vbuffer = std::make_unique<D3dGraphicsCore::StructuredBuffer>();
+        vbuffer->Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
+        dbc->m_vertex_buffer_index = GraphicsRHI.AddVertexBuffer(std::move(vbuffer));
 
+        std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer> ibuffer = std::make_unique<D3dGraphicsCore::ByteAddressBuffer>();
         switch (pMesh->GetIndexArray(0).GetIndexType()) {
         case My::kIndexDataTypeInt8:
         {
@@ -117,7 +120,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
             //    pIndexData[i] = _pData[i];
             //}
-            dbc.m_index_buffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
+            ibuffer->Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint8_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt16:
@@ -128,7 +131,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
             //    pIndexData[i] = _pData[i];
             //}
-            dbc.m_index_buffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
+            ibuffer->Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint16_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt32:
@@ -139,7 +142,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
             //    pIndexData[i] = _pData[i];
             //}
-            dbc.m_index_buffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
+            ibuffer->Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint32_t), pIndexData);
         }
         break;
         case My::kIndexDataTypeInt64:
@@ -150,14 +153,15 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             //for (int i = 0; i < pMesh->GetIndexArray(0).GetIndexCount(); i++) {
             //    pIndexData[i] = _pData[i];
             //}
-            dbc.m_index_buffer.Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
+            ibuffer->Create(L"Index Buffer", pMesh->GetIndexArray(0).GetIndexCount(), sizeof(uint64_t), pIndexData);
         }
         break;
         default:
             ASSERT(false, "Convert Index Type ERROR!");
             break;
         }
-        dbc.m_index_count_per_instance = pMesh->GetIndexArray(0).GetIndexCount();
+        dbc->m_indice_buffer_index = GraphicsRHI.AddIndexBuffer(std::move(ibuffer));
+        dbc->m_index_count_per_instance = pMesh->GetIndexArray(0).GetIndexCount();
 
         //-----------------------------------------Material-----------------------------------------//
         ASSERT(GeometryNode->GetMaterialCount() == 1 || GeometryNode->GetMaterialCount() == 0
@@ -169,38 +173,38 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> SRVsHandle;
 
             int TexturesPerMaterial = 0;
-            int type = pMaterial->GetTextureTypeFlag();
             for (int i = 0; i < My::SceneObjectMaterial::TextureType::kpbrType; i++) {
-                if (TEST_BIT(type, i)) {
-                    auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
-                    D3dGraphicsCore::Texture* pTexture = new D3dGraphicsCore::Texture();
-                    std::string TexPath = std::string(_ASSET_RESOURCE_DIRECTORY) + "/" + TextureRef->GetName();
-                    std::wstring TexturePath = Utility::UTF8ToWideString(TexPath);
-                    Image img;
-                    img.data = TextureRef->GetTextureImage().data;
-#ifdef USE_DIRECTX_TOOLKIT
-                    DXGI_FORMAT format;
-                    void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), img.Width, img.Height, img.pitch, img.data_size, format);
-                    //pImage.data = reinterpret_cast<R8G8B8A8Unorm*>(g_pMemoryManager->Allocate(pImage.data_size));
-                    //memcpy_s(pImage.data, pImage.data_size, pTexData, pImage.data_size);
-                    pTexture->Create2D(img.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pTexData);
-#else
-                    pTexture->Create2D(pImage.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, img.data);
-#endif
-                    pTexture->SetName(Utility::UTF8ToWideString(TextureRef->GetName()));
-                    SRVsHandle.push_back(pTexture->GetSRV());
-
-                    //DXSampler sampler;
-                    //sampler.filter = (D3D12_FILTER)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerFilter();
-                    //sampler.wrapS = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapS();
-                    //sampler.wrapT = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapT();
-
-                    D3dGraphicsCore::TextureResource re;
-                    //re.Handle = Handle;
-                    re.pTexture = pTexture;
-                    re.pImageData = pTexData;
-                    _object->MaterialResource.TextureResources.push_back(re);
-                    TexturesPerMaterial++;
+                auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
+                if (TextureRef) {
+//                    D3dGraphicsCore::Texture* pTexture = new D3dGraphicsCore::Texture();
+//                    std::string TexPath = std::string(_ASSET_RESOURCE_DIRECTORY) + "/" + TextureRef->GetName();
+//                    std::wstring TexturePath = Utility::UTF8ToWideString(TexPath);
+//                    Image img;
+//                    img.data = TextureRef->GetTextureImage().data;
+//#ifdef USE_DIRECTX_TOOLKIT
+//                    DXGI_FORMAT format;
+//                    void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), img.Width, img.Height, img.pitch, img.data_size, format);
+//                    //pImage.data = reinterpret_cast<R8G8B8A8Unorm*>(g_pMemoryManager->Allocate(pImage.data_size));
+//                    //memcpy_s(pImage.data, pImage.data_size, pTexData, pImage.data_size);
+//                    pTexture->Create2D(img.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pTexData);
+//#else
+//                    pTexture->Create2D(pImage.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, img.data);
+//#endif
+//                    pTexture->SetName(Utility::UTF8ToWideString(TextureRef->GetName()));
+//                    SRVsHandle.push_back(pTexture->GetSRV());
+//
+//                    //DXSampler sampler;
+//                    //sampler.filter = (D3D12_FILTER)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerFilter();
+//                    //sampler.wrapS = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapS();
+//                    //sampler.wrapT = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapT();
+//
+//                    dbc.Material.
+//                    D3dGraphicsCore::TextureResource re;
+//                    //re.Handle = Handle;
+//                    re.pTexture = pTexture;
+//                    re.pImageData = pTexData;
+//                    _object->MaterialResource.TextureResources.push_back(re);
+//                    TexturesPerMaterial++;
                 }
                 else {
                     D3dGraphicsCore::TextureResource re;
@@ -242,9 +246,9 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
 
                     //re.Handle = Handle;
-                    re.pImageData = nullptr;
-                    _object->MaterialResource.TextureResources.push_back(re);
-                    TexturesPerMaterial++;
+                    //re.pImageData = nullptr;
+                    //_object->MaterialResource.TextureResources.push_back(re);
+                    //TexturesPerMaterial++;
                 }
 
                 // texture transform
@@ -252,47 +256,47 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 switch (i) {
                 case My::SceneObjectMaterial::kBaseColor:
                 {
-                    _object->MaterialResource.BaseColorTextureTransform[0] = trans.offset[0];
-                    _object->MaterialResource.BaseColorTextureTransform[1] = trans.offset[1];
-                    _object->MaterialResource.BaseColorTextureTransform[2] = trans.scale[0];
-                    _object->MaterialResource.BaseColorTextureTransform[3] = trans.scale[1];
-                    _object->MaterialResource.BaseColorTextureTransform[4] = trans.rotation;
+                    dbc->BaseColorTextureTransform[0] = trans.offset[0];
+                    dbc->BaseColorTextureTransform[1] = trans.offset[1];
+                    dbc->BaseColorTextureTransform[2] = trans.scale[0];
+                    dbc->BaseColorTextureTransform[3] = trans.scale[1];
+                    dbc->BaseColorRotation = trans.rotation;
                 }
                 break;
                 case My::SceneObjectMaterial::kMetallicRoughness:
                 {
-                    _object->MaterialResource.MetallicRoughnessTextureTransform[0] = trans.offset[0];
-                    _object->MaterialResource.MetallicRoughnessTextureTransform[1] = trans.offset[1];
-                    _object->MaterialResource.MetallicRoughnessTextureTransform[2] = trans.scale[0];
-                    _object->MaterialResource.MetallicRoughnessTextureTransform[3] = trans.scale[1];
-                    _object->MaterialResource.MetallicRoughnessTextureTransform[4] = trans.rotation;
+                    dbc->MetallicRoughnessTextureTransform[0] = trans.offset[0];
+                    dbc->MetallicRoughnessTextureTransform[1] = trans.offset[1];
+                    dbc->MetallicRoughnessTextureTransform[2] = trans.scale[0];
+                    dbc->MetallicRoughnessTextureTransform[3] = trans.scale[1];
+                    dbc->MetallicRoughnessRotation = trans.rotation;
                 }
                 break;
                 case My::SceneObjectMaterial::kOcclusion:
                 {
-                    _object->MaterialResource.OcclusionTransform[0] = trans.offset[0];
-                    _object->MaterialResource.OcclusionTransform[1] = trans.offset[1];
-                    _object->MaterialResource.OcclusionTransform[2] = trans.scale[0];
-                    _object->MaterialResource.OcclusionTransform[3] = trans.scale[1];
-                    _object->MaterialResource.OcclusionTransform[4] = trans.rotation;
+                    dbc->OcclusionTextureTransform[0] = trans.offset[0];
+                    dbc->OcclusionTextureTransform[1] = trans.offset[1];
+                    dbc->OcclusionTextureTransform[2] = trans.scale[0];
+                    dbc->OcclusionTextureTransform[3] = trans.scale[1];
+                    dbc->OcclusionRotation = trans.rotation;
                 }
                 break;
                 case My::SceneObjectMaterial::kEmissive:
                 {
-                    _object->MaterialResource.EmissiveTextureTransform[0] = trans.offset[0];
-                    _object->MaterialResource.EmissiveTextureTransform[1] = trans.offset[1];
-                    _object->MaterialResource.EmissiveTextureTransform[2] = trans.scale[0];
-                    _object->MaterialResource.EmissiveTextureTransform[3] = trans.scale[1];
-                    _object->MaterialResource.EmissiveTextureTransform[4] = trans.rotation;
+                    dbc->EmissiveTextureTransform[0] = trans.offset[0];
+                    dbc->EmissiveTextureTransform[1] = trans.offset[1];
+                    dbc->EmissiveTextureTransform[2] = trans.scale[0];
+                    dbc->EmissiveTextureTransform[3] = trans.scale[1];
+                    dbc->EmissiveRotation = trans.rotation;
                 }
                 break;
                 case My::SceneObjectMaterial::kNormal:
                 {
-                    _object->MaterialResource.NormalTextureTransform[0] = trans.offset[0];
-                    _object->MaterialResource.NormalTextureTransform[1] = trans.offset[1];
-                    _object->MaterialResource.NormalTextureTransform[2] = trans.scale[0];
-                    _object->MaterialResource.NormalTextureTransform[3] = trans.scale[1];
-                    _object->MaterialResource.NormalTextureTransform[4] = trans.rotation;
+                    dbc->NormalTextureTransform[0] = trans.offset[0];
+                    dbc->NormalTextureTransform[1] = trans.offset[1];
+                    dbc->NormalTextureTransform[2] = trans.scale[0];
+                    dbc->NormalTextureTransform[3] = trans.scale[1];
+                    dbc->NormalRotation = trans.rotation;
                 }
                 break;
                 default:
@@ -302,66 +306,68 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             }
 
             // factor param / 
-            _object->MaterialResource.BaseColorFactor[0] = pMaterial->GetBaseColorFactor()[0];
-            _object->MaterialResource.BaseColorFactor[1] = pMaterial->GetBaseColorFactor()[1];
-            _object->MaterialResource.BaseColorFactor[2] = pMaterial->GetBaseColorFactor()[2];
-            _object->MaterialResource.BaseColorFactor[3] = pMaterial->GetBaseColorFactor()[3];
+            dbc->BaseColorFactor[0] = pMaterial->GetBaseColorFactor()[0];
+            dbc->BaseColorFactor[1] = pMaterial->GetBaseColorFactor()[1];
+            dbc->BaseColorFactor[2] = pMaterial->GetBaseColorFactor()[2];
+            dbc->BaseColorFactor[3] = pMaterial->GetBaseColorFactor()[3];
 
-            _object->MaterialResource.EmissiveFactor[0] = pMaterial->GetEmissivsFactor()[0];
-            _object->MaterialResource.EmissiveFactor[1] = pMaterial->GetEmissivsFactor()[1];
-            _object->MaterialResource.EmissiveFactor[2] = pMaterial->GetEmissivsFactor()[2];
+            dbc->EmissiveFactor[0] = pMaterial->GetEmissivsFactor()[0];
+            dbc->EmissiveFactor[1] = pMaterial->GetEmissivsFactor()[1];
+            dbc->EmissiveFactor[2] = pMaterial->GetEmissivsFactor()[2];
 
-            _object->MaterialResource.MetallicRoughnessFactor[0] = pMaterial->GetMetallicFactor();
-            _object->MaterialResource.MetallicRoughnessFactor[1] = pMaterial->GetRoughnessFactor();
+            dbc->MetallicRoughnessFactor[0] = pMaterial->GetMetallicFactor();
+            dbc->MetallicRoughnessFactor[1] = pMaterial->GetRoughnessFactor();
 
-            _object->MaterialResource.NormalScaleFactor = pMaterial->GetNormalScaleFactor();
+            dbc->NormalTextureScale = pMaterial->GetNormalScaleFactor();
 
-            int HeapIndex = -2;
-            D3dGraphicsCore::DescriptorHandle FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(TexturesPerMaterial, HeapIndex);
-            ASSERT(HeapIndex > -2, "Descripotr Heap Allocate Failed ERROR!");
-            _object->MaterialResource.TextureCountPerMaterial = TexturesPerMaterial;
-            _object->MaterialResource.FirstHandle = FirstHandle;
-            _object->MaterialResource.DescriptorHeapIndex = HeapIndex;
+            //int HeapIndex = -2;
+            //D3dGraphicsCore::DescriptorHandle FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(TexturesPerMaterial, HeapIndex);
+            //ASSERT(HeapIndex > -2, "Descripotr Heap Allocate Failed ERROR!");
+            //_object->MaterialResource.TextureCountPerMaterial = TexturesPerMaterial;
+            //_object->MaterialResource.FirstHandle = FirstHandle;
+            //_object->MaterialResource.DescriptorHeapIndex = HeapIndex;
 
-            //拷贝，且有材质纹理图
-            if (!FirstHandle.IsNull()) {
-                D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
-            }
-
-            _object->name = _it.second->GetSceneObjectRef();
-            _object->MaterialName = pMaterial->GetName();
-            //if (_object->name.size() > 7 && _object->name.substr(_object->name.size() - 7, 7) == "_Shared") {
-            //    _object->name = pMaterial->GetName();
+            ////拷贝，且有材质纹理图
+            //if (!FirstHandle.IsNull()) {
+            //    D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
             //}
 
-            //处理每个Primitive的材质对应的PS和VS
-            D3dGraphicsCore::SetPipelineSettings(_object->MaterialResource.PSO
-                , dbc.m_inputlayout, dbc.m_PrimitiveType, _object->name);
-            if (!FirstHandle.IsNull()) {
-                std::cout << "----------------------------" << std::endl;
-                std::cout << "Mesh " << _object->name << " Add Material " << _object->MaterialName << std::endl;
-                D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, "Model");
-            }
-            else {
-                std::cout << "----------------------------" << std::endl;
-                std::cout << "Mesh " << _object->name << " Has None Material Texture" << std::endl;
-                continue;
-            }
-            _object->MaterialResource.PSO.SetRenderTargetFormats(1,
-                &D3dGraphicsCore::g_SceneColorBuffer.GetFormat(),
-                DSV_FORMAT);
-            _object->MaterialResource.PSO.Finalize();
+            //_object->name = _it.second->GetSceneObjectRef();
+            //_object->MaterialName = pMaterial->GetName();
+            ////if (_object->name.size() > 7 && _object->name.substr(_object->name.size() - 7, 7) == "_Shared") {
+            ////    _object->name = pMaterial->GetName();
+            ////}
+
+            ////处理每个Primitive的材质对应的PS和VS
+            //D3dGraphicsCore::SetPipelineSettings(_object->MaterialResource.PSO
+            //    , dbc.m_inputlayout, dbc.m_PrimitiveType, _object->name);
+            //if (!FirstHandle.IsNull()) {
+            //    std::cout << "----------------------------" << std::endl;
+            //    std::cout << "Mesh " << _object->name << " Add Material " << _object->MaterialName << std::endl;
+            //    D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, "Model");
+            //}
+            //else {
+            //    std::cout << "----------------------------" << std::endl;
+            //    std::cout << "Mesh " << _object->name << " Has None Material Texture" << std::endl;
+            //    continue;
+            //}
+            //_object->MaterialResource.PSO.SetRenderTargetFormats(1,
+            //    &D3dGraphicsCore::g_SceneColorBuffer.GetFormat(),
+            //    DSV_FORMAT);
+            //_object->MaterialResource.PSO.Finalize();
         }
         else {
             //没有材质，可能是透明的，参考alphamode的值
         }
 
         //transform
-        auto mat = GeometryNode->GetCalculatedTransform();
-        _object->transform = new DirectX::XMFLOAT4X4();
-        memcpy(_object->transform, &*mat, 16 * sizeof(float));
+        dbc->ModelMatrix = *GeometryNode->GetCalculatedTransform().get();
+        dbc->Node = _it.second;
 
-        GraphicsRHI.AddPrimitiveObject(std::move(_object));
+        batch_index++;
+        for (auto frame : m_Frames) {
+            frame.BatchContexts.push_back(dbc);
+        }
     }
 }
 

@@ -48,8 +48,8 @@ namespace My {
         int InitializeD3dImGUI();
 
         struct D3dDrawBatchContext : DrawBatchContext {
-            D3dGraphicsCore::StructuredBuffer m_vertex_buffer;
-            D3dGraphicsCore::ByteAddressBuffer m_index_buffer;
+            uint32_t m_vertex_buffer_index;
+            uint32_t m_indice_buffer_index;
             PrimitiveType m_PrimitiveType;
             uint32_t m_index_count_per_instance;
             uint32_t m_inputlayout;

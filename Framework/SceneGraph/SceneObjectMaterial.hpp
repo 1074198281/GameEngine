@@ -30,7 +30,6 @@ namespace My {
         Color       m_pbrOcclusion;
         Color       m_pbrEmissive;
         Color       m_pbrNormal;
-        int         m_TextureTypeFlag;
 
         TextureParamFactor m_ParamFactor;
         TextureTransform m_BaseColorTrans;
@@ -40,10 +39,9 @@ namespace My {
         TextureTransform m_NormalTrans;
 
     public:
-        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name), m_TextureTypeFlag(0) {};
-        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)), m_TextureTypeFlag(0) {};
-        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f), m_TextureTypeFlag(0) {};
-        int GetTextureTypeFlag() { return m_TextureTypeFlag; };
+        SceneObjectMaterial(const std::string& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(name) {};
+        SceneObjectMaterial(std::string&& name) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(std::move(name)) {};
+        SceneObjectMaterial(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeMaterial), m_Name(""), m_BaseColor(Vector4f(1.0f)), m_Normal(Vector3f(0.0f, 0.0f, 1.0f)), m_Specular(0.0f), m_AmbientOcclusion(1.0f) {};
         void SetName(const std::string& name) { m_Name = name; };
         void SetName(std::string&& name) { m_Name = std::move(name); };
         std::string GetName() { return m_Name; };
@@ -93,23 +91,18 @@ namespace My {
         {
             if (attrib == "pbrdiffuse") {
                 m_pbrBaseColor = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << kBaseColor);
             }
             else if (attrib == "pbrmetallicroughness") {
                 m_pbrMetallicRoughness = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << kMetallicRoughness);
             }
             else if (attrib == "pbrocclusion") {
                 m_pbrOcclusion = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << kOcclusion);
             }
             else if (attrib == "pbremissive") {
                 m_pbrEmissive = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << kEmissive);
             }
             else if (attrib == "pbrnormal") {
                 m_pbrNormal = std::make_shared<SceneObjectTexture>(textureName);
-                m_TextureTypeFlag |= (1 << kNormal);
             }
         };
 
@@ -117,23 +110,18 @@ namespace My {
         {
             if (attrib == "pbrdiffuse") {
                 m_pbrBaseColor = texture;
-                m_TextureTypeFlag |= (1 << kBaseColor);
             }
             else if (attrib == "pbrmetallicroughness") {
                 m_pbrMetallicRoughness = texture;
-                m_TextureTypeFlag |= (1 << kMetallicRoughness);
             }
             else if (attrib == "pbrocclusion") {
                 m_pbrOcclusion = texture;
-                m_TextureTypeFlag |= (1 << kOcclusion);
             }
             else if (attrib == "pbremissive") {
                 m_pbrEmissive = texture;
-                m_TextureTypeFlag |= (1 << kEmissive);
             }
             else if (attrib == "pbrnormal") {
                 m_pbrNormal = texture;
-                m_TextureTypeFlag |= (1 << kNormal);
             }
         };
 
@@ -157,19 +145,19 @@ namespace My {
         };
 
         void LoadTextures() {
-            if (TEST_BIT(m_TextureTypeFlag, kBaseColor)) {
+            if (m_pbrBaseColor.ValueMap) {
                 m_pbrBaseColor.ValueMap->LoadTexture();
             }
-            if (TEST_BIT(m_TextureTypeFlag, kMetallicRoughness)) {
+            if (m_pbrMetallicRoughness.ValueMap) {
                 m_pbrMetallicRoughness.ValueMap->LoadTexture();
             }
-            if (TEST_BIT(m_TextureTypeFlag, kOcclusion)) {
+            if (m_pbrOcclusion.ValueMap) {
                 m_pbrOcclusion.ValueMap->LoadTexture();
             }
-            if (TEST_BIT(m_TextureTypeFlag, kEmissive)) {
+            if (m_pbrEmissive.ValueMap) {
                 m_pbrEmissive.ValueMap->LoadTexture();
             }
-            if (TEST_BIT(m_TextureTypeFlag, kNormal)) {
+            if (m_pbrNormal.ValueMap) {
                 m_pbrNormal.ValueMap->LoadTexture();
             }
         }

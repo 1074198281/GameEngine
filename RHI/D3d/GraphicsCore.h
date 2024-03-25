@@ -48,6 +48,9 @@ namespace D3dGraphicsCore {
 		void SetGetGfxconfiguration(const GetGfxconfiguration& func) {
 			m_fGetGfxconfiguration = func;
 		}
+
+		uint32_t AddVertexBuffer(std::unique_ptr <StructuredBuffer> buffer) { m_VecVertexBuffer.push_back(std::move(buffer)); return m_VecVertexBuffer.size() - 1; }
+		uint32_t AddIndexBuffer(std::unique_ptr <ByteAddressBuffer> buffer) { m_VecIndexBuffer.push_back(std::move(buffer)); return m_VecIndexBuffer.size() - 1;}
 	public:
 		
 		void InitializeGraphicsSettings();
@@ -76,6 +79,8 @@ namespace D3dGraphicsCore {
 		void InitializeCoreHWND();
 	private:
 		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
+		std::vector<std::unique_ptr<StructuredBuffer>> m_VecVertexBuffer;
+		std::vector<std::unique_ptr<ByteAddressBuffer>> m_VecIndexBuffer;
 
 		std::unique_ptr<IBLImageResource> m_IBLResource;
 	private:

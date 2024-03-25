@@ -28,14 +28,16 @@ namespace My {
 	// Model_PS -- cb0
 	// TextureTransform[4] ==> offset0, offset1, scale0, scale1
 	__declspec(align(16)) typedef struct MaterialConstants {
+		//constants
 		float BaseColorFactor[4];
 		float EmissiveFactor[3];
 		float NormalTextureScale;
 		float MetallicRoughnessFactor[2];
 		float padding0[2];
+		//texture trans [5] ===> offset[2] + scale[2] + rotation[1]
 		float BaseColorTextureTransform[4];
 		float MetallicRoughnessTextureTransform[4];
-		float OcclusionTransform[4];
+		float OcclusionTextureTransform[4];
 		float EmissiveTextureTransform[4];
 		float NormalTextureTransform[4];
 		float BaseColorRotation;
