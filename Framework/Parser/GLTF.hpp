@@ -465,6 +465,7 @@ namespace glTF
 
         Scene* m_scene;
         std::string m_basePath;
+        std::string m_AssetPath;
         std::vector<Scene> m_scenes;
         std::vector<Node> m_nodes;
         std::vector<Camera> m_cameras;
@@ -1197,6 +1198,8 @@ namespace glTF
 
             // Strip off file name to get root path to other related files
             m_basePath = My::GetBasePath(filepath);
+            size_t offset = m_basePath.find("/Asset/");
+            m_AssetPath = m_basePath.substr(offset + 7);
 
             // Parse all state
 
@@ -1448,7 +1451,8 @@ namespace glTF
                     }
                     std::string textureType = GetTextureType(Material::eTextureType(type));
                     
-                    GeoMaterial->SetTexture(textureType, meshIt->material->textures[type]->source->path);
+                    std::string texPath = m_AssetPath + meshIt->material->textures[type]->source->path;
+                    GeoMaterial->SetTexture(textureType, texPath);
                     My::TextureTransform trans;
                     memset(&trans, 0, sizeof(My::TextureTransform));
                     trans.offset[0] = meshIt->material->TextureTransform[0 + type * 5];

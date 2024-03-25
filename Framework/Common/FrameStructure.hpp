@@ -3,6 +3,8 @@
 #include "cbuffer.h"
 #include "SceneNodeGeometry.hpp"
 
+#define MAX_FRAME_COUNT 3
+
 namespace My {
 
 	typedef struct DrawFrameContext : PerFrameConstants {

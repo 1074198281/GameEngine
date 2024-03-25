@@ -13,6 +13,7 @@ int GraphicsManager::Initialize()
     int result = 0;
     m_nSceneRevision = 0;
     m_nFrameIndex = 0;
+    m_Frames.resize(MAX_FRAME_COUNT);
     return result;
 }
 
@@ -66,7 +67,11 @@ void GraphicsManager::Resize(uint32_t width, uint32_t height)
 
 void GraphicsManager::BeginScene(const Scene& scene)
 {
+    if (scene.GeometryNodes.size()) {
+        initializeGeometries(scene);
+    }
 
+    
 }
 
 void GraphicsManager::EndScene()

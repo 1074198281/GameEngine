@@ -34,13 +34,17 @@ namespace My {
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();
+        virtual void initializeGeometries(const Scene& scene) {}
+        virtual void initializeSkybox(const Scene& scene) {}
+        virtual void initializeLight(const Scene& scene) {}
+
 
         virtual void BeginFrame(Frame& frame) {}
         virtual void EndFrame(Frame& frame) {}
         virtual void StartGUIFrame() {}
         virtual void EndGUIFrame() {}
 
-    private:
+    protected:
         std::vector<Frame> m_Frames;
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;

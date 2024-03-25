@@ -41,9 +41,18 @@ namespace My {
 
 
     private:
-        bool LoadScene();
-        bool GenerateInputLayoutType(D3dGraphicsCore::PrimitiveObject* _object, const std::string& name);
+        void initializeGeometries(const Scene& scene) override;
+        void initializeSkybox(const Scene& scene) override;
+        bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
 
         int InitializeD3dImGUI();
+
+        struct D3dDrawBatchContext : DrawBatchContext {
+            D3dGraphicsCore::StructuredBuffer m_vertex_buffer;
+            D3dGraphicsCore::ByteAddressBuffer m_index_buffer;
+            PrimitiveType m_PrimitiveType;
+            uint32_t m_index_count_per_instance;
+            uint32_t m_inputlayout;
+        };
     };
 }
