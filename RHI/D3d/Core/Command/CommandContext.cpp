@@ -15,7 +15,6 @@
 #include "CommandContext.h"
 #include "../Resource/ColorBuffer.h"
 #include "../Resource/DepthBuffer.h"
-//#include "EngineProfiling.h"
 #include "../Resource/UploadBuffer.h"
 #include "../Resource/ReadbackBuffer.h"
 #include "../Pipeline/DescriptorHeap.h"
@@ -449,9 +448,9 @@ void D3dGraphicsCore::CommandContext::InsertAliasBarrier(GpuResource& Before, Gp
 
 void D3dGraphicsCore::CommandContext::WriteBuffer(GpuResource& Dest, size_t DestOffset, const void* BufferData, size_t NumBytes)
 {
-    ASSERT(BufferData != nullptr && Math::IsAligned(BufferData, 16));
+    ASSERT(BufferData != nullptr && My::IsAligned(BufferData, 16));
     DynAlloc TempSpace = m_CpuLinearAllocator.Allocate(NumBytes, 512);
-    SIMDMemCopy(TempSpace.DataPtr, BufferData, Math::DivideByMultiple(NumBytes, 16));
+    SIMDMemCopy(TempSpace.DataPtr, BufferData, My::DivideByMultiple(NumBytes, 16));
     CopyBufferRegion(Dest, DestOffset, TempSpace.Buffer, TempSpace.Offset, NumBytes);
 }
 
@@ -459,7 +458,7 @@ void D3dGraphicsCore::CommandContext::FillBuffer(GpuResource& Dest, size_t DestO
 {
     DynAlloc TempSpace = m_CpuLinearAllocator.Allocate(NumBytes, 512);
     __m128 VectorValue = _mm_set1_ps(Value.Float);
-    SIMDMemFill(TempSpace.DataPtr, VectorValue, Math::DivideByMultiple(NumBytes, 16));
+    SIMDMemFill(TempSpace.DataPtr, VectorValue, My::DivideByMultiple(NumBytes, 16));
     CopyBufferRegion(Dest, DestOffset, TempSpace.Buffer, TempSpace.Offset, NumBytes);
 }
 
@@ -567,7 +566,7 @@ void D3dGraphicsCore::CommandContext::InitializeBuffer(GpuBuffer& Dest, const vo
     CommandContext& InitContext = CommandContext::Begin();
 
     DynAlloc mem = InitContext.ReserveUploadMemory(NumBytes);
-    SIMDMemCopy(mem.DataPtr, BufferData, Math::DivideByMultiple(NumBytes, 16));
+    SIMDMemCopy(mem.DataPtr, BufferData, My::DivideByMultiple(NumBytes, 16));
 
     // copy data to the intermediate upload heap and then schedule a copy from the upload heap to the default texture
     InitContext.TransitionResource(Dest, D3D12_RESOURCE_STATE_COPY_DEST, true);

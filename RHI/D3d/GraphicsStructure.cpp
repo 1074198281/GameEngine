@@ -222,7 +222,7 @@ void D3dGraphicsCore::FinalizePipelineTemplates()
 
 void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name)
 {
-	std::wstring wName = Utility::UTF8ToWideString(Name);
+	std::wstring wName = My::UTF8ToWideString(Name);
 	size_t size = wName.size() + 1;
 	const wchar_t* LName = wName.c_str();
 	wchar_t* newname = new wchar_t[wName.size()];

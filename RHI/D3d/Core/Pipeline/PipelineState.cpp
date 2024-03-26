@@ -10,7 +10,6 @@
 //
 // Author:  James Stanard
 
-#include "GraphicsCore.h"
 #include "../D3dGraphicsCoreManager.h"
 #include "PipelineState.h"
 #include "RootSignature.h"
@@ -19,7 +18,7 @@
 #include <thread>
 #include <mutex>
 
-using Math::IsAligned;
+using My::IsAligned;
 using Microsoft::WRL::ComPtr;
 
 static std::map< size_t, ComPtr<ID3D12PipelineState> > s_GraphicsPSOHashMap;

@@ -1,6 +1,6 @@
 #include "XMInput.h"
 #include "D3d/Core/D3dGraphicsCoreManager.h"
-#include "D3d/Core/Utility.h"
+#include "WinUtility.h"
 
 
 namespace XM_Input {

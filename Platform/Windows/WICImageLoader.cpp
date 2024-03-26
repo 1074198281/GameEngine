@@ -1,16 +1,14 @@
-#include "XMWICImageLoader.h"
-#include "Core/Utility.h"
+#include "WICImageLoader.h"
+#include "WinUtility.h"
 
-namespace D3dGraphicsCore {
-    namespace WICLoader {
-        Microsoft::WRL::ComPtr<IWICImagingFactory> g_WICFactory;
-        Microsoft::WRL::ComPtr<IWICFormatConverter> g_FormatConverter;
-        Microsoft::WRL::ComPtr<IWICBitmapDecoder> g_PNGDecoder;
-        Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> g_FirstFrame;
-    }
+namespace My {
+    Microsoft::WRL::ComPtr<IWICImagingFactory> g_WICFactory;
+    Microsoft::WRL::ComPtr<IWICFormatConverter> g_FormatConverter;
+    Microsoft::WRL::ComPtr<IWICBitmapDecoder> g_PNGDecoder;
+    Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> g_FirstFrame;
 }
 
-void D3dGraphicsCore::WICLoader::InitializeWICLoader()
+void My::InitializeWICLoader()
 {
     using namespace Microsoft::WRL;
     HRESULT hr;
@@ -35,7 +33,7 @@ void D3dGraphicsCore::WICLoader::InitializeWICLoader()
 
 }
 
-void D3dGraphicsCore::WICLoader::FinalizeWICLoader()
+void My::FinalizeWICLoader()
 {
     if (g_WICFactory == nullptr) {
         ASSERT(false, "Factory Or Format Converter Not Initialized ERROR");
@@ -47,97 +45,104 @@ void D3dGraphicsCore::WICLoader::FinalizeWICLoader()
 }
 
 
-void* D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(const wchar_t* filePath, uint32_t& width, uint32_t& height, uint32_t& pitch, uint64_t& imageSize, DXGI_FORMAT& format)
+void My::LoadPNGAndGetImageData(const wchar_t* filePath, Image* img)
 {
     using namespace Microsoft::WRL;
     HRESULT hr;
 
     if (g_WICFactory == nullptr || g_FormatConverter != nullptr) {
         ASSERT(false, "Factory Or Format Converter Not Initialized ERROR");
-        return nullptr;
+        img->data = nullptr;
     }
 
     hr = g_WICFactory->CreateFormatConverter(&g_FormatConverter);
     if (FAILED(hr)) {
         ASSERT(false, "WICFactory Failed ERROR!");
-        return nullptr;
+        img->data = nullptr;
     }
 
     hr = g_WICFactory->CreateDecoderFromFilename(filePath, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &g_PNGDecoder);
     if (FAILED(hr)) {
-        return nullptr;
+        img->data = nullptr;
     }
 
     hr = g_PNGDecoder->GetFrame(0, &g_FirstFrame);
     if (FAILED(hr)) {
-        return nullptr;
+        img->data = nullptr;
     }
 
-    format = GetFormatByFrame();
+    GetFormatByFrame(img);
 
     // Get image information
-    hr = g_FirstFrame->GetSize(&width, &height);
+    hr = g_FirstFrame->GetSize(&img->Width, &img->Height);
     if (FAILED(hr)) {
-        return nullptr;
+        img->data = nullptr;
     }
 
     hr = g_FormatConverter->Initialize(g_FirstFrame.Get(), GUID_WICPixelFormat32bppPRGBA, WICBitmapDitherTypeNone, nullptr, 0.0, WICBitmapPaletteTypeMedianCut);
     if (FAILED(hr)) {
         ASSERT(false, "Format Converter Failed ERROR!");
-        return nullptr;
+        img->data = nullptr;
     }
 
     // Calculate buffer size
-    UINT stride = width * 4; // Assuming 32bpp
-    pitch = stride;
-    uint64_t bufferSize = (uint64_t)stride * (uint64_t)height;
-    imageSize = bufferSize;
+    UINT stride = img->Width * 4; // Assuming 32bpp
+    img->pitch = stride;
+    uint64_t bufferSize = (uint64_t)stride * (uint64_t)img->Height;
+    img->data_size = bufferSize;
 
     // Allocate buffer for image data
     void* imageDataBuffer = malloc(bufferSize);
     if (!imageDataBuffer) {
-        return nullptr;
+        img->data = nullptr;
     }
 
-    // Copy pixels to buffer
-    hr = g_FormatConverter->CopyPixels(nullptr, stride, bufferSize, static_cast<BYTE*>(imageDataBuffer));
-    if (FAILED(hr)) {
-        free(imageDataBuffer);
-        ASSERT(false, "Copy Pixels to Buffer Failed ERROR!");
-        return nullptr;
+    if (imageDataBuffer) {
+        // Copy pixels to buffer
+        hr = g_FormatConverter->CopyPixels(nullptr, stride, bufferSize, static_cast<BYTE*>(imageDataBuffer));
+        if (FAILED(hr)) {
+            free(imageDataBuffer);
+            ASSERT(false, "Copy Pixels to Buffer Failed ERROR!");
+            img->data = nullptr;
+        }
     }
 
     g_FormatConverter.Reset();
     g_PNGDecoder.Reset();
     g_FirstFrame.Reset();
 
-    return imageDataBuffer;
+    img->data = reinterpret_cast<uint8_t*>(imageDataBuffer);
 }
 
-DXGI_FORMAT D3dGraphicsCore::WICLoader::GetFormatByFrame()
+void My::GetFormatByFrame(Image* img)
 {
     HRESULT hr;
-    DXGI_FORMAT dxgiFormat = DXGI_FORMAT_UNKNOWN;
 
     // 获取像素格式信息
     WICPixelFormatGUID pixelFormat;
     hr = g_FirstFrame->GetPixelFormat(&pixelFormat);
+    if (FAILED(hr)) {
+        ASSERT(false, "Get Pixel Format ERROR!");
+    }
     // 根据获取的 GUID 判断 DXGI_FORMAT
     if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat32bppRGBA)) {
-        dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        img->format = PIXEL_FORMAT::RGBA8;
+        img->bitcount = 32;
     }
     else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat32bppBGRA)) {
-        dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+        img->format = PIXEL_FORMAT::RGBA8;
+        img->bitcount = 32;
     }
     else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat24bppRGB)) {
-        dxgiFormat = DXGI_FORMAT_B8G8R8X8_UNORM;
+        img->format = PIXEL_FORMAT::RGB8;
+        img->bitcount = 24;
     }
     else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat24bppBGR)) {
-        dxgiFormat = DXGI_FORMAT_B8G8R8X8_UNORM;
+        img->format = PIXEL_FORMAT::RGB8;
+        img->bitcount = 24;
     }
     else if (IsEqualGUID(pixelFormat, GUID_WICPixelFormat8bppGray)) {
-        dxgiFormat = DXGI_FORMAT_R8_UNORM;
+        img->format = PIXEL_FORMAT::R8;
+        img->bitcount = 8;
     }
-
-    return dxgiFormat;
 }

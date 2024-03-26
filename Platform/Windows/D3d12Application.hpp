@@ -14,6 +14,8 @@ namespace My {
         
         int CreateMainWindow() override;
 
+        void LoadSceneResource(Scene& scene);
+
         D3dGraphicsCore::CD3dGraphicsCore& GetRHI() { return m_GraphicsRHI; }
     private:
         D3dGraphicsCore::CD3dGraphicsCore m_GraphicsRHI;

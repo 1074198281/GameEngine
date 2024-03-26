@@ -13,7 +13,6 @@
 //
 
 #include "LinearAllocator.h"
-#include "GraphicsCore.h"
 #include "../D3dGraphicsCoreManager.h"
 #include "../Command/CommandListManager.h"
 #include <thread>
@@ -161,12 +160,12 @@ D3dGraphicsCore::DynAlloc D3dGraphicsCore::LinearAllocator::Allocate(size_t Size
     ASSERT((AlignmentMask & Alignment) == 0);
 
     // Align the allocation
-    const size_t AlignedSize = Math::AlignUpWithMask(SizeInBytes, AlignmentMask);
+    const size_t AlignedSize = My::AlignUpWithMask(SizeInBytes, AlignmentMask);
 
     if (AlignedSize > m_PageSize)
         return AllocateLargePage(AlignedSize);
 
-    m_CurOffset = Math::AlignUp(m_CurOffset, Alignment);
+    m_CurOffset = My::AlignUp(m_CurOffset, Alignment);
 
     if (m_CurOffset + AlignedSize > m_PageSize)
     {

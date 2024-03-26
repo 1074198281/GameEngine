@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Utility.h"
-#include "d3dx12.h"
+#include "WinUtility.h"
+#include "../d3dx12.h"
 #include <dxgi.h>
 #include <dxgi1_4.h>
 #include <dxgi1_6.h>

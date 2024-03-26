@@ -40,15 +40,12 @@ void GraphicsManager::Tick()
         }
     }
 
-    //assert(m_Frames.size());
-    //BeginFrame(m_Frames[m_nFrameIndex]);
-    //ImGui::NewFrame();
+    assert(m_Frames.size());
+    BeginFrame(m_Frames[m_nFrameIndex]);
     StartGUIFrame();
     Draw();
     EndGUIFrame();
-    //ImGui::EndFrame();
-    //ImGui::Render();
-    //EndFrame(m_Frames[m_nFrameIndex]);
+    EndFrame(m_Frames[m_nFrameIndex]);
     Present();
 }
 
@@ -70,6 +67,7 @@ void GraphicsManager::BeginScene(const Scene& scene)
     if (scene.GeometryNodes.size()) {
         initializeGeometries(scene);
     }
+    initializeSkybox(scene);
 
     
 }

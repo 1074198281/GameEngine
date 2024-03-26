@@ -3,6 +3,8 @@
 #include "AssetLoader.hpp"
 #include "../Framework/Parser/OGEX.hpp"
 #include "../Framework/Parser/GLTF.hpp"
+#include "utility.hpp"
+#include "D3d12Application.hpp"
 #include <filesystem>
 #include <assert.h>
 
@@ -26,22 +28,28 @@ void SceneManager::Tick()
 int SceneManager::LoadScene(const char* scene_file_name)
 {
     // now we only has ogex scene parser, call it directly
-    std::string scene(scene_file_name);
-    size_t pos = scene.find_last_of('.');
-    std::string extension = scene.substr(pos + 1);
+    std::string extension = GetFileExtension(scene_file_name);
     if (extension == "gltf") {
         LoadglTFScene(scene_file_name);
-        //m_pScene->LoadResource();
     }
     else if (extension == "ogex") {
         LoadOgexScene(scene_file_name);
-        //m_pScene->LoadResource();
     }
     else {
         printf("Invalid Or Unsupported File Extension!");
         assert(false);
         return -1;
     }
+
+#ifdef _WIN32
+    dynamic_cast<D3d12Application*>(m_pApp)->LoadSceneResource(*m_pScene);
+#elif _LINUX
+
+#elif _METAL
+
+#else
+    m_pScene->LoadResource();
+#endif // _WIN32
 
     m_nSceneRevision++;
 

@@ -14,7 +14,7 @@
 #pragma once
 
 #include "../D3dCommonDef.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 
 namespace D3dGraphicsCore {
 

@@ -23,7 +23,7 @@
 #pragma once
 
 #include "GpuResource.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 #include <vector>
 #include <queue>
 #include <mutex>

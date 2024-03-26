@@ -4,14 +4,8 @@
 #include <string>
 #include <unordered_map>
 #include <functional>
+#include <DirectXMath.h>
 #include "GfxConfiguration.h"
-#include "Core/D3dCommonDef.h"
-#include "Core/Pipeline/RootSignature.h"
-#include "Core/Resource/GpuBuffer.h"
-#include "Core/Pipeline/PipelineState.h"
-#include "Core/Resource/Texture.h"
-#include "Core/Pipeline/DescriptorHeap.h"
-#include "Core/Command/CommandContext.h"
 #include "StructureSettings.h"
 #include "ShaderSource.h"
 #include "RenderObject.h"
@@ -21,6 +15,9 @@
 
 
 namespace D3dGraphicsCore {
+	class StructuredBuffer;
+	class ByteAddressBuffer;
+	class GraphicsContext;
 
 	// CD3dGraphicsCore pretends to be D3DRHI
 	class CD3dGraphicsCore {
@@ -49,15 +46,17 @@ namespace D3dGraphicsCore {
 			m_fGetGfxconfiguration = func;
 		}
 
-		uint32_t AddVertexBuffer(std::unique_ptr <StructuredBuffer> buffer) { m_VecVertexBuffer.push_back(std::move(buffer)); return m_VecVertexBuffer.size() - 1; }
-		uint32_t AddIndexBuffer(std::unique_ptr <ByteAddressBuffer> buffer) { m_VecIndexBuffer.push_back(std::move(buffer)); return m_VecIndexBuffer.size() - 1;}
+		uint32_t AddVertexBuffer(std::unique_ptr<StructuredBuffer> buffer);
+		uint32_t AddIndexBuffer(std::unique_ptr<ByteAddressBuffer> buffer);
+		size_t CreateAndAddTexture(const My::Image& img);
+		void LoadIBLTextures(size_t& skyboxSpecularHandle, size_t& skyboxDiffuseHandle, size_t& brdfHandle);
 	public:
 		
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
 
 	public:
-		void UpdateGlobalLightPosition(XMFLOAT4 pos);
+		void UpdateGlobalLightPosition(DirectX::XMFLOAT4 pos);
 		void UpdateStatus();
 		void UpdateCamera();
 		void UpdateCameraParams(int64_t key);
@@ -66,10 +65,9 @@ namespace D3dGraphicsCore {
 		void UpdatePresent();
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
-		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
+		
 
 	private:
-		void LoadIBLTextures();
 		void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
 
 		void RenderAllObjects();
@@ -78,9 +76,13 @@ namespace D3dGraphicsCore {
 	private:
 		void InitializeCoreHWND();
 	private:
+		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
+		void GetDXGIFormat(const My::PIXEL_FORMAT& pixel_format, DXGI_FORMAT& dxgi_format);
+	private:
 		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
 		std::vector<std::unique_ptr<StructuredBuffer>> m_VecVertexBuffer;
 		std::vector<std::unique_ptr<ByteAddressBuffer>> m_VecIndexBuffer;
+		std::vector<Texture> m_VecTexture;
 
 		std::unique_ptr<IBLImageResource> m_IBLResource;
 	private:
@@ -89,7 +91,7 @@ namespace D3dGraphicsCore {
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
 
-		XMFLOAT4 m_GlobalLightPosition;
+		DirectX::XMFLOAT4 m_GlobalLightPosition;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;

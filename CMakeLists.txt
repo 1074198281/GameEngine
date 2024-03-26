@@ -24,8 +24,8 @@ elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
 endif ()
 
 
-#if USE DX12
-add_compile_definitions(USE_DIRECTX_TOOLKIT)
+# add GraphicsInterface Type
+add_compile_definitions(USING_DX12)
 
 # 添加预处理器定义屏蔽vs的全局max和min宏
 add_compile_definitions(NOMINMAX)

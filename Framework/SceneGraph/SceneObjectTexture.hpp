@@ -72,6 +72,11 @@ namespace My {
             }
         }
 
+        void SetTextureImage(Image img)
+        {
+            m_pImage = std::make_shared<Image>(img);
+        }
+
         Image& GetTextureImage()
         {
             if (!m_pImage)

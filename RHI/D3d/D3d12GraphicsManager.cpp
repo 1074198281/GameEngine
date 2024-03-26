@@ -8,7 +8,6 @@
 #include "StructureSettings.h"
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
-#include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
 #include "GraphicsStructure.h"
 
 #include "imgui.h"
@@ -79,9 +78,6 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         dbc->m_PrimitiveType = pMesh->GetPrimitiveType();
         dbc->BatchIndex = batch_index;
         dbc->m_inputlayout = 0;
-
-        //std::unique_ptr<D3dGraphicsCore::PrimitiveObject> _object = std::make_unique<D3dGraphicsCore::PrimitiveObject>();
-        //_object->PrimitiveType = pMesh->GetPrimitiveType();
 
         int elementCount = pMesh->GetVertexCount();
         int vertexPerCount = 0;
@@ -169,91 +165,81 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         if (GeometryNode->GetMaterialCount()) {
             auto pMaterial = scene.GetMaterial(GeometryNode->GetMaterialRef(0));
 
-            //SRVsHandle用于拷贝默认分配的描述符到设置堆中
-            std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> SRVsHandle;
-
-            int TexturesPerMaterial = 0;
-            for (int i = 0; i < My::SceneObjectMaterial::TextureType::kpbrType; i++) {
-                auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i);
+            for (int type = 0; type < My::SceneObjectMaterial::TextureType::kpbrType; type++) {
+                auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)type);
+                // if texture has loaded its image data, then create gpu data
+                size_t cpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
                 if (TextureRef) {
-//                    D3dGraphicsCore::Texture* pTexture = new D3dGraphicsCore::Texture();
-//                    std::string TexPath = std::string(_ASSET_RESOURCE_DIRECTORY) + "/" + TextureRef->GetName();
-//                    std::wstring TexturePath = Utility::UTF8ToWideString(TexPath);
-//                    Image img;
-//                    img.data = TextureRef->GetTextureImage().data;
-//#ifdef USE_DIRECTX_TOOLKIT
-//                    DXGI_FORMAT format;
-//                    void* pTexData = D3dGraphicsCore::WICLoader::LoadPNGAndGetImageData(TexturePath.c_str(), img.Width, img.Height, img.pitch, img.data_size, format);
-//                    //pImage.data = reinterpret_cast<R8G8B8A8Unorm*>(g_pMemoryManager->Allocate(pImage.data_size));
-//                    //memcpy_s(pImage.data, pImage.data_size, pTexData, pImage.data_size);
-//                    pTexture->Create2D(img.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, pTexData);
-//#else
-//                    pTexture->Create2D(pImage.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, img.data);
-//#endif
-//                    pTexture->SetName(Utility::UTF8ToWideString(TextureRef->GetName()));
-//                    SRVsHandle.push_back(pTexture->GetSRV());
-//
-//                    //DXSampler sampler;
-//                    //sampler.filter = (D3D12_FILTER)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerFilter();
-//                    //sampler.wrapS = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapS();
-//                    //sampler.wrapT = (D3D12_TEXTURE_ADDRESS_MODE)pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)i)->GetSamplerWrapT();
-//
-//                    dbc.Material.
-//                    D3dGraphicsCore::TextureResource re;
-//                    //re.Handle = Handle;
-//                    re.pTexture = pTexture;
-//                    re.pImageData = pTexData;
-//                    _object->MaterialResource.TextureResources.push_back(re);
-//                    TexturesPerMaterial++;
-                }
-                else {
-                    D3dGraphicsCore::TextureResource re;
-                    switch (i) {
+                    Image& img = TextureRef->GetTextureImage();
+                    cpuHandle = GraphicsRHI.CreateAndAddTexture(img);
+                } else {
+                    switch (type) {
                     case My::SceneObjectMaterial::kBaseColor:
                     {
-                        SRVsHandle.push_back(D3dGraphicsCore::g_DefaultBaseColorTexture.GetSRV());
-                        re.pTexture = &D3dGraphicsCore::g_DefaultBaseColorTexture;
+                        cpuHandle = D3dGraphicsCore::g_DefaultBaseColorTexture.GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kMetallicRoughness:
                     {
-                        SRVsHandle.push_back(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture.GetSRV());
-                        re.pTexture = &D3dGraphicsCore::g_DefaultRoughnessMetallicTexture;
+                        cpuHandle = D3dGraphicsCore::g_DefaultRoughnessMetallicTexture.GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kOcclusion:
                     {
-                        SRVsHandle.push_back(D3dGraphicsCore::g_DefaultOcclusionTexture.GetSRV());
-                        re.pTexture = &D3dGraphicsCore::g_DefaultOcclusionTexture;
+                        cpuHandle = D3dGraphicsCore::g_DefaultOcclusionTexture.GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kEmissive:
                     {
-                        SRVsHandle.push_back(D3dGraphicsCore::g_DefaultEmissiveTexture.GetSRV());
-                        re.pTexture = &D3dGraphicsCore::g_DefaultEmissiveTexture;
+                        cpuHandle = D3dGraphicsCore::g_DefaultEmissiveTexture.GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kNormal:
                     {
-                        SRVsHandle.push_back(D3dGraphicsCore::g_DefaultNormalTexture.GetSRV());
-                        re.pTexture = &D3dGraphicsCore::g_DefaultNormalTexture;
+                        cpuHandle = D3dGraphicsCore::g_DefaultNormalTexture.GetSRV().ptr;
                     }
                     break;
                     default:
                         ASSERT(false, "NO BLANK DESCRIPTOR TO FILL HEAP,ERROR!");
                         break;
                     }
+                }
 
-
-                    //re.Handle = Handle;
-                    //re.pImageData = nullptr;
-                    //_object->MaterialResource.TextureResources.push_back(re);
-                    //TexturesPerMaterial++;
+                switch (type)
+                {
+                case My::SceneObjectMaterial::kBaseColor:
+                {
+                    dbc->Material.DiffuseMap.Handle = cpuHandle;
+                }
+                break;
+                case My::SceneObjectMaterial::kMetallicRoughness:
+                {
+                    dbc->Material.MetallicRoughnessMap.Handle = cpuHandle;
+                }
+                break;
+                case My::SceneObjectMaterial::kOcclusion:
+                {
+                    dbc->Material.AmbientOcclusionMap.Handle = cpuHandle;
+                }
+                break;
+                case My::SceneObjectMaterial::kEmissive:
+                {
+                    dbc->Material.EmissiveMap.Handle = cpuHandle;
+                }
+                break;
+                case My::SceneObjectMaterial::kNormal:
+                {
+                    dbc->Material.NormalMap.Handle = cpuHandle;
+                }
+                break;
+                default:
+                    ASSERT(false, "Material Type ERROR!");
+                    break;
                 }
 
                 // texture transform
-                My::TextureTransform trans = pMaterial->GetTextureTransform(My::SceneObjectMaterial::TextureType(i));
-                switch (i) {
+                My::TextureTransform trans = pMaterial->GetTextureTransform(My::SceneObjectMaterial::TextureType(type));
+                switch (type) {
                 case My::SceneObjectMaterial::kBaseColor:
                 {
                     dbc->BaseColorTextureTransform[0] = trans.offset[0];
@@ -319,45 +305,6 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             dbc->MetallicRoughnessFactor[1] = pMaterial->GetRoughnessFactor();
 
             dbc->NormalTextureScale = pMaterial->GetNormalScaleFactor();
-
-            //int HeapIndex = -2;
-            //D3dGraphicsCore::DescriptorHandle FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(TexturesPerMaterial, HeapIndex);
-            //ASSERT(HeapIndex > -2, "Descripotr Heap Allocate Failed ERROR!");
-            //_object->MaterialResource.TextureCountPerMaterial = TexturesPerMaterial;
-            //_object->MaterialResource.FirstHandle = FirstHandle;
-            //_object->MaterialResource.DescriptorHeapIndex = HeapIndex;
-
-            ////拷贝，且有材质纹理图
-            //if (!FirstHandle.IsNull()) {
-            //    D3dGraphicsCore::CopyDescriptors(FirstHandle, SRVsHandle, TexturesPerMaterial);
-            //}
-
-            //_object->name = _it.second->GetSceneObjectRef();
-            //_object->MaterialName = pMaterial->GetName();
-            ////if (_object->name.size() > 7 && _object->name.substr(_object->name.size() - 7, 7) == "_Shared") {
-            ////    _object->name = pMaterial->GetName();
-            ////}
-
-            ////处理每个Primitive的材质对应的PS和VS
-            //D3dGraphicsCore::SetPipelineSettings(_object->MaterialResource.PSO
-            //    , dbc.m_inputlayout, dbc.m_PrimitiveType, _object->name);
-            //if (!FirstHandle.IsNull()) {
-            //    std::cout << "----------------------------" << std::endl;
-            //    std::cout << "Mesh " << _object->name << " Add Material " << _object->MaterialName << std::endl;
-            //    D3dGraphicsCore::SetShaderByteCode(_object->MaterialResource.PSO, "Model");
-            //}
-            //else {
-            //    std::cout << "----------------------------" << std::endl;
-            //    std::cout << "Mesh " << _object->name << " Has None Material Texture" << std::endl;
-            //    continue;
-            //}
-            //_object->MaterialResource.PSO.SetRenderTargetFormats(1,
-            //    &D3dGraphicsCore::g_SceneColorBuffer.GetFormat(),
-            //    DSV_FORMAT);
-            //_object->MaterialResource.PSO.Finalize();
-        }
-        else {
-            //没有材质，可能是透明的，参考alphamode的值
         }
 
         //transform
@@ -373,7 +320,14 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 {
-
+    TextureHandle specular, diffuse, brdf;
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.LoadIBLTextures(specular, diffuse, brdf);
+    for (auto frame : m_Frames) {
+        frame.BRDF_LUT_Map.Handle = brdf;
+        frame.SkyBoxMap.Handle = specular;
+        frame.SkyBoxDiffuseMap.Handle = diffuse;
+    }
 }
 
 void My::D3d12GraphicsManager::UpArrowKeyDown()
@@ -502,4 +456,14 @@ void My::D3d12GraphicsManager::EndGUIFrame()
 {
     ImGui::EndFrame();
     ImGui::Render();
+}
+
+void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
+{
+
+}
+
+void My::D3d12GraphicsManager::EndFrame(Frame& frame)
+{
+
 }

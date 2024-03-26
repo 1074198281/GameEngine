@@ -183,7 +183,7 @@ void D3dGraphicsCore::Initialize(bool RequireDXRSupport)
         }
         else
         {
-            Utility::Print("WARNING:  Unable to enable D3D12 debug validation layer\n");
+            My::Print("WARNING:  Unable to enable D3D12 debug validation layer\n");
         }
 
 #if _DEBUG
@@ -221,7 +221,7 @@ void D3dGraphicsCore::Initialize(bool RequireDXRSupport)
 
     if (desiredVendor)
     {
-        Utility::Printf(L"Looking for a %s GPU\n", GPUVendorToString(desiredVendor));
+        My::Printf(L"Looking for a %s GPU\n", GPUVendorToString(desiredVendor));
     }
 
     // Temporary workaround because SetStablePowerState() is crashing
@@ -263,22 +263,22 @@ void D3dGraphicsCore::Initialize(bool RequireDXRSupport)
 
             g_Device = pDevice.Detach();
 
-            Utility::Printf(L"Selected GPU:  %s (%u MB)\n", desc.Description, desc.DedicatedVideoMemory >> 20);
+            My::Printf(L"Selected GPU:  %s (%u MB)\n", desc.Description, desc.DedicatedVideoMemory >> 20);
         }
     }
 
     if (RequireDXRSupport && !g_Device)
     {
-        Utility::Printf("Unable to find a DXR-capable device. Halting.\n");
+        My::Printf("Unable to find a DXR-capable device. Halting.\n");
         __debugbreak();
     }
 
     if (g_Device == nullptr)
     {
         if (bUseWarpDriver)
-            Utility::Print("WARP software adapter requested.  Initializing...\n");
+            My::Print("WARP software adapter requested.  Initializing...\n");
         else
-            Utility::Print("Failed to find a hardware adapter.  Falling back to WARP.\n");
+            My::Print("Failed to find a hardware adapter.  Falling back to WARP.\n");
         ASSERT_SUCCEEDED(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&pAdapter)));
         ASSERT_SUCCEEDED(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&pDevice)));
         g_Device = pDevice.Detach();
@@ -412,7 +412,7 @@ void D3dGraphicsCore::Shutdown(void)
     if (SUCCEEDED(g_Device->QueryInterface(&debugInterface)))
     {
         debugInterface->ReportLiveDeviceObjects( D3D12_RLDO_DETAIL | D3D12_RLDO_IGNORE_INTERNAL);
-        __debugbreak();
+        //__debugbreak();
         debugInterface->Release();
     }
 #endif

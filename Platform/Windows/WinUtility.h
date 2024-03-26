@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <emmintrin.h>
 
-namespace Utility
+namespace My
 {
 #ifdef _CONSOLE
     inline void Print(const char* msg) { printf("%s", msg); }
@@ -64,19 +64,14 @@ namespace Utility
 
     std::wstring UTF8ToWideString(const std::string& str);
     std::string WideStringToUTF8(const std::wstring& wstr);
-    std::string ToLower(const std::string& str);
     std::wstring ToLower(const std::wstring& str);
-    std::string GetBasePath(const std::string& str);
     std::wstring GetBasePath(const std::wstring& str);
-    std::string RemoveBasePath(const std::string& str);
     std::wstring RemoveBasePath(const std::wstring& str);
-    std::string GetFileExtension(const std::string& str);
     std::wstring GetFileExtension(const std::wstring& str);
-    std::string RemoveExtension(const std::string& str);
     std::wstring RemoveExtension(const std::wstring& str);
 
 
-} // namespace Utility
+} // namespace My
 
 #ifdef ERROR
 #undef ERROR
@@ -105,19 +100,19 @@ namespace Utility
 #define STRINGIFY_BUILTIN(x) STRINGIFY(x)
 #define ASSERT( isFalse, ... ) \
         if (!(bool)(isFalse)) { \
-            Utility::Print("\nAssertion failed in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
-            Utility::PrintSubMessage("\'" #isFalse "\' is false"); \
-            Utility::PrintSubMessage(__VA_ARGS__); \
-            Utility::Print("\n"); \
+            My::Print("\nAssertion failed in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
+            My::PrintSubMessage("\'" #isFalse "\' is false"); \
+            My::PrintSubMessage(__VA_ARGS__); \
+            My::Print("\n"); \
             __debugbreak(); \
         }
 
 #define ASSERT_SUCCEEDED( hr, ... ) \
         if (FAILED(hr)) { \
-            Utility::Print("\nHRESULT failed in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
-            Utility::PrintSubMessage("hr = 0x%08X", hr); \
-            Utility::PrintSubMessage(__VA_ARGS__); \
-            Utility::Print("\n"); \
+            My::Print("\nHRESULT failed in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
+            My::PrintSubMessage("hr = 0x%08X", hr); \
+            My::PrintSubMessage(__VA_ARGS__); \
+            My::Print("\n"); \
             __debugbreak(); \
         }
 
@@ -127,22 +122,22 @@ namespace Utility
         static bool s_TriggeredWarning = false; \
         if ((bool)(isTrue) && !s_TriggeredWarning) { \
             s_TriggeredWarning = true; \
-            Utility::Print("\nWarning issued in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
-            Utility::PrintSubMessage("\'" #isTrue "\' is true"); \
-            Utility::PrintSubMessage(__VA_ARGS__); \
-            Utility::Print("\n"); \
+            My::Print("\nWarning issued in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
+            My::PrintSubMessage("\'" #isTrue "\' is true"); \
+            My::PrintSubMessage(__VA_ARGS__); \
+            My::Print("\n"); \
         } \
     }
 
 #define WARN_ONCE_IF_NOT( isTrue, ... ) WARN_ONCE_IF(!(isTrue), __VA_ARGS__)
 
 #define ERROR( ... ) \
-        Utility::Print("\nError reported in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
-        Utility::PrintSubMessage(__VA_ARGS__); \
-        Utility::Print("\n");
+        My::Print("\nError reported in " STRINGIFY_BUILTIN(__FILE__) " @ " STRINGIFY_BUILTIN(__LINE__) "\n"); \
+        My::PrintSubMessage(__VA_ARGS__); \
+        My::Print("\n");
 
 #define DEBUGPRINT( msg, ... ) \
-    Utility::Printf( msg "\n", ##__VA_ARGS__ );
+    My::Printf( msg "\n", ##__VA_ARGS__ );
 
 #endif
 

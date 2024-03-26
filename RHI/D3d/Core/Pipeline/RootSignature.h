@@ -12,7 +12,7 @@
 //
 
 #pragma once
-#include "../Utility.h"
+#include "WinUtility.h"
 #include "../D3dCommonDef.h"
 
 

@@ -13,9 +13,9 @@
 
 #pragma once
 
+#include "WinUtility.h"
 #include "../Common.h"
 #include "../Color.h"
-#include "../Utility.h"
 #include "CommandListManager.h"
 #include "CommandSignature.h"
 #include "../Common/GraphicsCommon.h"
@@ -464,27 +464,27 @@ namespace D3dGraphicsCore {
 
     inline void GraphicsContext::SetDynamicConstantBufferView(UINT RootIndex, size_t BufferSize, const void* BufferData)
     {
-        ASSERT(BufferData != nullptr && Math::IsAligned(BufferData, 16));
+        ASSERT(BufferData != nullptr && My::IsAligned(BufferData, 16));
         DynAlloc cb = m_CpuLinearAllocator.Allocate(BufferSize);
-        //SIMDMemCopy(cb.DataPtr, BufferData, Math::AlignUp(BufferSize, 16) >> 4);
+        //SIMDMemCopy(cb.DataPtr, BufferData, My::AlignUp(BufferSize, 16) >> 4);
         memcpy(cb.DataPtr, BufferData, BufferSize);
         m_CommandList->SetGraphicsRootConstantBufferView(RootIndex, cb.GpuAddress);
     }
 
     inline void ComputeContext::SetDynamicConstantBufferView(UINT RootIndex, size_t BufferSize, const void* BufferData)
     {
-        ASSERT(BufferData != nullptr && Math::IsAligned(BufferData, 16));
+        ASSERT(BufferData != nullptr && My::IsAligned(BufferData, 16));
         DynAlloc cb = m_CpuLinearAllocator.Allocate(BufferSize);
-        //SIMDMemCopy(cb.DataPtr, BufferData, Math::AlignUp(BufferSize, 16) >> 4);
+        //SIMDMemCopy(cb.DataPtr, BufferData, My::AlignUp(BufferSize, 16) >> 4);
         memcpy(cb.DataPtr, BufferData, BufferSize);
         m_CommandList->SetComputeRootConstantBufferView(RootIndex, cb.GpuAddress);
     }
 
     inline void GraphicsContext::SetDynamicVB(UINT Slot, size_t NumVertices, size_t VertexStride, const void* VertexData)
     {
-        ASSERT(VertexData != nullptr && Math::IsAligned(VertexData, 16));
+        ASSERT(VertexData != nullptr && My::IsAligned(VertexData, 16));
 
-        size_t BufferSize = Math::AlignUp(NumVertices * VertexStride, 16);
+        size_t BufferSize = My::AlignUp(NumVertices * VertexStride, 16);
         DynAlloc vb = m_CpuLinearAllocator.Allocate(BufferSize);
 
         SIMDMemCopy(vb.DataPtr, VertexData, BufferSize >> 4);
@@ -499,9 +499,9 @@ namespace D3dGraphicsCore {
 
     inline void GraphicsContext::SetDynamicIB(size_t IndexCount, const uint16_t* IndexData)
     {
-        ASSERT(IndexData != nullptr && Math::IsAligned(IndexData, 16));
+        ASSERT(IndexData != nullptr && My::IsAligned(IndexData, 16));
 
-        size_t BufferSize = Math::AlignUp(IndexCount * sizeof(uint16_t), 16);
+        size_t BufferSize = My::AlignUp(IndexCount * sizeof(uint16_t), 16);
         DynAlloc ib = m_CpuLinearAllocator.Allocate(BufferSize);
 
         SIMDMemCopy(ib.DataPtr, IndexData, BufferSize >> 4);
@@ -516,17 +516,17 @@ namespace D3dGraphicsCore {
 
     inline void GraphicsContext::SetDynamicSRV(UINT RootIndex, size_t BufferSize, const void* BufferData)
     {
-        ASSERT(BufferData != nullptr && Math::IsAligned(BufferData, 16));
+        ASSERT(BufferData != nullptr && My::IsAligned(BufferData, 16));
         DynAlloc cb = m_CpuLinearAllocator.Allocate(BufferSize);
-        SIMDMemCopy(cb.DataPtr, BufferData, Math::AlignUp(BufferSize, 16) >> 4);
+        SIMDMemCopy(cb.DataPtr, BufferData, My::AlignUp(BufferSize, 16) >> 4);
         m_CommandList->SetGraphicsRootShaderResourceView(RootIndex, cb.GpuAddress);
     }
 
     inline void ComputeContext::SetDynamicSRV(UINT RootIndex, size_t BufferSize, const void* BufferData)
     {
-        ASSERT(BufferData != nullptr && Math::IsAligned(BufferData, 16));
+        ASSERT(BufferData != nullptr && My::IsAligned(BufferData, 16));
         DynAlloc cb = m_CpuLinearAllocator.Allocate(BufferSize);
-        SIMDMemCopy(cb.DataPtr, BufferData, Math::AlignUp(BufferSize, 16) >> 4);
+        SIMDMemCopy(cb.DataPtr, BufferData, My::AlignUp(BufferSize, 16) >> 4);
         m_CommandList->SetComputeRootShaderResourceView(RootIndex, cb.GpuAddress);
     }
 
@@ -564,22 +564,22 @@ namespace D3dGraphicsCore {
 
     inline void ComputeContext::Dispatch1D(size_t ThreadCountX, size_t GroupSizeX)
     {
-        Dispatch(Math::DivideByMultiple(ThreadCountX, GroupSizeX), 1, 1);
+        Dispatch(My::DivideByMultiple(ThreadCountX, GroupSizeX), 1, 1);
     }
 
     inline void ComputeContext::Dispatch2D(size_t ThreadCountX, size_t ThreadCountY, size_t GroupSizeX, size_t GroupSizeY)
     {
         Dispatch(
-            Math::DivideByMultiple(ThreadCountX, GroupSizeX),
-            Math::DivideByMultiple(ThreadCountY, GroupSizeY), 1);
+            My::DivideByMultiple(ThreadCountX, GroupSizeX),
+            My::DivideByMultiple(ThreadCountY, GroupSizeY), 1);
     }
 
     inline void ComputeContext::Dispatch3D(size_t ThreadCountX, size_t ThreadCountY, size_t ThreadCountZ, size_t GroupSizeX, size_t GroupSizeY, size_t GroupSizeZ)
     {
         Dispatch(
-            Math::DivideByMultiple(ThreadCountX, GroupSizeX),
-            Math::DivideByMultiple(ThreadCountY, GroupSizeY),
-            Math::DivideByMultiple(ThreadCountZ, GroupSizeZ));
+            My::DivideByMultiple(ThreadCountX, GroupSizeX),
+            My::DivideByMultiple(ThreadCountY, GroupSizeY),
+            My::DivideByMultiple(ThreadCountZ, GroupSizeZ));
     }
 
     inline void CommandContext::SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE Type, ID3D12DescriptorHeap* HeapPtr)

@@ -1,6 +1,6 @@
 #include "FileUtility.h"
 #include "../D3dCommonDef.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 #include <fstream>
 #include <mutex>
 #include <memory>
@@ -105,7 +105,7 @@ ByteArray DecompressZippedFile(std::wstring& fileName )
     ByteArray DecompressedFile = Inflate(CompressedFile, error);
     if (DecompressedFile->size() == 0)
     {
-        Utility::Printf(L"Couldn't unzip file %s:  Error = %d\n", fileName.c_str(), error);
+        My::Printf(L"Couldn't unzip file %s:  Error = %d\n", fileName.c_str(), error);
         return NullFile;
     }
 

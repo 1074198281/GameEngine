@@ -4,6 +4,8 @@
 #include "Core/Pipeline/RootSignature.h"
 #include "Core/Pipeline/PipelineState.h"
 #include "Core/Resource/Texture.h" 
+#include "Core/Resource/GpuBuffer.h"
+#include <DirectXMath.h>
 
 namespace D3dGraphicsCore {
 	/*
@@ -49,7 +51,7 @@ namespace D3dGraphicsCore {
 	} MaterialResource;
 
 	typedef struct LightResource {
-		XMFLOAT4 LightColor;
+		DirectX::XMFLOAT4 LightColor;
 	} LightResource;
 
 

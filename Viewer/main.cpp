@@ -8,10 +8,22 @@
 #include "PhysicsManager.hpp"
 #include "MemoryManager.hpp"
 #include "MyViewer.hpp"
-#include "D3d12Application.hpp"
-#include "D3d/D3d12Config.hpp"
 
 using namespace My;
+
+#ifdef USING_DX12
+#include "D3d12Application.hpp"
+#include "D3d/D3d12Config.hpp"
+#elif USING_OPENGL
+
+#elif USING_METAL
+
+#elif USING_OPENGLES
+
+#elif USING_VULKAN
+
+#endif // USING_DX12
+
 
 int main(int argc, char** argv) {
 	int ret;

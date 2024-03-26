@@ -12,10 +12,8 @@
 //
 
 #include "GpuBuffer.h"
-#include "GraphicsCore.h"
 #include "../Command/CommandContext.h"
 #include "../D3dGraphicsCoreManager.h"
-//#include "BufferManager.h"
 
 
 void D3dGraphicsCore::GpuBuffer::Create( const std::wstring& name, uint32_t NumElements, uint32_t ElementSize, const void* initialData )
@@ -88,7 +86,7 @@ D3D12_CPU_DESCRIPTOR_HANDLE D3dGraphicsCore::GpuBuffer::CreateConstantBufferView
 {
     ASSERT(Offset + Size <= m_BufferSize);
 
-    Size = Math::AlignUp(Size, 16);
+    Size = My::AlignUp(Size, 16);
 
     D3D12_CONSTANT_BUFFER_VIEW_DESC CBVDesc;
     CBVDesc.BufferLocation = m_GpuVirtualAddress + (size_t)Offset;

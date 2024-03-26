@@ -51,7 +51,18 @@ namespace My {
 	enum LightType { Omni = 0, Spot = 1, Infinity = 2, Area = 3 };
 #define MAX_LIGHT_NUM 16
 
+#ifdef USING_DX12
 	typedef size_t TextureHandle;
+#elif USING_OPENGL
+	typedef size_t TextureHandle;
+#elif USING_METAL
+
+#elif USING_OPENGLES
+	typedef size_t TextureHandle;
+#elif USING_VULKAN
+
+#endif // GraphicsInterface
+
 	typedef struct Texture {
 		TextureHandle Handle;
 	} Texture;

@@ -26,10 +26,11 @@ namespace My {
     typedef struct _Image {
         uint32_t Width;
         uint32_t Height;
-        R8G8B8A8Unorm* data;
+        uint8_t* data;
         uint32_t bitcount;
         uint32_t pitch;
         size_t  data_size;
+        PIXEL_FORMAT format;
     } Image;
 
 

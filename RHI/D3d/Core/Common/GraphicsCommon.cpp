@@ -12,7 +12,7 @@
 //
 
 #include "../D3dCommonDef.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 #include "../Color.h"
 #include "GraphicsCommon.h"
 #include "../Resource/SamplerManager.h"

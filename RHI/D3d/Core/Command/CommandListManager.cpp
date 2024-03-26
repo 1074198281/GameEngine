@@ -12,7 +12,7 @@
 //
 
 #include "CommandListManager.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 
 D3dGraphicsCore::CommandQueue::CommandQueue(D3D12_COMMAND_LIST_TYPE Type) :
     m_Type(Type),

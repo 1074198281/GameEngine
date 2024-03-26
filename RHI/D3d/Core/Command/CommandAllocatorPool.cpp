@@ -12,7 +12,7 @@
 //
 
 #include "CommandAllocatorPool.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 
 D3dGraphicsCore::CommandAllocatorPool::CommandAllocatorPool(D3D12_COMMAND_LIST_TYPE Type) :
     m_cCommandListType(Type),

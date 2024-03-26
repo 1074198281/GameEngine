@@ -449,7 +449,7 @@ namespace My {
                         img.bitcount = 32;
                         img.pitch = mcu_count_x * 8 * (img.bitcount >> 3);
                         img.data_size = img.pitch * mcu_count_y * 8 * (img.bitcount >> 3);
-                        img.data = (R8G8B8A8Unorm*)new uint8_t[img.data_size];
+                        img.data = new uint8_t[img.data_size];
 
                         pData += endian_net_unsigned_int(pSegmentHeader->Length) + 2 /* length of marker */;
                     }

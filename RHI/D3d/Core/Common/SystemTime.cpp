@@ -1,6 +1,6 @@
 #include "SystemTime.h"
 #include "../D3dCommonDef.h"
-#include "../Utility.h"
+#include "WinUtility.h"
 
 double SystemTime::sm_CpuTickDelta = 0.0;
 

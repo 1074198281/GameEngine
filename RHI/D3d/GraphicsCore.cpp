@@ -1,14 +1,21 @@
 ﻿#include "GraphicsCore.h"
 #include "Core/D3dGraphicsCoreManager.h"
+#include "Core/Pipeline/RootSignature.h"
+#include "Core/Pipeline/PipelineState.h"
+#include "Core/Resource/Texture.h"
+#include "Core/Pipeline/DescriptorHeap.h"
+#include "Core/D3dCommonDef.h"
+#include "Core/Resource/GpuBuffer.h"
+#include "Core/Command/CommandContext.h"
+#include "Core/Common/SystemTime.h"
+#include "Core/Resource/DDSTextureLoader.h"
 #include "MemoryManager.hpp"
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
 #include "D3dComponents/XMInput/XMInput.h"
-#include "Core/Common/SystemTime.h"
-#include "D3dComponents/XMImageLoader/XMWICImageLoader.h"
-#include "Core/Resource/DDSTextureLoader.h"
 #include "ShaderConstants.h"
 #include "cbuffer.h"
+#include "WinUtility.h"
 
 #include "imgui_impl_dx12.h"
 #include <array>
@@ -48,9 +55,7 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     SystemTime::Initialize();
     XM_Input::Initialize();
     InitializeGraphicsSettings();
-    D3dGraphicsCore::WICLoader::InitializeWICLoader();
     
-    LoadIBLTextures();
     InitializeDefaultTexture();
 
     return 0;
@@ -85,7 +90,18 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
         m_IBLResource->IBLDescriptorHeap.Destroy();
         m_IBLResource->IBLImages.clear();
     }
-    D3dGraphicsCore::WICLoader::FinalizeWICLoader();
+    for (auto& _it : m_VecIndexBuffer) {
+        _it->Destroy();
+    }
+    for (auto& _it : m_VecVertexBuffer) {
+        _it->Destroy();
+    }
+    for (auto& _it : m_VecTexture) {
+        _it.Destroy();
+    }
+    m_VecIndexBuffer.clear();
+    m_VecVertexBuffer.clear();
+    m_VecTexture.clear();
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
     FinalizeShaderByteMap();
@@ -154,31 +170,32 @@ void D3dGraphicsCore::CD3dGraphicsCore::FinalizeGraphicsSettings()
     m_CameraController.reset(nullptr);
 }
 
+uint32_t D3dGraphicsCore::CD3dGraphicsCore::AddVertexBuffer(std::unique_ptr<StructuredBuffer> buffer)
+{ 
+    m_VecVertexBuffer.push_back(std::move(buffer)); 
+    return m_VecVertexBuffer.size() - 1; 
+}
+uint32_t D3dGraphicsCore::CD3dGraphicsCore::AddIndexBuffer(std::unique_ptr<ByteAddressBuffer> buffer)
+{ 
+    m_VecIndexBuffer.push_back(std::move(buffer)); 
+    return m_VecIndexBuffer.size() - 1; 
+}
+
+size_t D3dGraphicsCore::CD3dGraphicsCore::CreateAndAddTexture(const My::Image& img)
+{
+    size_t cpuHandle;
+    Texture pTex;
+    DXGI_FORMAT format;
+    GetDXGIFormat(img.format, format);
+    pTex.Create2D(img.pitch, img.Width, img.Height, format, img.data);
+    cpuHandle = pTex.GetSRV().ptr;
+    m_VecTexture.push_back(std::move(pTex));
+    return cpuHandle;
+}
+
 void D3dGraphicsCore::CD3dGraphicsCore::AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object)
 {
     m_PrimitiveObjects.push_back(std::move(_object));
-}
-
-void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)
-{
-    D3D_PRIMITIVE_TOPOLOGY d3dType;
-    switch (Type) {
-    case My::kPrimitiveTypeLineStrip:
-    {
-        d3dType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
-    }
-    break;
-    case My::kPrimitiveTypeTriList:
-    {
-        d3dType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-    }
-    break;
-    default:
-        ASSERT(false, "ERROR! No Configured Primitive Type!");
-        break;
-    }
-
-    context.SetPrimitiveTopology(d3dType);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateGlobalLightPosition(XMFLOAT4 pos)
@@ -255,7 +272,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
         image_handle_vec.push_back(handle);
         OffsetDescriptorHandle(handle);
         image_handle_vec.push_back(handle);
-        CopyDescriptors(m_IBLResource->FirstHandle, image_handle_vec, 2);
+        //CopyDescriptors(m_IBLResource->FirstHandle, image_handle_vec, 2);
         m_IBLResource->LastCubemapIndex = m_IBLResource->CurrentCubemapIndex;
     }
 
@@ -392,8 +409,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
 
         // irradiance -- register 11
         {
-            gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_IBLResource->HeapIndex]->GetHeapPointer());
-            gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->FirstHandle);
+            gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
+            gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->IBLFirstHandle);
         }
 
         gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
@@ -450,16 +467,16 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
     gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV_ReadOnly());
     gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
 
-    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_IBLResource->HeapIndex]->GetHeapPointer());
+    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
     gfxContext.SetDynamicConstantBufferView(kMeshConstant, sizeof(SkyboxVSCB), &skyVSCB);
     gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(SkyboxPSCB), &skyPSCB);
-    gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->FirstHandle);
+    gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->IBLFirstHandle);
     gfxContext.Draw(3);
     gfxContext.Finish();
 }
 
 
-void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures()
+void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures(size_t& skyboxSpecularHandle, size_t& skyboxDiffuseHandle, size_t& brdfHandle)
 {
     m_IBLResource = std::make_unique<IBLImageResource>();
 
@@ -501,7 +518,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures()
     std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
     m_IBLResource->BRDF_LUT_Image = std::make_unique<Texture>();
     m_IBLResource->BRDF_LUT_Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, Utility::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
+    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
         m_IBLResource->BRDF_LUT_Image->GetAddressOf(), m_IBLResource->BRDF_LUT_Handle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
@@ -522,12 +539,12 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures()
         OffsetDescriptorHandle(prevHandle);
         image_handle_vec.push_back(prevHandle);
         Handle = AllocateFromDescriptorHeap(2, HeapIdx);
-        m_IBLResource->FirstHandle = Handle;
+        //m_IBLResource->FirstHandle = Handle;
         m_IBLResource->HeapIndex = HeapIdx;
-        CopyDescriptors(Handle, image_handle_vec, 2);
+        //CopyDescriptors(Handle, image_handle_vec, 2);
         Handle = AllocateFromDescriptorHeap(1, HeapIdx);
         brdf_handle_vec.push_back(m_IBLResource->BRDF_LUT_Handle);
-        CopyDescriptors(Handle, brdf_handle_vec, 1);
+        //CopyDescriptors(Handle, brdf_handle_vec, 1);
     }
 }
 
@@ -562,7 +579,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string& ImagePath, 
     if (m_IBLResource->IBLFirstHandle.IsNull()) {
         m_IBLResource->IBLFirstHandle = HeapHandle;
     }
-    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, Utility::UTF8ToWideString(specularImage).c_str(), size, false,
+    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
         pSpecularTex->GetAddressOf(), HeapHandle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
@@ -573,7 +590,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string& ImagePath, 
     //ASSERT(HeapIndex == m_IBLResource->HeapIndex, "TEXTURE RESOURCE NOT IN ONE DESCRIPTOR HEAP! ERROR!");
 
     HeapHandle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, Utility::UTF8ToWideString(diffuseImage).c_str(), size, false,
+    hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
         pDiffuseTex->GetAddressOf(), HeapHandle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
@@ -587,4 +604,43 @@ void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string& ImagePath, 
     m_IBLResource->IBLImages.emplace(m_IBLResource->IBLImages.size(), std::move(map));
 
     ImageName.emplace(imageName, m_IBLResource->IBLImages.size());
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)
+{
+    D3D_PRIMITIVE_TOPOLOGY d3dType;
+    switch (Type) {
+    case My::kPrimitiveTypeLineStrip:
+    {
+        d3dType = D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
+    }
+    break;
+    case My::kPrimitiveTypeTriList:
+    {
+        d3dType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    }
+    break;
+    default:
+        ASSERT(false, "ERROR! No Configured Primitive Type!");
+        break;
+    }
+
+    context.SetPrimitiveTopology(d3dType);
+}
+
+void D3dGraphicsCore::CD3dGraphicsCore::GetDXGIFormat(const My::PIXEL_FORMAT& pixel_format, DXGI_FORMAT& dxgi_format)
+{
+    switch (pixel_format) {
+    case My::PIXEL_FORMAT::RGBA8:
+        dxgi_format = DXGI_FORMAT_R8G8B8A8_UNORM;
+        break;
+    case My::PIXEL_FORMAT::RGB8:
+        dxgi_format = DXGI_FORMAT_B8G8R8X8_UNORM;
+        break;
+    case My::PIXEL_FORMAT::R8:
+        dxgi_format = DXGI_FORMAT_R8_UNORM;
+        break;
+    default:
+        dxgi_format = DXGI_FORMAT_UNKNOWN;
+    }
 }

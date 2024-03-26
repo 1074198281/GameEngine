@@ -109,74 +109,6 @@ namespace My {
             pData += sizeof(PNG_FILEHEADER);
             if (pFileHeader->Signature == endian_net_unsigned_int((uint64_t)0x89504E470D0A1A0A)) {
                 std::cout << "Asset is PNG file" << std::endl;
-
-#if USE_DIRECTX_TOOLKIT
-                std::cout << "Using DirectX ToolKit,Only Get Image Size" << std::endl;
-                const PNG_CHUNK_HEADER* pChunkHeader = reinterpret_cast<const PNG_CHUNK_HEADER*>(pData);
-                PNG_CHUNK_TYPE type = static_cast<PNG_CHUNK_TYPE>(endian_net_unsigned_int(static_cast<uint32_t>(pChunkHeader->Type)));
-
-                std::cout << "============================" << std::endl;
-
-                if (type != PNG_CHUNK_TYPE::IHDR) {
-                    std::cout << "PNG File Error Not PNG File!" << std::endl;
-                    assert(false);
-                    return img;
-                }
-
-                std::cout << "IHDR (Image Header)" << std::endl;
-                std::cout << "----------------------------" << std::endl;
-                const PNG_IHDR_HEADER* pIHDRHeader = reinterpret_cast<const PNG_IHDR_HEADER*>(pData);
-                m_Width = endian_net_unsigned_int(pIHDRHeader->Width);
-                m_Height = endian_net_unsigned_int(pIHDRHeader->Height);
-                m_BitDepth = pIHDRHeader->BitDepth;
-                m_ColorType = pIHDRHeader->ColorType;
-                m_CompressionMethod = pIHDRHeader->CompressionMethod;
-                m_FilterMethod = pIHDRHeader->FilterMethod;
-                m_InterlaceMethod = pIHDRHeader->InterlaceMethod;
-
-                switch (m_ColorType)
-                {
-                case 0:  // grayscale
-                    m_BytesPerPixel = (m_BitDepth + 7) >> 3;
-                    break;
-                case 2:  // rgb true color
-                    m_BytesPerPixel = (m_BitDepth * 3) >> 3;
-                    break;
-                case 3:  // indexed
-                    m_BytesPerPixel = (m_BitDepth + 7) >> 3;
-                    break;
-                case 4:  // grayscale with alpha
-                    m_BytesPerPixel = (m_BitDepth * 2) >> 3;
-                    break;
-                case 6:
-                    m_BytesPerPixel = (m_BitDepth * 4) >> 3;
-                    break;
-                default:
-                    std::cout << "Unkown Color Type: " << m_ColorType << std::endl;
-                    assert(0);
-                }
-
-                m_ScanLineSize = m_BytesPerPixel * m_Width;
-
-
-                img.Width = m_Width;
-                img.Height = m_Height;
-                img.bitcount = 32; // currently we fixed at RGBA for rendering
-                img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
-                img.data_size = img.pitch * img.Height;
-                img.data = (R8G8B8A8Unorm*)new uint8_t[img.data_size];
-
-                std::cout << "Width: " << m_Width << std::endl;
-                std::cout << "Height: " << m_Height << std::endl;
-                std::cout << "Bit Depth: " << (int)m_BitDepth << std::endl;
-                std::cout << "Color Type: " << (int)m_ColorType << std::endl;
-                std::cout << "Compression Method: " << (int)m_CompressionMethod << std::endl;
-                std::cout << "Filter Method: " << (int)m_FilterMethod << std::endl;
-                std::cout << "Interlace Method: " << (int)m_InterlaceMethod << std::endl;
-
-                return img;
-#endif
-
                 while (pData < pDataEnd)
                 {
                     const PNG_CHUNK_HEADER* pChunkHeader = reinterpret_cast<const PNG_CHUNK_HEADER*>(pData);
@@ -229,7 +161,7 @@ namespace My {
                         img.bitcount = 32; // currently we fixed at RGBA for rendering
                         img.pitch = (img.Width * (img.bitcount >> 3) + 3) & ~3u; // for GPU address alignment
                         img.data_size = img.pitch * img.Height;
-                        img.data = (R8G8B8A8Unorm*)new uint8_t[img.data_size];
+                        img.data = new uint8_t[img.data_size];
 
                         std::cout << "Width: " << m_Width << std::endl;
                         std::cout << "Height: " << m_Height << std::endl;

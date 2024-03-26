@@ -37,6 +37,8 @@ namespace My {
 
         void StartGUIFrame() override;
         void EndGUIFrame() override;
+        void BeginFrame(Frame& frame) override;
+        void EndFrame(Frame& frame) override;
     public:
 
 

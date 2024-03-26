@@ -11,16 +11,16 @@
 // Author:  James Stanard 
 //
 
-#include "Utility.h"
-#include "Common.h"
+#include "utility.hpp"
+#include "WinUtility.h"
 #include <string>
 #include <locale>
 
 // A faster version of memcopy that uses SSE instructions.  TODO:  Write an ARM variant if necessary.
 void SIMDMemCopy(void* __restrict _Dest, const void* __restrict _Source, size_t NumQuadwords)
 {
-    ASSERT(Math::IsAligned(_Dest, 16));
-    ASSERT(Math::IsAligned(_Source, 16));
+    ASSERT(My::IsAligned(_Dest, 16));
+    ASSERT(My::IsAligned(_Source, 16));
 
     __m128i* __restrict Dest = (__m128i * __restrict)_Dest;
     const __m128i* __restrict Source = (const __m128i * __restrict)_Source;
@@ -98,7 +98,7 @@ void SIMDMemCopy(void* __restrict _Dest, const void* __restrict _Source, size_t 
 
 void SIMDMemFill(void* __restrict _Dest, __m128 FillVector, size_t NumQuadwords)
 {
-    ASSERT(Math::IsAligned(_Dest, 16));
+    ASSERT(My::IsAligned(_Dest, 16));
 
     register const __m128i Source = _mm_castps_si128(FillVector);
     __m128i* __restrict Dest = (__m128i * __restrict)_Dest;
@@ -136,7 +136,7 @@ void SIMDMemFill(void* __restrict _Dest, __m128 FillVector, size_t NumQuadwords)
     _mm_sfence();
 }
 
-std::wstring Utility::UTF8ToWideString(const std::string& str)
+std::wstring My::UTF8ToWideString(const std::string& str)
 {
     wchar_t wstr[MAX_PATH];
     if (!MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, str.c_str(), -1, wstr, MAX_PATH))
@@ -144,7 +144,7 @@ std::wstring Utility::UTF8ToWideString(const std::string& str)
     return wstr;
 }
 
-std::string Utility::WideStringToUTF8(const std::wstring& wstr)
+std::string My::WideStringToUTF8(const std::wstring& wstr)
 {
     char str[MAX_PATH];
     if (!WideCharToMultiByte(CP_ACP, MB_PRECOMPOSED, wstr.c_str(), -1, str, MAX_PATH, nullptr, nullptr))
@@ -152,16 +152,7 @@ std::string Utility::WideStringToUTF8(const std::wstring& wstr)
     return str;
 }
 
-std::string Utility::ToLower(const std::string& str)
-{
-    std::string lower_case = str;
-    std::locale loc;
-    for (char& s : lower_case)
-        s = std::tolower(s, loc);
-    return lower_case;
-}
-
-std::wstring Utility::ToLower(const std::wstring& str)
+std::wstring My::ToLower(const std::wstring& str)
 {
     std::wstring lower_case = str;
     std::locale loc;
@@ -170,18 +161,7 @@ std::wstring Utility::ToLower(const std::wstring& str)
     return lower_case;
 }
 
-std::string Utility::GetBasePath(const std::string& filePath)
-{
-    size_t lastSlash;
-    if ((lastSlash = filePath.rfind('/')) != std::string::npos)
-        return filePath.substr(0, lastSlash + 1);
-    else if ((lastSlash = filePath.rfind('\\')) != std::string::npos)
-        return filePath.substr(0, lastSlash + 1);
-    else
-        return "";
-}
-
-std::wstring Utility::GetBasePath(const std::wstring& filePath)
+std::wstring My::GetBasePath(const std::wstring& filePath)
 {
     size_t lastSlash;
     if ((lastSlash = filePath.rfind(L'/')) != std::wstring::npos)
@@ -192,18 +172,7 @@ std::wstring Utility::GetBasePath(const std::wstring& filePath)
         return L"";
 }
 
-std::string Utility::RemoveBasePath(const std::string& filePath)
-{
-    size_t lastSlash;
-    if ((lastSlash = filePath.rfind('/')) != std::string::npos)
-        return filePath.substr(lastSlash + 1, std::string::npos);
-    else if ((lastSlash = filePath.rfind('\\')) != std::string::npos)
-        return filePath.substr(lastSlash + 1, std::string::npos);
-    else
-        return filePath;
-}
-
-std::wstring Utility::RemoveBasePath(const std::wstring& filePath)
+std::wstring My::RemoveBasePath(const std::wstring& filePath)
 {
     size_t lastSlash;
     if ((lastSlash = filePath.rfind(L'/')) != std::string::npos)
@@ -214,17 +183,7 @@ std::wstring Utility::RemoveBasePath(const std::wstring& filePath)
         return filePath;
 }
 
-std::string Utility::GetFileExtension(const std::string& filePath)
-{
-    std::string fileName = RemoveBasePath(filePath);
-    size_t extOffset = fileName.rfind('.');
-    if (extOffset == std::wstring::npos)
-        return "";
-
-    return fileName.substr(extOffset + 1);
-}
-
-std::wstring Utility::GetFileExtension(const std::wstring& filePath)
+std::wstring My::GetFileExtension(const std::wstring& filePath)
 {
     std::wstring fileName = RemoveBasePath(filePath);
     size_t extOffset = fileName.rfind(L'.');
@@ -234,12 +193,7 @@ std::wstring Utility::GetFileExtension(const std::wstring& filePath)
     return fileName.substr(extOffset + 1);
 }
 
-std::string Utility::RemoveExtension(const std::string& filePath)
-{
-    return filePath.substr(0, filePath.rfind("."));
-}
-
-std::wstring Utility::RemoveExtension(const std::wstring& filePath)
+std::wstring My::RemoveExtension(const std::wstring& filePath)
 {
     return filePath.substr(0, filePath.rfind(L"."));
 }

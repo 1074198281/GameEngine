@@ -13,7 +13,6 @@
 
 
 #include "DescriptorHeap.h"
-#include "GraphicsCore.h"
 #include "../D3dGraphicsCoreManager.h"
 #include "../Command/CommandListManager.h"
 
