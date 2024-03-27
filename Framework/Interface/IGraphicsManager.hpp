@@ -27,5 +27,11 @@ namespace My {
         virtual void NumPadKeyUp(int64_t key) {}
         virtual void FunctionKeyDown(int64_t key) {}
         virtual void FunctionKeyUp(int64_t key) {}
+
+    public:
+    // pass interface
+        virtual void DrawBatch(Frame& frame) = 0;
+        virtual void DrawSkybox(Frame& frame) = 0;
+        virtual void DrawGui(Frame& frame) = 0;
 	};
 }

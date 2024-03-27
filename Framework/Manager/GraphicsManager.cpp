@@ -61,6 +61,12 @@ void GraphicsManager::Clear()
 
 void GraphicsManager::Draw()
 {
+    auto& frame = m_Frames[m_nFrameIndex];
+    for (auto& pass : m_DrawPasses) {
+        pass->BeginPass(frame);
+        pass->Draw(frame);
+        pass->EndPass(frame);
+    }
 }
 
 void GraphicsManager::Resize(uint32_t width, uint32_t height)

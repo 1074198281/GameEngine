@@ -31,6 +31,11 @@ namespace My {
         void FunctionKeyDown(int64_t key) override;
         void FunctionKeyUp(int64_t key) override;
 
+    public:
+        // pass interface
+        void DrawBatch(Frame& frame) override {}
+        void DrawSkybox(Frame& frame) override {}
+        void DrawGui(Frame& frame) override {}
 
     protected:
         virtual void BeginScene(const Scene& scene);

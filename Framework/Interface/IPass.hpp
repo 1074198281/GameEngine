@@ -4,9 +4,9 @@
 #include "FrameStructure.hpp"
 
 namespace My {
-	__Interface IPass : public IRuntimeModule{
+	__Interface IPass {
 	public:
-		virtual ~IPass() = 0;
+		virtual ~IPass() = default;
 		virtual void BeginPass(Frame& frame) = 0;
 		virtual void EndPass(Frame& frame) = 0;
 	};

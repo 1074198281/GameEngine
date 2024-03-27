@@ -51,10 +51,9 @@ namespace D3dGraphicsCore {
 		size_t CreateAndAddTexture(const My::Image& img);
 		void LoadIBLTextures(size_t& skyboxSpecularHandle, size_t& skyboxDiffuseHandle, size_t& brdfHandle);
 	public:
-		
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
-
+		
 	public:
 		void UpdateGlobalLightPosition(DirectX::XMFLOAT4 pos);
 		void UpdateStatus();
@@ -65,7 +64,9 @@ namespace D3dGraphicsCore {
 		void UpdatePresent();
 
 		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
-		
+
+	public:
+		void DrawBatch(Frame& frame);
 
 	private:
 		void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);

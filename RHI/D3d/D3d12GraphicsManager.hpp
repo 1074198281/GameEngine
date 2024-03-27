@@ -10,6 +10,7 @@
 #include "StructureSettings.h"
 #include "GraphicsCore.h"
 #include "RenderObject.h"
+#include "Core/Resource/GpuBuffer.h"
 
 
 namespace My {
@@ -40,7 +41,10 @@ namespace My {
         void BeginFrame(Frame& frame) override;
         void EndFrame(Frame& frame) override;
     public:
-
+        // pass interface
+        void DrawBatch(Frame& frame) override;
+        void DrawSkybox(Frame& frame) override;
+        void DrawGui(Frame& frame) override;
 
     private:
         void initializeGeometries(const Scene& scene) override;
@@ -56,5 +60,9 @@ namespace My {
             uint32_t m_index_count_per_instance;
             uint32_t m_inputlayout;
         };
+
+    private:
+        std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
+        std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
     };
 }

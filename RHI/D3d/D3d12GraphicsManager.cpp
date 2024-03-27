@@ -467,3 +467,18 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 {
     m_nFrameIndex = (m_nFrameIndex + 1) % MAX_FRAME_COUNT;
 }
+
+void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
+{
+    
+}
+
+void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
+{
+
+}
+
+void My::D3d12GraphicsManager::DrawGui(Frame& frame)
+{
+
+}
