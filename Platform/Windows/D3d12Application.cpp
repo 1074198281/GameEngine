@@ -5,7 +5,7 @@
 
 void My::D3d12Application::Finalize()
 {
-    BaseApplication::Finalize();
+    WindowsApplication::Finalize();
     FinalizeWICLoader();
 }
 
