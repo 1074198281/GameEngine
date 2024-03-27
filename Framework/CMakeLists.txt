@@ -1,48 +1,57 @@
 # add algorithm files
 file(GLOB ALGORITHM_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.hpp)
 file(GLOB ALGORITHM_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.cpp)
-
 source_group(include/Algorithm FILES ${ALGORITHM_HEADER_FILES})
 source_group(src/Algorithm FILES ${ALGORITHM_SOURCE_FILES})
 
 # add common files
 file(GLOB COMMON_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Common/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Common/*.hpp)
 file(GLOB COMMON_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Common/*.cpp)
-
 source_group(include/Common FILES ${COMMON_HEADER_FILES})
 source_group(src/Common FILES ${COMMON_SOURCE_FILES})
 
 # add math calc files
 file(GLOB MATH_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/GeomMath/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/GeomMath/*.h)
 file(GLOB MATH_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/GeomMath/*.cpp )
-
 source_group(include/Math FILES ${MATH_HEADER_FILES})
 source_group(src/Math FILES ${MATH_SOURCE_FILES})
 
 # add Interface files
 file(GLOB INTERFACE_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Interface/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Interface/*.hpp)
-
 source_group(include/Interface FILES ${INTERFACE_HEADER_FILES})
 
 # add Manager files
 
 file(GLOB MANAGER_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.hpp)
 file(GLOB MANAGER_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.cpp)
-
 source_group(include/Manager FILES ${MANAGER_HEADER_FILES})
 source_group(src/Manager FILES ${MANAGER_SOURCE_FILES})
 
 # add Parser files
 file(GLOB PARSER_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Parser/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Parser/*.hpp)
-
 source_group(include/Parser FILES ${PARSER_HEADER_FILES})
 
 # add SceneGraph files
 file(GLOB SCENEGRAPH_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/SceneGraph/*.h ${CMAKE_CURRENT_SOURCE_DIR}/SceneGraph/*.hpp)
 file(GLOB SCENEGRAPH_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/SceneGraph/*.cpp)
-
 source_group(include/SceneGraph FILES ${SCENEGRAPH_HEADER_FILES})
 source_group(src/SceneGraph FILES ${SCENEGRAPH_SOURCE_FILES})
+
+# add Pass files
+file(GLOB DISPATCHPASS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DispatchPass/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DispatchPass/*.hpp)
+file(GLOB DISPATCHPASS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DispatchPass/*.cpp)
+source_group(include/Pass/DispatchPass FILES ${DISPATCHPASS_HEADER_FILES})
+source_group(src/Pass/DispatchPass FILES ${DISPATCHPASS_SOURCE_FILES})
+
+file(GLOB DRAWPASS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawPass/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawPass/*.hpp)
+file(GLOB DRAWPASS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawPass/*.cpp)
+source_group(include/Pass/DrawPass FILES ${DRAWPASS_HEADER_FILES})
+source_group(src/Pass/DrawPass FILES ${DRAWPASS_SOURCE_FILES})
+
+file(GLOB DRAWSUBPASS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawSubPass/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawSubPass/*.hpp)
+file(GLOB DRAWSUBPASS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Pass/DrawSubPass/*.cpp)
+source_group(include/Pass/DrawSubPass FILES ${DRAWSUBPASS_HEADER_FILES})
+source_group(src/Pass/DrawSubPass FILES ${DRAWSUBPASS_SOURCE_FILES})
 
 
 # add library
@@ -53,6 +62,9 @@ ${MATH_HEADER_FILES} ${MATH_SOURCE_FILES}
 ${INTERFACE_HEADER_FILES}
 ${MANAGER_HEADER_FILES} ${MANAGER_SOURCE_FILES}
 ${PARSER_HEADER_FILES}
+${DISPATCHPASS_HEADER_FILES} ${DISPATCHPASS_SOURCE_FILES}
+${DRAWPASS_HEADER_FILES} ${DRAWPASS_SOURCE_FILES}
+${DRAWSUBPASS_HEADER_FILES} ${DRAWSUBPASS_SOURCE_FILES}
 ${SCENEGRAPH_HEADER_FILES} ${SCENEGRAPH_SOURCE_FILES}
 )
 

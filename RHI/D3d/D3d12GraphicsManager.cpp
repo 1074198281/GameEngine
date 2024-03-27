@@ -465,5 +465,5 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 {
-
+    m_nFrameIndex = (m_nFrameIndex + 1) % MAX_FRAME_COUNT;
 }

@@ -1,6 +1,8 @@
 #include <iostream>
 #include "GraphicsManager.hpp"
 #include "BaseApplication.hpp"
+#include "ForwardGeometryPass.hpp"
+#include "OverlayPass.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -14,6 +16,10 @@ int GraphicsManager::Initialize()
     m_nSceneRevision = 0;
     m_nFrameIndex = 0;
     m_Frames.resize(MAX_FRAME_COUNT);
+
+    m_DrawPasses.push_back(std::make_shared<ForwardGeometryPass>(this));
+    m_DrawPasses.push_back(std::make_shared<OverlayPass>(this));
+
     return result;
 }
 

@@ -112,6 +112,9 @@ include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Manager")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Math")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Parser")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DispatchPass")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DrawPass")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DrawSubPass")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/SceneGraph")
 
 # add windows includes

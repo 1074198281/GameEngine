@@ -1,10 +1,10 @@
 #pragma once
 #include <iostream>
-#include "Interface.hpp"
-#include "IPass.hpp"
+#include "FrameStructure.hpp"
+#include "ISubPass.hpp"
 
 namespace My {
-	class IDrawPass : __implements IPass {
+	class IDrawSubPass : __implements ISubPass {
 	public:
 		virtual void Draw(Frame& frame) = 0;
 	};

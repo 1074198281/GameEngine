@@ -4,8 +4,8 @@
 #include "IPass.hpp"
 
 namespace My {
-	class IDrawPass : __implements IPass {
+	class IDispatchPass : __implements IPass {
 	public:
-		virtual void Draw(Frame& frame) = 0;
+		virtual void Dispatch(Frame& frame) = 0;
 	};
 }

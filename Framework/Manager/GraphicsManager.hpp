@@ -2,6 +2,7 @@
 #include "IGraphicsManager.hpp"
 #include "Scene.hpp"
 #include "FrameStructure.hpp"
+#include "IDrawPass.hpp"
 
 namespace My {
     class GraphicsManager : __implements IGraphicsManager
@@ -46,6 +47,8 @@ namespace My {
 
     protected:
         std::vector<Frame> m_Frames;
+        std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
+
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
     };
