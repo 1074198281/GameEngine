@@ -13,8 +13,7 @@
 
 #include "DynamicDescriptorHeap.h"
 #include "../Command/CommandContext.h"
-#include "../D3dGraphicsCoreManager.h"
-#include "../Command/CommandListManager.h"
+#include "D3d/Core/D3dGraphicsCoreManager.h"
 #include "RootSignature.h"
 
 

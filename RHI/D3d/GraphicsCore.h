@@ -9,6 +9,7 @@
 #include "StructureSettings.h"
 #include "ShaderSource.h"
 #include "RenderObject.h"
+#include "GraphicsStructure.h"
 
 #include "D3dComponents/XMCamera/XMCamera.h"
 #include "D3dComponents/XMCamera/XMCameraController.h"
@@ -46,30 +47,23 @@ namespace D3dGraphicsCore {
 			m_fGetGfxconfiguration = func;
 		}
 
-		uint32_t AddVertexBuffer(std::unique_ptr<StructuredBuffer> buffer);
-		uint32_t AddIndexBuffer(std::unique_ptr<ByteAddressBuffer> buffer);
-		size_t CreateAndAddTexture(const My::Image& img);
-		void LoadIBLTextures(size_t& skyboxSpecularHandle, size_t& skyboxDiffuseHandle, size_t& brdfHandle);
+
 	public:
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
 		
 	public:
-		void UpdateGlobalLightPosition(DirectX::XMFLOAT4 pos);
 		void UpdateStatus();
 		void UpdateCamera();
 		void UpdateCameraParams(int64_t key);
 		void UpdateRenderingQueue();
-		void UpdateCubemapIndex();
 		void UpdatePresent();
 
-		void AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object);
-
 	public:
-		void DrawBatch(Frame& frame);
+		void DrawBatch(const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer, 
+			ID3D12DescriptorHeap* MaterialHeapPtr, ID3D12DescriptorHeap* IBLHeapPtr);
 
 	private:
-		void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
 
 		void RenderAllObjects();
 		void RenderCubeMap();
@@ -78,21 +72,13 @@ namespace D3dGraphicsCore {
 		void InitializeCoreHWND();
 	private:
 		void SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type);
-		void GetDXGIFormat(const My::PIXEL_FORMAT& pixel_format, DXGI_FORMAT& dxgi_format);
-	private:
-		std::vector<std::unique_ptr<PrimitiveObject> > m_PrimitiveObjects;
-		std::vector<std::unique_ptr<StructuredBuffer>> m_VecVertexBuffer;
-		std::vector<std::unique_ptr<ByteAddressBuffer>> m_VecIndexBuffer;
-		std::vector<Texture> m_VecTexture;
-
-		std::unique_ptr<IBLImageResource> m_IBLResource;
 	private:
 		std::unique_ptr<XM_Camera::Camera> m_Camera;
 		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
+		GraphicsContext* m_pGraphicsContext;
 
-		DirectX::XMFLOAT4 m_GlobalLightPosition;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;

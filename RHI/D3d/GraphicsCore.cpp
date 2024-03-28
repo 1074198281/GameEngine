@@ -65,43 +65,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
 {
     ShutdownDisplay();
     DestroyCommonState();
-    for (auto it = m_PrimitiveObjects.begin(); it != m_PrimitiveObjects.end(); it++) {
-        auto p = (*it).release();
-        p->VertexBuffer.Destroy();
-        p->IndexBuffer.Destroy();
-        for (auto itTex = p->MaterialResource.TextureResources.begin(); itTex != p->MaterialResource.TextureResources.end(); itTex++) {
-            delete itTex->pTexture;
-            itTex->pTexture = nullptr;
-            if (itTex->pImageData) {
-                delete itTex->pImageData;
-            }
-        }
-    }
-    if (m_IBLResource) {
-        for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
-            it->second->pDiffuse->Destroy();
-            it->second->pSpecular->Destroy();
-            it->second->pDiffuse.reset();
-            it->second->pSpecular.reset();
-            it->second.reset();
-        }
-        m_IBLResource->BRDF_LUT_Image->Destroy();
-        m_IBLResource->BRDF_LUT_Image.reset();
-        m_IBLResource->IBLDescriptorHeap.Destroy();
-        m_IBLResource->IBLImages.clear();
-    }
-    for (auto& _it : m_VecIndexBuffer) {
-        _it->Destroy();
-    }
-    for (auto& _it : m_VecVertexBuffer) {
-        _it->Destroy();
-    }
-    for (auto& _it : m_VecTexture) {
-        _it.Destroy();
-    }
-    m_VecIndexBuffer.clear();
-    m_VecVertexBuffer.clear();
-    m_VecTexture.clear();
+
     FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
     FinalizeShaderByteMap();
@@ -161,48 +125,11 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     m_MainScissor.top = 0;
     m_MainScissor.right = g_DisplayWidth;
     m_MainScissor.bottom = g_DisplayHeight;
-
-    m_GlobalLightPosition = XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f);
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::FinalizeGraphicsSettings()
 {
     m_CameraController.reset(nullptr);
-}
-
-uint32_t D3dGraphicsCore::CD3dGraphicsCore::AddVertexBuffer(std::unique_ptr<StructuredBuffer> buffer)
-{ 
-    m_VecVertexBuffer.push_back(std::move(buffer)); 
-    return m_VecVertexBuffer.size() - 1; 
-}
-uint32_t D3dGraphicsCore::CD3dGraphicsCore::AddIndexBuffer(std::unique_ptr<ByteAddressBuffer> buffer)
-{ 
-    m_VecIndexBuffer.push_back(std::move(buffer)); 
-    return m_VecIndexBuffer.size() - 1; 
-}
-
-size_t D3dGraphicsCore::CD3dGraphicsCore::CreateAndAddTexture(const My::Image& img)
-{
-    size_t cpuHandle;
-    Texture pTex;
-    DXGI_FORMAT format;
-    GetDXGIFormat(img.format, format);
-    pTex.Create2D(img.pitch, img.Width, img.Height, format, img.data);
-    cpuHandle = pTex.GetSRV().ptr;
-    m_VecTexture.push_back(std::move(pTex));
-    return cpuHandle;
-}
-
-void D3dGraphicsCore::CD3dGraphicsCore::AddPrimitiveObject(std::unique_ptr<PrimitiveObject> _object)
-{
-    m_PrimitiveObjects.push_back(std::move(_object));
-}
-
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateGlobalLightPosition(XMFLOAT4 pos)
-{
-    m_GlobalLightPosition.x += pos.x;
-    m_GlobalLightPosition.y += pos.y;
-    m_GlobalLightPosition.z += pos.z;
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
@@ -257,25 +184,8 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
     }
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateCubemapIndex()
-{
-    m_IBLResource->CurrentCubemapIndex = (++m_IBLResource->CurrentCubemapIndex) % (m_IBLResource->IBLImageCount / 2);
-}
-
 void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
 {
-    if (m_IBLResource->CurrentCubemapIndex != m_IBLResource->LastCubemapIndex) {
-        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> image_handle_vec;
-        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> brdf_handle_vec;
-        DescriptorHandle handle = m_IBLResource->IBLFirstHandle;
-        OffsetDescriptorHandle(handle, m_IBLResource->CurrentCubemapIndex * 2);
-        image_handle_vec.push_back(handle);
-        OffsetDescriptorHandle(handle);
-        image_handle_vec.push_back(handle);
-        //CopyDescriptors(m_IBLResource->FirstHandle, image_handle_vec, 2);
-        m_IBLResource->LastCubemapIndex = m_IBLResource->CurrentCubemapIndex;
-    }
-
     RenderAllObjects();
     RenderCubeMap();
 
@@ -330,280 +240,145 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
     gfxContext.ClearDepth(g_DepthBuffer);
 
 
-    for (auto it = m_PrimitiveObjects.begin(); it != m_PrimitiveObjects.end(); it++) {
-        if ((*it)->MaterialResource.FirstHandle.IsNull()) {
-            //没有材质，透明
-            continue;
-        }
-        SetPrimitiveType(gfxContext, (*it)->PrimitiveType);
-        gfxContext.SetRootSignature(g_TemplateRootSignature);
+    //for (auto it = m_PrimitiveObjects.begin(); it != m_PrimitiveObjects.end(); it++) {
+    //    if ((*it)->MaterialResource.FirstHandle.IsNull()) {
+    //        //没有材质，透明
+    //        continue;
+    //    }
+    //    SetPrimitiveType(gfxContext, (*it)->PrimitiveType);
+    //    gfxContext.SetRootSignature(g_TemplateRootSignature);
 
-        gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-            g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
+    //    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+    //        g_DescriptorHeaps[(*it)->MaterialResource.DescriptorHeapIndex]->GetHeapPointer());
 
-        // Material Constants --  register 0 / cb0
-        {
-            MaterialConstants MatCbv;
-            memset(&MatCbv, 0, sizeof(MaterialConstants));
-            // factor param
-            MatCbv.BaseColorFactor[0] = (*it)->MaterialResource.BaseColorFactor[0];
-            MatCbv.BaseColorFactor[1] = (*it)->MaterialResource.BaseColorFactor[1];
-            MatCbv.BaseColorFactor[2] = (*it)->MaterialResource.BaseColorFactor[2];
-            MatCbv.BaseColorFactor[3] = (*it)->MaterialResource.BaseColorFactor[3];
-            MatCbv.MetallicRoughnessFactor[0] = (*it)->MaterialResource.MetallicRoughnessFactor[0];
-            MatCbv.MetallicRoughnessFactor[1] = (*it)->MaterialResource.MetallicRoughnessFactor[1];
-            MatCbv.EmissiveFactor[0] = (*it)->MaterialResource.EmissiveFactor[0];
-            MatCbv.EmissiveFactor[1] = (*it)->MaterialResource.EmissiveFactor[1];
-            MatCbv.EmissiveFactor[2] = (*it)->MaterialResource.EmissiveFactor[2];
-            MatCbv.NormalTextureScale = (*it)->MaterialResource.NormalScaleFactor;
+    //    // Material Constants --  register 0 / cb0
+    //    {
+    //        MaterialConstants MatCbv;
+    //        memset(&MatCbv, 0, sizeof(MaterialConstants));
+    //        // factor param
+    //        MatCbv.BaseColorFactor[0] = (*it)->MaterialResource.BaseColorFactor[0];
+    //        MatCbv.BaseColorFactor[1] = (*it)->MaterialResource.BaseColorFactor[1];
+    //        MatCbv.BaseColorFactor[2] = (*it)->MaterialResource.BaseColorFactor[2];
+    //        MatCbv.BaseColorFactor[3] = (*it)->MaterialResource.BaseColorFactor[3];
+    //        MatCbv.MetallicRoughnessFactor[0] = (*it)->MaterialResource.MetallicRoughnessFactor[0];
+    //        MatCbv.MetallicRoughnessFactor[1] = (*it)->MaterialResource.MetallicRoughnessFactor[1];
+    //        MatCbv.EmissiveFactor[0] = (*it)->MaterialResource.EmissiveFactor[0];
+    //        MatCbv.EmissiveFactor[1] = (*it)->MaterialResource.EmissiveFactor[1];
+    //        MatCbv.EmissiveFactor[2] = (*it)->MaterialResource.EmissiveFactor[2];
+    //        MatCbv.NormalTextureScale = (*it)->MaterialResource.NormalScaleFactor;
 
-            // transform param
-            MatCbv.BaseColorTextureTransform[0] = (*it)->MaterialResource.BaseColorTextureTransform[0];
-            MatCbv.BaseColorTextureTransform[1] = (*it)->MaterialResource.BaseColorTextureTransform[1];
-            MatCbv.BaseColorTextureTransform[2] = (*it)->MaterialResource.BaseColorTextureTransform[2];
-            MatCbv.BaseColorTextureTransform[3] = (*it)->MaterialResource.BaseColorTextureTransform[3];
-            MatCbv.BaseColorRotation = (*it)->MaterialResource.BaseColorTextureTransform[4];
+    //        // transform param
+    //        MatCbv.BaseColorTextureTransform[0] = (*it)->MaterialResource.BaseColorTextureTransform[0];
+    //        MatCbv.BaseColorTextureTransform[1] = (*it)->MaterialResource.BaseColorTextureTransform[1];
+    //        MatCbv.BaseColorTextureTransform[2] = (*it)->MaterialResource.BaseColorTextureTransform[2];
+    //        MatCbv.BaseColorTextureTransform[3] = (*it)->MaterialResource.BaseColorTextureTransform[3];
+    //        MatCbv.BaseColorRotation = (*it)->MaterialResource.BaseColorTextureTransform[4];
 
-            MatCbv.MetallicRoughnessTextureTransform[0] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[0];
-            MatCbv.MetallicRoughnessTextureTransform[1] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[1];
-            MatCbv.MetallicRoughnessTextureTransform[2] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[2];
-            MatCbv.MetallicRoughnessTextureTransform[3] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[3];
-            MatCbv.MetallicRoughnessRotation = (*it)->MaterialResource.MetallicRoughnessTextureTransform[4];
+    //        MatCbv.MetallicRoughnessTextureTransform[0] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[0];
+    //        MatCbv.MetallicRoughnessTextureTransform[1] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[1];
+    //        MatCbv.MetallicRoughnessTextureTransform[2] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[2];
+    //        MatCbv.MetallicRoughnessTextureTransform[3] = (*it)->MaterialResource.MetallicRoughnessTextureTransform[3];
+    //        MatCbv.MetallicRoughnessRotation = (*it)->MaterialResource.MetallicRoughnessTextureTransform[4];
 
-            MatCbv.OcclusionTransform[0] = (*it)->MaterialResource.OcclusionTransform[0];
-            MatCbv.OcclusionTransform[1] = (*it)->MaterialResource.OcclusionTransform[1];
-            MatCbv.OcclusionTransform[2] = (*it)->MaterialResource.OcclusionTransform[2];
-            MatCbv.OcclusionTransform[3] = (*it)->MaterialResource.OcclusionTransform[3];
-            MatCbv.OcclusionRotation = (*it)->MaterialResource.OcclusionTransform[4];
+    //        MatCbv.OcclusionTextureTransform[0] = (*it)->MaterialResource.OcclusionTransform[0];
+    //        MatCbv.OcclusionTextureTransform[1] = (*it)->MaterialResource.OcclusionTransform[1];
+    //        MatCbv.OcclusionTextureTransform[2] = (*it)->MaterialResource.OcclusionTransform[2];
+    //        MatCbv.OcclusionTextureTransform[3] = (*it)->MaterialResource.OcclusionTransform[3];
+    //        MatCbv.OcclusionRotation = (*it)->MaterialResource.OcclusionTransform[4];
 
-            MatCbv.EmissiveTextureTransform[0] = (*it)->MaterialResource.EmissiveTextureTransform[0];
-            MatCbv.EmissiveTextureTransform[1] = (*it)->MaterialResource.EmissiveTextureTransform[1];
-            MatCbv.EmissiveTextureTransform[2] = (*it)->MaterialResource.EmissiveTextureTransform[2];
-            MatCbv.EmissiveTextureTransform[3] = (*it)->MaterialResource.EmissiveTextureTransform[3];
-            MatCbv.EmissiveRotation = (*it)->MaterialResource.EmissiveTextureTransform[4];
+    //        MatCbv.EmissiveTextureTransform[0] = (*it)->MaterialResource.EmissiveTextureTransform[0];
+    //        MatCbv.EmissiveTextureTransform[1] = (*it)->MaterialResource.EmissiveTextureTransform[1];
+    //        MatCbv.EmissiveTextureTransform[2] = (*it)->MaterialResource.EmissiveTextureTransform[2];
+    //        MatCbv.EmissiveTextureTransform[3] = (*it)->MaterialResource.EmissiveTextureTransform[3];
+    //        MatCbv.EmissiveRotation = (*it)->MaterialResource.EmissiveTextureTransform[4];
 
-            MatCbv.NormalTextureTransform[0] = (*it)->MaterialResource.NormalTextureTransform[0];
-            MatCbv.NormalTextureTransform[1] = (*it)->MaterialResource.NormalTextureTransform[1];
-            MatCbv.NormalTextureTransform[2] = (*it)->MaterialResource.NormalTextureTransform[2];
-            MatCbv.NormalTextureTransform[3] = (*it)->MaterialResource.NormalTextureTransform[3];
-            MatCbv.NormalRotation = (*it)->MaterialResource.NormalTextureTransform[4];
+    //        MatCbv.NormalTextureTransform[0] = (*it)->MaterialResource.NormalTextureTransform[0];
+    //        MatCbv.NormalTextureTransform[1] = (*it)->MaterialResource.NormalTextureTransform[1];
+    //        MatCbv.NormalTextureTransform[2] = (*it)->MaterialResource.NormalTextureTransform[2];
+    //        MatCbv.NormalTextureTransform[3] = (*it)->MaterialResource.NormalTextureTransform[3];
+    //        MatCbv.NormalRotation = (*it)->MaterialResource.NormalTextureTransform[4];
 
-            gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
-        }
+    //        gfxContext.SetDynamicConstantBufferView(My::kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
+    //    }
 
-        // Material Shader Resource --  register 0 / t0 - t4
-        {
-            gfxContext.SetDescriptorTable(kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
-        }
+    //    // Material Shader Resource --  register 0 / t0 - t4
+    //    {
+    //        gfxContext.SetDescriptorTable(My::kMaterialSRVs, (*it)->MaterialResource.FirstHandle);
+    //    }
 
-        // Common Constant Buffer --  register 1 / cb1
-        {
+    //    // Common Constant Buffer --  register 1 / cb1
+    //    {
 
-            CommonConstants CommonCbv;
-            memset(&CommonCbv, 0, sizeof(CommonCbv));
-            CommonCbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
-            CommonCbv.ViewMatrix = m_Camera->GetViewMatrix();
-            CommonCbv.ProjMatrix = m_Camera->GetProjMatrix();
-            gfxContext.SetDynamicConstantBufferView(kCommonCBV, sizeof(CommonConstants), &CommonCbv);
-        }
+    //        CommonConstants CommonCbv;
+    //        memset(&CommonCbv, 0, sizeof(CommonCbv));
+    //        CommonCbv.ModelMatrix = XMLoadFloat4x4((*it)->transform);
+    //        CommonCbv.ViewMatrix = m_Camera->GetViewMatrix();
+    //        CommonCbv.ProjMatrix = m_Camera->GetProjMatrix();
+    //        gfxContext.SetDynamicConstantBufferView(My::kCommonCBV, sizeof(CommonConstants), &CommonCbv);
+    //    }
 
-        // irradiance -- register 11
-        {
-            gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
-            gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->IBLFirstHandle);
-        }
+    //    // irradiance -- register 11
+    //    {
+    //        //gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
+    //        //gfxContext.SetDescriptorTable(My::kCommonSRVs, m_IBLResource->IBLFirstHandle);
+    //    }
 
-        gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
+    //    gfxContext.SetPipelineState((*it)->MaterialResource.PSO);
 
-        gfxContext.SetVertexBuffer(0, (*it)->VertexBuffer.VertexBufferView());
+    //    gfxContext.SetVertexBuffer(0, (*it)->VertexBuffer.VertexBufferView());
 
-        gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
+    //    gfxContext.SetIndexBuffer((*it)->IndexBuffer.IndexBufferView());
 
-        gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, 1, 0, 0, 0);
-    }
+    //    gfxContext.DrawIndexedInstanced((*it)->indexCountPerInstance, 1, 0, 0, 0);
+    //}
 
-    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+    //gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
 
-    gfxContext.Finish();
+    //gfxContext.Finish();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
 {
-    if (!m_IBLResource) {
-        return;
-    }
+    //m_IBLResource->SpecularIBLRange = 0.0f;
+    //auto& specularTex = m_IBLResource->IBLImages[m_IBLResource->CurrentCubemapIndex]->pSpecular;
 
-    m_IBLResource->SpecularIBLRange = 0.0f;
-    auto& specularTex = m_IBLResource->IBLImages[m_IBLResource->CurrentCubemapIndex]->pSpecular;
-
-    if (specularTex) {
-        ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
-        const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();
-        m_IBLResource->SpecularIBLRange = std::max(0.0f, (float)texDesc.MipLevels - 1);
-        m_IBLResource->SpecularIBLBias = std::min(m_IBLResource->SpecularIBLBias, m_IBLResource->SpecularIBLRange);
-    }
-
-    __declspec(align(16)) struct SkyboxVSCB
-    {
-        XM_Math::Matrix4 ProjInverse;
-        XM_Math::Matrix3 ViewInverse;
-    } skyVSCB;
-    skyVSCB.ProjInverse = Invert(m_Camera->GetProjMatrix());
-    skyVSCB.ViewInverse = Invert(m_Camera->GetViewMatrix()).Get3x3();
-
-    __declspec(align(16)) struct SkyboxPSCB
-    {
-        float TextureLevel;
-    } skyPSCB;
-    skyPSCB.TextureLevel = m_IBLResource->SpecularIBLBias;
-
-    //Common SRVs for cubemap -- register 10 
-    GraphicsContext& gfxContext = GraphicsContext::Begin(L"CubeMap Render");
-    gfxContext.SetRootSignature(g_TemplateRootSignature);
-    gfxContext.SetPipelineState(g_SkyBoxPSO);
-    gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
-    gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
-    gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV_ReadOnly());
-    gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
-
-    gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
-    gfxContext.SetDynamicConstantBufferView(kMeshConstant, sizeof(SkyboxVSCB), &skyVSCB);
-    gfxContext.SetDynamicConstantBufferView(kMaterialConstant, sizeof(SkyboxPSCB), &skyPSCB);
-    gfxContext.SetDescriptorTable(kCommonSRVs, m_IBLResource->IBLFirstHandle);
-    gfxContext.Draw(3);
-    gfxContext.Finish();
-}
-
-
-void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLTextures(size_t& skyboxSpecularHandle, size_t& skyboxDiffuseHandle, size_t& brdfHandle)
-{
-    m_IBLResource = std::make_unique<IBLImageResource>();
-
-    std::vector<std::string> IBLFiles;
-    std::string IBLLoadDirectory = _IBL_RESOURCE_DIRECTORY;
-    std::string specular_suffix = "_specularIBL.dds";
-    size_t specular_offset = specular_suffix.size();
-    std::string diffuse_suffix = "_diffuseIBL.dds";
-    size_t diffuse_offset = diffuse_suffix.size();
-
-    std::unordered_map<std::string, int> ImageName;
-
-    int fileCount = std::count_if(std::filesystem::directory_iterator(IBLLoadDirectory), std::filesystem::directory_iterator{}, (bool (*)(const std::filesystem::path&))std::filesystem::is_regular_file);
-
-    // initialize heap
-    m_IBLResource->IBLDescriptorHeap.Create(L"IBLDescriptorHeap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, fileCount + 1);
-
-    for (auto dir : std::filesystem::recursive_directory_iterator(IBLLoadDirectory)) {
-        if (!dir.is_directory()) {
-            if (dir.path().extension().string() == ".dds") {
-                std::string path = dir.path().string();
-                if (path.substr(path.size() - specular_offset, specular_offset) == specular_suffix) {
-                    LoadIBLDDSImage(path, specular_suffix, ImageName);
-                }
-                else if (path.substr(path.size() - diffuse_offset, diffuse_offset) == diffuse_suffix) {
-                    LoadIBLDDSImage(path, diffuse_suffix, ImageName);
-                }
-            }
-        }
-    }
-    m_IBLResource->IBLImageCount = fileCount;
-
-
-    // Load BRDF_LUT Image
-    uint32_t width = 0;
-    uint32_t height = 0;
-    uint32_t pitch = 0;
-    uint64_t size = 0;
-    std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
-    m_IBLResource->BRDF_LUT_Image = std::make_unique<Texture>();
-    m_IBLResource->BRDF_LUT_Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
-        m_IBLResource->BRDF_LUT_Image->GetAddressOf(), m_IBLResource->BRDF_LUT_Handle);
-    if (FAILED(hr)) {
-        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
-    }
-    m_IBLResource->BRDF_offset = m_IBLResource->IBLImageCount;
-
-    // dispaly first cube map
-
-    if (m_IBLResource->CurrentCubemapIndex == -1) {
-        m_IBLResource->CurrentCubemapIndex = 0;
-        m_IBLResource->LastCubemapIndex = 0;
-        DescriptorHandle Handle, prevHandle;
-        int HeapIdx = -1;
-        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> image_handle_vec;
-        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> brdf_handle_vec;
-        prevHandle = m_IBLResource->IBLFirstHandle;
-        image_handle_vec.push_back(prevHandle);
-        OffsetDescriptorHandle(prevHandle);
-        image_handle_vec.push_back(prevHandle);
-        Handle = AllocateFromDescriptorHeap(2, HeapIdx);
-        //m_IBLResource->FirstHandle = Handle;
-        m_IBLResource->HeapIndex = HeapIdx;
-        //CopyDescriptors(Handle, image_handle_vec, 2);
-        Handle = AllocateFromDescriptorHeap(1, HeapIdx);
-        brdf_handle_vec.push_back(m_IBLResource->BRDF_LUT_Handle);
-        //CopyDescriptors(Handle, brdf_handle_vec, 1);
-    }
-}
-
-void D3dGraphicsCore::CD3dGraphicsCore::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
-{
-    std::string specular_suffix = "_specularIBL.dds";
-    std::string diffuse_suffix = "_diffuseIBL.dds";
-
-    size_t suffix_offset = suffix.size();
-    size_t pos = std::max(ImagePath.find_last_of('/'), ImagePath.find_last_of('\\'));
-    std::string imageName = ImagePath.substr(pos + 1);
-    imageName = imageName.substr(0, imageName.size() - suffix_offset);
-
-    if (ImageName.find(imageName) != ImageName.end()) {
-        return;
-    }
-
-    std::unique_ptr<Texture> pSpecularTex, pDiffuseTex;
-
-    pSpecularTex = std::make_unique<Texture>();
-    pDiffuseTex = std::make_unique<Texture>();
-
-    uint32_t width = 0;
-    uint32_t height = 0;
-    uint32_t pitch = 0;
-    uint64_t size = 0;
-    int HeapIndex;
-    std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
-    std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
-
-    DescriptorHandle HeapHandle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    if (m_IBLResource->IBLFirstHandle.IsNull()) {
-        m_IBLResource->IBLFirstHandle = HeapHandle;
-    }
-    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
-        pSpecularTex->GetAddressOf(), HeapHandle);
-    if (FAILED(hr)) {
-        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
-    }
-    //if (m_IBLResource->HeapIndex == -1) {
-    //	m_IBLResource->HeapIndex = HeapIndex;
+    //if (specularTex) {
+    //    ID3D12Resource* texRes = const_cast<ID3D12Resource*>(specularTex->GetResource());
+    //    const D3D12_RESOURCE_DESC& texDesc = texRes->GetDesc();
+    //    m_IBLResource->SpecularIBLRange = std::max(0.0f, (float)texDesc.MipLevels - 1);
+    //    m_IBLResource->SpecularIBLBias = std::min(m_IBLResource->SpecularIBLBias, m_IBLResource->SpecularIBLRange);
     //}
-    //ASSERT(HeapIndex == m_IBLResource->HeapIndex, "TEXTURE RESOURCE NOT IN ONE DESCRIPTOR HEAP! ERROR!");
 
-    HeapHandle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
-        pDiffuseTex->GetAddressOf(), HeapHandle);
-    if (FAILED(hr)) {
-        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
-    }
-    //ASSERT(HeapIndex == m_IBLResource->HeapIndex, "TEXTURE RESOURCE NOT IN ONE DESCRIPTOR HEAP! ERROR!");
+    //__declspec(align(16)) struct SkyboxVSCB
+    //{
+    //    XM_Math::Matrix4 ProjInverse;
+    //    XM_Math::Matrix3 ViewInverse;
+    //} skyVSCB;
+    //skyVSCB.ProjInverse = Invert(m_Camera->GetProjMatrix());
+    //skyVSCB.ViewInverse = Invert(m_Camera->GetViewMatrix()).Get3x3();
 
-    std::unique_ptr<IBLImageMap> map = std::make_unique<IBLImageMap>();
-    map->name = imageName;
-    map->pSpecular = std::move(pSpecularTex);
-    map->pDiffuse = std::move(pDiffuseTex);
-    m_IBLResource->IBLImages.emplace(m_IBLResource->IBLImages.size(), std::move(map));
+    //__declspec(align(16)) struct SkyboxPSCB
+    //{
+    //    float TextureLevel;
+    //} skyPSCB;
+    //skyPSCB.TextureLevel = m_IBLResource->SpecularIBLBias;
 
-    ImageName.emplace(imageName, m_IBLResource->IBLImages.size());
+    ////Common SRVs for cubemap -- register 10 
+    //GraphicsContext& gfxContext = GraphicsContext::Begin(L"CubeMap Render");
+    //gfxContext.SetRootSignature(g_TemplateRootSignature);
+    //gfxContext.SetPipelineState(g_SkyBoxPSO);
+    //gfxContext.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    //gfxContext.TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    //gfxContext.TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    //gfxContext.SetRenderTarget(g_SceneColorBuffer.GetRTV(), g_DepthBuffer.GetDSV_ReadOnly());
+    //gfxContext.SetViewportAndScissor(m_MainViewport, m_MainScissor);
+
+    //gfxContext.SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
+    //gfxContext.SetDynamicConstantBufferView(My::kMeshConstant, sizeof(SkyboxVSCB), &skyVSCB);
+    //gfxContext.SetDynamicConstantBufferView(My::kMaterialConstant, sizeof(SkyboxPSCB), &skyPSCB);
+    //gfxContext.SetDescriptorTable(My::kCommonSRVs, m_IBLResource->IBLFirstHandle);
+    //gfxContext.Draw(3);
+    //gfxContext.Finish();
 }
 
 void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)
@@ -628,19 +403,77 @@ void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& contex
     context.SetPrimitiveTopology(d3dType);
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::GetDXGIFormat(const My::PIXEL_FORMAT& pixel_format, DXGI_FORMAT& dxgi_format)
+void D3dGraphicsCore::CD3dGraphicsCore::DrawBatch(const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
+    ID3D12DescriptorHeap* MaterialHeapPtr, ID3D12DescriptorHeap* IBLHeapPtr)
 {
-    switch (pixel_format) {
-    case My::PIXEL_FORMAT::RGBA8:
-        dxgi_format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        break;
-    case My::PIXEL_FORMAT::RGB8:
-        dxgi_format = DXGI_FORMAT_B8G8R8X8_UNORM;
-        break;
-    case My::PIXEL_FORMAT::R8:
-        dxgi_format = DXGI_FORMAT_R8_UNORM;
-        break;
-    default:
-        dxgi_format = DXGI_FORMAT_UNKNOWN;
+    SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, MaterialHeapPtr);
+
+    {
+        MaterialConstants MatCbv;
+        memset(&MatCbv, 0, sizeof(MaterialConstants));
+        // factor param
+        MatCbv.BaseColorFactor[0] = pdbc->BaseColorFactor[0];
+        MatCbv.BaseColorFactor[1] = pdbc->BaseColorFactor[1];
+        MatCbv.BaseColorFactor[2] = pdbc->BaseColorFactor[2];
+        MatCbv.BaseColorFactor[3] = pdbc->BaseColorFactor[3];
+        MatCbv.MetallicRoughnessFactor[0] = pdbc->MetallicRoughnessFactor[0];
+        MatCbv.MetallicRoughnessFactor[1] = pdbc->MetallicRoughnessFactor[1];
+        MatCbv.EmissiveFactor[0] = pdbc->EmissiveFactor[0];
+        MatCbv.EmissiveFactor[1] = pdbc->EmissiveFactor[1];
+        MatCbv.EmissiveFactor[2] = pdbc->EmissiveFactor[2];
+        MatCbv.NormalTextureScale = pdbc->NormalTextureScale;
+
+        // transform param
+        MatCbv.BaseColorTextureTransform[0] = pdbc->BaseColorTextureTransform[0];
+        MatCbv.BaseColorTextureTransform[1] = pdbc->BaseColorTextureTransform[1];
+        MatCbv.BaseColorTextureTransform[2] = pdbc->BaseColorTextureTransform[2];
+        MatCbv.BaseColorTextureTransform[3] = pdbc->BaseColorTextureTransform[3];
+        MatCbv.BaseColorRotation = pdbc->BaseColorRotation;
+
+        MatCbv.MetallicRoughnessTextureTransform[0] = pdbc->MetallicRoughnessTextureTransform[0];
+        MatCbv.MetallicRoughnessTextureTransform[1] = pdbc->MetallicRoughnessTextureTransform[1];
+        MatCbv.MetallicRoughnessTextureTransform[2] = pdbc->MetallicRoughnessTextureTransform[2];
+        MatCbv.MetallicRoughnessTextureTransform[3] = pdbc->MetallicRoughnessTextureTransform[3];
+        MatCbv.MetallicRoughnessRotation = pdbc->MetallicRoughnessRotation;
+
+        MatCbv.OcclusionTextureTransform[0] = pdbc->OcclusionTextureTransform[0];
+        MatCbv.OcclusionTextureTransform[1] = pdbc->OcclusionTextureTransform[1];
+        MatCbv.OcclusionTextureTransform[2] = pdbc->OcclusionTextureTransform[2];
+        MatCbv.OcclusionTextureTransform[3] = pdbc->OcclusionTextureTransform[3];
+        MatCbv.OcclusionRotation = pdbc->OcclusionRotation;
+
+        MatCbv.EmissiveTextureTransform[0] = pdbc->EmissiveTextureTransform[0];
+        MatCbv.EmissiveTextureTransform[1] = pdbc->EmissiveTextureTransform[1];
+        MatCbv.EmissiveTextureTransform[2] = pdbc->EmissiveTextureTransform[2];
+        MatCbv.EmissiveTextureTransform[3] = pdbc->EmissiveTextureTransform[3];
+        MatCbv.EmissiveRotation = pdbc->EmissiveRotation;
+
+        MatCbv.NormalTextureTransform[0] = pdbc->NormalTextureTransform[0];
+        MatCbv.NormalTextureTransform[1] = pdbc->NormalTextureTransform[1];
+        MatCbv.NormalTextureTransform[2] = pdbc->NormalTextureTransform[2];
+        MatCbv.NormalTextureTransform[3] = pdbc->NormalTextureTransform[3];
+        MatCbv.NormalRotation = pdbc->NormalRotation;
+
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
     }
+
+    {
+        m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pdbc->Material.DiffuseMap.Handle));
+    }
+    
+    {
+        //m_pGraphicsContext->SetDynamicConstantBufferView(kCommonCBV, sizeof(CommonConstants), pdbc->);
+    }
+    
+    {
+        m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, IBLHeapPtr);
+        //m_pGraphicsContext->SetDescriptorTable(kCommonSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pdbc->));
+    }
+
+
+    m_pGraphicsContext->SetIndexBuffer(ibuffer->IndexBufferView());
+    m_pGraphicsContext->SetVertexBuffer(0, vbuffer->VertexBufferView());
+    m_pGraphicsContext->DrawIndexedInstanced(pdbc->m_index_count_per_instance, 1, 0, 0, 0);
 }
+

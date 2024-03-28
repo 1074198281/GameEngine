@@ -8,7 +8,6 @@
 #include "SceneObject.hpp"
 #include "SceneNode.hpp"
 #include "StructureSettings.h"
-#include "GraphicsCore.h"
 #include "RenderObject.h"
 #include "Core/Resource/GpuBuffer.h"
 
@@ -23,7 +22,7 @@ namespace My {
         void Finalize() override;
 
         void Clear() override;
-        void Draw() override;
+        //void Draw() override;
         void Resize(uint32_t width, uint32_t height) override;
         void Present() override;
 
@@ -49,20 +48,17 @@ namespace My {
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
+        void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
         bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
 
         int InitializeD3dImGUI();
 
-        struct D3dDrawBatchContext : DrawBatchContext {
-            uint32_t m_vertex_buffer_index;
-            uint32_t m_indice_buffer_index;
-            PrimitiveType m_PrimitiveType;
-            uint32_t m_index_count_per_instance;
-            uint32_t m_inputlayout;
-        };
-
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
+        std::vector<D3dGraphicsCore::GpuTexture> m_VecTexture;
+        std::unordered_map<uint32_t, GpuHandleStatus> m_BatchHandleStatus;
+
+        std::unique_ptr<IBLImageResource> m_IBLResource;
     };
 }

@@ -3,10 +3,8 @@
 #include "StructureSettings.h"
 #include "Core/Common/GraphicsCommon.h"
 #include "Core/D3dGraphicsCoreManager.h"
+#include "ShaderSource.h"
 
-//namespace D3dGraphicsCore {
-//	ID3D12Device* g_Device;
-//}
 
 namespace D3dGraphicsCore {
 	DescriptorHeap* g_BaseDescriptorHeap;
@@ -15,11 +13,11 @@ namespace D3dGraphicsCore {
 	unsigned int g_FreeDescriptorsInCurrentHeap = g_DescriptorCountPerHeap;
 	UINT64 g_DescriptorSize = 0;
 
-	Texture g_DefaultBaseColorTexture;
-	Texture g_DefaultRoughnessMetallicTexture;
-	Texture g_DefaultOcclusionTexture;
-	Texture g_DefaultEmissiveTexture;
-	Texture g_DefaultNormalTexture;
+	GpuTexture g_DefaultBaseColorTexture;
+	GpuTexture g_DefaultRoughnessMetallicTexture;
+	GpuTexture g_DefaultOcclusionTexture;
+	GpuTexture g_DefaultEmissiveTexture;
+	GpuTexture g_DefaultNormalTexture;
 
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
@@ -160,13 +158,13 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 
 	SamplerDesc CubeMapSamplerDesc = DefaultSamplerDesc;
 
-	g_TemplateRootSignature.Reset(RootBindings::kNumRootBindings, 2); 	//暂时不使用采样器
-	g_TemplateRootSignature[kMeshConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
-	g_TemplateRootSignature[kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[kMaterialSamplers].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 15, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[kCommonCBV].InitAsConstantBuffer(1);
+	g_TemplateRootSignature.Reset(My::RootBindings::kNumRootBindings, 2); 	//暂时不使用采样器
+	g_TemplateRootSignature[My::kMeshConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
+	g_TemplateRootSignature[My::kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kMaterialSamplers].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 15, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kCommonCBV].InitAsConstantBuffer(1);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);
@@ -254,16 +252,16 @@ void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, con
 	PSO.SetPrimitiveTopologyType(d3dType);
 
 	//InputLayoutType
-	if (InputLayoutType == (1 << kPos)) {
+	if (InputLayoutType == (1 << My::kPos)) {
 		PSO.SetInputLayout(1, g_Pos);
 	}
-	else if (InputLayoutType == ((1 << kPos) + (1 << kTexcoord0))) {
+	else if (InputLayoutType == ((1 << My::kPos) + (1 << My::kTexcoord0))) {
 		PSO.SetInputLayout(2, g_PosTex);
 	}
-	else if (InputLayoutType == ((1 << kPos) + (1 << kNormal) + (1 << kTexcoord0))) {
+	else if (InputLayoutType == ((1 << My::kPos) + (1 << My::kNormal) + (1 << My::kTexcoord0))) {
 		PSO.SetInputLayout(3, g_PosNorTex);
 	}
-	else if (InputLayoutType == ((1 << kPos) + (1 << kNormal) + (1 << kTangent) + (1 << kTexcoord0))) {
+	else if (InputLayoutType == ((1 << My::kPos) + (1 << My::kNormal) + (1 << My::kTangent) + (1 << My::kTexcoord0))) {
 		PSO.SetInputLayout(4, g_PosNorTanTex);
 	}
 	else {

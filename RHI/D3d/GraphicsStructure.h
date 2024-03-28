@@ -1,11 +1,12 @@
 #pragma once
 
 #include <d3d12.h>
-#include <d3dx12.h>
+#include "d3dx12.h"
 #include <vector>
 #include <memory>
 #include <map>
 #include <unordered_map>
+#include "SceneObjectTypeDef.hpp"
 #include "Core/Pipeline/RootSignature.h"
 #include "Core/Pipeline/PipelineState.h"
 #include "Core/Pipeline/DescriptorHeap.h"
@@ -33,11 +34,11 @@ namespace D3dGraphicsCore {
 
 	//-------------------------------------baseTextures-------------------------------------//
 
-	extern Texture g_DefaultBaseColorTexture;
-	extern Texture g_DefaultRoughnessMetallicTexture;
-	extern Texture g_DefaultOcclusionTexture;
-	extern Texture g_DefaultEmissiveTexture;
-	extern Texture g_DefaultNormalTexture;
+	extern GpuTexture g_DefaultBaseColorTexture;
+	extern GpuTexture g_DefaultRoughnessMetallicTexture;
+	extern GpuTexture g_DefaultOcclusionTexture;
+	extern GpuTexture g_DefaultEmissiveTexture;
+	extern GpuTexture g_DefaultNormalTexture;
 	void InitializeDefaultTexture();
 	void FinalizeDefaultTexture();
 

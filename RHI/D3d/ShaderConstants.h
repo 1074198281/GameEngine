@@ -37,7 +37,7 @@ namespace D3dGraphicsCore {
 		float padding0[2];
 		float BaseColorTextureTransform[4];
 		float MetallicRoughnessTextureTransform[4];
-		float OcclusionTransform[4];
+		float OcclusionTextureTransform[4];
 		float EmissiveTextureTransform[4];
 		float NormalTextureTransform[4];
 		float BaseColorRotation;

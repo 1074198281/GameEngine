@@ -5,14 +5,14 @@
 
 namespace D3dGraphicsCore {
 
-    class Texture : public GpuResource
+    class GpuTexture : public GpuResource
     {
         friend class CommandContext;
 
     public:
 
-        Texture() { m_hCpuDescriptorHandle.ptr = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN; }
-        Texture(D3D12_CPU_DESCRIPTOR_HANDLE Handle) : m_hCpuDescriptorHandle(Handle) {}
+        GpuTexture() { m_hCpuDescriptorHandle.ptr = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN; }
+        GpuTexture(D3D12_CPU_DESCRIPTOR_HANDLE Handle) : m_hCpuDescriptorHandle(Handle) {}
 
         // Create a 1-level textures
         void Create2D(size_t RowPitchBytes, size_t Width, size_t Height, DXGI_FORMAT Format, const void* InitData);

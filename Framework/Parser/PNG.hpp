@@ -322,7 +322,7 @@ namespace My {
                         } while (ret != Z_STREAM_END);
 
                         (void)inflateEnd(&strm);
-                        delete pDecompressedBuffer;
+                        delete[] pDecompressedBuffer;
                     }
                     break;
                     case PNG_CHUNK_TYPE::IEND:

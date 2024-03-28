@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Resource/Texture.h"
 #include "Core/Pipeline/DescriptorHeap.h"
+#include "FrameStructure.hpp"
 #include <vector>
 #include <math.h>
 #include <unordered_map>
@@ -8,8 +9,16 @@
 #include "d3dx12.h"
 #include <DirectXMath.h>
 
+namespace My {
 
-namespace D3dGraphicsCore {
+	struct D3dDrawBatchContext : DrawBatchContext {
+		uint32_t m_vertex_buffer_index;
+		uint32_t m_indice_buffer_index;
+		PrimitiveType m_PrimitiveType;
+		uint32_t m_index_count_per_instance;
+		uint32_t m_inputlayout;
+	};
+
 	enum kInputLayoutType {
 		kPos,				// 1
 		kNormal,			// 2
@@ -51,27 +60,23 @@ namespace D3dGraphicsCore {
 	typedef struct IBLImageMap
 	{
 		std::string name;
-		std::unique_ptr<Texture> pSpecular;
-		std::unique_ptr<Texture> pDiffuse;
+		std::unique_ptr<D3dGraphicsCore::GpuTexture> pSpecular;
+		std::unique_ptr<D3dGraphicsCore::GpuTexture> pDiffuse;
 	} IBLImageMap;
 
 	typedef struct IBLImageResource
 	{
-		DescriptorHeap IBLDescriptorHeap;
-		DescriptorHandle IBLFirstHandle;
-		int CurrentCubemapIndex = -1;
-		int LastCubemapIndex = -1;
-
-		DescriptorHandle FirstHandle;
+		D3dGraphicsCore::DescriptorHeap IBLDescriptorHeap;
+		D3dGraphicsCore::DescriptorHandle FirstHandle;
+		std::unordered_map<int, std::unique_ptr<IBLImageMap> > IBLImages;
+		std::unique_ptr<D3dGraphicsCore::GpuTexture> BRDF_LUT_Image;
 		float SpecularIBLRange;
 		float SpecularIBLBias;
 		int IBLImageCount = 0;
-		int HeapIndex = -1;
-		std::unordered_map<int, std::unique_ptr<IBLImageMap> > IBLImages;
-
-		DescriptorHandle BRDF_LUT_Handle;
-		std::unique_ptr<Texture> BRDF_LUT_Image;
-		int BRDFHeapIndex;
-		int BRDF_offset;
 	} IBLImageResource;
+
+	typedef struct GpuHandleStatus {
+		int HeapIndex{-1};
+		D3dGraphicsCore::DescriptorHandle Handle;
+	} GpuHandleStatus;
 }

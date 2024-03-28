@@ -27,57 +27,57 @@ namespace D3dGraphicsCore {
 	
 	*/
 
-	typedef struct TextureResource {
-		Texture* pTexture;
-		DescriptorHandle Handle;
-		void* pImageData;
-	} TextureResource;
+	//typedef struct TextureResource {
+	//	GpuTexture* pTexture;
+	//	DescriptorHandle Handle;
+	//	void* pImageData;
+	//} TextureResource;
 
-	typedef struct MaterialResource {
-		std::vector<TextureResource> TextureResources;
-		int TextureCountPerMaterial;
-		DescriptorHandle FirstHandle;
-		int DescriptorHeapIndex;
-		float BaseColorFactor[4];
-		float MetallicRoughnessFactor[2];
-		float EmissiveFactor[3];
-		float NormalScaleFactor;
-		float BaseColorTextureTransform[5];
-		float MetallicRoughnessTextureTransform[5];
-		float OcclusionTransform[5];
-		float EmissiveTextureTransform[5];
-		float NormalTextureTransform[5];
-		GraphicsPSO PSO;
-	} MaterialResource;
+	//typedef struct MaterialResource {
+	//	std::vector<TextureResource> TextureResources;
+	//	int TextureCountPerMaterial;
+	//	DescriptorHandle FirstHandle;
+	//	int DescriptorHeapIndex;
+	//	float BaseColorFactor[4];
+	//	float MetallicRoughnessFactor[2];
+	//	float EmissiveFactor[3];
+	//	float NormalScaleFactor;
+	//	float BaseColorTextureTransform[5];
+	//	float MetallicRoughnessTextureTransform[5];
+	//	float OcclusionTransform[5];
+	//	float EmissiveTextureTransform[5];
+	//	float NormalTextureTransform[5];
+	//	GraphicsPSO PSO;
+	//} MaterialResource;
 
-	typedef struct LightResource {
-		DirectX::XMFLOAT4 LightColor;
-	} LightResource;
+	//typedef struct LightResource {
+	//	DirectX::XMFLOAT4 LightColor;
+	//} LightResource;
 
 
 
-	class PrimitiveObject
-	{
-	public:
-		PrimitiveObject() {}
-		~PrimitiveObject() {}
+	//class PrimitiveObject
+	//{
+	//public:
+	//	PrimitiveObject() {}
+	//	~PrimitiveObject() {}
 
-	public:
-		std::string name;
-		
-		D3dGraphicsCore::StructuredBuffer VertexBuffer;
-		D3dGraphicsCore::ByteAddressBuffer IndexBuffer;
-		UINT indexCountPerInstance;
-		UINT InstanceCount;
-		bool alphamode;
-		DirectX::XMFLOAT4X4* transform;
+	//public:
+	//	std::string name;
+	//	
+	//	D3dGraphicsCore::StructuredBuffer VertexBuffer;
+	//	D3dGraphicsCore::ByteAddressBuffer IndexBuffer;
+	//	UINT indexCountPerInstance;
+	//	UINT InstanceCount;
+	//	bool alphamode;
+	//	DirectX::XMFLOAT4X4* transform;
 
-		// TextureResources
-		std::string MaterialName;
-		MaterialResource MaterialResource;
+	//	// TextureResources
+	//	std::string MaterialName;
+	//	MaterialResource MaterialResource;
 
-		//GraphicsPSO
-		int InputLayoutType;
-		My::PrimitiveType PrimitiveType;
-	};
+	//	//GraphicsPSO
+	//	int InputLayoutType;
+	//	My::PrimitiveType PrimitiveType;
+	//};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IRuntimeModule.hpp"
+#include "FrameStructure.hpp"
 
 namespace My {
     __Interface IGraphicsManager : public IRuntimeModule{

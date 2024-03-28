@@ -14,6 +14,7 @@
 #pragma once
 
 #include "WinUtility.h"
+#include "utility.hpp"
 #include "../Common.h"
 #include "../Color.h"
 #include "CommandListManager.h"
@@ -26,7 +27,6 @@
 #include "../Resource/Texture.h"
 #include "../Resource/PixelBuffer.h"
 #include "../Resource/LinearAllocator.h"
-#include "../../GraphicsCore.h"
 #include <vector>
 #include <queue>
 #include <mutex>
@@ -35,7 +35,7 @@ namespace D3dGraphicsCore {
 
     class ColorBuffer;
     class DepthBuffer;
-    class Texture;
+    class GpuTexture;
     class GraphicsContext;
     class ComputeContext;
     class UploadBuffer;
@@ -89,7 +89,7 @@ namespace D3dGraphicsCore {
 
     class CommandContext : NonCopyable
     {
-        friend ContextManager;
+        friend class ContextManager;
     private:
 
         CommandContext(D3D12_COMMAND_LIST_TYPE Type);

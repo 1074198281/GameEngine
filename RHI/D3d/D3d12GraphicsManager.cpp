@@ -1,5 +1,6 @@
 ﻿#include <objbase.h>
 #include <d3dcompiler.h>
+#include <filesystem>
 #include "D3d12GraphicsManager.hpp"
 #include "WindowsApplication.hpp"
 #include "D3d12Application.hpp"
@@ -9,6 +10,8 @@
 #include "GraphicsStructure.h"
 #include "ShaderSource.h"
 #include "GraphicsStructure.h"
+#include "D3d_Helper.hpp"
+#include "Core/Resource/DDSTextureLoader.h"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -33,13 +36,19 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Clear()
 {
-    
-}
-
-void My::D3d12GraphicsManager::Draw()
-{
-    auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.UpdateStatus();
+    if (m_IBLResource) {
+        for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
+            it->second->pDiffuse->Destroy();
+            it->second->pSpecular->Destroy();
+            it->second->pDiffuse.reset();
+            it->second->pSpecular.reset();
+            it->second.reset();
+        }
+        m_IBLResource->BRDF_LUT_Image->Destroy();
+        m_IBLResource->BRDF_LUT_Image.reset();
+        m_IBLResource->IBLDescriptorHeap.Destroy();
+        m_IBLResource->IBLImages.clear();
+    }
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
@@ -104,7 +113,8 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         }
         std::unique_ptr<D3dGraphicsCore::StructuredBuffer> vbuffer = std::make_unique<D3dGraphicsCore::StructuredBuffer>();
         vbuffer->Create(L"Vertex Buffer", elementCount, sizeof(float) * vertexPerCount, pVertexData);
-        dbc->m_vertex_buffer_index = GraphicsRHI.AddVertexBuffer(std::move(vbuffer));
+        dbc->m_vertex_buffer_index = m_VecVertexBuffer.size();
+        m_VecVertexBuffer.push_back(std::move(vbuffer));
 
         std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer> ibuffer = std::make_unique<D3dGraphicsCore::ByteAddressBuffer>();
         switch (pMesh->GetIndexArray(0).GetIndexType()) {
@@ -156,7 +166,8 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             ASSERT(false, "Convert Index Type ERROR!");
             break;
         }
-        dbc->m_indice_buffer_index = GraphicsRHI.AddIndexBuffer(std::move(ibuffer));
+        dbc->m_indice_buffer_index = m_VecIndexBuffer.size();
+        m_VecIndexBuffer.push_back(std::move(ibuffer));
         dbc->m_index_count_per_instance = pMesh->GetIndexArray(0).GetIndexCount();
 
         //-----------------------------------------Material-----------------------------------------//
@@ -171,7 +182,12 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 size_t cpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
                 if (TextureRef) {
                     Image& img = TextureRef->GetTextureImage();
-                    cpuHandle = GraphicsRHI.CreateAndAddTexture(img);
+                    D3dGraphicsCore::GpuTexture pTex;
+                    DXGI_FORMAT format;
+                    GetDXGIFormat(img.format, format);
+                    pTex.Create2D(img.pitch, img.Width, img.Height, format, img.data);
+                    cpuHandle = pTex.GetSRV().ptr;
+                    m_VecTexture.push_back(std::move(pTex));
                 } else {
                     switch (type) {
                     case My::SceneObjectMaterial::kBaseColor:
@@ -320,14 +336,99 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 {
-    TextureHandle specular, diffuse, brdf;
-    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.LoadIBLTextures(specular, diffuse, brdf);
-    for (auto frame : m_Frames) {
-        frame.BRDF_LUT_Map.Handle = brdf;
-        frame.SkyBoxMap.Handle = specular;
-        frame.SkyBoxDiffuseMap.Handle = diffuse;
+    m_IBLResource = std::make_unique<IBLImageResource>();
+
+    std::vector<std::string> IBLFiles;
+    std::string IBLLoadDirectory = _IBL_RESOURCE_DIRECTORY;
+    std::string specular_suffix = "_specularIBL.dds";
+    size_t specular_offset = specular_suffix.size();
+    std::string diffuse_suffix = "_diffuseIBL.dds";
+    size_t diffuse_offset = diffuse_suffix.size();
+
+    std::unordered_map<std::string, int> ImageName;
+
+    int fileCount = std::count_if(std::filesystem::directory_iterator(IBLLoadDirectory), std::filesystem::directory_iterator{}, (bool (*)(const std::filesystem::path&))std::filesystem::is_regular_file);
+
+    // initialize heap 3 for 2 IBL images, specular and diffuse and 1 for BRDF image
+    m_IBLResource->IBLDescriptorHeap.Create(L"IBLDescriptorHeap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 3);
+
+    for (auto dir : std::filesystem::recursive_directory_iterator(IBLLoadDirectory)) {
+        if (!dir.is_directory()) {
+            if (dir.path().extension().string() == ".dds") {
+                std::string path = dir.path().string();
+                if (path.substr(path.size() - specular_offset, specular_offset) == specular_suffix) {
+                    LoadIBLDDSImage(path, specular_suffix, ImageName);
+                }
+                else if (path.substr(path.size() - diffuse_offset, diffuse_offset) == diffuse_suffix) {
+                    LoadIBLDDSImage(path, diffuse_suffix, ImageName);
+                }
+            }
+        }
     }
+    m_IBLResource->IBLImageCount = fileCount;
+
+    // Load BRDF_LUT Image
+    uint64_t size = 0;
+    std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
+    m_IBLResource->BRDF_LUT_Image = std::make_unique<D3dGraphicsCore::GpuTexture>();
+    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
+        m_IBLResource->BRDF_LUT_Image->GetAddressOf(), m_IBLResource->BRDF_LUT_Image->GetSRV());
+    if (FAILED(hr)) {
+        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+    }
+
+    for (auto frame : m_Frames) {
+
+    }
+}
+
+
+void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
+{
+    std::string specular_suffix = "_specularIBL.dds";
+    std::string diffuse_suffix = "_diffuseIBL.dds";
+
+    size_t suffix_offset = suffix.size();
+    size_t pos = std::max(ImagePath.find_last_of('/'), ImagePath.find_last_of('\\'));
+    std::string imageName = ImagePath.substr(pos + 1);
+    imageName = imageName.substr(0, imageName.size() - suffix_offset);
+
+    if (ImageName.find(imageName) != ImageName.end()) {
+        return;
+    }
+
+    std::unique_ptr<D3dGraphicsCore::GpuTexture> pSpecularTex, pDiffuseTex;
+
+    pSpecularTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
+    pDiffuseTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
+
+    uint32_t width = 0;
+    uint32_t height = 0;
+    uint32_t pitch = 0;
+    uint64_t size = 0;
+    int HeapIndex;
+    std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
+    std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
+
+    HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
+        pSpecularTex->GetAddressOf(), pSpecularTex->GetSRV());
+    if (FAILED(hr)) {
+        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+    }
+
+    hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
+        pDiffuseTex->GetAddressOf(), pDiffuseTex->GetSRV());
+    if (FAILED(hr)) {
+        ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+    }
+
+    std::unique_ptr<IBLImageMap> map = std::make_unique<IBLImageMap>();
+    map->name = imageName;
+    map->pSpecular = std::move(pSpecularTex);
+    map->pDiffuse = std::move(pDiffuseTex);
+    m_IBLResource->IBLImages.emplace(m_IBLResource->IBLImages.size(), std::move(map));
+
+    ImageName.emplace(imageName, m_IBLResource->IBLImages.size());
 }
 
 void My::D3d12GraphicsManager::UpArrowKeyDown()
@@ -355,7 +456,7 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     switch (key) {
     case VK_NUMPAD0:
-        GraphicsRHI.UpdateCubemapIndex();
+        
         break;
     case VK_NUMPAD1:
         break;
@@ -364,22 +465,22 @@ void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
     case VK_NUMPAD3:
         break;
     case VK_NUMPAD4:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, 100.0f, 1.0f));
+        
         break;
     case VK_NUMPAD5:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, -100.0f, 0.0f, 1.0f));
+        
         break;
     case VK_NUMPAD6:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 0.0f, -100.0f, 1.0f));
+        
         break;
     case VK_NUMPAD7:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(-100.0f, 0.0f, 0.0f, 1.0f));
+        
         break;
     case VK_NUMPAD8:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(0.0f, 100.0f, 0.0f, 1.0f));
+        
         break;
     case VK_NUMPAD9:
-        GraphicsRHI.UpdateGlobalLightPosition(XMFLOAT4(100.0f, 0.0f, 0.0f, 1.0f));
+        
         break;
     default:
         ASSERT(false, "RECIEVE UNKOWN NUMPAD INPUT! ERROR!");
@@ -404,19 +505,19 @@ void My::D3d12GraphicsManager::NumPadKeyUp(int64_t key)
 bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType, const std::string& name)
 {
     if (name == "POSITION") {
-        InputLayoutType |= (1 << D3dGraphicsCore::kPos);
+        InputLayoutType |= (1 << kPos);
     }
     else if (name == "NORMAL") {
-        InputLayoutType |= (1 << D3dGraphicsCore::kNormal);
+        InputLayoutType |= (1 << kNormal);
     }
     else if (name == "TANGENT") {
-        InputLayoutType |= (1 << D3dGraphicsCore::kTangent);
+        InputLayoutType |= (1 << kTangent);
     }
     else if (name == "TEXCOORD0") {
-        InputLayoutType |= (1 << D3dGraphicsCore::kTexcoord0);
+        InputLayoutType |= (1 << kTexcoord0);
     }
     else if (name == "TEXCOORD1") {
-        InputLayoutType |= (1 << D3dGraphicsCore::kTexcoord1);
+        InputLayoutType |= (1 << kTexcoord1);
     }
     else {
         ASSERT(false, "Set InputLayout Type Error!")
@@ -460,7 +561,20 @@ void My::D3d12GraphicsManager::EndGUIFrame()
 
 void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 {
-
+    for (auto& batch : frame.BatchContexts) {
+        D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
+        D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
+            D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.DiffuseMap.Handle),
+            D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.MetallicRoughnessMap.Handle),
+            D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.AmbientOcclusionMap.Handle),
+            D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.EmissiveMap.Handle),
+            D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.NormalMap.Handle),
+        };
+        int HeapIndex = -1;
+        D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(5, HeapIndex);
+        GpuHandleStatus status{HeapIndex, GpuHandle};
+        m_BatchHandleStatus.emplace(d3dbatch->BatchIndex, status);
+    }
 }
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
@@ -470,7 +584,12 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
 {
-    
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    for (auto& batch : frame.BatchContexts) {
+        D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
+        GraphicsRHI.DrawBatch(d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
+            D3dGraphicsCore::g_BaseDescriptorHeap[m_BatchHandleStatus[d3dbatch->BatchIndex].HeapIndex].GetHeapPointer(), m_IBLResource->IBLDescriptorHeap.GetHeapPointer());
+    }
 }
 
 void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)

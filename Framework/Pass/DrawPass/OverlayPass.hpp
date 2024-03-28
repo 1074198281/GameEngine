@@ -8,7 +8,7 @@ namespace My {
 	public:
 		OverlayPass(IGraphicsManager* gmr) : BaseDrawPass(gmr)
 		{
-			m_DrawSubPasses.push_back(std::make_shared<GuiSubPass>());
+			m_DrawSubPasses.push_back(std::make_shared<GuiSubPass>(gmr));
 		}
 	};
 }

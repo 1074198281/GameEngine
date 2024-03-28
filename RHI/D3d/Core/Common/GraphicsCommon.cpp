@@ -55,7 +55,7 @@ namespace D3dGraphicsCore
     D3D12_CPU_DESCRIPTOR_HANDLE SamplerPointBorder;
     D3D12_CPU_DESCRIPTOR_HANDLE SamplerLinearBorder;
 
-    Texture DefaultTextures[kNumDefaultTextures];
+    GpuTexture DefaultTextures[kNumDefaultTextures];
     D3D12_CPU_DESCRIPTOR_HANDLE GetDefaultTexture(eDefaultTexture texID)
     {
         ASSERT(texID < kNumDefaultTextures);

@@ -30,7 +30,7 @@ static UINT BytesPerPixel(DXGI_FORMAT Format)
     return (UINT)BitsPerPixel(Format) / 8;
 };
 
-void D3dGraphicsCore::Texture::Create2D(size_t RowPitchBytes, size_t Width, size_t Height, DXGI_FORMAT Format, const void* InitialData)
+void D3dGraphicsCore::GpuTexture::Create2D(size_t RowPitchBytes, size_t Width, size_t Height, DXGI_FORMAT Format, const void* InitialData)
 {
     Destroy();
 
@@ -85,7 +85,7 @@ void D3dGraphicsCore::Texture::Create2D(size_t RowPitchBytes, size_t Width, size
     D3dGraphicsCore::g_Device->CreateShaderResourceView(m_pResource.Get(), &srvDesc, m_hCpuDescriptorHandle);
 }
 
-void D3dGraphicsCore::Texture::CreateCube(size_t RowPitchBytes, size_t Width, size_t Height, DXGI_FORMAT Format, const void* InitialData)
+void D3dGraphicsCore::GpuTexture::CreateCube(size_t RowPitchBytes, size_t Width, size_t Height, DXGI_FORMAT Format, const void* InitialData)
 {
     Destroy();
 
@@ -140,7 +140,7 @@ void D3dGraphicsCore::Texture::CreateCube(size_t RowPitchBytes, size_t Width, si
 }
 
 
-void D3dGraphicsCore::Texture::CreateTGAFromMemory(const void* _filePtr, size_t, bool sRGB)
+void D3dGraphicsCore::GpuTexture::CreateTGAFromMemory(const void* _filePtr, size_t, bool sRGB)
 {
     const uint8_t* filePtr = (const uint8_t*)_filePtr;
 
@@ -192,7 +192,7 @@ void D3dGraphicsCore::Texture::CreateTGAFromMemory(const void* _filePtr, size_t,
     delete[] formattedData;
 }
 
-bool D3dGraphicsCore::Texture::CreateDDSFromMemory(const void* filePtr, size_t fileSize, bool sRGB)
+bool D3dGraphicsCore::GpuTexture::CreateDDSFromMemory(const void* filePtr, size_t fileSize, bool sRGB)
 {
     if (m_hCpuDescriptorHandle.ptr == D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN)
         m_hCpuDescriptorHandle = AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -203,7 +203,7 @@ bool D3dGraphicsCore::Texture::CreateDDSFromMemory(const void* filePtr, size_t f
     return SUCCEEDED(hr);
 }
 
-void D3dGraphicsCore::Texture::CreatePIXImageFromMemory(const void* memBuffer, size_t fileSize)
+void D3dGraphicsCore::GpuTexture::CreatePIXImageFromMemory(const void* memBuffer, size_t fileSize)
 {
     struct Header
     {
