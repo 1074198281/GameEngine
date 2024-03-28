@@ -8,7 +8,6 @@
 #include "GfxConfiguration.h"
 #include "StructureSettings.h"
 #include "ShaderSource.h"
-#include "RenderObject.h"
 #include "GraphicsStructure.h"
 
 #include "D3dComponents/XMCamera/XMCamera.h"
@@ -20,15 +19,14 @@ namespace D3dGraphicsCore {
 	class ByteAddressBuffer;
 	class GraphicsContext;
 
-	// CD3dGraphicsCore pretends to be D3DRHI
-	class CD3dGraphicsCore {
+	class D3d12RHI {
 		using QueryFrameBufferSize = std::function<void(uint32_t&, uint32_t&)>;
 		using GetWindowHandleProc = std::function<HWND()>;
 		using GetGfxconfiguration = std::function<const My::GfxConfiguration&()>;
 
 	public:
-		CD3dGraphicsCore();
-		~CD3dGraphicsCore();
+		D3d12RHI();
+		~D3d12RHI();
 
 		int StartUp();
 		void Finalize();

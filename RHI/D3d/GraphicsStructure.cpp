@@ -159,12 +159,13 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	SamplerDesc CubeMapSamplerDesc = DefaultSamplerDesc;
 
 	g_TemplateRootSignature.Reset(My::RootBindings::kNumRootBindings, 2); 	//暂时不使用采样器
-	g_TemplateRootSignature[My::kMeshConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
-	g_TemplateRootSignature[My::kMaterialConstant].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kMeshConstants].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
+	g_TemplateRootSignature[My::kMaterialConstants].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[My::kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[My::kMaterialSamplers].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[My::kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 15, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[My::kCommonCBV].InitAsConstantBuffer(1);
+	g_TemplateRootSignature[My::kCommonBatchConstantsCBV].InitAsConstantBuffer(1);
+	g_TemplateRootSignature[My::kCommonFrameConstantsCBV].InitAsConstantBuffer(2);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);

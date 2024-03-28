@@ -8,7 +8,6 @@
 #include "SceneObject.hpp"
 #include "SceneNode.hpp"
 #include "StructureSettings.h"
-#include "RenderObject.h"
 #include "Core/Resource/GpuBuffer.h"
 
 

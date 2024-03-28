@@ -12,6 +12,7 @@ namespace My {
         Vector2f m_TextureUV;
     };
 
+	// cb2
 	typedef struct PerFrameConstants {
 		Matrix4X4f ViewMatrix;
 		Matrix4X4f ProjectionMatrix;
@@ -21,6 +22,7 @@ namespace My {
 		float padding0[2];
 	} PerFrameConstants;
 
+	// cb1
 	typedef struct PerBatchConstants {
 		Matrix4X4f ModelMatrix;
 	} PerBatchConstants;
@@ -47,16 +49,6 @@ namespace My {
 		float NormalRotation;
 		float padding1[3];
 	} MaterialConstants;
-
-	// cb1
-	__declspec(align(16)) typedef struct CommonConstants {
-		Matrix4X4f ModelMatrix;
-		Matrix4X4f ViewMatrix;
-		Matrix4X4f ProjMatrix;
-		Vector4f CameraPosition;
-		int LightNum;
-		float padding0[3];
-	} CommonConstants;
 
 	typedef struct Light {
 		Vector4f LightPosition;

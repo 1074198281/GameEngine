@@ -350,7 +350,7 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
     int fileCount = std::count_if(std::filesystem::directory_iterator(IBLLoadDirectory), std::filesystem::directory_iterator{}, (bool (*)(const std::filesystem::path&))std::filesystem::is_regular_file);
 
     // initialize heap 3 for 2 IBL images, specular and diffuse and 1 for BRDF image
-    m_IBLResource->IBLDescriptorHeap.Create(L"IBLDescriptorHeap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 3);
+    m_IBLResource->IBLDescriptorHeap.Create(L"IBLDescriptorHeap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, fileCount + 1);
 
     for (auto dir : std::filesystem::recursive_directory_iterator(IBLLoadDirectory)) {
         if (!dir.is_directory()) {
@@ -367,18 +367,16 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
     }
     m_IBLResource->IBLImageCount = fileCount;
 
+    D3dGraphicsCore::DescriptorHandle Handle;
+    Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
     // Load BRDF_LUT Image
     uint64_t size = 0;
     std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
     m_IBLResource->BRDF_LUT_Image = std::make_unique<D3dGraphicsCore::GpuTexture>();
     HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(BRDF_LUT_Name).c_str(), size, false,
-        m_IBLResource->BRDF_LUT_Image->GetAddressOf(), m_IBLResource->BRDF_LUT_Image->GetSRV());
+        m_IBLResource->BRDF_LUT_Image->GetAddressOf(), Handle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
-    }
-
-    for (auto frame : m_Frames) {
-
     }
 }
 
@@ -402,22 +400,24 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
     pSpecularTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
     pDiffuseTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
 
-    uint32_t width = 0;
-    uint32_t height = 0;
-    uint32_t pitch = 0;
     uint64_t size = 0;
-    int HeapIndex;
     std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
     std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
+    D3dGraphicsCore::DescriptorHandle Handle;
+    Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
+    if (m_IBLResource->FirstHandle.IsNull()) {
+        m_IBLResource->FirstHandle = Handle;
+    }
 
     HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
-        pSpecularTex->GetAddressOf(), pSpecularTex->GetSRV());
+        pSpecularTex->GetAddressOf(), Handle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
     }
 
+    D3dGraphicsCore::OffsetDescriptorHandle(Handle);
     hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
-        pDiffuseTex->GetAddressOf(), pDiffuseTex->GetSRV());
+        pDiffuseTex->GetAddressOf(), Handle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
     }
@@ -561,6 +561,9 @@ void My::D3d12GraphicsManager::EndGUIFrame()
 
 void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 {
+    uint32_t NumDest = 5;
+    int HeapIndex = -1;
+
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
@@ -570,9 +573,10 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
             D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.EmissiveMap.Handle),
             D3D12_CPU_DESCRIPTOR_HANDLE(d3dbatch->Material.NormalMap.Handle),
         };
-        int HeapIndex = -1;
-        D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(5, HeapIndex);
-        GpuHandleStatus status{HeapIndex, GpuHandle};
+        uint32_t NumSrc = _countof(CpuHandle);
+        D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(NumSrc, HeapIndex);
+        D3dGraphicsCore::g_Device->CopyDescriptors(NumDest, &GpuHandle, &NumDest, NumSrc, CpuHandle, &NumSrc, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+        GpuHandleStatus status{ HeapIndex, GpuHandle };
         m_BatchHandleStatus.emplace(d3dbatch->BatchIndex, status);
     }
 }

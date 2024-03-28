@@ -1,4 +1,4 @@
-﻿#include "GraphicsCore.h"
+﻿#include "D3d12RHI.h"
 #include "Core/D3dGraphicsCoreManager.h"
 #include "Core/Pipeline/RootSignature.h"
 #include "Core/Pipeline/PipelineState.h"
@@ -25,12 +25,12 @@
 
 using namespace DirectX;
 
-D3dGraphicsCore::CD3dGraphicsCore::CD3dGraphicsCore()
+D3dGraphicsCore::D3d12RHI::D3d12RHI()
 {
 
 }
 
-D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
+D3dGraphicsCore::D3d12RHI::~D3d12RHI()
 {
 #if 0
     // for dxgi debug,to solve memory leak 
@@ -43,7 +43,7 @@ D3dGraphicsCore::CD3dGraphicsCore::~CD3dGraphicsCore()
 #endif
 }
 
-int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
+int D3dGraphicsCore::D3d12RHI::StartUp()
 {
     InitializeCoreHWND();
     InitializeInputLayout();
@@ -61,7 +61,7 @@ int D3dGraphicsCore::CD3dGraphicsCore::StartUp()
     return 0;
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
+void D3dGraphicsCore::D3d12RHI::Finalize()
 {
     ShutdownDisplay();
     DestroyCommonState();
@@ -75,7 +75,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Finalize()
     Shutdown();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::Resize(uint32_t width, uint32_t height)
+void D3dGraphicsCore::D3d12RHI::Resize(uint32_t width, uint32_t height)
 {
     DisplayResize(width, height);
     m_Camera.reset();
@@ -83,7 +83,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::Resize(uint32_t width, uint32_t height)
     InitializeGraphicsSettings();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::InitializeCoreHWND()
+void D3dGraphicsCore::D3d12RHI::InitializeCoreHWND()
 {
     HWND hwnd;
     uint32_t width, height;
@@ -97,7 +97,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeCoreHWND()
     InitializeBuffers();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
+void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
 {
     if (!m_Camera) {
         m_Camera = std::make_unique<XM_Camera::Camera>();
@@ -127,18 +127,18 @@ void D3dGraphicsCore::CD3dGraphicsCore::InitializeGraphicsSettings()
     m_MainScissor.bottom = g_DisplayHeight;
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::FinalizeGraphicsSettings()
+void D3dGraphicsCore::D3d12RHI::FinalizeGraphicsSettings()
 {
     m_CameraController.reset(nullptr);
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateStatus()
+void D3dGraphicsCore::D3d12RHI::UpdateStatus()
 {
     UpdateCamera();
     UpdateRenderingQueue();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
+void D3dGraphicsCore::D3d12RHI::UpdateCamera()
 {
     float DeltaTime = GetFrameTime();
     XM_Input::Update(DeltaTime);
@@ -154,7 +154,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCamera()
 #endif // _DEBUG
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
+void D3dGraphicsCore::D3d12RHI::UpdateCameraParams(int64_t key)
 {
     switch (key)
     {
@@ -184,7 +184,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateCameraParams(int64_t key)
     }
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
+void D3dGraphicsCore::D3d12RHI::UpdateRenderingQueue()
 {
     RenderAllObjects();
     RenderCubeMap();
@@ -218,7 +218,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdateRenderingQueue()
     gfxContext.Finish();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::UpdatePresent()
+void D3dGraphicsCore::D3d12RHI::UpdatePresent()
 {
     D3dGraphicsCore::Present();
 
@@ -226,7 +226,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::UpdatePresent()
     InitializeBuffers();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
+void D3dGraphicsCore::D3d12RHI::RenderAllObjects()
 {
     GraphicsContext& gfxContext = GraphicsContext::Begin(L"Scene Render");
 
@@ -337,7 +337,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderAllObjects()
     //gfxContext.Finish();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
+void D3dGraphicsCore::D3d12RHI::RenderCubeMap()
 {
     //m_IBLResource->SpecularIBLRange = 0.0f;
     //auto& specularTex = m_IBLResource->IBLImages[m_IBLResource->CurrentCubemapIndex]->pSpecular;
@@ -381,7 +381,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::RenderCubeMap()
     //gfxContext.Finish();
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)
+void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)
 {
     D3D_PRIMITIVE_TOPOLOGY d3dType;
     switch (Type) {
@@ -403,7 +403,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::SetPrimitiveType(GraphicsContext& contex
     context.SetPrimitiveTopology(d3dType);
 }
 
-void D3dGraphicsCore::CD3dGraphicsCore::DrawBatch(const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
+void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
     ID3D12DescriptorHeap* MaterialHeapPtr, ID3D12DescriptorHeap* IBLHeapPtr)
 {
     SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
@@ -455,7 +455,7 @@ void D3dGraphicsCore::CD3dGraphicsCore::DrawBatch(const My::D3dDrawBatchContext*
         MatCbv.NormalTextureTransform[3] = pdbc->NormalTextureTransform[3];
         MatCbv.NormalRotation = pdbc->NormalRotation;
 
-        m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstant, sizeof(MaterialConstants), &MatCbv);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstants, sizeof(MaterialConstants), &MatCbv);
     }
 
     {

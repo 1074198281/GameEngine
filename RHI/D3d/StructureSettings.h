@@ -39,13 +39,13 @@ namespace My {
 	* 
 	*/
 	enum RootBindings { 
-        kMeshConstant,
-        kMaterialConstant,
+        kMeshConstants,
+        kMaterialConstants,
         kMaterialSRVs,
         kMaterialSamplers,
-        kCommonSRVs,
-        kCommonCBV,
-		//kSkinMatrices,
+        kCommonBatchConstantsCBV,
+		kCommonFrameConstantsCBV,
+		kCommonSRVs,
 
         kNumRootBindings
 	};
