@@ -11,13 +11,14 @@ namespace D3dGraphicsCore {
 	std::unordered_map<unsigned int, std::unique_ptr<DescriptorHeap>> g_DescriptorHeaps;
 	unsigned int g_CurrentHeapIndex = 0;
 	unsigned int g_FreeDescriptorsInCurrentHeap = g_DescriptorCountPerHeap;
+	D3D12_DESCRIPTOR_HEAP_TYPE g_DescriptorsType = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	UINT64 g_DescriptorSize = 0;
 
-	GpuTexture g_DefaultBaseColorTexture;
-	GpuTexture g_DefaultRoughnessMetallicTexture;
-	GpuTexture g_DefaultOcclusionTexture;
-	GpuTexture g_DefaultEmissiveTexture;
-	GpuTexture g_DefaultNormalTexture;
+	std::shared_ptr<GpuTexture> g_DefaultBaseColorTexture;
+	std::shared_ptr<GpuTexture> g_DefaultRoughnessMetallicTexture;
+	std::shared_ptr<GpuTexture> g_DefaultOcclusionTexture;
+	std::shared_ptr<GpuTexture> g_DefaultEmissiveTexture;
+	std::shared_ptr<GpuTexture> g_DefaultNormalTexture;
 
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
@@ -135,20 +136,26 @@ void D3dGraphicsCore::InitializeDefaultTexture()
 	NormalTextureData[2] = 255;
 	NormalTextureData[3] = 255;
 
-	g_DefaultBaseColorTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
-	g_DefaultRoughnessMetallicTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
-	g_DefaultOcclusionTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
-	g_DefaultEmissiveTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, BlackTextureData);
-	g_DefaultNormalTexture.Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, NormalTextureData);
+	g_DefaultBaseColorTexture = std::make_shared<GpuTexture>();
+	g_DefaultRoughnessMetallicTexture = std::make_shared<GpuTexture>();
+	g_DefaultOcclusionTexture = std::make_shared<GpuTexture>();
+	g_DefaultEmissiveTexture = std::make_shared<GpuTexture>();
+	g_DefaultNormalTexture = std::make_shared<GpuTexture>();
+
+	g_DefaultBaseColorTexture->Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultRoughnessMetallicTexture->Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultOcclusionTexture->Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, WhiteTextureData);
+	g_DefaultEmissiveTexture->Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, BlackTextureData);
+	g_DefaultNormalTexture->Create2D(4, 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM, NormalTextureData);
 }
 
 void D3dGraphicsCore::FinalizeDefaultTexture()
 {
-	g_DefaultBaseColorTexture.Destroy();
-	g_DefaultRoughnessMetallicTexture.Destroy();
-	g_DefaultOcclusionTexture.Destroy();
-	g_DefaultEmissiveTexture.Destroy();
-	g_DefaultNormalTexture.Destroy();
+	g_DefaultBaseColorTexture->Destroy();
+	g_DefaultRoughnessMetallicTexture->Destroy();
+	g_DefaultOcclusionTexture->Destroy();
+	g_DefaultEmissiveTexture->Destroy();
+	g_DefaultNormalTexture->Destroy();
 }
 
 void D3dGraphicsCore::InitializePipelineTemplates()
@@ -161,11 +168,12 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature.Reset(My::RootBindings::kNumRootBindings, 2); 	//暂时不使用采样器
 	g_TemplateRootSignature[My::kMeshConstants].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature[My::kMaterialConstants].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[My::kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kMaterialSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 20, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[My::kMaterialSamplers].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 0, 10, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[My::kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 15, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_TemplateRootSignature[My::kCommonBatchConstantsCBV].InitAsConstantBuffer(1);
-	g_TemplateRootSignature[My::kCommonFrameConstantsCBV].InitAsConstantBuffer(2);
+	g_TemplateRootSignature[My::kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 20, 15, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kCommonBatchConstantsCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
+	g_TemplateRootSignature[My::kCommonFrameConstantsCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
+	g_TemplateRootSignature[My::kCommonLightConstantsCBV].InitAsConstantBuffer(3, D3D12_SHADER_VISIBILITY_PIXEL);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);
@@ -182,8 +190,11 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_DefaultPSO.SetRasterizerState(RasterizerDefault);
 	g_DefaultPSO.SetBlendState(BlendDisable);
 	g_DefaultPSO.SetDepthStencilState(DepthStateReadWriteLess);
-	//g_DefaultPSO.SetInputLayout(4, g_PosNorTanTex);
-	//g_DefaultPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	g_DefaultPSO.SetRenderTargetFormat(g_SceneColorBufferFormat, g_SceneDepthBufferFormat);
+	g_DefaultPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	g_DefaultPSO.SetInputLayout(3, g_PosNorTex);
+	SetShaderByteCode(g_DefaultPSO, "Model");
+	g_DefaultPSO.Finalize();
 
 	//SkyBox
 	auto RasterizerSkyBox = RasterizerDefault;

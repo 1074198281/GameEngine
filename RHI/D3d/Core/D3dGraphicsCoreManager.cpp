@@ -44,10 +44,12 @@ namespace D3dGraphicsCore
     int64_t s_FrameStartTick = 0;
     ColorBuffer g_SceneColorBuffer;	// R11G11B10_FLOAT
     DXGI_FORMAT g_SceneColorBufferFormat = DXGI_FORMAT_R11G11B10_FLOAT;
+
     DXGI_FORMAT g_SwapChainFormat = DXGI_FORMAT_R10G10B10A2_UNORM;
     ColorBuffer g_PreDisplayBuffer;
     ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
     DepthBuffer g_DepthBuffer(1.0f);
+    DXGI_FORMAT g_SceneDepthBufferFormat(DSV_FORMAT);
     UINT g_CurrentBuffer = 0;
     IDXGISwapChain1* s_SwapChain1 = nullptr;
 }

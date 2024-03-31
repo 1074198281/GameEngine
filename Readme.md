@@ -8,11 +8,27 @@ GameEngine代码主要参考了https://zhuanlan.zhihu.com/p/510064704专栏内�
 
 该项目主体由**dx12**支持，且暂时**没有**考虑跨平台和vulkan支持，所以主要在windows上使用，IDE使用VS2022。
 
+
+
+## 效果图
+
+使用IBL的渲染效果。
+
+![IBL](doc\Image\IBL.png)
+
+镜面反射细节部分。
+
+![IBLSpecular](doc\Image\IBLSpecular.png)
+
+
+
 ## 0 项目构建
 
 项目中目前使用的三方库包括bullet3,ImGUI,OGEX。所有的三方库文件都存储在External/Windows/include下。
 
 编译得到的.lib文件存储在External/Windows/lib下。
+
+相关dll文件在External/Windows/bin下。
 
 ### 0.1 bullet3
 
@@ -52,6 +68,8 @@ OGEX的lib文件直接存放在lib文件夹下，可以直接使用。由于对�
 `./GameEngine.sln`
 
 即可打开项目工程。
+
+由于cmake中尚未写编译后事件，编译后事件后续有空将补上，所以第一次编译后运行可能会提示缺少dll文件，需要将External/Windows/bin下的zlib.dll拷贝至运行目录下。
 
 ## 1 文件结构
 
@@ -111,6 +129,10 @@ Parser主要是存放了一些解释器相关的文件。
 #### 1.5.7 SceneGraph
 
 SceneGraph主要保存了场景相关的一些文件。
+
+#### 1.5.8 Pass
+
+Pass部分主要存储了抽象出来的RenderPass层。目前主要包括Geometry，GUI，Skybox，Present这几个主要流。
 
 ### 1.6 Platform
 

@@ -1,5 +1,15 @@
 #include "GeometrySubPass.hpp"
 
+void My::GeometrySubPass::BeginSubPass()
+{
+	m_pGraphicsManager->BeginSubPass("RenderGeometry");
+}
+
+void My::GeometrySubPass::EndSubPass()
+{
+	m_pGraphicsManager->EndSubPass();
+}
+
 void My::GeometrySubPass::Draw(Frame& frame)
 {
 	//m_pGraphicsManager->SetShadowMaps();

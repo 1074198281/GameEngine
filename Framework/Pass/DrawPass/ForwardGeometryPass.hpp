@@ -3,6 +3,7 @@
 #include "BaseDrawPass.hpp"
 #include "GeometrySubPass.hpp"
 #include "SkyboxSubPass.hpp"
+#include "PresentSubPass.hpp"
 
 namespace My {
 	class ForwardGeometryPass : __implements BaseDrawPass {
@@ -11,6 +12,7 @@ namespace My {
 		{
 			m_DrawSubPasses.push_back(std::make_shared<GeometrySubPass>(gmr));
 			m_DrawSubPasses.push_back(std::make_shared<SkyboxSubPass>(gmr));
+			m_DrawSubPasses.push_back(std::make_shared<PresentSubPass>(gmr));
 		}
 	};
 }

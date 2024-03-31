@@ -496,7 +496,7 @@ namespace glTF
 
                     ByteArray ba = My::ReadFileSyncDirectly(filepath.c_str());
                     assert(ba->size() > 0);
-                    printf("Missing bin file %s", filepath.c_str());
+                    printf("Missing bin file %s\n", filepath.c_str());
                     m_buffers.push_back(ba);
                 }
                 else
@@ -1446,13 +1446,6 @@ namespace glTF
                         break;
                     }
 
-                    if (!meshIt->material->textures[type]) {
-                        continue;
-                    }
-                    std::string textureType = GetTextureType(Material::eTextureType(type));
-                    
-                    std::string texPath = m_AssetPath + meshIt->material->textures[type]->source->path;
-                    GeoMaterial->SetTexture(textureType, texPath);
                     My::TextureTransform trans;
                     memset(&trans, 0, sizeof(My::TextureTransform));
                     trans.offset[0] = meshIt->material->TextureTransform[0 + type * 5];
@@ -1461,6 +1454,15 @@ namespace glTF
                     trans.scale[1] = meshIt->material->TextureTransform[3 + type * 5];
                     trans.rotation = meshIt->material->TextureTransform[4 + type * 5];
                     GeoMaterial->SetTextureTransform(pbrname, trans);
+
+                    if (!meshIt->material->textures[type]) {
+                        continue;
+                    }
+                    std::string textureType = GetTextureType(Material::eTextureType(type));
+                    
+                    std::string texPath = m_AssetPath + meshIt->material->textures[type]->source->path;
+                    GeoMaterial->SetTexture(textureType, texPath);
+
                     if (meshIt->material->textures[type]->sampler) {
                         GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
                             meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);

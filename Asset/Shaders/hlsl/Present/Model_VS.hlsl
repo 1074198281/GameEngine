@@ -1,18 +1,19 @@
 #define MAX_LIGHT_NUM 16
 
-cbuffer cbCommon : register(b1)
+cbuffer PerBatchConstants : register(b1)
 {
-    float4 gLightPosition[MAX_LIGHT_NUM];
-    float4 gLightColor[MAX_LIGHT_NUM];
     float4x4 gModelMatrix;
+};
+
+// cb2
+cbuffer PerFrameConstants : register(b2)
+{
     float4x4 gViewMatrix;
     float4x4 gProjMatrix;
-    float4 gViewerPos;
-    float3 SunDirection;
-    float3 SunInsensity;
+    float4 gCameraPosition;
     int gLightNum;
-    float IBLRange;
-    float IBLBias;
+    int clip_space_type; //0: opengl ,1: others ≤√ºÙø’º‰¿‡–Õ
+    float2 padding2;
 };
 
 struct VertexIn

@@ -27,11 +27,18 @@ struct SurfaceProperties
     float AmbientOcclusion;
 };
 
+struct PerLightPro
+{
+    float4 LightPosition;
+    float4 LightColor;
+    float4 LightDirection;
+    float Insensity;
+};
+
 // in light properties, position is in the world coordinate
 struct LightProperties
 {
-    float4 LightPosition[MAX_LIGHT_NUM];
-    float4 LightColor[MAX_LIGHT_NUM];
+    PerLightPro light[MAX_LIGHT_NUM];
     int LightNum;
 };
 
@@ -119,7 +126,7 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
     for (int lightIdx = 0; lightIdx < light.LightNum; lightIdx++)
     {
         // direct lighting
-        float4 Light_Position = HomogeneousCoordinates(light.LightPosition[lightIdx]);
+        float4 Light_Position = HomogeneousCoordinates(light.light[lightIdx].LightPosition);
         float4 World_Position = HomogeneousCoordinates(surface.PositionWorld);
         float3 Light_Vec = normalize(Light_Position.xyz - World_Position.xyz);
         float3 Half_Vec = normalize(Light_Vec + surface.View_Vec);
@@ -127,7 +134,7 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
 
         float distance = length(World_Position - Light_Position);
         float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.LightColor[lightIdx].rgb * attenuation;
+        float3 radiance = light.light[lightIdx].LightColor.rgb * attenuation;
 
         // indirect lighting, based on Cook-Torrence
         
@@ -154,66 +161,5 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
     }
     return irradiance;
 }
-
-#if 0
-
-float3 DirectLighting(InputLayout input, MaterialProperties mat, float4 LightPosition[MAX_LIGHT_NUM], int LightNum)
-{
-    float3 N_vec = normalize(input.Normal);
-    float3 View_vec = normalize(input.CameraPos - input.WorldPos);
-    
-    float3 LightColor = float3(1.0, 1.0, 1.0);
-    float3 LightOut = float3(0.0, 0.0, 0.0);
-    for (int light = 0; light < LightNum; light++)
-    {
-        //�������˥������ƽ��˥��
-        float3 CurrentLightPosition = LightPosition[light].xyz;
-        float3 L_vec = normalize(CurrentLightPosition - input.WorldPos);
-        float3 Half_vec = normalize(L_vec + View_vec);
-
-        float distance = length(CurrentLightPosition - input.WorldPos);
-        float attenuation = 1.0f / (distance * distance);
-        float3 radiance = LightColor * 1;
-
-        //����DFG�е�F
-        float3 F = lerp(F0, mat.Albedo, mat.metallic);
-        F = FresnalSchlick(max(dot(Half_vec, View_vec), 0.0f), F);
-        
-        float NDF = DistributionGGX(N_vec, Half_vec, mat.roughness);
-        float G = GeometrySmith(N_vec, View_vec, L_vec, mat.roughness);
-        
-        float3 numerator = NDF * G * F;
-        float denominator = 4.0 * max(dot(N_vec, View_vec), 0.0) * max(dot(N_vec, L_vec), 0.0);
-        float3 specular = numerator / max(denominator, 0.001);
-        
-        float3 kS = F;
-        float3 kD = float3(1.0, 1.0, 1.0) - kS;
-        kD *= 1.0 - mat.metallic;
-
-        float NdotL = max(dot(N_vec, L_vec), 0.0);
-        LightOut += (kD * mat.Albedo / PI + specular) * radiance * NdotL;
-    }
-    
-    return LightOut;
-}
-
-
-float4 PBROutput(InputLayout input, MaterialProperties mat, float4 LightPosition[MAX_LIGHT_NUM], int LightNum)
-{
-    float4 pixelColor = float4(1.0, 1.0, 1.0, 1.0);
-    
-    float3 N = normalize(input.Normal);
-    float3 V = normalize(input.CameraPos - input.WorldPos);
-    
-    float3 directLighting = DirectLighting(input, mat, LightPosition, LightNum);
-    
-    float3 ambient = float3(0.03, 0.03, 0.03) * mat.Albedo * mat.AO;
-    pixelColor.rgb = ambient + directLighting;
-
-    pixelColor.rgb = LinearTosRGB(pixelColor.rgb);
-
-    return pixelColor;
-}
-#endif
 
 #endif

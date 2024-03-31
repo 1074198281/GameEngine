@@ -7,9 +7,9 @@ Texture2D<float4> OcclusionTexture : register(t2);
 Texture2D<float4> EmissiveTexture : register(t3);
 Texture2D<float4> NormalTexture : register(t4);
 
-TextureCube<float3> RadianceIBLTexture : register(t10);
-TextureCube<float3> IrradianceIBLTexture : register(t11);
-Texture2D<float4> BRDF_LUT : register(t12);
+TextureCube<float3> RadianceIBLTexture : register(t20);
+TextureCube<float3> IrradianceIBLTexture : register(t21);
+Texture2D<float4> BRDF_LUT : register(t32);
 
 SamplerState DefaultSampler : register(s10);
 
@@ -33,20 +33,34 @@ cbuffer cbMaterialConstants : register(b0)
     float3 padding1;
 };
 
-cbuffer cbCommon : register(b1)
+cbuffer cbPerBatchConstants : register(b1)
 {
-    float4 gLightPosition[MAX_LIGHT_NUM];
-    float4 gLightColor[MAX_LIGHT_NUM];
     float4x4 gModelMatrix;
+};
+
+// cb2
+cbuffer cbPerFrameConstants : register(b2)
+{
     float4x4 gViewMatrix;
     float4x4 gProjMatrix;
-    float4 gViewerPos;
-    float3 SunDirection;
-    float3 SunInsensity;
+    float4 gCameraPosition;
     int gLightNum;
-    float IBLRange;
-    float IBLBias;
+    int clip_space_type; //0: opengl ,1: others ≤√ºÙø’º‰¿‡–Õ
+    float2 padding2;
 };
+
+// cb3
+struct cLight
+{
+    float4 gLightPosition;
+    float4 gLightColor;
+    float4 gLightDirection;
+    float gInsensity;
+};
+cbuffer LightInfo : register(b3)
+{
+    cLight glightinfo[MAX_LIGHT_NUM];
+}
 
 struct VertexOut
 {
@@ -85,8 +99,6 @@ float4 main(VertexOut pin) : SV_Target
     float4 LightColor = float4(1.0, 1.0, 1.0, 1.0);
 
     float4 WorldPos = pin.ProjectedPosition.xyzw / pin.ProjectedPosition.w;
-    float3 defaultLightPos = gLightPosition[0].xyz;
-    float3 LightDir = normalize((defaultLightPos - WorldPos.xyz));
     
     float3 NormalDir = normalize(mul(float4(pin.WorldNormal, 0.0f), transpose(gModelMatrix)).xyz);
 
@@ -111,7 +123,7 @@ float4 main(VertexOut pin) : SV_Target
     SurfaceProperties surface;
     surface.PositionWorld = HomogeneousCoordinates(pin.WorldPosition);
     surface.Normal_Vec = normal;
-    surface.View_Vec = normalize((surface.PositionWorld - gViewerPos).xyz);
+    surface.View_Vec = normalize((surface.PositionWorld - gCameraPosition).xyz);
     surface.N_dot_V = dot(surface.Normal_Vec, surface.View_Vec);
     surface.roughness = roughness;
     surface.roughness_sq = roughness * roughness;
@@ -126,9 +138,11 @@ float4 main(VertexOut pin) : SV_Target
 
     // add direct and reflect light
     LightProperties light;
-    light.LightPosition = gLightPosition;
-    light.LightColor = gLightColor;
-    light.LightNum = gLightNum;
+    for (int i = 0; i < gLightNum; i++)
+    {
+        light.light[i] = glightinfo[i];
+        light.LightNum = gLightNum;
+    }
     colorResult += CalculateDirectionalLighting(surface, light);
 
     // add IBL part

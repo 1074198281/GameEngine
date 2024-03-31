@@ -34,5 +34,9 @@ namespace My {
         virtual void DrawBatch(Frame& frame) = 0;
         virtual void DrawSkybox(Frame& frame) = 0;
         virtual void DrawGui(Frame& frame) = 0;
+        virtual void DrawPresent(Frame& frame) = 0;
+
+        virtual void BeginSubPass(std::string PassName) = 0;
+        virtual void EndSubPass() = 0;
 	};
 }

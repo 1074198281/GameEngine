@@ -23,7 +23,7 @@ namespace D3dGraphicsCore {
 	extern unsigned int g_CurrentHeapIndex;
 	extern unsigned int g_FreeDescriptorsInCurrentHeap;
 	const unsigned int g_DescriptorCountPerHeap = 1024;
-	const D3D12_DESCRIPTOR_HEAP_TYPE g_DescriptorsType = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	extern D3D12_DESCRIPTOR_HEAP_TYPE g_DescriptorsType;
 	extern UINT64 g_DescriptorSize;
 	void InitializeBaseDescriptorHeap();
 	void FinalizeBaseDescriptorHeap();
@@ -34,11 +34,11 @@ namespace D3dGraphicsCore {
 
 	//-------------------------------------baseTextures-------------------------------------//
 
-	extern GpuTexture g_DefaultBaseColorTexture;
-	extern GpuTexture g_DefaultRoughnessMetallicTexture;
-	extern GpuTexture g_DefaultOcclusionTexture;
-	extern GpuTexture g_DefaultEmissiveTexture;
-	extern GpuTexture g_DefaultNormalTexture;
+	extern std::shared_ptr<GpuTexture> g_DefaultBaseColorTexture;
+	extern std::shared_ptr<GpuTexture> g_DefaultRoughnessMetallicTexture;
+	extern std::shared_ptr<GpuTexture> g_DefaultOcclusionTexture;
+	extern std::shared_ptr<GpuTexture> g_DefaultEmissiveTexture;
+	extern std::shared_ptr<GpuTexture> g_DefaultNormalTexture;
 	void InitializeDefaultTexture();
 	void FinalizeDefaultTexture();
 

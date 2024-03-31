@@ -45,6 +45,7 @@ namespace My {
         kMaterialSamplers,
         kCommonBatchConstantsCBV,
 		kCommonFrameConstantsCBV,
+		kCommonLightConstantsCBV,
 		kCommonSRVs,
 
         kNumRootBindings

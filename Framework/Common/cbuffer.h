@@ -12,23 +12,8 @@ namespace My {
         Vector2f m_TextureUV;
     };
 
-	// cb2
-	typedef struct PerFrameConstants {
-		Matrix4X4f ViewMatrix;
-		Matrix4X4f ProjectionMatrix;
-		Vector4f CameraPosition;
-		int LightNum;
-		int clip_space_type;			//0: opengl ,1: others 裁剪空间类型
-		float padding0[2];
-	} PerFrameConstants;
-
-	// cb1
-	typedef struct PerBatchConstants {
-		Matrix4X4f ModelMatrix;
-	} PerBatchConstants;
-
 	// Model_PS -- cb0
-	// TextureTransform[4] ==> offset0, offset1, scale0, scale1
+// TextureTransform[4] ==> offset0, offset1, scale0, scale1,   total:40 * float
 	__declspec(align(16)) typedef struct MaterialConstants {
 		//constants
 		float BaseColorFactor[4];
@@ -50,6 +35,22 @@ namespace My {
 		float padding1[3];
 	} MaterialConstants;
 
+	// cb1
+	typedef struct PerBatchConstants {
+		Matrix4X4f ModelMatrix;
+	} PerBatchConstants;
+
+	// cb2
+	typedef struct PerFrameConstants {
+		Matrix4X4f ViewMatrix;
+		Matrix4X4f ProjectionMatrix;
+		Vector4f CameraPosition;
+		int LightNum;
+		int clip_space_type;			//0: opengl ,1: others 裁剪空间类型
+		float padding0[2];
+	} PerFrameConstants;
+
+	// cb3
 	typedef struct Light {
 		Vector4f LightPosition;
 		Vector4f LightColor;
@@ -57,7 +58,6 @@ namespace My {
 		float Insensity;
 	} Light;
 
-	// cb3
 	typedef struct LightInfo {
 		Light Lights[MAX_LIGHT_NUM];
 	} LightInfo;

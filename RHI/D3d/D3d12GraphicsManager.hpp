@@ -34,6 +34,7 @@ namespace My {
         void FunctionKeyDown(int64_t key) final;
         void FunctionKeyUp(int64_t key) final;
 
+    public:
         void StartGUIFrame() override;
         void EndGUIFrame() override;
         void BeginFrame(Frame& frame) override;
@@ -43,6 +44,10 @@ namespace My {
         void DrawBatch(Frame& frame) override;
         void DrawSkybox(Frame& frame) override;
         void DrawGui(Frame& frame) override;
+        void DrawPresent(Frame& frame) override;
+
+        void BeginSubPass(std::string PassName) override;
+        void EndSubPass() override;
 
     private:
         void initializeGeometries(const Scene& scene) override;
@@ -55,9 +60,9 @@ namespace My {
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
-        std::vector<D3dGraphicsCore::GpuTexture> m_VecTexture;
-        std::unordered_map<uint32_t, GpuHandleStatus> m_BatchHandleStatus;
-
+        std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
         std::unique_ptr<IBLImageResource> m_IBLResource;
+        D3dGraphicsCore::DescriptorHandle m_ColorBufferHandle;
+        int m_iColorBufferHeapIndex = -1;
     };
 }

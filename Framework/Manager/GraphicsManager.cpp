@@ -81,7 +81,7 @@ void GraphicsManager::BeginScene(const Scene& scene)
     }
     initializeSkybox(scene);
 
-    
+
 }
 
 void GraphicsManager::EndScene()

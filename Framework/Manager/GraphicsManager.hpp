@@ -36,6 +36,10 @@ namespace My {
         void DrawBatch(Frame& frame) override {}
         void DrawSkybox(Frame& frame) override {}
         void DrawGui(Frame& frame) override {}
+        void DrawPresent(Frame& frame) override {}
+
+        void BeginSubPass(std::string PassName) override {}
+        void EndSubPass() override {}
 
     protected:
         virtual void BeginScene(const Scene& scene);
@@ -54,6 +58,7 @@ namespace My {
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
 
+        bool m_bInitialized{ false };
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
     };

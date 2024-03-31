@@ -3,7 +3,7 @@
 #include "BaseSubPass.hpp"
 
 namespace My {
-	class GuiSubPass : __implements BaseSubPass {
+	class PresentSubPass : __implements BaseSubPass {
 	public:
 		using BaseSubPass::BaseSubPass;
 		void BeginSubPass() override;
