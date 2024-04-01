@@ -52,11 +52,13 @@ namespace My {
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
-        void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
-        bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
+        void initializeFixedHandle() override;
 
         int InitializeD3dImGUI();
 
+        void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
+        bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
+        
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;

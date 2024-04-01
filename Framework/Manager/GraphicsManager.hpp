@@ -47,6 +47,7 @@ namespace My {
         virtual void initializeGeometries(const Scene& scene) {}
         virtual void initializeSkybox(const Scene& scene) {}
         virtual void initializeLight(const Scene& scene) {}
+        virtual void initializeFixedHandle() {}
 
 
         virtual void BeginFrame(Frame& frame) {}

@@ -445,6 +445,29 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
 
     ImageName.emplace(imageName, m_IBLResource->IBLImages.size());
 }
+void My::D3d12GraphicsManager::initializeFixedHandle()
+{
+    m_ColorBufferHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, m_iColorBufferHeapIndex);
+}
+
+int My::D3d12GraphicsManager::InitializeD3dImGUI()
+{
+    D3dGraphicsCore::DescriptorHandle ImGUIHandle;
+    int HeapIdx = -1;
+    ImGUIHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    if (HeapIdx == -1) {
+        ASSERT(false, "Allocate Descriptor From Heap For ImGUI Failed! ERROR!");
+        return -1;
+    }
+
+    ImGui_ImplDX12_Init(D3dGraphicsCore::g_Device, SWAP_CHAIN_BUFFER_COUNT, D3dGraphicsCore::g_SwapChainFormat,
+        D3dGraphicsCore::g_DescriptorHeaps[HeapIdx]->GetHeapPointer(),
+        // You'll need to designate a descriptor from your descriptor heap for Dear ImGui to use internally for its font texture's SRV
+        ImGUIHandle,
+        ImGUIHandle);
+
+    return 0;
+}
 
 void My::D3d12GraphicsManager::UpArrowKeyDown()
 {
@@ -541,25 +564,6 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     return true;
 }
 
-int My::D3d12GraphicsManager::InitializeD3dImGUI()
-{
-    D3dGraphicsCore::DescriptorHandle ImGUIHandle;
-    int HeapIdx = -1;
-    ImGUIHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
-    if (HeapIdx == -1) {
-        ASSERT(false, "Allocate Descriptor From Heap For ImGUI Failed! ERROR!");
-        return -1;
-    }
-    
-    ImGui_ImplDX12_Init(D3dGraphicsCore::g_Device, SWAP_CHAIN_BUFFER_COUNT, D3dGraphicsCore::g_SwapChainFormat,
-        D3dGraphicsCore::g_DescriptorHeaps[HeapIdx]->GetHeapPointer(),
-        // You'll need to designate a descriptor from your descriptor heap for Dear ImGui to use internally for its font texture's SRV
-        ImGUIHandle,
-        ImGUIHandle);
-
-    return 0;
-}
-
 void My::D3d12GraphicsManager::StartGUIFrame()
 {
     ImGui_ImplDX12_NewFrame();
@@ -601,13 +605,12 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
             GraphicsRHI.AddBatchHandle(d3dbatch->BatchIndex, status);
         }
 
-        std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
-        HandleVec.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
-        m_ColorBufferHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, m_iColorBufferHeapIndex);
-        CopyDescriptors(m_ColorBufferHandle, HandleVec, 1);
-
         m_bInitialized = true;
     }
+
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
+    HandleVec.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
+    CopyDescriptors(m_ColorBufferHandle, HandleVec, 1);
 }
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
