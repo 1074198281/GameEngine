@@ -35,8 +35,6 @@ namespace My {
         void FunctionKeyUp(int64_t key) final;
 
     public:
-        void StartGUIFrame() override;
-        void EndGUIFrame() override;
         void BeginFrame(Frame& frame) override;
         void EndFrame(Frame& frame) override;
     public:

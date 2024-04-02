@@ -195,6 +195,41 @@ namespace My {
         return result;
     }
 
+    template <template<typename> class TT, typename T>
+    void VectorMultiply(TT<T>& result, const TT<T>& vec1, const T& val)
+    {
+        for (int count = 0; count < countof(result.data); count++) {
+            result.data[count] = vec1.data[count] * val;
+        }
+    }
+
+    template <template<typename> class TT, typename T>
+    TT<T> operator*(const TT<T>& vec1, const T& val)
+    {
+        TT<T> result;
+        VectorMultiply(result, vec1, val);
+
+        return result;
+    }
+
+    template <template<typename> class TT, typename T>
+    void VectorDevide(TT<T>& result, const TT<T>& vec1, T val)
+    {
+        assert(val != 0);
+        for (int count = 0; count < countof(result.data); count++) {
+            result.data[count] = vec1.data[count] / val;
+        }
+    }
+
+    template <template<typename> class TT, typename T>
+    TT<T> operator/(const TT<T>& vec1, const T val)
+    {
+        TT<T> result;
+        VectorDevide(result, vec1, val);
+
+        return result;
+    }
+
     inline void CrossProduct(Vector3f& result, const Vector3f& vec1, const Vector3f& vec2)
     {
         result.data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
@@ -202,30 +237,54 @@ namespace My {
         result.data[2] = vec1.data[0] * vec2.data[1] - vec1.data[1] * vec2.data[0];
     }
 
-    inline void CrossProduct(Vector4f& result, const Vector4f& vec1, const Vector4f& vec2)
+    inline Vector3f CrossProduct(const Vector3f& vec1, const Vector3f& vec2)
     {
-        assert(vec1.data[3] == 1.0f && vec2.data[3] == 1.0f);
+        Vector3f result;
         result.data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
         result.data[1] = vec1.data[2] * vec2.data[0] - vec1.data[0] * vec2.data[2];
         result.data[2] = vec1.data[0] * vec2.data[1] - vec1.data[1] * vec2.data[0];
-        result.data[3] = 1.0f;
-    }    
-
-    inline void DotProduct(Vector3f& result, const Vector3f& vec1, const Vector3f& vec2)
-    {
-        result.data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
-        result.data[1] = vec1.data[2] * vec2.data[0] - vec1.data[0] * vec2.data[2];
-        result.data[2] = vec1.data[0] * vec2.data[1] - vec1.data[1] * vec2.data[0];
+        return result;
     }
 
-    inline void DotProduct(Vector4f& result, const Vector4f& vec1, const Vector4f& vec2)
+    inline void CrossProduct(Vector4f& result, const Vector4f& vec1, const Vector4f& vec2)
     {
-        assert(vec1.data[3] == 1.0f && vec2.data[3] == 1.0f);
+        assert(vec1.data[3] == vec2.data[3]);
         result.data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
         result.data[1] = vec1.data[2] * vec2.data[0] - vec1.data[0] * vec2.data[2];
         result.data[2] = vec1.data[0] * vec2.data[1] - vec1.data[1] * vec2.data[0];
-        result.data[3] = 1.0f;
-    }    
+        result.data[3] = vec1.data[3];
+    }
+
+    inline Vector4f CrossProduct(const Vector4f& vec1, const Vector4f& vec2)
+    {
+        Vector4f result;
+        assert(vec1.data[3] == vec2.data[3]);
+        result.data[0] = vec1.data[1] * vec2.data[2] - vec1.data[2] * vec2.data[1];
+        result.data[1] = vec1.data[2] * vec2.data[0] - vec1.data[0] * vec2.data[2];
+        result.data[2] = vec1.data[0] * vec2.data[1] - vec1.data[1] * vec2.data[0];
+        result.data[3] = vec1.data[3];
+        return result;
+    }
+
+    inline void DotProduct(float& result, const Vector3f& vec1, const Vector3f& vec2)
+    {
+        result = vec1.data[0] * vec2.data[0] + vec1.data[1] * vec2.data[1] + vec1.data[2] * vec2.data[2];
+    }
+
+    inline float DotProduct(const Vector3f& vec1, const Vector3f& vec2)
+    {
+        return vec1.data[0] * vec2.data[0] + vec1.data[1] * vec2.data[1] + vec1.data[2] * vec2.data[2];
+    }
+
+    inline void DotProduct(float& result, const Vector4f& vec1, const Vector4f& vec2)
+    {
+        result = vec1.data[0] * vec2.data[0] + vec1.data[1] * vec2.data[1] + vec1.data[2] * vec2.data[2] + vec1.data[3] * vec2.data[3];
+    }
+
+    inline float DotProduct(const Vector4f& vec1, const Vector4f& vec2)
+    {
+        return vec1.data[0] * vec2.data[0] + vec1.data[1] * vec2.data[1] + vec1.data[2] * vec2.data[2] + vec1.data[3] * vec2.data[3];
+    }
 
     template <template <typename> class TT, typename T>
     inline void CrossProduct(TT<T>& result, const TT<T>& vec1, const TT<T>& vec2)
@@ -348,7 +407,6 @@ namespace My {
         //         ispc::DotProduct(matrix1[i], matrix2_transpose[j], &result[i][j], Db);
         //     }
         // }
-        //a,b,c->m,n, p
         Matrix<T, Dc, Db> matrix2_transpose;
         Transpose(matrix2_transpose, matrix2);
 

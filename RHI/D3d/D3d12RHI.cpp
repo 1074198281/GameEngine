@@ -17,6 +17,7 @@
 #include "WinUtility.h"
 
 #include "imgui_impl_dx12.h"
+#include "imgui.h"
 #include <array>
 #include <filesystem>
 #include <algorithm>
@@ -382,9 +383,20 @@ void D3dGraphicsCore::D3d12RHI::DrawSkybox(My::Frame frame, ID3D12DescriptorHeap
 
 void D3dGraphicsCore::D3d12RHI::DrawGui(My::Frame frame)
 {
-    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[0]->GetHeapPointer());
+    m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
+    m_pGraphicsContext->SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
     ImGui::Render();
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pGraphicsContext->GetCommandList());
+    auto& io = ImGui::GetIO();
+    // Update and Render additional Platform Windows
+    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    //{
+    //    ImGui::UpdatePlatformWindows();
+    //    ImGui::RenderPlatformWindowsDefault();
+    //}
+    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawPresent(My::Frame frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
@@ -393,11 +405,11 @@ void D3dGraphicsCore::D3d12RHI::DrawPresent(My::Frame frame, DescriptorHandle Co
     m_pGraphicsContext->SetPipelineState(g_PresentPSO);
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
     m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
     m_pGraphicsContext->SetDescriptorTable(0, ColorBufferHandle);
     m_pGraphicsContext->SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
     m_pGraphicsContext->Draw(3);
-    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT, true);
+    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
 }

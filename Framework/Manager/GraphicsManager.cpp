@@ -48,9 +48,9 @@ void GraphicsManager::Tick()
 
     assert(m_Frames.size());
     BeginFrame(m_Frames[m_nFrameIndex]);
-    StartGUIFrame();
+    //StartGUIFrame();
     Draw();
-    EndGUIFrame();
+    //EndGUIFrame();
     EndFrame(m_Frames[m_nFrameIndex]);
     Present();
 }

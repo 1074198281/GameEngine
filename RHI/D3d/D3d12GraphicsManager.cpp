@@ -564,22 +564,13 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     return true;
 }
 
-void My::D3d12GraphicsManager::StartGUIFrame()
+void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 {
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     ImGui::ShowDemoWindow(); // Show demo window! :)
-}
 
-void My::D3d12GraphicsManager::EndGUIFrame()
-{
-    ImGui::EndFrame();
-    //ImGui::Render();
-}
-
-void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
-{
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateConstants(frame);
     if (!m_bInitialized) {
@@ -616,7 +607,8 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 {
     m_nFrameIndex = (m_nFrameIndex + 1) % MAX_FRAME_COUNT;
-
+    ImGui::EndFrame();
+    ImGui::Render();
 }
 
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame)

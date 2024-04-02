@@ -52,8 +52,6 @@ namespace My {
 
         virtual void BeginFrame(Frame& frame) {}
         virtual void EndFrame(Frame& frame) {}
-        virtual void StartGUIFrame() {}
-        virtual void EndGUIFrame() {}
 
     protected:
         std::vector<Frame> m_Frames;
