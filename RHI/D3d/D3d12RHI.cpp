@@ -236,11 +236,6 @@ void D3dGraphicsCore::D3d12RHI::UpdateConstants(My::Frame& frame)
     memcpy(&frame.FrameContext.ViewMatrix, &m_Camera->GetViewMatrix(), sizeof(float) * 16);
 }
 
-void D3dGraphicsCore::D3d12RHI::AddBatchHandle(uint32_t batch_index, My::GpuHandleStatus handlestatus)
-{
-    m_BatchHandleStatus.emplace(batch_index, handlestatus);
-}
-
 void D3dGraphicsCore::D3d12RHI::PrepareBatch()
 {
     m_pGraphicsContext->TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
@@ -252,14 +247,14 @@ void D3dGraphicsCore::D3d12RHI::PrepareBatch()
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(My::Frame frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle)
+    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
     m_pGraphicsContext->SetPipelineState(g_DefaultPSO);
 
     SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
 
-    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_BatchHandleStatus[pdbc->BatchIndex].HeapIndex]->GetHeapPointer());
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[batch_map[pdbc->BatchIndex].HeapIndex].GetHeapPointer());
 
     {
         My::MaterialConstants MatCbv;
@@ -311,7 +306,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(My::Frame frame, const My::D3dDrawBatc
     }
 
     {
-        m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, m_BatchHandleStatus[pdbc->BatchIndex].Handle);
+        m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, batch_map[pdbc->BatchIndex].Handle);
     }
     
     {
@@ -333,7 +328,6 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(My::Frame frame, const My::D3dDrawBatc
         m_pGraphicsContext->SetDescriptorTable(My::kCommonSRVs, IBLHandle);
     }
 
-    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[m_BatchHandleStatus[pdbc->BatchIndex].HeapIndex]->GetHeapPointer());
     m_pGraphicsContext->SetIndexBuffer(ibuffer->IndexBufferView());
     m_pGraphicsContext->SetVertexBuffer(0, vbuffer->VertexBufferView());
     m_pGraphicsContext->DrawIndexedInstanced(pdbc->m_index_count_per_instance, 1, 0, 0, 0);

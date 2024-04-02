@@ -22,7 +22,7 @@ namespace My {
 		DrawFrameContext FrameContext;
 		std::vector<std::shared_ptr<DrawBatchContext> > BatchContexts;
 		LightInfo LightInfomation;
-		Vector4f ClearColor;
+		Vector4f ClearColor{0.0, 0.0, 0.0, 0.0};
 		std::vector<Texture> ColorBuffers;
 		Texture DepthTexture;
 		//bool RenderToTexture = false;

@@ -62,7 +62,7 @@ namespace My {
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
         std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
         std::unique_ptr<IBLImageResource> m_IBLResource;
-        D3dGraphicsCore::DescriptorHandle m_ColorBufferHandle;
-        int m_iColorBufferHeapIndex = -1;
+        std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;
+        std::unordered_map<std::string, My::DescriptorHeapHandleInfo> m_FixedHandleStatus;
     };
 }

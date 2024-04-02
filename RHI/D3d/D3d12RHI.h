@@ -60,10 +60,9 @@ namespace D3dGraphicsCore {
 
 	public:
 		void UpdateConstants(My::Frame& frame);
-		void AddBatchHandle(uint32_t batch_index, My::GpuHandleStatus handlestatus);
 		void PrepareBatch();
 		void DrawBatch(My::Frame frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-			ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle);
+			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle);
 		void DrawSkybox(My::Frame frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(My::Frame frame);
 		void DrawPresent(My::Frame frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
@@ -82,7 +81,6 @@ namespace D3dGraphicsCore {
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
 		GraphicsContext* m_pGraphicsContext;
-		std::unordered_map<uint32_t, My::GpuHandleStatus> m_BatchHandleStatus;
 
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;

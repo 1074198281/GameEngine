@@ -67,8 +67,6 @@ namespace My {
 
 	typedef struct IBLImageResource
 	{
-		D3dGraphicsCore::DescriptorHeap IBLDescriptorHeap;
-		D3dGraphicsCore::DescriptorHandle FirstHandle;
 		std::unordered_map<int, std::unique_ptr<IBLImageMap> > IBLImages;
 		std::unique_ptr<D3dGraphicsCore::GpuTexture> BRDF_LUT_Image;
 		float SpecularIBLRange;
@@ -76,8 +74,8 @@ namespace My {
 		int IBLImageCount = 0;
 	} IBLImageResource;
 
-	typedef struct GpuHandleStatus {
+	typedef struct DescriptorHeapHandleInfo {
 		int HeapIndex{-1};
 		D3dGraphicsCore::DescriptorHandle Handle;
-	} GpuHandleStatus;
+	} DescriptorHeapHandleInfo;
 }

@@ -47,12 +47,13 @@ void My::D3d12GraphicsManager::Clear()
         }
         m_IBLResource->BRDF_LUT_Image->Destroy();
         m_IBLResource->BRDF_LUT_Image.reset();
-        m_IBLResource->IBLDescriptorHeap.Destroy();
         m_IBLResource->IBLImages.clear();
     }
     m_VecIndexBuffer.clear();
     m_VecVertexBuffer.clear();
     m_VecTexture.clear();
+    m_BatchHandleStatus.clear();
+    m_FixedHandleStatus.clear();
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
@@ -352,6 +353,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 {
     m_IBLResource = std::make_unique<IBLImageResource>();
+    int HeapIdx = -1;
 
     std::vector<std::string> IBLFiles;
     std::string IBLLoadDirectory = _IBL_RESOURCE_DIRECTORY;
@@ -363,9 +365,6 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
     std::unordered_map<std::string, int> ImageName;
 
     int fileCount = std::count_if(std::filesystem::directory_iterator(IBLLoadDirectory), std::filesystem::directory_iterator{}, (bool (*)(const std::filesystem::path&))std::filesystem::is_regular_file);
-
-    // initialize heap 13 for 12 IBL images, specular and diffuse and 1 for BRDF image
-    m_IBLResource->IBLDescriptorHeap.Create(L"IBLDescriptorHeap", D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, fileCount + 1);
 
     for (auto dir : std::filesystem::recursive_directory_iterator(IBLLoadDirectory)) {
         if (!dir.is_directory()) {
@@ -383,7 +382,7 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
     m_IBLResource->IBLImageCount = fileCount;
 
     D3dGraphicsCore::DescriptorHandle Handle;
-    Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
+    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     // Load BRDF_LUT Image
     uint64_t size = 0;
     std::string BRDF_LUT_Name = std::string(_IBL_RESOURCE_DIRECTORY) + "/BRDF/" + "BRDF_LUT.dds";
@@ -419,10 +418,10 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
     std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
     std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
     D3dGraphicsCore::DescriptorHandle Handle;
-    Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
-    if (m_IBLResource->FirstHandle.IsNull()) {
-        m_IBLResource->FirstHandle = Handle;
-    }
+    int HeapIdx = -1;
+    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    DescriptorHeapHandleInfo status{ HeapIdx, Handle };
+    m_FixedHandleStatus.emplace("Skybox", status);
 
     HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
         pSpecularTex->GetAddressOf(), Handle);
@@ -430,7 +429,7 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
     }
 
-    Handle = m_IBLResource->IBLDescriptorHeap.Alloc(1);
+    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
         pDiffuseTex->GetAddressOf(), Handle);
     if (FAILED(hr)) {
@@ -447,7 +446,11 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
 }
 void My::D3d12GraphicsManager::initializeFixedHandle()
 {
-    m_ColorBufferHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, m_iColorBufferHeapIndex);
+    D3dGraphicsCore::DescriptorHandle Handle;
+    int HeapIdx = -1;
+    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    DescriptorHeapHandleInfo status{ HeapIdx, Handle };
+    m_FixedHandleStatus.emplace("ColorBuffer", status);
 }
 
 int My::D3d12GraphicsManager::InitializeD3dImGUI()
@@ -466,6 +469,8 @@ int My::D3d12GraphicsManager::InitializeD3dImGUI()
         ImGUIHandle,
         ImGUIHandle);
 
+    DescriptorHeapHandleInfo status{ HeapIdx, ImGUIHandle };
+    m_FixedHandleStatus.emplace("Gui", status);
     return 0;
 }
 
@@ -569,7 +574,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     ImGui_ImplDX12_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow(); // Show demo window! :)
+    //ImGui::ShowDemoWindow(); // Show demo window! :)
 
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateConstants(frame);
@@ -592,8 +597,8 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
             }
             D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(NumSrc, HeapIndex);
             D3dGraphicsCore::g_Device->CopyDescriptors(1, &GpuHandle, &NumDest, NumSrc, CpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-            GpuHandleStatus status{ HeapIndex, GpuHandle };
-            GraphicsRHI.AddBatchHandle(d3dbatch->BatchIndex, status);
+            DescriptorHeapHandleInfo status{ HeapIndex, GpuHandle };
+            m_BatchHandleStatus.emplace(d3dbatch->BatchIndex, status);
         }
 
         m_bInitialized = true;
@@ -601,7 +606,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
     HandleVec.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
-    CopyDescriptors(m_ColorBufferHandle, HandleVec, 1);
+    CopyDescriptors(m_FixedHandleStatus["ColorBuffer"].Handle, HandleVec, 1);
 }
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
@@ -618,14 +623,18 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
-            m_IBLResource->IBLDescriptorHeap.GetHeapPointer(), m_IBLResource->FirstHandle);
+            m_BatchHandleStatus,
+            D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
+            m_FixedHandleStatus["Skybox"].Handle);
     }
 }
 
 void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.DrawSkybox(frame, m_IBLResource->IBLDescriptorHeap.GetHeapPointer(), m_IBLResource->FirstHandle, m_IBLResource->IBLImages[0]->pSpecular.get(),
+    GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
+        m_FixedHandleStatus["Skybox"].Handle,
+        m_IBLResource->IBLImages[0]->pSpecular.get(),
         m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
 }
 
@@ -638,7 +647,7 @@ void My::D3d12GraphicsManager::DrawGui(Frame& frame)
 void My::D3d12GraphicsManager::DrawPresent(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.DrawPresent(frame, m_ColorBufferHandle, m_iColorBufferHeapIndex);
+    GraphicsRHI.DrawPresent(frame, m_FixedHandleStatus["ColorBuffer"].Handle, m_FixedHandleStatus["ColorBuffer"].HeapIndex);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)
