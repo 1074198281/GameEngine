@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Asset/Scene/glTF
 /External/Windows/include/ImGUI/build_ImGUI
+/build
+/build_shader
