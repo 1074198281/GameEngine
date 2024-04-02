@@ -391,11 +391,11 @@ void D3dGraphicsCore::D3d12RHI::DrawGui(My::Frame frame)
     ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), m_pGraphicsContext->GetCommandList());
     auto& io = ImGui::GetIO();
     // Update and Render additional Platform Windows
-    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    //{
-    //    ImGui::UpdatePlatformWindows();
-    //    ImGui::RenderPlatformWindowsDefault();
-    //}
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+    }
     m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
 }
 

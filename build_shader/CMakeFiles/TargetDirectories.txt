@@ -1,3 +1,0 @@
-G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build_shader/CMakeFiles/COMPILER.dir
-G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build_shader/CMakeFiles/ALL_BUILD.dir
-G:/Engine_file/gameEngine/GameEngineStart/GameEngine/build_shader/CMakeFiles/ZERO_CHECK.dir
