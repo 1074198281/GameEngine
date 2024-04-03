@@ -1,13 +1,20 @@
 #pragma once
 
 #include "BaseSubPass.hpp"
+#include "Scene.hpp"
 
 namespace My {
 	class GuiSubPass : __implements BaseSubPass {
 	public:
-		using BaseSubPass::BaseSubPass;
+		GuiSubPass(IGraphicsManager* gmr) : BaseSubPass(gmr) {
+			UpdateScene();
+		}
+		void UpdateScene() { m_Scene = m_pGraphicsManager->GetSceneForGuiBuild(); }
+
 		void BeginSubPass() override;
 		void EndSubPass() override;
 		void Draw(Frame& frame) override;
+	private:
+		Scene m_Scene;
 	};
 }

@@ -569,6 +569,11 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     return true;
 }
 
+const My::Scene& My::D3d12GraphicsManager::GetSceneForGuiBuild()
+{
+    return dynamic_cast<D3d12Application*>(m_pApp)->GetSceneManager()->GetSceneForRendering();
+}
+
 void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 {
     ImGui_ImplDX12_NewFrame();

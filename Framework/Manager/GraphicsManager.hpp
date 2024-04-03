@@ -30,7 +30,8 @@ namespace My {
         void NumPadKeyUp(int64_t key) override;
         void FunctionKeyDown(int64_t key) override;
         void FunctionKeyUp(int64_t key) override;
-
+    public:
+        const Scene& GetSceneForGuiBuild() override = 0;
     public:
         // pass interface
         void DrawBatch(Frame& frame) override {}

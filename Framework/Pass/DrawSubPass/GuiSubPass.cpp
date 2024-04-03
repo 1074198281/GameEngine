@@ -79,7 +79,15 @@ void My::GuiSubPass::Draw(Frame& frame)
 		}
 
 		if (show_app_scene_status) {
-			
+			ImGui::Begin((const char*)u8"Scene Status");
+			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+			for (auto& geo : m_Scene.Geometries) {
+				if (ImGui::BeginMenu(geo.first.c_str()))
+				{
+					ImGui::EndMenu();
+				}
+			}
+			ImGui::End();
 		}
 
 		ImGui::End();
