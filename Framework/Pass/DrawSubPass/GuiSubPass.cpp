@@ -94,7 +94,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoName]->GetMetallicFactorData(), 0, 1);
 					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoName]->GetRoughnessFactorData(), 0, 1);
 					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoName]->GetEmissiveFactorData(), 0, 1);
-					ImGui::SliderFloat3("NormalScale", m_pScene->Materials[GeoName]->GetNornalScaleFactorData(), 0, 1);
+					ImGui::SliderFloat("NormalScale", m_pScene->Materials[GeoName]->GetNornalScaleFactorData(), 0, 1);
 
 					ImGui::TreePop();
 				}
