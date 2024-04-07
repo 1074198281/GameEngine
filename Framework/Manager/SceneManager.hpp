@@ -21,6 +21,7 @@ namespace My {
 
 	public:
 		const Scene& GetSceneForRendering() override;
+		Scene* GetSceneForGui() override;
 		uint64_t GetSceneRevision() override;
 
 		void ResetScene() override;

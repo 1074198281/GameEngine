@@ -91,6 +91,11 @@ const Scene& SceneManager::GetSceneForRendering()
     return *m_pScene;
 }
 
+Scene* SceneManager::GetSceneForGui()
+{
+    return m_pScene.get();
+}
+
 uint64_t SceneManager::GetSceneRevision() 
 {
     return m_nSceneRevision;

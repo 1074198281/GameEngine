@@ -35,7 +35,7 @@ namespace My {
         void FunctionKeyUp(int64_t key) final;
 
     public:
-        const Scene& GetSceneForGuiBuild() override;
+        Scene* GetSceneForGuiBuild() override;
     public:
         void BeginFrame(Frame& frame) override;
         void EndFrame(Frame& frame) override;

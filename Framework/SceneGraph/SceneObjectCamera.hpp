@@ -28,6 +28,9 @@ namespace My {
             else if (attrib == "far") {
                 m_fFarClipDistance = param;
             }
+            else if (attrib == "aspect") {
+                m_fAspect = param;
+            }
         };
 
         void SetTexture(std::string& attrib, std::string& textureName)

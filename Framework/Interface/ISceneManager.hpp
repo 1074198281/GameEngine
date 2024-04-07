@@ -17,6 +17,7 @@ namespace My {
 		virtual int LoadScene(const char* scene_file_name) = 0;
 
 		virtual const Scene& GetSceneForRendering() = 0;
+		virtual Scene* GetSceneForGui() = 0;
 
 		virtual void ResetScene() = 0;
 

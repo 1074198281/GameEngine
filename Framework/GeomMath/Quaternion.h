@@ -51,4 +51,6 @@ namespace My {
 		Quaternion pos{ position };
 		return QuaternionMultiply(QuaternionMultiply(q, pos), QuaternionInverse(q));
 	}
+
+
 }

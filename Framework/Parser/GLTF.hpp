@@ -1500,12 +1500,54 @@ namespace glTF
             return GeoNode;
         }
 
+        std::shared_ptr<My::BaseSceneNode> ProcessNodeCamera(My::Scene& Scene, glTF::Node* pNode)
+        {
+            std::shared_ptr<My::SceneCameraNode> CameraNode = std::make_shared<My::SceneCameraNode>();
+            std::shared_ptr<My::SceneObjectCamera> CameraObject;
+
+            std::string attribNear("near");
+            std::string attribFar("far");
+            std::string attribAspect("aspect");
+            switch (pNode->camera->type)
+            {
+            case Camera::eType::kOrthographic:
+            {
+                CameraObject = std::make_shared<My::SceneObjectOrthogonalCamera>();
+            }
+            break;
+            case Camera::eType::kPerspective:
+            {
+                CameraObject = std::make_shared<My::SceneObjectPerspectiveCamera>();
+                std::string fov("fov");
+                CameraObject->SetParam(fov, pNode->camera->yfov);
+            }
+            break;
+            default:
+                break;
+            }
+            CameraObject->SetParam(attribNear, pNode->camera->znear);
+            CameraObject->SetParam(attribFar, pNode->camera->zfar);
+
+            My::Vector3f translation;
+            My::Quaternion ratation;
+            My::Vector3f scale;
+            translation = My::Vector3f(pNode->translation[0], pNode->translation[1], pNode->translation[2]);
+            ratation = My::Quaternion(pNode->rotation[0], pNode->rotation[1], pNode->rotation[2], pNode->rotation[3]);
+            scale = My::Vector3f(pNode->scale[0], pNode->scale[1], pNode->scale[2]);
+            CameraNode->SetTranslation(translation);
+            CameraNode->SetRotation(ratation);
+            CameraNode->SetScale(scale);
+
+            CameraNode->AddSceneObjectRef(pNode->name);
+            return CameraNode;
+        }
+
         void ProcessCurrentNode(std::shared_ptr<My::BaseSceneNode>& node, My::Scene& Scene, glTF::Node* pNode)
         {
             std::shared_ptr<My::BaseSceneNode> newNode;
             if (pNode->pointsToCamera) {
                 // TODO: Multi Camera Support
-                newNode = std::make_shared<My::SceneCameraNode>(pNode->name);
+                newNode = ProcessNodeCamera(Scene, pNode);;
             }
             else {
                 newNode = ProcessNodeMesh(Scene, pNode);

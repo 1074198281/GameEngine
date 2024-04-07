@@ -1,6 +1,7 @@
 ﻿#include "GuiSubPass.hpp"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 
@@ -81,10 +82,21 @@ void My::GuiSubPass::Draw(Frame& frame)
 		if (show_app_scene_status) {
 			ImGui::Begin((const char*)u8"Scene Status");
 			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-			for (auto& geo : m_Scene.Geometries) {
-				if (ImGui::BeginMenu(geo.first.c_str()))
+			for (auto& geo : m_pScene->Geometries) {
+				std::string GeoName = geo.first;
+				if (ImGui::TreeNode(GeoName.c_str()))
 				{
-					ImGui::EndMenu();
+					std::string MaterialName = GeoName + "Material";
+					assert(m_pScene->Materials[GeoName], "Material Not Exist!");
+
+					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
+					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoName]->GetBaseColorFactorData(), 0, 1);
+					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoName]->GetMetallicFactorData(), 0, 1);
+					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoName]->GetRoughnessFactorData(), 0, 1);
+					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoName]->GetEmissiveFactorData(), 0, 1);
+					ImGui::SliderFloat3("NormalScale", m_pScene->Materials[GeoName]->GetNornalScaleFactorData(), 0, 1);
+
+					ImGui::TreePop();
 				}
 			}
 			ImGui::End();

@@ -1,8 +1,10 @@
 #include <iostream>
+#include <memory>
 #include "GraphicsManager.hpp"
 #include "BaseApplication.hpp"
 #include "ForwardGeometryPass.hpp"
 #include "OverlayPass.hpp"
+#include "Scene.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -86,6 +88,33 @@ void GraphicsManager::BeginScene(const Scene& scene)
 
 void GraphicsManager::EndScene()
 {
+
+}
+
+void GraphicsManager::UpdateFrameConstants(Frame& frame)
+{
+    auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+    if (pSceneManager) {
+        auto& scene = pSceneManager->GetSceneForRendering();
+        for (auto& batch : frame.BatchContexts) {
+            if (batch->Node->GetMaterialCount() == 1) {
+                auto name = batch->Node->GetMaterialRef(0);
+                batch->BaseColorFactor[0] = scene.Materials.at(name)->GetBaseColorFactor()[0];
+                batch->BaseColorFactor[1] = scene.Materials.at(name)->GetBaseColorFactor()[1];
+                batch->BaseColorFactor[2] = scene.Materials.at(name)->GetBaseColorFactor()[2];
+                batch->BaseColorFactor[3] = scene.Materials.at(name)->GetBaseColorFactor()[3];
+
+                batch->MetallicRoughnessFactor[0] = scene.Materials.at(name)->GetMetallicFactor();
+                batch->MetallicRoughnessFactor[1] = scene.Materials.at(name)->GetRoughnessFactor();
+
+                batch->EmissiveFactor[0] = scene.Materials.at(name)->GetEmissivsFactor()[0];
+                batch->EmissiveFactor[1] = scene.Materials.at(name)->GetEmissivsFactor()[1];
+                batch->EmissiveFactor[2] = scene.Materials.at(name)->GetEmissivsFactor()[2];
+
+                batch->NormalTextureScale = scene.Materials.at(name)->GetNormalScaleFactor();
+            }
+        }
+    }
 
 }
 

@@ -569,9 +569,9 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     return true;
 }
 
-const My::Scene& My::D3d12GraphicsManager::GetSceneForGuiBuild()
+My::Scene* My::D3d12GraphicsManager::GetSceneForGuiBuild()
 {
-    return dynamic_cast<D3d12Application*>(m_pApp)->GetSceneManager()->GetSceneForRendering();
+    return dynamic_cast<D3d12Application*>(m_pApp)->GetSceneManager()->GetSceneForGui();
 }
 
 void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
@@ -581,6 +581,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     ImGui::NewFrame();
     //ImGui::ShowDemoWindow(); // Show demo window! :)
 
+    UpdateFrameConstants(frame);
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateConstants(frame);
     if (!m_bInitialized) {

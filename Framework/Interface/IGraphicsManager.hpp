@@ -31,7 +31,7 @@ namespace My {
         virtual void FunctionKeyUp(int64_t key) {}
 
     public:
-        virtual const Scene& GetSceneForGuiBuild() = 0;
+        virtual Scene* GetSceneForGuiBuild() = 0;
     public:
     // pass interface
         virtual void DrawBatch(Frame& frame) = 0;

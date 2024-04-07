@@ -31,7 +31,7 @@ namespace My {
         void FunctionKeyDown(int64_t key) override;
         void FunctionKeyUp(int64_t key) override;
     public:
-        const Scene& GetSceneForGuiBuild() override = 0;
+        Scene* GetSceneForGuiBuild() override = 0;
     public:
         // pass interface
         void DrawBatch(Frame& frame) override {}
@@ -50,9 +50,9 @@ namespace My {
         virtual void initializeLight(const Scene& scene) {}
         virtual void initializeFixedHandle() {}
 
-
         virtual void BeginFrame(Frame& frame) {}
         virtual void EndFrame(Frame& frame) {}
+        virtual void UpdateFrameConstants(Frame& frame);
 
     protected:
         std::vector<Frame> m_Frames;

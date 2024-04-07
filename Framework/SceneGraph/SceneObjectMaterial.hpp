@@ -188,14 +188,29 @@ namespace My {
                 m_ParamFactor.BaseColorFactor[2], m_ParamFactor.BaseColorFactor[3]);
         }
 
+        float* GetBaseColorFactorData()
+        {
+            return m_ParamFactor.BaseColorFactor;
+        }
+
         const float GetMetallicFactor() const
         {
             return m_ParamFactor.MetallicRoughnessFactor[0];
         }
 
+        float* GetMetallicFactorData()
+        {
+            return &m_ParamFactor.MetallicRoughnessFactor[0];
+        }
+
         const float GetRoughnessFactor() const
         {
             return m_ParamFactor.MetallicRoughnessFactor[1];
+        }
+
+        float* GetRoughnessFactorData()
+        {
+            return &m_ParamFactor.MetallicRoughnessFactor[1];
         }
 
         const Vector4f GetEmissivsFactor() const
@@ -204,9 +219,19 @@ namespace My {
                 m_ParamFactor.EmissiveFactor[2], 0.0);
         }
 
+        float* GetEmissiveFactorData()
+        {
+            return m_ParamFactor.EmissiveFactor;
+        }
+
         const float GetNormalScaleFactor() const
         {
             return m_ParamFactor.NormalTextureScaleFactor;
+        }
+
+        float* GetNornalScaleFactorData()
+        {
+            return &m_ParamFactor.NormalTextureScaleFactor;
         }
 
         void SetTextureTransform(const std::string attrib, TextureTransform trans) 
