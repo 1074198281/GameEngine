@@ -95,11 +95,11 @@ void My::GuiSubPass::Draw(Frame& frame)
 					}
 
 					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
-					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoMaterialName]->GetBaseColorFactorData(), 0, 1);
-					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoMaterialName]->GetMetallicFactorData(), 0, 1);
-					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoMaterialName]->GetRoughnessFactorData(), 0, 1);
-					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
-					ImGui::SliderFloat3("NormalScale", m_pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
+					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoName]->GetBaseColorFactorData(), 0, 1);
+					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoName]->GetMetallicFactorData(), 0, 1);
+					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoName]->GetRoughnessFactorData(), 0, 1);
+					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoName]->GetEmissiveFactorData(), 0, 1);
+					ImGui::SliderFloat("NormalScale", m_pScene->Materials[GeoName]->GetNornalScaleFactorData(), 0, 1);
 
 					ImGui::TreePop();
 				}
