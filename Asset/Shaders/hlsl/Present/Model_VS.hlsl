@@ -34,12 +34,12 @@ struct VertexOut
 VertexOut main(VertexIn vin)
 {
     VertexOut vout;
-    float4x4 ProjectedMat = mul(transpose(gModelMatrix), mul(transpose(gViewMatrix), transpose(gProjMatrix)));
+    float4x4 ProjectedMat = mul(gModelMatrix, mul(transpose(gViewMatrix), transpose(gProjMatrix)));
 	
     vout.ProjectedPosition = mul(float4(vin.Position, 1.0f), ProjectedMat);
 	
-    vout.WorldPosition = mul(float4(vin.Position, 1.0f), transpose(gModelMatrix));
-	vout.WorldNormal = mul(float4(vin.Normal, 0.0f), transpose(gModelMatrix)).xyz;
+    vout.WorldPosition = mul(float4(vin.Position, 1.0f), gModelMatrix);
+    vout.WorldNormal = mul(float4(vin.Normal, 0.0f), gModelMatrix).xyz;
 	vout.TextureUV = vin.Tex;
 	return vout;
 }

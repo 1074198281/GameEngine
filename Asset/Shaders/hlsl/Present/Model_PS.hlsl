@@ -100,7 +100,7 @@ float4 main(VertexOut pin) : SV_Target
 
     float4 WorldPos = pin.ProjectedPosition.xyzw / pin.ProjectedPosition.w;
     
-    float3 NormalDir = normalize(mul(float4(pin.WorldNormal, 0.0f), transpose(gModelMatrix)).xyz);
+    float3 NormalDir = normalize(mul(float4(pin.WorldNormal, 0.0f), gModelMatrix).xyz);
 
 #ifdef LAMBERT
     return LambertLighting(LumenIns, LightColor, LightDir, NormalDir);

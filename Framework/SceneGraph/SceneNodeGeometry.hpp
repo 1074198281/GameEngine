@@ -63,5 +63,10 @@ namespace My {
             m_pRigidBody = nullptr;
             return rigidBody;
         }
+
+        void* GetRigidBody()
+        {
+            return m_pRigidBody;
+        }
     };
 }

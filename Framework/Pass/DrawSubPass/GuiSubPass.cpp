@@ -82,19 +82,24 @@ void My::GuiSubPass::Draw(Frame& frame)
 		if (show_app_scene_status) {
 			ImGui::Begin((const char*)u8"Scene Status");
 			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-			for (auto& geo : m_pScene->Geometries) {
-				std::string GeoName = geo.first;
+			for (auto& GeoNode : m_pScene->GeometryNodes) {
+				std::string GeoName = GeoNode.first;
 				if (ImGui::TreeNode(GeoName.c_str()))
 				{
 					std::string MaterialName = GeoName + "Material";
-					assert(m_pScene->Materials[GeoName], "Material Not Exist!");
+					std::string GeoMaterialName = GeoNode.second->GetMaterialCount() > 0 ? GeoNode.second->GetMaterialRef(0) : "default";
+					if (!m_pScene->Materials[GeoMaterialName]) {
+						assert(false, "Material Not Exist!");
+						ImGui::TreePop();
+						continue;
+					}
 
 					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
-					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoName]->GetBaseColorFactorData(), 0, 1);
-					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoName]->GetMetallicFactorData(), 0, 1);
-					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoName]->GetRoughnessFactorData(), 0, 1);
-					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoName]->GetEmissiveFactorData(), 0, 1);
-					ImGui::SliderFloat3("NormalScale", m_pScene->Materials[GeoName]->GetNornalScaleFactorData(), 0, 1);
+					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoMaterialName]->GetBaseColorFactorData(), 0, 1);
+					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoMaterialName]->GetMetallicFactorData(), 0, 1);
+					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoMaterialName]->GetRoughnessFactorData(), 0, 1);
+					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
+					ImGui::SliderFloat3("NormalScale", m_pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
 
 					ImGui::TreePop();
 				}

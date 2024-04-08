@@ -86,11 +86,11 @@ int main(int argc, char** argv) {
 
 	app.RegisterManagerModule(&gameLogic);
 	app.RegisterManagerModule(&assetLoader);
-	app.RegisterManagerModule(&graphicsManager);
-	app.RegisterManagerModule(&inputManager);
-	app.RegisterManagerModule(&memoryManager);
-	app.RegisterManagerModule(&physicsManager);
 	app.RegisterManagerModule(&sceneManager);
+	app.RegisterManagerModule(&inputManager);
+	app.RegisterManagerModule(&physicsManager);
+	app.RegisterManagerModule(&graphicsManager);
+	app.RegisterManagerModule(&memoryManager);
 
 	app.CreateMainWindow();
 	app.Initialize();

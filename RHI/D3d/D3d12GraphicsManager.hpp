@@ -39,6 +39,7 @@ namespace My {
     public:
         void BeginFrame(Frame& frame) override;
         void EndFrame(Frame& frame) override;
+        void UpdateD3dFrameConstants(Frame& frame);
     public:
         // pass interface
         void DrawBatch(Frame& frame) override;

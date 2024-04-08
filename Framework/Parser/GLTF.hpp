@@ -168,6 +168,8 @@ namespace glTF
         std::string name;
         std::vector<Primitive> primitives;
         int32_t skin;
+        enum eCollisionType { kNone, kSphere, kBox, kPlane, kCollisionType };
+        eCollisionType collisionType;
     };
 
     struct Camera
@@ -843,6 +845,19 @@ namespace glTF
                     // TODO:  Add morph targets
                     //if (thisPrim.find("targets") != thisPrim.end())
                 }
+
+                if (thisMesh.find("CollisionType") != thisMesh.end()) {
+                    std::string type = thisMesh.at("CollisionType");
+                    if (type == "Sphere") {
+                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kSphere;
+                    }
+                    else if (type == "Box") {
+                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kBox;
+                    }
+                    else if (type == "Plane") {
+                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kPlane;
+                    }
+                }
             }
         }
 
@@ -862,7 +877,7 @@ namespace glTF
                 node.linearIdx = -1;
                 node.ParentIdx = -1;
 
-                if (thisNode.find("camera") != thisNode.end()) {
+                if (thisNode.find("name") != thisNode.end()) {
                     node.name = thisNode.at("name");
                 }
 
@@ -1365,7 +1380,7 @@ namespace glTF
                 }
                 //indice data
                 size_t restart_index = 0;
-                uint32_t material_index = meshIt->material->index;
+                uint32_t material_index = meshIt->material ? meshIt->material->index : -1;
                 componentSize = GetComponentDataSize(meshIt->indices->componentType);
                 My::IndexDataType index_type = GetIndexDataType(meshIt->indices->componentType);
                 void* pData = nullptr;
@@ -1395,81 +1410,83 @@ namespace glTF
                 GeoObject->AddMesh(GeoMesh);
 
                 //Material
-                GeoNode->AddMaterialRef(meshIt->material->name);
-                std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
-                
-                for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
-                    std::string name;
-                    std::string pbrname;
-                    switch (type)
-                    {
-                    case Material::eTextureType::kBaseColor:
-                    {
-                        name = "diffuse";
-                        pbrname = "pbrdiffuse";
-                        My::Vector4f BaseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1]
-                            , meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
-                        GeoMaterial->SetColor(name, BaseColorFactor);
-                    }
-                    break;
-                    case Material::eTextureType::kMetallicRoughness:
-                    {
-                        name = "metallic";
-                        GeoMaterial->SetParam(name, meshIt->material->metallicFactor);
-                        name = "roughness";
-                        GeoMaterial->SetParam(name, meshIt->material->roughnessFactor);
-                        pbrname = "pbrmetallicroughness";
-                    }
-                    break;
-                    case Material::eTextureType::kOcclusion:
-                    {
-                        pbrname = "pbrocclusion";
-                    }
-                    break;
-                    case Material::eTextureType::kEmissive:
-                    {
-                        name = "emission";
-                        pbrname = "pbremissive";
-                        My::Vector4f EmissiveFactor = My::Vector4f(meshIt->material->emissiveFactor[0], meshIt->material->emissiveFactor[1],
-                            meshIt->material->emissiveFactor[2], meshIt->material->emissiveFactor[3]);
-                        GeoMaterial->SetColor(name, EmissiveFactor);
-                    }
-                    break;
-                    case Material::eTextureType::kNormal:
-                    {
-                        name = "normal";
-                        pbrname = "pbrnormal";
-                        GeoMaterial->SetParam(name, meshIt->material->normalTextureScale);
-                    }
-                    break;
-                    default:
+                if (meshIt->material) {
+                    GeoNode->AddMaterialRef(meshIt->material->name);
+                    std::shared_ptr<My::SceneObjectMaterial> GeoMaterial = std::make_shared<My::SceneObjectMaterial>(meshIt->material->name);
+
+                    for (int type = 0; type < Material::eTextureType::kNumTextures; type++) {
+                        std::string name;
+                        std::string pbrname;
+                        switch (type)
+                        {
+                        case Material::eTextureType::kBaseColor:
+                        {
+                            name = "diffuse";
+                            pbrname = "pbrdiffuse";
+                            My::Vector4f BaseColorFactor = My::Vector4f(meshIt->material->baseColorFactor[0], meshIt->material->baseColorFactor[1]
+                                , meshIt->material->baseColorFactor[2], meshIt->material->baseColorFactor[3]);
+                            GeoMaterial->SetColor(name, BaseColorFactor);
+                        }
                         break;
+                        case Material::eTextureType::kMetallicRoughness:
+                        {
+                            name = "metallic";
+                            GeoMaterial->SetParam(name, meshIt->material->metallicFactor);
+                            name = "roughness";
+                            GeoMaterial->SetParam(name, meshIt->material->roughnessFactor);
+                            pbrname = "pbrmetallicroughness";
+                        }
+                        break;
+                        case Material::eTextureType::kOcclusion:
+                        {
+                            pbrname = "pbrocclusion";
+                        }
+                        break;
+                        case Material::eTextureType::kEmissive:
+                        {
+                            name = "emission";
+                            pbrname = "pbremissive";
+                            My::Vector4f EmissiveFactor = My::Vector4f(meshIt->material->emissiveFactor[0], meshIt->material->emissiveFactor[1],
+                                meshIt->material->emissiveFactor[2], meshIt->material->emissiveFactor[3]);
+                            GeoMaterial->SetColor(name, EmissiveFactor);
+                        }
+                        break;
+                        case Material::eTextureType::kNormal:
+                        {
+                            name = "normal";
+                            pbrname = "pbrnormal";
+                            GeoMaterial->SetParam(name, meshIt->material->normalTextureScale);
+                        }
+                        break;
+                        default:
+                            break;
+                        }
+
+                        My::TextureTransform trans;
+                        memset(&trans, 0, sizeof(My::TextureTransform));
+                        trans.offset[0] = meshIt->material->TextureTransform[0 + type * 5];
+                        trans.offset[1] = meshIt->material->TextureTransform[1 + type * 5];
+                        trans.scale[0] = meshIt->material->TextureTransform[2 + type * 5];
+                        trans.scale[1] = meshIt->material->TextureTransform[3 + type * 5];
+                        trans.rotation = meshIt->material->TextureTransform[4 + type * 5];
+                        GeoMaterial->SetTextureTransform(pbrname, trans);
+
+                        if (!meshIt->material->textures[type]) {
+                            continue;
+                        }
+                        std::string textureType = GetTextureType(Material::eTextureType(type));
+
+                        std::string texPath = m_AssetPath + meshIt->material->textures[type]->source->path;
+                        GeoMaterial->SetTexture(textureType, texPath);
+
+                        if (meshIt->material->textures[type]->sampler) {
+                            GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
+                                meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
+                        }
                     }
 
-                    My::TextureTransform trans;
-                    memset(&trans, 0, sizeof(My::TextureTransform));
-                    trans.offset[0] = meshIt->material->TextureTransform[0 + type * 5];
-                    trans.offset[1] = meshIt->material->TextureTransform[1 + type * 5];
-                    trans.scale[0] = meshIt->material->TextureTransform[2 + type * 5];
-                    trans.scale[1] = meshIt->material->TextureTransform[3 + type * 5];
-                    trans.rotation = meshIt->material->TextureTransform[4 + type * 5];
-                    GeoMaterial->SetTextureTransform(pbrname, trans);
-
-                    if (!meshIt->material->textures[type]) {
-                        continue;
-                    }
-                    std::string textureType = GetTextureType(Material::eTextureType(type));
-                    
-                    std::string texPath = m_AssetPath + meshIt->material->textures[type]->source->path;
-                    GeoMaterial->SetTexture(textureType, texPath);
-
-                    if (meshIt->material->textures[type]->sampler) {
-                        GeoMaterial->SetSampler(textureType, meshIt->material->textures[type]->sampler->filter,
-                            meshIt->material->textures[type]->sampler->wrapS, meshIt->material->textures[type]->sampler->wrapT);
-                    }
+                    Scene.Materials[meshIt->material->name] = GeoMaterial;
                 }
-
-                Scene.Materials[meshIt->material->name] = GeoMaterial;
             }
 
             //Transform
@@ -1481,14 +1498,29 @@ namespace glTF
                 GeoNode->AppendChild(std::move(trans));
             }
             else {
-                My::Matrix4X4f mat;
+                My::Matrix4X4f mat, quaternion;
                 std::shared_ptr<My::SceneObjectTransform> trans;
                 auto scale = My::BuildScaleMatrix(pCurrNode->scale[0], pCurrNode->scale[1], pCurrNode->scale[2], 1.0f);
-                auto rotation = My::BuildRotationMatrix(pCurrNode->rotation[0], pCurrNode->rotation[1], pCurrNode->rotation[2], pCurrNode->rotation[3]);
+                My::MatrixRotationQuaternion(quaternion, My::Quaternion(pCurrNode->rotation[0], pCurrNode->rotation[1], pCurrNode->rotation[2], pCurrNode->rotation[3]));
                 auto translation = My::BuildTranslationMatrix(pCurrNode->translation[0], pCurrNode->translation[1], pCurrNode->translation[2], 1.0f);
-                mat = translation * rotation * scale;
+                mat = translation * quaternion * scale;
                 trans = std::make_shared<My::SceneObjectTransform>(mat);
                 GeoNode->AppendChild(std::move(trans));
+            }
+
+            // CollisionType
+            switch (mesh->collisionType) {
+            case Mesh::eCollisionType::kSphere:
+                GeoObject->SetCollisionType(My::kSceneObjectCollisionTypeSphere);
+                break;
+            case Mesh::eCollisionType::kBox:
+                GeoObject->SetCollisionType(My::kSceneObjectCollisionTypeBox);
+                break;
+            case Mesh::eCollisionType::kPlane:
+                GeoObject->SetCollisionType(My::kSceneObjectCollisionTypePlane);
+                break;
+            default:
+                break;
             }
 
 
@@ -1539,6 +1571,8 @@ namespace glTF
             CameraNode->SetScale(scale);
 
             CameraNode->AddSceneObjectRef(pNode->name);
+            Scene.CameraNodes.emplace(pNode->name, CameraNode);
+            Scene.Cameras.emplace(pNode->name, CameraObject);
             return CameraNode;
         }
 

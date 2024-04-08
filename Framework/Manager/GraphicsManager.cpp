@@ -115,7 +115,6 @@ void GraphicsManager::UpdateFrameConstants(Frame& frame)
             }
         }
     }
-
 }
 
 void GraphicsManager::UpArrowKeyDown()

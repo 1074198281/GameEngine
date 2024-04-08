@@ -18,7 +18,7 @@ int My::PhysicsManager::Initialize()
 
 	//world
 	m_btDynamicsWorld = new btDiscreteDynamicsWorld(m_btDispatcher, m_btBroadphase, m_btSolver, m_btCollisionConfiguration);
-	m_btDynamicsWorld->setGravity(btVector3(0.0f, 0.0f, -9.8f));
+	m_btDynamicsWorld->setGravity(btVector3(0.0f, -9.8f, 0.0f));
 	
 	return 0;
 }
@@ -64,7 +64,7 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(trans->data[3][0], trans->data[3][1], trans->data[3][2]));
+        startTransform.setOrigin(btVector3(trans->data[0][3], trans->data[1][3], trans->data[2][3]));
         btDefaultMotionState* motionState =
             new btDefaultMotionState(
                 startTransform
@@ -100,13 +100,13 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
     break;
     case SceneObjectCollisionType::kSceneObjectCollisionTypePlane:
     {
-        btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0.0f, 0.0f, 1.0f), 0);
+        btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0.0f, 1.0f, 0.0f), 0);
         m_btCollisionShapes.push_back(plane);
 
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(trans->data[3][0], trans->data[3][1], trans->data[3][2]));
+        startTransform.setOrigin(btVector3(trans->data[0][3], trans->data[1][3], trans->data[2][3]));
         btDefaultMotionState* motionState =
             new btDefaultMotionState(
                 startTransform
@@ -187,18 +187,19 @@ My::Matrix4X4f My::PhysicsManager::GetRigidBodyTransform(void* rigidBody)
     auto basis = trans.getBasis();
     auto origin = trans.getOrigin();
     BuildIdentityMatrix(result);
+    // 24.4.8 convert result from vec*matrix to matrix*vec 
     result.data[0][0] = basis[0][0];
-    result.data[1][0] = basis[0][1];
-    result.data[2][0] = basis[0][2];
-    result.data[0][1] = basis[1][0];
+    result.data[0][1] = basis[0][1];
+    result.data[0][2] = basis[0][2];
+    result.data[1][0] = basis[1][0];
     result.data[1][1] = basis[1][1];
-    result.data[2][1] = basis[1][2];
-    result.data[0][2] = basis[2][0];
-    result.data[1][2] = basis[2][1];
+    result.data[1][2] = basis[1][2];
+    result.data[2][0] = basis[2][0];
+    result.data[2][1] = basis[2][1];
     result.data[2][2] = basis[2][2];
-    result.data[3][0] = origin.getX();
-    result.data[3][1] = origin.getY();
-    result.data[3][2] = origin.getZ();
+    result.data[0][3] = origin.getX();
+    result.data[1][3] = origin.getY();
+    result.data[2][3] = origin.getZ();
 
     return result;
 }

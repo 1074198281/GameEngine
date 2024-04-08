@@ -3,6 +3,7 @@
 #include "IRuntimeModule.hpp"
 #include "SceneNodeGeometry.hpp"
 #include "SceneObjectGeometry.hpp"
+#include "geommath.hpp"
 
 namespace My {
 	__Interface IPhysicsManager : public IRuntimeModule{
@@ -15,5 +16,7 @@ namespace My {
 
 		virtual int CreateRigidBodies() = 0;
 		virtual void ClearRigidBodies() = 0;
+
+		virtual Matrix4X4f GetRigidBodyTransform(void* rigidbody) = 0;
 	};
 }

@@ -21,7 +21,7 @@ namespace My {
 		virtual int CreateRigidBodies();
 		virtual void ClearRigidBodies();
 
-		Matrix4X4f GetRigidBodyTransform(void* rigidBody);
+		Matrix4X4f GetRigidBodyTransform(void* rigidBody) override;
 
 	protected:
 		uint64_t m_nSceneRevision;

@@ -337,9 +337,87 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
             dbc->NormalTextureScale = pMaterial->GetNormalScaleFactor();
         }
+        else {
+            size_t cpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
+
+            cpuHandle = m_VecTexture.size();
+            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexBaseColor(D3dGraphicsCore::g_DefaultBaseColorTexture);
+            m_VecTexture.push_back(std::move(pTexBaseColor));
+            dbc->Material.DiffuseMap.Handle = cpuHandle;
+
+            cpuHandle = m_VecTexture.size();
+            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexRoughnessMetallic(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture);
+            m_VecTexture.push_back(std::move(pTexRoughnessMetallic));
+            dbc->Material.MetallicRoughnessMap.Handle = cpuHandle;
+
+            cpuHandle = m_VecTexture.size();
+            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexOcclusion(D3dGraphicsCore::g_DefaultOcclusionTexture);
+            m_VecTexture.push_back(std::move(pTexOcclusion));
+            dbc->Material.AmbientOcclusionMap.Handle = cpuHandle;
+
+            cpuHandle = m_VecTexture.size();
+            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexEmissive(D3dGraphicsCore::g_DefaultEmissiveTexture);
+            m_VecTexture.push_back(std::move(pTexEmissive));
+            dbc->Material.EmissiveMap.Handle = cpuHandle;
+
+            cpuHandle = m_VecTexture.size();
+            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexNormal(D3dGraphicsCore::g_DefaultNormalTexture);
+            m_VecTexture.push_back(std::move(pTexNormal));
+            dbc->Material.NormalMap.Handle = cpuHandle;
+
+            My::TextureTransform trans;
+            trans.offset[0] = 0;
+            trans.offset[1] = 0;
+            trans.scale[0] = 1;
+            trans.scale[1] = 1;
+            trans.rotation = 0;
+            dbc->BaseColorTextureTransform[0] = trans.offset[0];
+            dbc->BaseColorTextureTransform[1] = trans.offset[1];
+            dbc->BaseColorTextureTransform[2] = trans.scale[0];
+            dbc->BaseColorTextureTransform[3] = trans.scale[1];
+            dbc->BaseColorRotation = trans.rotation;
+
+            dbc->MetallicRoughnessTextureTransform[0] = trans.offset[0];
+            dbc->MetallicRoughnessTextureTransform[1] = trans.offset[1];
+            dbc->MetallicRoughnessTextureTransform[2] = trans.scale[0];
+            dbc->MetallicRoughnessTextureTransform[3] = trans.scale[1];
+            dbc->MetallicRoughnessRotation = trans.rotation;
+
+            dbc->OcclusionTextureTransform[0] = trans.offset[0];
+            dbc->OcclusionTextureTransform[1] = trans.offset[1];
+            dbc->OcclusionTextureTransform[2] = trans.scale[0];
+            dbc->OcclusionTextureTransform[3] = trans.scale[1];
+            dbc->OcclusionRotation = trans.rotation;
+
+            dbc->EmissiveTextureTransform[0] = trans.offset[0];
+            dbc->EmissiveTextureTransform[1] = trans.offset[1];
+            dbc->EmissiveTextureTransform[2] = trans.scale[0];
+            dbc->EmissiveTextureTransform[3] = trans.scale[1];
+            dbc->EmissiveRotation = trans.rotation;
+
+            dbc->NormalTextureTransform[0] = trans.offset[0];
+            dbc->NormalTextureTransform[1] = trans.offset[1];
+            dbc->NormalTextureTransform[2] = trans.scale[0];
+            dbc->NormalTextureTransform[3] = trans.scale[1];
+            dbc->NormalRotation = trans.rotation;
+
+            dbc->BaseColorFactor[0] = 1;
+            dbc->BaseColorFactor[1] = 1;
+            dbc->BaseColorFactor[2] = 1;
+            dbc->BaseColorFactor[3] = 1;
+
+            dbc->EmissiveFactor[0] = 1;
+            dbc->EmissiveFactor[1] = 1;
+            dbc->EmissiveFactor[2] = 1;
+
+            dbc->MetallicRoughnessFactor[0] = 1;
+            dbc->MetallicRoughnessFactor[1] = 1;
+
+            dbc->NormalTextureScale = 1;
+        }
 
         //transform
-        dbc->ModelMatrix = *GeometryNode->GetCalculatedTransform().get();
+        //dbc->ModelMatrix = *GeometryNode->GetCalculatedTransform().get();
         dbc->Node = _it.second;
         
 
@@ -582,6 +660,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     //ImGui::ShowDemoWindow(); // Show demo window! :)
 
     UpdateFrameConstants(frame);
+    UpdateD3dFrameConstants(frame);
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateConstants(frame);
     if (!m_bInitialized) {
@@ -620,6 +699,14 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
     m_nFrameIndex = (m_nFrameIndex + 1) % MAX_FRAME_COUNT;
     ImGui::EndFrame();
     ImGui::Render();
+}
+
+void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
+    auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
+    for (auto& dbc : frame.BatchContexts) {
+        Matrix4X4f trans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+        dbc->ModelMatrix = trans * *dbc->Node->GetCalculatedTransform().get();
+    }
 }
 
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
