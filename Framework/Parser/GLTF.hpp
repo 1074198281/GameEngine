@@ -168,7 +168,7 @@ namespace glTF
         std::string name;
         std::vector<Primitive> primitives;
         int32_t skin;
-        enum eCollisionType { kNone, kSphere, kBox, kPlane, kCollisionType };
+        enum eCollisionType { kNone, kSphere, kBox, kPlane = 15, kCollisionType };
         eCollisionType collisionType;
     };
 
@@ -846,16 +846,10 @@ namespace glTF
                     //if (thisPrim.find("targets") != thisPrim.end())
                 }
 
-                if (thisMesh.find("CollisionType") != thisMesh.end()) {
-                    std::string type = thisMesh.at("CollisionType");
-                    if (type == "Sphere") {
-                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kSphere;
-                    }
-                    else if (type == "Box") {
-                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kBox;
-                    }
-                    else if (type == "Plane") {
-                        m_meshes[curMesh].collisionType = Mesh::eCollisionType::kPlane;
+                if (thisMesh.find("extras") != thisMesh.end()) {
+                    if (thisMesh.at("extras").find("CollisionType") != thisMesh.at("extras").end()) {
+                        uint8_t type = thisMesh.at("extras").at("CollisionType");
+                        m_meshes[curMesh].collisionType = (Mesh::eCollisionType)type;
                     }
                 }
             }

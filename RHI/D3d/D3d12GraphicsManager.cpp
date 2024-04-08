@@ -704,7 +704,11 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
     for (auto& dbc : frame.BatchContexts) {
-        Matrix4X4f trans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+        Matrix4X4f trans;
+        BuildIdentityMatrix(trans);
+        if (dbc->Node->GetRigidBody()) {
+            pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+        }
         dbc->ModelMatrix = trans * *dbc->Node->GetCalculatedTransform().get();
     }
 }
@@ -715,10 +719,12 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
     GraphicsRHI.PrepareBatch();
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
-        GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
-            m_BatchHandleStatus,
-            D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
-            m_FixedHandleStatus["Skybox"].Handle);
+        if (d3dbatch->Node->Visible()) {
+            GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
+                m_BatchHandleStatus,
+                D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
+                m_FixedHandleStatus["Skybox"].Handle);
+        }
     }
 }
 
