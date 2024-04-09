@@ -647,11 +647,6 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     return true;
 }
 
-My::Scene* My::D3d12GraphicsManager::GetSceneForGuiBuild()
-{
-    return dynamic_cast<D3d12Application*>(m_pApp)->GetSceneManager()->GetSceneForGui();
-}
-
 void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 {
     ImGui_ImplDX12_NewFrame();
@@ -707,9 +702,10 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
         Matrix4X4f trans;
         BuildIdentityMatrix(trans);
         if (dbc->Node->GetRigidBody()) {
-            pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+            trans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
         }
         dbc->ModelMatrix = trans * *dbc->Node->GetCalculatedTransform().get();
+        break;
     }
 }
 

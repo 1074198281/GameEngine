@@ -5,7 +5,7 @@
 #include "Scene.hpp"
 
 namespace My {
-    __Interface IGraphicsManager : public IRuntimeModule{
+    __Interface IGraphicsManager : public IRuntimeModule {
     public:
         IGraphicsManager() = default;
         virtual ~IGraphicsManager() = default;
@@ -30,8 +30,6 @@ namespace My {
         virtual void FunctionKeyDown(int64_t key) {}
         virtual void FunctionKeyUp(int64_t key) {}
 
-    public:
-        virtual Scene* GetSceneForGuiBuild() = 0;
     public:
     // pass interface
         virtual void DrawBatch(Frame& frame) = 0;

@@ -1,4 +1,5 @@
 ﻿#include "GuiSubPass.hpp"
+#include "BaseApplication.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -80,31 +81,40 @@ void My::GuiSubPass::Draw(Frame& frame)
 		}
 
 		if (show_app_scene_status) {
+			auto pScene = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager()->GetSceneForGui();
+			auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
 			ImGui::Begin((const char*)u8"Scene Status");
 			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
-			for (auto& GeoNode : m_pScene->GeometryNodes) {
+			for (auto& GeoNode : pScene->GeometryNodes) {
+				GeoNode.second->GetRigidBody();
 				std::string GeoName = GeoNode.first;
 				if (ImGui::TreeNode(GeoName.c_str()))
 				{
-					std::string MaterialName = GeoName + "Material";
-					std::string GeoMaterialName = GeoNode.second->GetMaterialCount() > 0 ? GeoNode.second->GetMaterialRef(0) : "default";
-
 					bool bVisible = GeoNode.second->Visible();
-					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
 					ImGui::Checkbox("Visible", &bVisible);
 
-					if (!m_pScene->Materials[GeoMaterialName]) {
+					ImGui::SeparatorTextEx(0, "Model Matrix", NULL, 0);
+					Matrix4X4f model = pPhysicsManager->GetRigidBodyTransform(GeoNode.second->GetRigidBody());
+					ImGui::InputFloat4("", model[0]);
+					ImGui::InputFloat4("", model[1]);
+					ImGui::InputFloat4("", model[2]);
+					ImGui::InputFloat4("", model[3]);
+					
+					std::string MaterialName = GeoName + "Material";
+					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
+					std::string GeoMaterialName = GeoNode.second->GetMaterialCount() > 0 ? GeoNode.second->GetMaterialRef(0) : "default";
+					if (!pScene->Materials[GeoMaterialName]) {
 						std::cout << "Node " << GeoName << " Has No Material!" << std::endl;
 						//assert(false, "Material Not Exist!");
 						GeoNode.second->SetVisibility(bVisible);
 						ImGui::TreePop();
 						continue;
 					}
-					ImGui::SliderFloat4("BaseColor", m_pScene->Materials[GeoMaterialName]->GetBaseColorFactorData(), 0, 1);
-					ImGui::SliderFloat("Metallic", m_pScene->Materials[GeoMaterialName]->GetMetallicFactorData(), 0, 1);
-					ImGui::SliderFloat("Roughness", m_pScene->Materials[GeoMaterialName]->GetRoughnessFactorData(), 0, 1);
-					ImGui::SliderFloat3("Emissive", m_pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
-					ImGui::SliderFloat("NormalScale", m_pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
+					ImGui::SliderFloat4("BaseColor", pScene->Materials[GeoMaterialName]->GetBaseColorFactorData(), 0, 1);
+					ImGui::SliderFloat("Metallic", pScene->Materials[GeoMaterialName]->GetMetallicFactorData(), 0, 1);
+					ImGui::SliderFloat("Roughness", pScene->Materials[GeoMaterialName]->GetRoughnessFactorData(), 0, 1);
+					ImGui::SliderFloat3("Emissive", pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
+					ImGui::SliderFloat("NormalScale", pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
 
 					GeoNode.second->SetVisibility(bVisible);
 					ImGui::TreePop();

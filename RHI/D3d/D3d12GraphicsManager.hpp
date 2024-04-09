@@ -35,8 +35,6 @@ namespace My {
         void FunctionKeyUp(int64_t key) final;
 
     public:
-        Scene* GetSceneForGuiBuild() override;
-    public:
         void BeginFrame(Frame& frame) override;
         void EndFrame(Frame& frame) override;
         void UpdateD3dFrameConstants(Frame& frame);

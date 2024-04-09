@@ -6,9 +6,9 @@
 namespace My {
 	class OverlayPass : __implements BaseDrawPass {
 	public:
-		OverlayPass(IGraphicsManager* gmr) : BaseDrawPass(gmr)
+		OverlayPass(IGraphicsManager* gmr, IApplication* pApp) : BaseDrawPass(gmr)
 		{
-			m_DrawSubPasses.push_back(std::make_shared<GuiSubPass>(gmr));
+			m_DrawSubPasses.push_back(std::make_shared<GuiSubPass>(gmr, pApp));
 		}
 	};
 }

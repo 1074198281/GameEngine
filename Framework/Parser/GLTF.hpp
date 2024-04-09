@@ -170,6 +170,7 @@ namespace glTF
         int32_t skin;
         enum eCollisionType { kNone, kSphere, kBox, kPlane = 15, kCollisionType };
         eCollisionType collisionType;
+        float Bounding[3];
     };
 
     struct Camera
@@ -850,6 +851,7 @@ namespace glTF
                     if (thisMesh.at("extras").find("CollisionType") != thisMesh.at("extras").end()) {
                         uint8_t type = thisMesh.at("extras").at("CollisionType");
                         m_meshes[curMesh].collisionType = (Mesh::eCollisionType)type;
+                        ReadFloats(thisMesh.at("extras").at("Bounding"), m_meshes[curMesh].Bounding);
                     }
                 }
             }
@@ -1505,18 +1507,24 @@ namespace glTF
             // CollisionType
             switch (mesh->collisionType) {
             case Mesh::eCollisionType::kSphere:
+            {
                 GeoObject->SetCollisionType(My::kSceneObjectCollisionTypeSphere);
-                break;
+            }
+            break;
             case Mesh::eCollisionType::kBox:
-                GeoObject->SetCollisionType(My::kSceneObjectCollisionTypeBox);
-                break;
+            {
+                GeoObject->SetCollisionType(My::kSceneObjectCollisionTypeBox);               
+            }
+            break;
             case Mesh::eCollisionType::kPlane:
+            {
                 GeoObject->SetCollisionType(My::kSceneObjectCollisionTypePlane);
-                break;
+            }
+            break;
             default:
                 break;
             }
-
+            GeoObject->SetBounding(My::Vector3f(mesh->Bounding[0], mesh->Bounding[1], mesh->Bounding[2]));
 
             GeoNode->AddSceneObjectRef(mesh->name);
             Scene.LUT_Name_GeometryNode.emplace(mesh->name, GeoNode);

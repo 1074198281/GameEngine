@@ -53,14 +53,13 @@ void My::PhysicsManager::Tick()
 void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::SceneObjectGeometry& geometry)
 {
     btRigidBody* rigidBody = nullptr;
-
+    Vector3f Bounding = geometry.Bounding();
     switch (geometry.CollisionType())
     {
     case SceneObjectCollisionType::kSceneObjectCollisionTypeSphere:
     {
-        btSphereShape* sphere = new btSphereShape(1.0f);
+        btSphereShape* sphere = new btSphereShape(Bounding[0]);
         m_btCollisionShapes.push_back(sphere);
-
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
@@ -69,7 +68,7 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
             new btDefaultMotionState(
                 startTransform
             );
-        btScalar mass = 1.0f;
+        btScalar mass = pow(Bounding[0], 3) * 4 * PI / 3.0;
         btVector3 fallInertia(0.0f, 0.0f, 0.0f);
         sphere->calculateLocalInertia(mass, fallInertia);
         btRigidBody::btRigidBodyConstructionInfo
@@ -80,9 +79,8 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
     break;
     case SceneObjectCollisionType::kSceneObjectCollisionTypeBox:
     {
-        btBoxShape* box = new btBoxShape(btVector3(5.0f, 5.0f, 0.01f));
+        btBoxShape* box = new btBoxShape(btVector3(Bounding[0], Bounding[1], Bounding[2]));
         m_btCollisionShapes.push_back(box);
-
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
@@ -100,9 +98,8 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
     break;
     case SceneObjectCollisionType::kSceneObjectCollisionTypePlane:
     {
-        btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(0.0f, 1.0f, 0.0f), 0);
+        btStaticPlaneShape* plane = new btStaticPlaneShape(btVector3(Bounding[0], Bounding[1], Bounding[2]), 0);
         m_btCollisionShapes.push_back(plane);
-
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
@@ -189,13 +186,13 @@ My::Matrix4X4f My::PhysicsManager::GetRigidBodyTransform(void* rigidBody)
     BuildIdentityMatrix(result);
     // 24.4.8 convert result from vec*matrix to matrix*vec 
     result.data[0][0] = basis[0][0];
-    result.data[0][1] = basis[0][1];
-    result.data[0][2] = basis[0][2];
-    result.data[1][0] = basis[1][0];
+    result.data[1][0] = basis[0][1];
+    result.data[2][0] = basis[0][2];
+    result.data[0][1] = basis[1][0];
     result.data[1][1] = basis[1][1];
-    result.data[1][2] = basis[1][2];
-    result.data[2][0] = basis[2][0];
-    result.data[2][1] = basis[2][1];
+    result.data[2][1] = basis[1][2];
+    result.data[0][2] = basis[2][0];
+    result.data[1][2] = basis[2][1];
     result.data[2][2] = basis[2][2];
     result.data[0][3] = origin.getX();
     result.data[1][3] = origin.getY();

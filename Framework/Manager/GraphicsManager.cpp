@@ -19,8 +19,8 @@ int GraphicsManager::Initialize()
     m_nFrameIndex = 0;
     m_Frames.resize(MAX_FRAME_COUNT);
 
-    m_DrawPasses.push_back(std::make_shared<ForwardGeometryPass>(this));
-    m_DrawPasses.push_back(std::make_shared<OverlayPass>(this));
+    m_DrawPasses.push_back(std::make_shared<ForwardGeometryPass>(this, m_pApp));
+    m_DrawPasses.push_back(std::make_shared<OverlayPass>(this, m_pApp));
 
     return result;
 }
