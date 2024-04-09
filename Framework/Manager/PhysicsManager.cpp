@@ -79,12 +79,12 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
     break;
     case SceneObjectCollisionType::kSceneObjectCollisionTypeBox:
     {
-        btBoxShape* box = new btBoxShape(btVector3(Bounding[0], Bounding[1], Bounding[2]));
+        btBoxShape* box = new btBoxShape(btVector3(Bounding[0], Bounding[2], Bounding[1]));
         m_btCollisionShapes.push_back(box);
         const auto trans = node.GetCalculatedTransform();
         btTransform startTransform;
         startTransform.setIdentity();
-        startTransform.setOrigin(btVector3(trans->data[3][0], trans->data[3][1], trans->data[3][2]));
+        startTransform.setOrigin(btVector3(trans->data[0][3], trans->data[1][3], trans->data[2][3]));
         btDefaultMotionState* motionState =
             new btDefaultMotionState(
                 startTransform

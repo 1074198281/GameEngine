@@ -497,7 +497,7 @@ namespace glTF
                     const std::string& uri = thisBuffer.at("uri");
                     std::string filepath = m_basePath + std::string(uri.begin(), uri.end());
 
-                    ByteArray ba = My::ReadFileSyncDirectly(filepath.c_str());
+                    ByteArray ba = My::ReadFileSyncDirectly(filepath.c_str(), true);
                     assert(ba->size() > 0);
                     printf("Missing bin file %s\n", filepath.c_str());
                     m_buffers.push_back(ba);
@@ -622,10 +622,10 @@ namespace glTF
                         ReadFloats(metallicRoughness.at("baseColorFactor"), material.baseColorFactor);
 
                     if (metallicRoughness.find("metallicFactor") != metallicRoughness.end())
-                        material.metallicFactor = metallicRoughness.at("metallicFactor");
+                        ReadFloats(metallicRoughness.at("metallicFactor"), &material.metallicFactor);
 
                     if (metallicRoughness.find("roughnessFactor") != metallicRoughness.end())
-                        material.roughnessFactor = metallicRoughness.at("roughnessFactor");
+                        ReadFloats(metallicRoughness.at("roughnessFactor"), &material.roughnessFactor);
 
                     if (metallicRoughness.find("baseColorTexture") != metallicRoughness.end())
                         material.baseColorUV = ReadTextureInfo(metallicRoughness.at("baseColorTexture"),

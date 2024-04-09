@@ -705,7 +705,6 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
             trans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
         }
         dbc->ModelMatrix = trans * *dbc->Node->GetCalculatedTransform().get();
-        break;
     }
 }
 
