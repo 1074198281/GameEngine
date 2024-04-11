@@ -1,8 +1,5 @@
 #pragma once 
 
-#define BT_USE_DOUBLE_PRECISION 1
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
 #include "IPhysicsManager.hpp"
 #include "SceneManager.hpp"
 #include <vector>
@@ -11,27 +8,19 @@ namespace My {
 	class PhysicsManager : __implements IPhysicsManager {
 	public:
 		~PhysicsManager() override = default;
-		virtual int Initialize();
-		virtual void Finalize();
-		virtual void Tick();
+		int Initialize() override = 0;
+		void Finalize() override = 0;
+		void Tick() override = 0;
 
-		virtual void CreateRigidBody(SceneGeometryNode& node, const SceneObjectGeometry& geometry);
-		virtual void DeleteRigidBody(SceneGeometryNode& node);
+		void CreateRigidBody(SceneGeometryNode& node, const SceneObjectGeometry& geometry) override = 0;
+		void DeleteRigidBody(SceneGeometryNode& node) override = 0;
 
-		virtual int CreateRigidBodies();
-		virtual void ClearRigidBodies();
+		int CreateRigidBodies() override = 0;
+		void ClearRigidBodies() override = 0;
 
-		Matrix4X4f GetRigidBodyTransform(void* rigidBody) override;
+		Matrix4X4f GetRigidBodyTransform(void* rigidBody) override = 0;
 
 	protected:
 		uint64_t m_nSceneRevision;
-
-		btBroadphaseInterface* m_btBroadphase;
-		btDefaultCollisionConfiguration* m_btCollisionConfiguration;
-		btCollisionDispatcher* m_btDispatcher;
-		btSequentialImpulseConstraintSolver* m_btSolver;
-		btDiscreteDynamicsWorld* m_btDynamicsWorld;
-
-		std::vector<btCollisionShape*> m_btCollisionShapes;
 	};
 }

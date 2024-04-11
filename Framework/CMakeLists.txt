@@ -54,6 +54,22 @@ source_group(include/Pass/DrawSubPass FILES ${DRAWSUBPASS_HEADER_FILES})
 source_group(src/Pass/DrawSubPass FILES ${DRAWSUBPASS_SOURCE_FILES})
 
 
+# add Physics files Physics library PhysX/Bullet3/My(no realization)
+if(${PHYSICS_TYPE} STREQUAL "PhysX")
+    file(GLOB PHYSICS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.hpp)
+    file(GLOB PHYSICS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.cpp)
+    source_group(include/Physics FILES ${PHYSICS_HEADER_FILES})
+    source_group(src/Physics FILES ${PHYSICS_SOURCE_FILES})
+elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
+    file(GLOB PHYSICS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.hpp)
+    file(GLOB PHYSICS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.cpp)
+    source_group(include/Physics FILES ${PHYSICS_HEADER_FILES})
+    source_group(src/Physics FILES ${PHYSICS_SOURCE_FILES})
+elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
+    # no realization
+endif()
+
+
 # add library
 add_library(Framework
 ${ALGORITHM_HEADER_FILES} ${ALGORITHM_SOURCE_FILES}
@@ -66,6 +82,7 @@ ${DISPATCHPASS_HEADER_FILES} ${DISPATCHPASS_SOURCE_FILES}
 ${DRAWPASS_HEADER_FILES} ${DRAWPASS_SOURCE_FILES}
 ${DRAWSUBPASS_HEADER_FILES} ${DRAWSUBPASS_SOURCE_FILES}
 ${SCENEGRAPH_HEADER_FILES} ${SCENEGRAPH_SOURCE_FILES}
+${PHYSICS_HEADER_FILES} ${PHYSICS_SOURCE_FILES}
 )
 
 MESSAGE("DEBUG_FLAG")
@@ -73,15 +90,25 @@ MESSAGE("DEBUG_FLAG")
 if(DEBUG_FLAG EQUAL 1)
     MESSAGE("Using Debug External Library")
     target_link_libraries(Framework 
-    ${BULLETLINEARMATH_DEBUG_LIBRARY}
-    ${BULLETDYNAMICS_DEBUG_LIBRARY}
-    ${BULLETCOLLISION_DEBUG_LIBRARY}
     ${IMGUI_DEBUG_LIBRARY})
+
+    if(${PHYSICS_TYPE} STREQUAL "PhysX")
+        target_link_libraries(Framework ${PHYSX_DEBUG_LIBRARY} ${PHYSXCOMMON_DEBUG_LIBRARY} ${PHYSXFOUNDATION_DEBUG_LIBRARY} ${PHYSXPVDSDK_DEBUG_LIBRARY}  ${PHYSXEXTENSIONS_DEBUG_LIBRARY})
+    elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
+        target_link_libraries(Framework ${BULLETLINEARMATH_DEBUG_LIBRARY} ${BULLETDYNAMICS_DEBUG_LIBRARY} ${BULLETCOLLISION_DEBUG_LIBRARY})
+    elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
+        # no realization
+    endif()
 elseif(DEBUG_FLAG EQUAL 0)
     MESSAGE("Using Release External Library")
     target_link_libraries(Framework 
-    ${BULLETLINEARMATH_RELEASE_LIBRARY}
-    ${BULLETDYNAMICS_RELEASE_LIBRARY}
-    ${BULLETCOLLISION_RELEASE_LIBRARY}
     ${IMGUI_RELEASE_LIBRARY})
+
+    if(${PHYSICS_TYPE} STREQUAL "PhysX")
+        target_link_libraries(Framework ${PHYSX_RELEASE_LIBRARY} ${PHYSXCOMMON_RELEASE_LIBRARY} ${PHYSXFOUNDATION_RELEASE_LIBRARY} ${PHYSXPVDSDK_RELEASE_LIBRARY}  ${PHYSXEXTENSIONS_RELEASE_LIBRARY})
+    elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
+        target_link_libraries(Framework ${BULLETLINEARMATH_RELEASE_LIBRARY} ${BULLETDYNAMICS_RELEASE_LIBRARY} ${BULLETCOLLISION_RELEASE_LIBRARY})
+    elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
+        # no realization
+    endif()
 endif()

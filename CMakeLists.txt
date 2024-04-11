@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.18)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 
-project(GameEngine VERSION 1.0 LANGUAGES CXX)
+project(GameEngine VERSION 1.0)
 
 set(DEBUG_FLAG 1) 
+set(PHYSICS_TYPE "PhysX")   # PhysX/Bullet3/My(no realization)
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   # Debug 配置
@@ -29,6 +30,16 @@ add_compile_definitions(USING_DX12)
 
 # 添加预处理器定义屏蔽vs的全局max和min宏
 add_compile_definitions(NOMINMAX)
+
+# Physics library PhysX/Bullet3/My(no realization)
+if(${PHYSICS_TYPE} STREQUAL "PhysX")
+  add_compile_definitions(USING_PHYSICS_PHYSX)
+elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
+  add_compile_definitions(USING_PHYSICS_BULLET3)
+elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
+  # no realization
+  add_compile_definitions(USING_PHYSICS_MY)
+endif()
 
 # 添加工作目录
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
@@ -73,6 +84,20 @@ if(DEBUG_FLAG)
   find_library(IMGUI_DEBUG_LIBRARY ImGUI_Debug PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/ImGUI/Debug NO_CMAKE_FIND_ROOT_PATH)
   MESSAGE(STATUS "IMGUI_DEBUG_LIBRARY: " ${IMGUI_DEBUG_LIBRARY} )
   MESSAGE("----------- find ImGUI end -----------")
+
+  #find PhysX
+  MESSAGE("----------- find PhysX -----------")
+  find_library(PHYSX_DEBUG_LIBRARY PhysX_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Debug NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysX_DEBUG_LIBRARY: " ${PHYSX_DEBUG_LIBRARY} )
+  find_library(PHYSXCOMMON_DEBUG_LIBRARY PhysXCommon_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Debug NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXCommon_DEBUG_LIBRARY: " ${PHYSXCOMMON_DEBUG_LIBRARY} )
+  find_library(PHYSXFOUNDATION_DEBUG_LIBRARY PhysXFoundation_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Debug NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXFoundation_DEBUG_LIBRARY: " ${PHYSXFOUNDATION_DEBUG_LIBRARY} )
+  find_library(PHYSXPVDSDK_DEBUG_LIBRARY PhysXPvdSDK_static_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Debug NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXPvdSDK_DEBUG_LIBRARY: " ${PHYSXPVDSDK_DEBUG_LIBRARY} )
+  find_library(PHYSXEXTENSIONS_DEBUG_LIBRARY PhysXExtensions_static_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Debug NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXExtensions_DEBUG_LIBRARY: " ${PHYSXEXTENSIONS_DEBUG_LIBRARY} )
+  MESSAGE("----------- find PhysX end -----------")
 else()
   #find bullet3
   MESSAGE("----------- find bullet3 -----------")
@@ -89,6 +114,16 @@ else()
   find_library(IMGUI_RELEASE_LIBRARY ImGUI_Release PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/ImGUI/Release NO_CMAKE_FIND_ROOT_PATH)
   MESSAGE(STATUS "IMGUI_RELEASE_LIBRARY: " ${IMGUI_RELEASE_LIBRARY} )
   MESSAGE("----------- find ImGUI end -----------")
+
+  #find PhysX
+  MESSAGE("----------- find PhysX -----------")
+  find_library(PHYSX_RELEASE_LIBRARY PhysX_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Release NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysX_RELEASE_LIBRARY: " ${PHYSX_RELEASE_LIBRARY} )
+  find_library(PHYSXCOMMON_RELEASE_LIBRARY PhysXCommon_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Release NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXCommon_RELEASE_LIBRARY: " ${PHYSXCOMMON_RELEASE_LIBRARY} )
+  find_library(PHYSXFOUNDATION_RELEASE_LIBRARY PhysXFoundation_64 PATHS ${MYGE_EXTERNAL_LIBRARY_PATH}/PhysX/Release NO_CMAKE_FIND_ROOT_PATH)
+  MESSAGE(STATUS "PhysXFoundation_RELEASE_LIBRARY: " ${PHYSXFOUNDATION_RELEASE_LIBRARY} )
+  MESSAGE("----------- find PhysX end -----------")
 endif()
 
 # 设置附加库目录
@@ -103,6 +138,8 @@ include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include/zlib")
 include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include/WinPix")
 # ImGUI
 include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include/ImGUI")
+# PhysX
+include_directories("${PROJECT_SOURCE_DIR}/External/Windows/include/PhysX/include")
 
 # Framework files
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Algorithm")
@@ -116,6 +153,16 @@ include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DispatchPass")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DrawPass")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Pass/DrawSubPass")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/SceneGraph")
+if(${PHYSICS_TYPE} STREQUAL "PhysX")
+  include_directories("${PROJECT_SOURCE_DIR}/Framework/Physics/PhysXPhysics")
+elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
+  include_directories("${PROJECT_SOURCE_DIR}/Framework/Physics/Bullet3Physics")
+elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
+  # no realization
+endif()
+
+
+
 
 # add windows includes
 IF(${WIN32})

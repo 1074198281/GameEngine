@@ -1,8 +1,8 @@
 #include <iostream>
-#include "PhysicsManager.hpp"
+#include "BulletPhysicsManager.hpp"
 #include "BaseApplication.hpp"
 
-int My::PhysicsManager::Initialize()
+int My::BulletPhysicsManager::Initialize()
 {
     m_nSceneRevision = 0;
 
@@ -23,7 +23,7 @@ int My::PhysicsManager::Initialize()
 	return 0;
 }
 
-void My::PhysicsManager::Finalize()
+void My::BulletPhysicsManager::Finalize()
 {
 	// Clean up
 	ClearRigidBodies();
@@ -35,7 +35,7 @@ void My::PhysicsManager::Finalize()
 	delete m_btBroadphase;
 }
 
-void My::PhysicsManager::Tick()
+void My::BulletPhysicsManager::Tick()
 {
     auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
     auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
@@ -50,7 +50,7 @@ void My::PhysicsManager::Tick()
 	m_btDynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
 }
 
-void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::SceneObjectGeometry& geometry)
+void My::BulletPhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::SceneObjectGeometry& geometry)
 {
     btRigidBody* rigidBody = nullptr;
     Vector3f Bounding = geometry.Bounding();
@@ -122,7 +122,7 @@ void My::PhysicsManager::CreateRigidBody(My::SceneGeometryNode& node, const My::
     node.LinkRigidBody(rigidBody);
 }
 
-void My::PhysicsManager::DeleteRigidBody(My::SceneGeometryNode& node)
+void My::BulletPhysicsManager::DeleteRigidBody(My::SceneGeometryNode& node)
 {
     if (!node.UnlinkRigidBody()) {
         return;
@@ -137,7 +137,7 @@ void My::PhysicsManager::DeleteRigidBody(My::SceneGeometryNode& node)
     }
 }
 
-int My::PhysicsManager::CreateRigidBodies()
+int My::BulletPhysicsManager::CreateRigidBodies()
 {
     auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
     auto& scene = pSceneManager->GetSceneForRendering();
@@ -155,7 +155,7 @@ int My::PhysicsManager::CreateRigidBodies()
     return 0;
 }
 
-void My::PhysicsManager::ClearRigidBodies()
+void My::BulletPhysicsManager::ClearRigidBodies()
 {
     auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
 
@@ -176,7 +176,7 @@ void My::PhysicsManager::ClearRigidBodies()
     m_btCollisionShapes.clear();
 }
 
-My::Matrix4X4f My::PhysicsManager::GetRigidBodyTransform(void* rigidBody)
+My::Matrix4X4f My::BulletPhysicsManager::GetRigidBodyTransform(void* rigidBody)
 {
     Matrix4X4f result;
     btTransform trans;

@@ -46,7 +46,7 @@ static std::wstring GetLatestWinPixGpuCapturerPath_Cpp17()
 #endif // WINPIX_DEBUG
 
 
-
+// Graphics Interface
 #ifdef USING_DX12
 #include "D3d12Application.hpp"
 #include "D3d/D3d12Config.hpp"
@@ -59,6 +59,14 @@ static std::wstring GetLatestWinPixGpuCapturerPath_Cpp17()
 #elif USING_VULKAN
 
 #endif // USING_DX12
+
+#ifdef USING_PHYSICS_PHYSX
+#include "PhysXPhysicsManager.hpp"
+#elif USING_PHYSICS_BULLET3
+#include "Bullet3PhysicsManager.hpp"
+#elif USING_PHYSICS_MY
+
+#endif
 
 
 int main(int argc, char** argv) {
@@ -81,7 +89,7 @@ int main(int argc, char** argv) {
 	TGraphicsManager graphicsManager;
 	MemoryManager memoryManager;
 	SceneManager sceneManager;
-	PhysicsManager physicsManager;
+	TPhysicsManager physicsManager;
 	InputManager inputManager;
 
 	app.RegisterManagerModule(&gameLogic);
