@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseSceneNode.hpp"
-#include "Quaternion.h"
+#include "Quaternion.hpp"
 #include <ostream>
 #include <vector>
 #include <string>
