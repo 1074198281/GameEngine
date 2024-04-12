@@ -699,12 +699,15 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
     for (auto& dbc : frame.BatchContexts) {
-        Matrix4X4f trans;
-        BuildIdentityMatrix(trans);
+        Matrix4X4f PhysicsTrans;
         if (dbc->Node->GetRigidBody()) {
-            trans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+            PhysicsTrans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
         }
-        dbc->ModelMatrix = trans * *dbc->Node->GetCalculatedTransform().get();
+        Matrix4X4f ModelTrans = *dbc->Node->GetCalculatedTransform().get();
+        ModelTrans[0][3] = 0;
+        ModelTrans[1][3] = 0;
+        ModelTrans[2][3] = 0;
+        dbc->ModelMatrix = PhysicsTrans * ModelTrans;
     }
 }
 

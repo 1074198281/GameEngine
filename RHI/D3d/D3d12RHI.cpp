@@ -104,7 +104,7 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
         m_Camera->SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
         m_Camera->SetFOV(120.f);
         m_Camera->SetZRange(0.001f, 1000.0f);
-        m_Camera->SetPosition(XM_Math::Vector3(0, 20, 200));
+        m_Camera->SetPosition(XM_Math::Vector3(0, 5, 150));
     }
     if (!m_CameraController) {
         m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(*m_Camera.get(), XM_Math::Vector3(0.0f, 1.0f, 0.0f));

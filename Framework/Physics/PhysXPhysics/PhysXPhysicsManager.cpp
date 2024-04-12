@@ -19,7 +19,7 @@ int My::PhysXPhysicsManager::Initialize()
 	// for PhysX Visual Debugger
 	bool recordMemoryAllocators = true;
 	m_PxPvd = PxCreatePvd(*m_PxFoundation);
-	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10000);
 	m_PxPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
 	m_PxPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_PxFoundation, PxTolerancesScale(), recordMemoryAllocators, m_PxPvd);
@@ -28,19 +28,20 @@ int My::PhysXPhysicsManager::Initialize()
 	}
 
 	PxSceneDesc sceneDesc(m_PxPhysics->getTolerancesScale());
-	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+	sceneDesc.gravity = PxVec3(0.0f, -0.981f, 0.0f);
 	m_PxDispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_PxDispatcher;
 	sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+	sceneDesc.flags = PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 	m_PxScene = m_PxPhysics->createScene(sceneDesc);
 
-	//PxPvdSceneClient* pvdClient = m_PxScene->getScenePvdClient();
-	//if (pvdClient)
-	//{
-	//	pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-	//	pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-	//	pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-	//}
+	PxPvdSceneClient* pvdClient = m_PxScene->getScenePvdClient();
+	if (pvdClient)
+	{
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+	}
 
 	return 0;
 }
@@ -82,33 +83,70 @@ void My::PhysXPhysicsManager::CreateRigidBody(SceneGeometryNode& node, const Sce
 	{
 	case kSceneObjectCollisionTypeSphere:
 	{
+		PxRigidDynamic* dynamic;
+		PxSphereGeometry GeoSphere;
+		PxShape* ShapeSphere = nullptr;
+		PxMaterial* MaterialSphere = nullptr;
 		float Radius = geometry.Bounding()[0];
 		const auto trans = node.GetCalculatedTransform();
-		rigidActor = m_PxPhysics->createRigidDynamic(PxTransform(PxVec3(trans->data[0][3], trans->data[1][3], trans->data[2][3])));
-		PxMaterial* SphereMaterial = m_PxPhysics->createMaterial(0.5, 0.5, 0.6);
-		PxRigidActorExt::createExclusiveShape(*rigidActor, PxSphereGeometry(Radius), *SphereMaterial);
+		dynamic = m_PxPhysics->createRigidDynamic(PxTransform(PxVec3(trans->data[0][3], trans->data[1][3], trans->data[2][3])));
+		MaterialSphere = m_PxPhysics->createMaterial(0.5, 0.5, 0.6);
+		GeoSphere.radius = Radius;
+		PxRigidActorExt::createExclusiveShape(*dynamic, GeoSphere, *MaterialSphere);
+		ShapeSphere = m_PxPhysics->createShape(GeoSphere, *MaterialSphere);
 		float mass = 4 / 3.0f * PI * pow(Radius, 3);
-		PxShape shapeSphere;
-		m_PxPhysics->createShape();
-		rigidActor->attachShape()
-		reinterpret_cast<PxShape*>()->setContactOffset()
+		PxRigidBodyExt::updateMassAndInertia(*dynamic, mass);
+		ShapeSphere->setContactOffset(0.04);
+		ShapeSphere->setRestOffset(0.01);
+		rigidActor = dynamic;
+		rigidActor->attachShape(*ShapeSphere);
+		rigidActor->setName(node.GetSceneObjectRef().c_str());
 		m_PxScene->addActor(*rigidActor);
 	}
 	break;
 	case kSceneObjectCollisionTypeBox:
 	{
-		My::Vector3f Bounding = geometry.Bounding();
+		PxRigidStatic* dynamic;
+		PxBoxGeometry GeoBox;
+		PxShape* ShapeBox = nullptr;
+		PxMaterial* MaterialBox = nullptr;
+		My::Vector3f Bounding= geometry.Bounding();
 		const auto trans = node.GetCalculatedTransform();
-		rigidActor = m_PxPhysics->createRigidStatic(PxTransform(PxVec3(trans->data[0][3], trans->data[1][3], trans->data[2][3])));
-		PxMaterial* SphereMaterial = m_PxPhysics->createMaterial(0.5, 0.5, 0.6);
-		PxRigidActorExt::createExclusiveShape(*rigidActor, PxBoxGeometry(Bounding[0], Bounding[1], Bounding[2]), *SphereMaterial);
-		float mass = 0;
+		dynamic = m_PxPhysics->createRigidStatic(PxTransform(PxVec3(trans->data[0][3], trans->data[1][3], trans->data[2][3])));
+		dynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+		MaterialBox = m_PxPhysics->createMaterial(0.5, 0.5, 0.6);
+		GeoBox.halfExtents = PxVec3(Bounding[1], Bounding[2], Bounding[0]);
+		PxRigidActorExt::createExclusiveShape(*dynamic, GeoBox, *MaterialBox);
+		ShapeBox = m_PxPhysics->createShape(GeoBox, *MaterialBox);
+		//float mass = 0;
+		float mass = 2 * Bounding[0] * 2 * Bounding[1] * 2 * Bounding[2];
+		//PxRigidBodyExt::updateMassAndInertia(*dynamic, mass);
+		ShapeBox->setContactOffset(0.04);
+		ShapeBox->setRestOffset(0.01);
+		rigidActor = dynamic;
+		rigidActor->attachShape(*ShapeBox);
+		rigidActor->setName(node.GetSceneObjectRef().c_str());
 		m_PxScene->addActor(*rigidActor);
 	}
 	break;
 	case kSceneObjectCollisionTypePlane:
 	{
-
+		PxPlaneGeometry GeoPlane;
+		PxShape* ShapePlane = nullptr;
+		PxMaterial* MaterialPlane = nullptr;
+		My::Vector3f Bounding = geometry.Bounding();
+		const auto trans = node.GetCalculatedTransform();
+		rigidActor = m_PxPhysics->createRigidDynamic(PxTransform(PxVec3(trans->data[0][3], trans->data[1][3], trans->data[2][3])));
+		MaterialPlane = m_PxPhysics->createMaterial(0.5, 0.5, 0.6);
+		PxRigidActorExt::createExclusiveShape(*rigidActor, GeoPlane, *MaterialPlane);
+		ShapePlane = m_PxPhysics->createShape(GeoPlane, *MaterialPlane);
+		float mass = 0.f;
+		reinterpret_cast<PxRigidDynamic*>(rigidActor)->setMass(mass);
+		ShapePlane->setContactOffset(0.04);
+		ShapePlane->setRestOffset(0.01);
+		rigidActor->attachShape(*ShapePlane);
+		rigidActor->setName(node.GetSceneObjectRef().c_str());
+		m_PxScene->addActor(*rigidActor);
 	}
 	break;
 	default:
@@ -117,6 +155,7 @@ void My::PhysXPhysicsManager::CreateRigidBody(SceneGeometryNode& node, const Sce
 
 	node.LinkRigidBody(rigidActor);
 }
+
 void My::PhysXPhysicsManager::DeleteRigidBody(SceneGeometryNode& node)
 {
 	if (!node.UnlinkRigidBody()) {
