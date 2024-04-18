@@ -72,4 +72,9 @@ namespace My {
         kPrimitiveTypeQuadStrip = "QSTR"_i32,   ///< For N>=0, vertices [N*2+0, N*2+1, N*2+3] and [N*2+0, N*2+3, N*2+2] render triangles.
         kPrimitiveTypePolygon = "POLY"_i32,     ///< For N>=0, vertices [0, N+1, N+2] render a triangle.
     };
+
+    ENUM(AttenCurveType) {
+        kNone = 0, kLinear = 1, kSmooth = 2, kInverse = 3,
+            kInverseSquare = 4
+    };
 }

@@ -40,6 +40,7 @@ uint FIRSTBITHIGH_SLOW(uint input)
 #else
 #include <stddef.h>
 #include "geommath.hpp"
+#include "Image.hpp"
 
 #define __CBREGISTER( i )
 #define ATTR_OFFS			offsetof
@@ -49,7 +50,7 @@ uint FIRSTBITHIGH_SLOW(uint input)
 
 namespace My {
 	enum LightType { Omni = 0, Spot = 1, Infinity = 2, Area = 3 };
-#define MAX_LIGHT_NUM 16
+#define MAX_LIGHT_NUM 100
 
 #ifdef USING_DX12
 	typedef size_t TextureHandle;
@@ -63,24 +64,51 @@ namespace My {
 
 #endif // GraphicsInterface
 
-	typedef struct Texture {
-		TextureHandle Handle;
-	} Texture;
+	typedef struct TextureBase {
+		TextureHandle handle;
+		PIXEL_FORMAT pixel_format;
+
+		uint32_t width;
+		uint32_t height;
+		uint32_t mips;
+		uint32_t samplers;
+	} TextureBase;
+
+	struct TextureArrayBase : virtual TextureBase {
+		uint32_t size = 0;
+	};
+
+	struct Texture2D : virtual TextureBase {
+	};
+
+	struct TextureCube : virtual TextureBase {
+	};
+
+	struct Texture2DArray : Texture2D, TextureArrayBase {
+	};
+
+	struct TextureCubeArray : TextureCube, TextureArrayBase {
+	};
 
 	typedef struct MaterialTextures {
-		Texture DiffuseMap;
-		Texture MetallicRoughnessMap;
-		Texture AmbientOcclusionMap;
-		Texture EmissiveMap;
-		Texture NormalMap;
+		Texture2D DiffuseMap;
+		Texture2D MetallicRoughnessMap;
+		Texture2D AmbientOcclusionMap;
+		Texture2D EmissiveMap;
+		Texture2D NormalMap;
 	} MaterialTextures;
 
 	typedef struct GlobalTextures {
-		Texture SkyBoxMap;
-		Texture SkyBoxDiffuseMap;
-		Texture BRDF_LUT_Map;
+		TextureCube SkyBoxMap;
+		TextureCube SkyBoxDiffuseMap;
+		Texture2D BRDF_LUT_Map;
 	} GlobalTextures;
 
+	typedef struct ShadowTextures {
+		Texture2DArray ShadowMap;
+		Texture2DArray GlobalShadowMap;
+		TextureCubeArray CubeShadowMap;
+	} ShadowTextures;
 }
 
 

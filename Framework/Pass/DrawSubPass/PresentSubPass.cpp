@@ -12,6 +12,7 @@ void My::PresentSubPass::EndSubPass()
 
 void My::PresentSubPass::Draw(Frame& frame)
 {
+	m_pGraphicsManager->SetPipelineStatus("Present");
 	//m_pGraphicsManager->SetShadowMaps();
 	m_pGraphicsManager->DrawPresent(frame);
 }

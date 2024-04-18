@@ -3,7 +3,6 @@
 
 namespace My {
 
-
     struct BasicVertex
     {
         Vector3f m_Position;
@@ -52,9 +51,13 @@ namespace My {
 
 	// cb3
 	typedef struct Light {
+		Matrix4X4f LightViewMatrix;
+		Matrix4X4f LightProjectionMatrix;
 		Vector4f LightPosition;
 		Vector4f LightColor;
 		Vector4f LightDirection;
+		int LightShadowMapIndex;
+		LightType Type;
 		float Insensity;
 	} Light;
 

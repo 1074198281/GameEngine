@@ -41,6 +41,10 @@ namespace My {
         void BeginSubPass(std::string PassName) override {}
         void EndSubPass() override {}
 
+        void SetPipelineStatus(std::string PSOName) override {}
+        void SetBatchResources(Frame& frame) override {}
+        void SetShadowResources(Frame& frame) override {}
+
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();

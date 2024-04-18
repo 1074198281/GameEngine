@@ -45,7 +45,6 @@ namespace D3dGraphicsCore {
 			m_fGetGfxconfiguration = func;
 		}
 
-
 	public:
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
@@ -56,21 +55,20 @@ namespace D3dGraphicsCore {
 		void UpdateCameraParams(int64_t key);
 		void UpdatePresent();
 
-		
-
 	public:
 		void UpdateConstants(My::Frame& frame);
-		void PrepareBatch();
 		void DrawBatch(My::Frame frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
 			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle);
 		void DrawSkybox(My::Frame frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(My::Frame frame);
 		void DrawPresent(My::Frame frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 
-
 		void BeginSubPass(std::string PassName);
 		void EndSubPass();
 
+		void SetPipelineStatus(std::string PSOName);
+		void SetBatchResources();
+		void SetShadowResources(My::Frame& frame);
 	private:
 		void InitializeCoreHWND();
 	private:
@@ -81,6 +79,7 @@ namespace D3dGraphicsCore {
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
 		GraphicsContext* m_pGraphicsContext;
+		GraphicsPSO* m_pGraphicsPSO;
 
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;

@@ -240,27 +240,27 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 {
                 case My::SceneObjectMaterial::kBaseColor:
                 {
-                    dbc->Material.DiffuseMap.Handle = cpuHandle;
+                    dbc->Material.DiffuseMap.handle = cpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kMetallicRoughness:
                 {
-                    dbc->Material.MetallicRoughnessMap.Handle = cpuHandle;
+                    dbc->Material.MetallicRoughnessMap.handle = cpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kOcclusion:
                 {
-                    dbc->Material.AmbientOcclusionMap.Handle = cpuHandle;
+                    dbc->Material.AmbientOcclusionMap.handle = cpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kEmissive:
                 {
-                    dbc->Material.EmissiveMap.Handle = cpuHandle;
+                    dbc->Material.EmissiveMap.handle = cpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kNormal:
                 {
-                    dbc->Material.NormalMap.Handle = cpuHandle;
+                    dbc->Material.NormalMap.handle = cpuHandle;
                 }
                 break;
                 default:
@@ -343,27 +343,27 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             cpuHandle = m_VecTexture.size();
             std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexBaseColor(D3dGraphicsCore::g_DefaultBaseColorTexture);
             m_VecTexture.push_back(std::move(pTexBaseColor));
-            dbc->Material.DiffuseMap.Handle = cpuHandle;
+            dbc->Material.DiffuseMap.handle = cpuHandle;
 
             cpuHandle = m_VecTexture.size();
             std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexRoughnessMetallic(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture);
             m_VecTexture.push_back(std::move(pTexRoughnessMetallic));
-            dbc->Material.MetallicRoughnessMap.Handle = cpuHandle;
+            dbc->Material.MetallicRoughnessMap.handle = cpuHandle;
 
             cpuHandle = m_VecTexture.size();
             std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexOcclusion(D3dGraphicsCore::g_DefaultOcclusionTexture);
             m_VecTexture.push_back(std::move(pTexOcclusion));
-            dbc->Material.AmbientOcclusionMap.Handle = cpuHandle;
+            dbc->Material.AmbientOcclusionMap.handle = cpuHandle;
 
             cpuHandle = m_VecTexture.size();
             std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexEmissive(D3dGraphicsCore::g_DefaultEmissiveTexture);
             m_VecTexture.push_back(std::move(pTexEmissive));
-            dbc->Material.EmissiveMap.Handle = cpuHandle;
+            dbc->Material.EmissiveMap.handle = cpuHandle;
 
             cpuHandle = m_VecTexture.size();
             std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexNormal(D3dGraphicsCore::g_DefaultNormalTexture);
             m_VecTexture.push_back(std::move(pTexNormal));
-            dbc->Material.NormalMap.Handle = cpuHandle;
+            dbc->Material.NormalMap.handle = cpuHandle;
 
             My::TextureTransform trans;
             trans.offset[0] = 0;
@@ -664,11 +664,11 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
         for (auto& batch : frame.BatchContexts) {
             D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
             D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
-                m_VecTexture[d3dbatch->Material.DiffuseMap.Handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.MetallicRoughnessMap.Handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.AmbientOcclusionMap.Handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.EmissiveMap.Handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.NormalMap.Handle]->GetSRV()
+                m_VecTexture[d3dbatch->Material.DiffuseMap.handle]->GetSRV(),
+                m_VecTexture[d3dbatch->Material.MetallicRoughnessMap.handle]->GetSRV(),
+                m_VecTexture[d3dbatch->Material.AmbientOcclusionMap.handle]->GetSRV(),
+                m_VecTexture[d3dbatch->Material.EmissiveMap.handle]->GetSRV(),
+                m_VecTexture[d3dbatch->Material.NormalMap.handle]->GetSRV()
             };
             const uint32_t NumSrc = _countof(CpuHandle);
             uint32_t pArray[NumSrc];
@@ -696,6 +696,24 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
     ImGui::Render();
 }
 
+void My::D3d12GraphicsManager::SetPipelineStatus(std::string PSOName)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.SetPipelineStatus(PSOName);
+}
+
+void My::D3d12GraphicsManager::SetBatchResources(Frame& frame)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.SetBatchResources();
+}
+
+void My::D3d12GraphicsManager::SetShadowResources(Frame& frame)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.SetBatchResources();
+}
+
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
     for (auto& dbc : frame.BatchContexts) {
@@ -714,7 +732,6 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.PrepareBatch();
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         if (d3dbatch->Node->Visible()) {

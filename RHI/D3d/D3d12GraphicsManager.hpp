@@ -48,6 +48,10 @@ namespace My {
         void BeginSubPass(std::string PassName) override;
         void EndSubPass() override;
 
+        void SetPipelineStatus(std::string PSOName) override;
+        void SetBatchResources(Frame& frame) override;
+        void SetShadowResources(Frame& frame) override;
+
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
@@ -62,6 +66,7 @@ namespace My {
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
         std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
+        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowTexture;
         std::unique_ptr<IBLImageResource> m_IBLResource;
         std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;
         std::unordered_map<std::string, My::DescriptorHeapHandleInfo> m_FixedHandleStatus;

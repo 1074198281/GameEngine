@@ -22,9 +22,7 @@ namespace D3dGraphicsCore {
 
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
-    GraphicsPSO g_DefaultPSO(L"Default PSO");
-	GraphicsPSO g_SkyBoxPSO(L"SkyBox PSO");
-	GraphicsPSO g_PresentPSO(L"Present PSO");
+	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
 	D3D12_SAMPLER_DESC g_pointWarp;
 	D3D12_SAMPLER_DESC g_pointClamp;
@@ -186,48 +184,58 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_PresentRootSignature.InitStaticSampler(17, g_linearClamp);
 	g_PresentRootSignature.Finalize(L"PresentRootSig");
 
-	g_DefaultPSO.SetRootSignature(g_TemplateRootSignature);
-	g_DefaultPSO.SetRasterizerState(RasterizerDefault);
-	g_DefaultPSO.SetBlendState(BlendDisable);
-	g_DefaultPSO.SetDepthStencilState(DepthStateReadWriteLess);
-	g_DefaultPSO.SetRenderTargetFormat(g_SceneColorBufferFormat, g_SceneDepthBufferFormat);
-	g_DefaultPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	g_DefaultPSO.SetInputLayout(3, g_PosNorTex);
-	SetShaderByteCode(g_DefaultPSO, "Model");
-	g_DefaultPSO.Finalize();
+	// Default
+	std::unique_ptr<GraphicsPSO> pDefaultPSO = std::make_unique<GraphicsPSO>(L"Default PSO");
+	pDefaultPSO->SetRootSignature(g_TemplateRootSignature);
+	pDefaultPSO->SetRasterizerState(RasterizerDefault);
+	pDefaultPSO->SetBlendState(BlendDisable);
+	pDefaultPSO->SetDepthStencilState(DepthStateReadWriteLess);
+	pDefaultPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, g_SceneDepthBufferFormat);
+	pDefaultPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pDefaultPSO->SetInputLayout(3, g_PosNorTex);
+	SetShaderByteCode(*pDefaultPSO.get(), "Model");
+	pDefaultPSO->Finalize();
 
 	//SkyBox
+	std::unique_ptr<GraphicsPSO> pSkyBoxPSO = std::make_unique<GraphicsPSO>(L"SkyBox PSO");
 	auto RasterizerSkyBox = RasterizerDefault;
 	RasterizerSkyBox.CullMode = D3D12_CULL_MODE_NONE;
-	g_SkyBoxPSO.SetRootSignature(g_TemplateRootSignature);
-	g_SkyBoxPSO.SetRasterizerState(RasterizerSkyBox);
-	g_SkyBoxPSO.SetDepthStencilState(DepthStateReadWriteLess);
-	g_SkyBoxPSO.SetBlendState(BlendDisable);
-	g_SkyBoxPSO.SetInputLayout(0, nullptr);
-	SetShaderByteCode(g_SkyBoxPSO, "SkyBox");
-	g_SkyBoxPSO.SetRenderTargetFormat(g_SceneColorBufferFormat, DSV_FORMAT);
-	g_SkyBoxPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	g_SkyBoxPSO.Finalize();
+	pSkyBoxPSO->SetRootSignature(g_TemplateRootSignature);
+	pSkyBoxPSO->SetRasterizerState(RasterizerSkyBox);
+	pSkyBoxPSO->SetDepthStencilState(DepthStateReadWriteLess);
+	pSkyBoxPSO->SetBlendState(BlendDisable);
+	pSkyBoxPSO->SetInputLayout(0, nullptr);
+	SetShaderByteCode(*pSkyBoxPSO.get(), "SkyBox");
+	pSkyBoxPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DSV_FORMAT);
+	pSkyBoxPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pSkyBoxPSO->Finalize();
 
-	g_PresentPSO.SetRootSignature(g_PresentRootSignature);
-	g_PresentPSO.SetRasterizerState(RasterizerTwoSided);
-	g_PresentPSO.SetBlendState(BlendDisable);
-	g_PresentPSO.SetDepthStencilState(DepthStateDisabled);
-	g_PresentPSO.SetSampleMask(0xFFFFFFFF);
-	g_PresentPSO.SetInputLayout(0, nullptr);
-	SetShaderByteCode(g_PresentPSO, "Present");
-	g_PresentPSO.SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);
-	g_PresentPSO.SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	g_PresentPSO.Finalize();
+	// Present
+	std::unique_ptr<GraphicsPSO> pPresentPSO = std::make_unique<GraphicsPSO>(L"Present PSO");
+	pPresentPSO->SetRootSignature(g_PresentRootSignature);
+	pPresentPSO->SetRasterizerState(RasterizerTwoSided);
+	pPresentPSO->SetBlendState(BlendDisable);
+	pPresentPSO->SetDepthStencilState(DepthStateDisabled);
+	pPresentPSO->SetSampleMask(0xFFFFFFFF);
+	pPresentPSO->SetInputLayout(0, nullptr);
+	SetShaderByteCode(*pPresentPSO.get(), "Present");
+	pPresentPSO->SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);
+	pPresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pPresentPSO->Finalize();
+
+	g_PipelineStatusMap.emplace("Default", std::move(pDefaultPSO));
+	g_PipelineStatusMap.emplace("Skybox", std::move(pSkyBoxPSO));
+	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
 }
 
 void D3dGraphicsCore::FinalizePipelineTemplates()
 {
 	g_TemplateRootSignature.DestroyAll();
 	g_PresentRootSignature.DestroyAll();
-	g_DefaultPSO.DestroyAll();
-	g_SkyBoxPSO.DestroyAll();
-	g_PresentPSO.DestroyAll();
+	for (auto& _it : g_PipelineStatusMap) {
+		_it.second->DestroyAll();
+		_it.second.reset();
+	}
 }
 
 void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name)

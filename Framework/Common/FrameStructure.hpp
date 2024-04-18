@@ -7,7 +7,7 @@
 
 namespace My {
 
-	typedef struct DrawFrameContext : PerFrameConstants {
+	typedef struct DrawFrameContext : PerFrameConstants, ShadowTextures {
 
 	} DrawFrameContext;
 
@@ -23,8 +23,8 @@ namespace My {
 		std::vector<std::shared_ptr<DrawBatchContext> > BatchContexts;
 		LightInfo LightInfomation;
 		Vector4f ClearColor{0.0, 0.0, 0.0, 0.0};
-		std::vector<Texture> ColorBuffers;
-		Texture DepthTexture;
+		std::vector<Texture2D> ColorBuffers;
+		Texture2D DepthTexture;
 		//bool RenderToTexture = false;
 		//bool EnableMSAA = false;
 		//bool ClearRT = false;

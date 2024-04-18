@@ -21,7 +21,6 @@ file(GLOB INTERFACE_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Interface/*.h ${CM
 source_group(include/Interface FILES ${INTERFACE_HEADER_FILES})
 
 # add Manager files
-
 file(GLOB MANAGER_HEADER_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.hpp)
 file(GLOB MANAGER_SOURCE_FILES  ${CMAKE_CURRENT_SOURCE_DIR}/Manager/*.cpp)
 source_group(include/Manager FILES ${MANAGER_HEADER_FILES})

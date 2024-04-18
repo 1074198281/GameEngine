@@ -46,9 +46,7 @@ namespace D3dGraphicsCore {
 	//---------------------------------------pipeline---------------------------------------//
 	extern RootSignature g_TemplateRootSignature;
 	extern RootSignature g_PresentRootSignature;
-    extern GraphicsPSO g_DefaultPSO;
-	extern GraphicsPSO g_SkyBoxPSO;
-	extern GraphicsPSO g_PresentPSO;
+	extern std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
 	void InitializePipelineTemplates();
 
