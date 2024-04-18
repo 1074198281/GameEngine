@@ -9,6 +9,7 @@
 #include "SceneNode.hpp"
 #include "StructureSettings.h"
 #include "Core/Resource/GpuBuffer.h"
+#include "Core/Resource/DepthBuffer.h"
 
 
 namespace My {
