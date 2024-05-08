@@ -150,7 +150,7 @@ void D3dGraphicsCore::RootSignature::Finalize(const std::wstring& name, D3D12_RO
         ComPtr<ID3DBlob> pOutBlob, pErrorBlob;
 
         ASSERT_SUCCEEDED(D3D12SerializeRootSignature(&RootDesc, D3D_ROOT_SIGNATURE_VERSION_1,
-            pOutBlob.GetAddressOf(), pErrorBlob.GetAddressOf()));
+            pOutBlob.GetAddressOf(), pErrorBlob.GetAddressOf()), (const char*)pErrorBlob->GetBufferPointer());
 
         ASSERT_SUCCEEDED(D3dGraphicsCore::g_Device->CreateRootSignature(1, pOutBlob->GetBufferPointer(), pOutBlob->GetBufferSize(),
             IID_PPV_ARGS(&m_Signature)));

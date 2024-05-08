@@ -55,13 +55,15 @@ namespace D3dGraphicsCore {
 		void UpdateCameraParams(int64_t key);
 		void UpdatePresent();
 
-	public:
 		void UpdateConstants(My::Frame& frame);
-		void DrawBatch(My::Frame frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
+
+	public:
+		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
 			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle);
-		void DrawSkybox(My::Frame frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
-		void DrawGui(My::Frame frame);
-		void DrawPresent(My::Frame frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
+		void DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
+		void DrawGui(const My::Frame& frame);
+		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
+		void DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 
 		void BeginSubPass(std::string PassName);
 		void EndSubPass();
@@ -78,8 +80,11 @@ namespace D3dGraphicsCore {
 		std::unique_ptr<XM_Camera::FlyingFPSCamera> m_CameraController;
 		D3D12_VIEWPORT m_MainViewport;
 		D3D12_RECT m_MainScissor;
-		GraphicsContext* m_pGraphicsContext;
-		GraphicsPSO* m_pGraphicsPSO;
+		GraphicsContext* m_pGraphicsContext = nullptr;
+		GraphicsPSO* m_pGraphicsPSO = nullptr;
+
+		ComputeContext* m_pComputeContext = nullptr;
+		ComputePSO* m_pComputePSO = nullptr;
 
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;

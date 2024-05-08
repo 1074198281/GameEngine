@@ -215,22 +215,47 @@ void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::P
 
 void D3dGraphicsCore::D3d12RHI::BeginSubPass(std::string PassName)
 {
+    m_pComputeContext = nullptr;
+    m_pGraphicsContext = nullptr;
+    m_pComputePSO = nullptr;
+    m_pGraphicsPSO = nullptr;
+
     std::wstring wPassName = L"";
 #ifdef _DEBUG
     wPassName = My::UTF8ToWideString(PassName);
 #endif
+    if (PassName.substr(PassName.size() - 3, 3) == "_CS") {
+        ComputeContext& csContext = ComputeContext::Begin(wPassName);
+        m_pComputeContext = & csContext;
+        return;
+    }
+
     GraphicsContext& gfxContext = GraphicsContext::Begin(wPassName);
     m_pGraphicsContext = &gfxContext;
 }
 
 void D3dGraphicsCore::D3d12RHI::EndSubPass()
 {
+    if (m_pComputeContext) {
+        m_pComputeContext->Finish();
+        return;
+    }
     m_pGraphicsContext->TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
     m_pGraphicsContext->Finish();
 }
 
 void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(std::string PSOName)
 {
+    if (PSOName.substr(PSOName.size() - 3, 3) == "_CS") {
+        if (g_ComputePSOMap.find(PSOName) != g_ComputePSOMap.end()) {
+            m_pComputePSO = g_ComputePSOMap[PSOName].get();
+        }
+        else {
+            ASSERT(false, "InValid Compute Pipeline Status Name!")
+        }
+        return;
+    }
+
     if (g_PipelineStatusMap.find(PSOName) != g_PipelineStatusMap.end()) {
         m_pGraphicsPSO = g_PipelineStatusMap[PSOName].get();
     }
@@ -264,7 +289,7 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame)
 
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawBatch(My::Frame frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
+void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
     std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
@@ -351,7 +376,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(My::Frame frame, const My::D3dDrawBatc
     m_pGraphicsContext->DrawIndexedInstanced(pdbc->m_index_count_per_instance, 1, 0, 0, 0);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawSkybox(My::Frame frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture
+void D3dGraphicsCore::D3d12RHI::DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture
     , float& SpecularIBLRange, float& SpecularIBLBias)
 {
     SpecularIBLRange = 0.0f;
@@ -393,7 +418,7 @@ void D3dGraphicsCore::D3d12RHI::DrawSkybox(My::Frame frame, ID3D12DescriptorHeap
     m_pGraphicsContext->Draw(3);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawGui(My::Frame frame)
+void D3dGraphicsCore::D3d12RHI::DrawGui(const My::Frame& frame)
 {
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_RENDER_TARGET, true);
@@ -411,7 +436,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGui(My::Frame frame)
     m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawPresent(My::Frame frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
+void D3dGraphicsCore::D3d12RHI::DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
     m_pGraphicsContext->SetRootSignature(g_PresentRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -424,4 +449,24 @@ void D3dGraphicsCore::D3d12RHI::DrawPresent(My::Frame frame, DescriptorHandle Co
     m_pGraphicsContext->SetRenderTarget(g_DisplayBuffer[g_CurrentBuffer].GetRTV());
     m_pGraphicsContext->Draw(3);
     m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
+}
+
+void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
+{
+    if (!m_pComputePSO) {
+        return;
+    }
+
+    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, true);
+    
+    m_pComputeContext->GetCommandList()->SetComputeRootSignature(g_GuassBlurRootSignature.GetSignature());
+    m_pComputeContext->SetPipelineState(*g_ComputePSOMap["GuassBlur_CS"].get());
+    m_pComputeContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
+    m_pComputeContext->SetDescriptorTable(My::kComputeSRV, ColorBufferHandle);
+    m_pComputeContext->SetDescriptorTable(My::kComputeUAV, ResultBufferHandle);
+    m_pComputeContext->Dispatch2D(g_DisplayWidth, g_DisplayHeight);
+
+    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
+    //m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST, true);
+    //m_pComputeContext->CopyBuffer(src, result);
 }

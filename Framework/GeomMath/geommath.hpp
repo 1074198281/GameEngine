@@ -4,6 +4,11 @@
 #include <limits>
 #include <math.h>
 #include <assert.h>
+
+//#define SSE2
+#ifdef SSE2
+#include <intrin.h>
+#endif // SSE2
 //#include "include/CrossProduct.h"
 //#include "include/DotProduct.h"
 //#include "include/MulByElement.h"
@@ -278,6 +283,13 @@ namespace My {
 
     inline void DotProduct(float& result, const Vector4f& vec1, const Vector4f& vec2)
     {
+#ifdef SSE2
+        __m128 _v1 = _mm_load_ps(vec1.data);
+        __m128 _v2 = _mm_load_ps(vec2.data);
+        __m128 _result = _mm_mul_ps(_v1, _v2);
+        result = _result.m128_f32[0] + _result.m128_f32[1] + _result.m128_f32[2] + _result.m128_f32[3];
+        return;
+#endif // SSE2
         result = vec1.data[0] * vec2.data[0] + vec1.data[1] * vec2.data[1] + vec1.data[2] * vec2.data[2] + vec1.data[3] * vec2.data[3];
     }
 
@@ -746,4 +758,5 @@ namespace My {
         trans = v;
         return trans;
     }
+
 }

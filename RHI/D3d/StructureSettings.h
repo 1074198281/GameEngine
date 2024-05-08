@@ -51,6 +51,14 @@ namespace My {
         kNumRootBindings
 	};
 
+	enum ComputeRootBindings {
+		kComputeSRV,
+		kComputeUAV,
+		kComputeCBV,
+
+		kComputeRootBindings
+	};
+
 	typedef struct DXSampler
 	{
 		D3D12_FILTER filter;

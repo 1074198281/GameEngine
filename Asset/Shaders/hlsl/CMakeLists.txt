@@ -82,6 +82,18 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""
         )
+    elseif(FILE_NAME MATCHES "_CS.hlsl$")
+        set_source_files_properties(${PER_SHADER_FILE}
+            PROPERTIES
+            VS_SHADER_DISABLE_OPTIMIZATIONS "true"
+            VS_SHADER_ENABLE_DEBUG "true"
+            VS_SHADER_ENTRYPOINT "main"
+            VS_SHADER_TYPE "Compute"
+            VS_SHADER_MODEL "5.1"
+            VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
+            VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
+            VS_SHADER_OBJECT_FILE_NAME ""
+        )
     endif()
 endforeach()
 

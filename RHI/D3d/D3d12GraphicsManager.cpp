@@ -52,6 +52,7 @@ void My::D3d12GraphicsManager::Clear()
     m_VecIndexBuffer.clear();
     m_VecVertexBuffer.clear();
     m_VecTexture.clear();
+    m_VecColorBuffer.clear();
     m_BatchHandleStatus.clear();
     m_FixedHandleStatus.clear();
 }
@@ -529,6 +530,17 @@ void My::D3d12GraphicsManager::initializeFixedHandle()
     Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     DescriptorHeapHandleInfo status{ HeapIdx, Handle };
     m_FixedHandleStatus.emplace("ColorBuffer", status);
+
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> GuassBlur = std::make_shared<D3dGraphicsCore::ColorBuffer>();
+    GuassBlur->Create(L"Guass Blur", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    int HeapIndex = -1;
+    D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIndex);
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
+    vecHandle.push_back(GuassBlur->GetUAV());
+    D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 1);
+    m_FixedHandleStatus.emplace("GuassBlur", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
+
+    m_VecColorBuffer.push_back(GuassBlur);
 }
 
 int My::D3d12GraphicsManager::InitializeD3dImGUI()
@@ -762,6 +774,17 @@ void My::D3d12GraphicsManager::DrawPresent(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.DrawPresent(frame, m_FixedHandleStatus["ColorBuffer"].Handle, m_FixedHandleStatus["ColorBuffer"].HeapIndex);
+}
+
+void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    auto& config = dynamic_cast<D3d12Application*>(m_pApp)->GetConfiguration();
+
+    auto& GuassBlurBuffer = m_VecColorBuffer[0];
+    
+    GraphicsRHI.DrawGuassBlur(frame, *GuassBlurBuffer, D3dGraphicsCore::g_SceneColorBuffer, 
+        m_FixedHandleStatus["GuassBlur"].Handle, m_FixedHandleStatus["ColorBuffer"].Handle, m_FixedHandleStatus["GuassBlur"].HeapIndex);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)
