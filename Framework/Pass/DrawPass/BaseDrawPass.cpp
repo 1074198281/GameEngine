@@ -2,12 +2,18 @@
 
 void My::BaseDrawPass::BeginPass(Frame& frame)
 {
-	//m_pGraphicsManager->BeginPass(frame);
+	if (m_PassType == kOverlay)
+	{
+		m_pGraphicsManager->BeginOverlayPass();
+	}
 }
 
 void My::BaseDrawPass::EndPass(Frame& frame)
 {
-	//m_pGraphicsManager->EndPass(frame);
+	if (m_PassType == kOverlay)
+	{
+		m_pGraphicsManager->EndOverlayPass();
+	}
 }
 
 void My::BaseDrawPass::Draw(Frame& frame)

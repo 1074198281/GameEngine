@@ -40,6 +40,8 @@ namespace My {
 
         virtual void BeginSubPass(std::string PassName) = 0;
         virtual void EndSubPass() = 0;
+        virtual void BeginOverlayPass() = 0;
+        virtual void EndOverlayPass() = 0;
         virtual void SetPipelineStatus(std::string PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
         virtual void SetShadowResources(Frame& frame) = 0;

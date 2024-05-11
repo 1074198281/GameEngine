@@ -67,6 +67,8 @@ namespace D3dGraphicsCore {
 
 		void BeginSubPass(std::string PassName);
 		void EndSubPass();
+		void BeginOverlayPass(ColorBuffer& result, ColorBuffer& src);
+		void EndOverlayPass(ColorBuffer& result, ColorBuffer& src);
 
 		void SetPipelineStatus(std::string PSOName);
 		void SetBatchResources();

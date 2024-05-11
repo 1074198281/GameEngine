@@ -51,6 +51,8 @@ namespace My {
 
         void BeginSubPass(std::string PassName) override;
         void EndSubPass() override;
+        void BeginOverlayPass() override;
+        void EndOverlayPass() override;
 
         void SetPipelineStatus(std::string PSOName) override;
         void SetBatchResources(Frame& frame) override;
@@ -71,7 +73,7 @@ namespace My {
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
         std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
         std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowTexture;
-        std::vector<std::shared_ptr<D3dGraphicsCore::ColorBuffer>> m_VecColorBuffer;
+        std::unordered_map<std::string, std::shared_ptr<D3dGraphicsCore::ColorBuffer>> m_ColorBufferMap;
         std::unique_ptr<IBLImageResource> m_IBLResource;
         std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;
         std::unordered_map<std::string, My::DescriptorHeapHandleInfo> m_FixedHandleStatus;

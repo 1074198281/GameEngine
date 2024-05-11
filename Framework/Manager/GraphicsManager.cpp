@@ -4,6 +4,7 @@
 #include "BaseApplication.hpp"
 #include "ForwardGeometryPass.hpp"
 #include "OverlayPass.hpp"
+#include "PresentPass.hpp"
 #include "Scene.hpp"
 
 #include "imgui.h"
@@ -21,6 +22,7 @@ int GraphicsManager::Initialize()
 
     m_DrawPasses.push_back(std::make_shared<ForwardGeometryPass>(this, m_pApp));
     m_DrawPasses.push_back(std::make_shared<OverlayPass>(this, m_pApp));
+    m_DrawPasses.push_back(std::make_shared<PresentPass>(this, m_pApp));
 
     return result;
 }

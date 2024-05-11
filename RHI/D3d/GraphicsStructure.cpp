@@ -237,7 +237,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_GuassBlurRootSignature[My::kComputeUAV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 0, 1);
 	g_GuassBlurRootSignature.Finalize(L"Guass Blur");
 
-	std::unique_ptr<ComputePSO> GuassBlurPSO = std::make_unique<ComputePSO>("GuassBlur PSO");
+	std::unique_ptr<ComputePSO> GuassBlurPSO = std::make_unique<ComputePSO>(L"GuassBlur PSO");
 	GuassBlurPSO->SetRootSignature(g_GuassBlurRootSignature);
 	D3D12_SHADER_BYTECODE GuassBlurShader = CD3DX12_SHADER_BYTECODE();
 	GuassBlurShader.pShaderBytecode = g_ShaderByteMap["GuassBlurCS"].pShaderByteCode;

@@ -185,6 +185,7 @@ void D3dGraphicsCore::D3d12RHI::UpdateCameraParams(int64_t key)
 
 void D3dGraphicsCore::D3d12RHI::UpdatePresent()
 {
+    g_CommandManager.IdleGPU();
     D3dGraphicsCore::Present();
 
     g_CommandManager.IdleGPU();
@@ -242,6 +243,24 @@ void D3dGraphicsCore::D3d12RHI::EndSubPass()
     }
     m_pGraphicsContext->TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
     m_pGraphicsContext->Finish();
+}
+
+void D3dGraphicsCore::D3d12RHI::BeginOverlayPass(ColorBuffer& result, ColorBuffer& src)
+{
+    ComputeContext& BeginOverlayContext = ComputeContext::Begin(L"BeginOverlay");
+    //BeginOverlayContext.TransitionResource(src, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    //BeginOverlayContext.TransitionResource(result, D3D12_RESOURCE_STATE_COPY_DEST);
+    BeginOverlayContext.CopyBuffer(result, src);
+    BeginOverlayContext.Finish();
+}
+
+void D3dGraphicsCore::D3d12RHI::EndOverlayPass(ColorBuffer& result, ColorBuffer& src)
+{
+    ComputeContext& EndOverlayContext = ComputeContext::Begin(L"EndOverlay");
+    //EndOverlayContext.TransitionResource(src, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    //EndOverlayContext.TransitionResource(result, D3D12_RESOURCE_STATE_COPY_DEST);
+    EndOverlayContext.CopyBuffer(result, src);
+    EndOverlayContext.Finish();
 }
 
 void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(std::string PSOName)
@@ -459,14 +478,16 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
 
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, true);
     
-    m_pComputeContext->GetCommandList()->SetComputeRootSignature(g_GuassBlurRootSignature.GetSignature());
-    m_pComputeContext->SetPipelineState(*g_ComputePSOMap["GuassBlur_CS"].get());
+    m_pComputeContext->SetRootSignature(g_GuassBlurRootSignature);
+    m_pComputeContext->SetPipelineState(*m_pComputePSO);
     m_pComputeContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
     m_pComputeContext->SetDescriptorTable(My::kComputeSRV, ColorBufferHandle);
     m_pComputeContext->SetDescriptorTable(My::kComputeUAV, ResultBufferHandle);
     m_pComputeContext->Dispatch2D(g_DisplayWidth, g_DisplayHeight);
 
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
-    //m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST, true);
-    //m_pComputeContext->CopyBuffer(src, result);
+
+    m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    m_pComputeContext->CopyBuffer(src, result);
 }

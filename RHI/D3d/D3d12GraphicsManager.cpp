@@ -52,7 +52,7 @@ void My::D3d12GraphicsManager::Clear()
     m_VecIndexBuffer.clear();
     m_VecVertexBuffer.clear();
     m_VecTexture.clear();
-    m_VecColorBuffer.clear();
+    m_ColorBufferMap.clear();
     m_BatchHandleStatus.clear();
     m_FixedHandleStatus.clear();
 }
@@ -531,16 +531,36 @@ void My::D3d12GraphicsManager::initializeFixedHandle()
     DescriptorHeapHandleInfo status{ HeapIdx, Handle };
     m_FixedHandleStatus.emplace("ColorBuffer", status);
 
-    std::shared_ptr<D3dGraphicsCore::ColorBuffer> GuassBlur = std::make_shared<D3dGraphicsCore::ColorBuffer>();
-    GuassBlur->Create(L"Guass Blur", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
-    int HeapIndex = -1;
-    D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIndex);
-    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
-    vecHandle.push_back(GuassBlur->GetUAV());
-    D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 1);
-    m_FixedHandleStatus.emplace("GuassBlur", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
+    //std::shared_ptr<D3dGraphicsCore::ColorBuffer> GuassBlur = std::make_shared<D3dGraphicsCore::ColorBuffer>();
+    //GuassBlur->Create(L"Guass Blur", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    //int HeapIndex = -1;
+    //D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIndex);
+    //std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
+    //vecHandle.push_back(GuassBlur->GetUAV());
+    //D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 1);
+    //m_FixedHandleStatus.emplace("GuassBlur", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
 
-    m_VecColorBuffer.push_back(GuassBlur);
+    //m_ColorBufferMap.emplace("GuassBlur", GuassBlur);
+
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
+    int HeapIndex = -1;
+
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> OverlaySrc = std::make_shared<D3dGraphicsCore::ColorBuffer>();
+    OverlaySrc->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    vecHandle.push_back(OverlaySrc->GetSRV());
+
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> OverlayDes = std::make_shared<D3dGraphicsCore::ColorBuffer>();
+    OverlayDes->Create(L"OverlayDes", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    vecHandle.push_back(OverlayDes->GetUAV());
+
+    D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(2, HeapIndex);
+    D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 2);
+    m_FixedHandleStatus.emplace("OverlaySrc", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
+    D3dGraphicsCore::OffsetDescriptorHandle(handle);
+    m_FixedHandleStatus.emplace("OverlayDes", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
+
+    m_ColorBufferMap.emplace("OverlaySrc", OverlaySrc);
+    m_ColorBufferMap.emplace("OverlayDes", OverlayDes);
 }
 
 int My::D3d12GraphicsManager::InitializeD3dImGUI()
@@ -781,10 +801,12 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     auto& config = dynamic_cast<D3d12Application*>(m_pApp)->GetConfiguration();
 
-    auto& GuassBlurBuffer = m_VecColorBuffer[0];
-    
-    GraphicsRHI.DrawGuassBlur(frame, *GuassBlurBuffer, D3dGraphicsCore::g_SceneColorBuffer, 
-        m_FixedHandleStatus["GuassBlur"].Handle, m_FixedHandleStatus["ColorBuffer"].Handle, m_FixedHandleStatus["GuassBlur"].HeapIndex);
+    auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
+    auto& desBuffer = m_ColorBufferMap["OverlayDes"];
+    ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
+
+    GraphicsRHI.DrawGuassBlur(frame, *desBuffer, *srcBuffer,
+        m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)
@@ -797,4 +819,16 @@ void My::D3d12GraphicsManager::EndSubPass()
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.EndSubPass();
+}
+
+void My::D3d12GraphicsManager::BeginOverlayPass()
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.BeginOverlayPass(*m_ColorBufferMap["OverlaySrc"], D3dGraphicsCore::g_SceneColorBuffer);
+}
+
+void My::D3d12GraphicsManager::EndOverlayPass()
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.EndOverlayPass(D3dGraphicsCore::g_SceneColorBuffer, *m_ColorBufferMap["OverlaySrc"]);
 }

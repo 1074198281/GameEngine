@@ -41,6 +41,8 @@ namespace My {
 
         void BeginSubPass(std::string PassName) override {}
         void EndSubPass() override {}
+        void BeginOverlayPass() override {}
+        void EndOverlayPass() override {}
 
         void SetPipelineStatus(std::string PSOName) override {}
         void SetBatchResources(Frame& frame) override {}

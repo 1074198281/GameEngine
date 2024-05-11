@@ -7,6 +7,7 @@
 #include <memory>
 
 namespace My {
+	enum PassType { kPassTypeNone, kForwardGeometry, kOverlay, kPresent, kPassType };
 	class BaseDrawPass : __implements IDrawPass {
 	public:
 		BaseDrawPass(IGraphicsManager* gmr) : m_pGraphicsManager(gmr) {}
@@ -19,6 +20,7 @@ namespace My {
 
 	protected:
 		IGraphicsManager* m_pGraphicsManager;
+		PassType m_PassType;
 		std::vector<std::shared_ptr<IDrawSubPass>> m_DrawSubPasses;
 	};
 }
