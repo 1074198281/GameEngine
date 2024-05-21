@@ -240,8 +240,8 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	std::unique_ptr<ComputePSO> GuassBlurPSO = std::make_unique<ComputePSO>(L"GuassBlur PSO");
 	GuassBlurPSO->SetRootSignature(g_GuassBlurRootSignature);
 	D3D12_SHADER_BYTECODE GuassBlurShader = CD3DX12_SHADER_BYTECODE();
-	GuassBlurShader.pShaderBytecode = g_ShaderByteMap["GuassBlurCS"].pShaderByteCode;
-	GuassBlurShader.BytecodeLength = g_ShaderByteMap["GuassBlurCS"].size;
+	GuassBlurShader.pShaderBytecode = g_ShaderByteMap["MyGuassBlurCS"].pShaderByteCode;
+	GuassBlurShader.BytecodeLength = g_ShaderByteMap["MyGuassBlurCS"].size;
 	GuassBlurPSO->SetComputeShader(GuassBlurShader);
 	GuassBlurPSO->Finalize();
 	g_ComputePSOMap.emplace("GuassBlur_CS", std::move(GuassBlurPSO));

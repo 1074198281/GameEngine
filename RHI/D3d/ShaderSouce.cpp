@@ -15,6 +15,7 @@
 #include "../Asset/Shaders/CompiledShaders/g_Model_PS.h"
 
 #include "../Asset/Shaders/CompiledShaders/g_GuassBlur_CS.h"
+#include "../Asset/Shaders/CompiledShaders/g_MyGuassBlur_CS.h"
 
 
 namespace D3dGraphicsCore {
@@ -72,10 +73,11 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 #endif // TOSTRING
 #define TOSTRING( NAME ) #NAME
 #define GENERATE_CS_SHADER_BYTE_CODE(NAME)\
-	ShaderByteCode csByteCode = { g_p##NAME##_CS, sizeof(g_p##NAME##_CS)};\
-	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##CS), csByteCode)); \
+	ShaderByteCode cs##NAME##ByteCode = { g_p##NAME##_CS, sizeof(g_p##NAME##_CS)};\
+	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##CS), cs##NAME##ByteCode)); \
 
 	GENERATE_CS_SHADER_BYTE_CODE(GuassBlur)
+	GENERATE_CS_SHADER_BYTE_CODE(MyGuassBlur)
 
 #endif // GENERATE_CS_SHADER_BYTE_CODE
 

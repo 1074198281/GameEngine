@@ -483,7 +483,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
     m_pComputeContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
     m_pComputeContext->SetDescriptorTable(My::kComputeSRV, ColorBufferHandle);
     m_pComputeContext->SetDescriptorTable(My::kComputeUAV, ResultBufferHandle);
-    m_pComputeContext->Dispatch2D(g_DisplayWidth, g_DisplayHeight);
+    m_pComputeContext->Dispatch(g_DisplayWidth, g_DisplayHeight, 1);
 
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
 

@@ -116,7 +116,7 @@ void VertBlurCS(int3 groupThreadID : SV_GroupThreadID,
 }
 
 */
-/*
+
 Texture2D<float3> InputBuf : register(t0);
 RWTexture2D<float3> Result : register(u0);
 
@@ -223,10 +223,3 @@ void main(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV
     //
     BlurVertically(DTid.xy, (GTid.y << 3) + GTid.x);
 }
-
-*/
-
-Texture2D<float3> InputBuf : register(t0);
-RWTexture2D<float3> Result : register(u0);
-
-[numThreads()]
