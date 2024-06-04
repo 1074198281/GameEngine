@@ -57,17 +57,21 @@ source_group(src/Pass/DrawSubPass FILES ${DRAWSUBPASS_SOURCE_FILES})
 if(${PHYSICS_TYPE} STREQUAL "PhysX")
     file(GLOB PHYSICS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.hpp)
     file(GLOB PHYSICS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/PhysXPhysics/*.cpp)
-    source_group(include/Physics FILES ${PHYSICS_HEADER_FILES})
-    source_group(src/Physics FILES ${PHYSICS_SOURCE_FILES})
+    source_group(include/Physics/Phy FILES ${PHYSICS_HEADER_FILES})
+    source_group(src/Physics/Phy FILES ${PHYSICS_SOURCE_FILES})
 elseif(${PHYSICS_TYPE} STREQUAL "Bullet3")
     file(GLOB PHYSICS_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.hpp)
     file(GLOB PHYSICS_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/Bullet3Physics/*.cpp)
-    source_group(include/Physics FILES ${PHYSICS_HEADER_FILES})
-    source_group(src/Physics FILES ${PHYSICS_SOURCE_FILES})
+    source_group(include/Physics/Phy FILES ${PHYSICS_HEADER_FILES})
+    source_group(src/Physics/Phy FILES ${PHYSICS_SOURCE_FILES})
 elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
     # no realization
 endif()
 
+file(GLOB CHEMISTRY_HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/MyChemistry/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Physics/MyChemistry/*.hpp)
+file(GLOB CHEMISTRY_SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Physics/MyChemistry/*.cpp)
+source_group(include/Physics/Chem FILES ${CHEMISTRY_HEADER_FILES})
+source_group(src/Physics/Chem FILES ${CHEMISTRY_SOURCE_FILES})
 
 # add library
 add_library(Framework
@@ -82,6 +86,7 @@ ${DRAWPASS_HEADER_FILES} ${DRAWPASS_SOURCE_FILES}
 ${DRAWSUBPASS_HEADER_FILES} ${DRAWSUBPASS_SOURCE_FILES}
 ${SCENEGRAPH_HEADER_FILES} ${SCENEGRAPH_SOURCE_FILES}
 ${PHYSICS_HEADER_FILES} ${PHYSICS_SOURCE_FILES}
+${CHEMISTRY_HEADER_FILES} ${CHEMISTRY_SOURCE_FILES} 
 )
 
 MESSAGE("DEBUG_FLAG")

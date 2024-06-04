@@ -16,6 +16,7 @@ namespace My {
         bool        m_bMotionBlur;
         std::vector<std::string> m_Materials;
         void*       m_pRigidBody;
+        void*       m_pChemistryBody;
 
     protected:
         virtual void dump(std::ostream& out) const
@@ -67,6 +68,23 @@ namespace My {
         void* GetRigidBody()
         {
             return m_pRigidBody;
+        }
+
+        void LinkChemistryBody(void* chemistryBody)
+        {
+            m_pChemistryBody = chemistryBody;
+        }
+
+        void* UnLinkChemistryBody()
+        {
+            void* chemistryBody = m_pChemistryBody;
+            m_pChemistryBody = nullptr;
+            return chemistryBody;
+        }
+
+        void* GetChemistryBody()
+        {
+            return m_pChemistryBody;
         }
     };
 }
