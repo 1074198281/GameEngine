@@ -303,13 +303,20 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
     m_pGraphicsContext->ClearDepth(g_DepthBuffer);
 }
 
-void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame)
+void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light)
 {
+    m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
+    m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
+    m_pGraphicsContext->ClearColor(colorBuffer);
+    m_pGraphicsContext->ClearDepth(depthBuffer);
 
+    m_CacheLight = light;
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle)
+    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -375,9 +382,16 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         My::PerBatchConstants pbc;
         pbc.ModelMatrix = pdbc->ModelMatrix;
         My::PerFrameConstants pfc;
-        pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
-        pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
-        pfc.CameraPosition = frame.FrameContext.CameraPosition;
+        if (!bShadowCast) {
+            pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
+            pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
+            pfc.CameraPosition = frame.FrameContext.CameraPosition;
+        } else {
+            pfc.ViewMatrix = m_CacheLight.LightViewMatrix;
+            pfc.ProjectionMatrix = m_CacheLight.LightProjectionMatrix;
+            pfc.CameraPosition = m_CacheLight.LightPosition;
+        }
+
         pfc.clip_space_type = 1;
         pfc.LightNum = 0;
 

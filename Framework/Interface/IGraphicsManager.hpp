@@ -44,6 +44,6 @@ namespace My {
         virtual void EndOverlayPass() = 0;
         virtual void SetPipelineStatus(std::string PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
-        virtual void SetShadowResources(Frame& frame) = 0;
+        virtual void SetShadowResources(Frame& frame, Light lightInfo) = 0;
 	};
 }

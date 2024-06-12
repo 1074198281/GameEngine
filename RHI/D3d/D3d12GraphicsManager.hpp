@@ -56,11 +56,12 @@ namespace My {
 
         void SetPipelineStatus(std::string PSOName) override;
         void SetBatchResources(Frame& frame) override;
-        void SetShadowResources(Frame& frame) override;
+        void SetShadowResources(Frame& frame, Light lightInfo) override;
 
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
+        void initializeLight(const Scene& scene) override;
         void initializeFixedHandle() override;
 
         int InitializeD3dImGUI();
@@ -72,7 +73,9 @@ namespace My {
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
         std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
-        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowTexture;
+        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowMapTexture;
+        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_GlobalShadowMapTexture;
+        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_CubeShadowMapTexture;
         std::unordered_map<std::string, std::shared_ptr<D3dGraphicsCore::ColorBuffer>> m_ColorBufferMap;
         std::unique_ptr<IBLImageResource> m_IBLResource;
         std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;

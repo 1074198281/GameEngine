@@ -1,13 +1,14 @@
 #pragma once
 
 #include <DirectXMath.h>
-#include <intrin.h>
 
 #define INLINE __forceinline
 
+using DirectX::XMVECTOR;
+using namespace DirectX;
+
 namespace Math
 {
-    using namespace DirectX;
 
     INLINE XMVECTOR SplatZero()
     {

@@ -15,6 +15,7 @@ namespace My {
     class SceneObjectLight : public BaseSceneObject
     {
     protected:
+        Vector4f    m_Position;
         Color       m_LightColor;
         float       m_fIntensity;
         AttenFunc   m_LightAttenuation;
@@ -52,7 +53,7 @@ namespace My {
 
         const Color& GetColor() { return m_LightColor; };
         float GetIntensity() { return m_fIntensity; };
-
+        Vector4f GetPosition() { return m_Position; }
     protected:
         // can only be used as base class of delivered lighting objects
         SceneObjectLight(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeLight), m_LightColor(Vector4f(1.0f)), m_fIntensity(100.0f), m_LightAttenuation(DefaultAttenFunc), m_bCastShadows(false) {};

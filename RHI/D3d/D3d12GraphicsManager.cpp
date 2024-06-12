@@ -2,8 +2,9 @@
 #include <d3dcompiler.h>
 #include <filesystem>
 #include "D3d12GraphicsManager.hpp"
-#include "WindowsApplication.hpp"
 #include "D3d12Application.hpp"
+#include "D3d12RHI.h"
+#include "WindowsApplication.hpp"
 #include "PhysicsManager.hpp"
 #include "SceneObject.hpp"
 #include "StructureSettings.h"
@@ -473,6 +474,28 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
     }
 }
 
+void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
+{
+    std::vector<Light> lights;
+    LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo));
+    memset(info, 0, sizeof(LightInfo));
+    for (auto& node : scene.LightNodes)
+    {
+        if (node.second->CastShadow())
+        {
+            Light l;
+            
+            std::string name = node.second->GetSceneObjectRef();
+            auto lightObject = scene.GetLight(name);
+            Matrix4X4f lightMat = *node.second->GetCalculatedTransform().get();
+            Vector4f lightPos = lightObject->GetPosition();
+            Vector4f pos;
+            MatrixMulVector(pos, lightPos, lightMat);
+            l.LightPosition = pos;
+            
+        }
+    }
+}
 
 void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
 {
@@ -740,10 +763,43 @@ void My::D3d12GraphicsManager::SetBatchResources(Frame& frame)
     GraphicsRHI.SetBatchResources();
 }
 
-void My::D3d12GraphicsManager::SetShadowResources(Frame& frame)
+void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.SetBatchResources();
+    std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>();
+    depthBuffer->Create(L"ShadowMap", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
+    GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer, lightInfo);
+
+    switch (lightInfo.Type)
+    {
+    case LightType::Omni:
+    {
+        m_CubeShadowMapTexture.emplace_back(depthBuffer);
+        ASSERT(lightInfo.LightShadowMapIndex == m_CubeShadowMapTexture.size());
+    }
+    break;
+    case LightType::Area:
+    {
+        m_ShadowMapTexture.emplace_back(depthBuffer);
+        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size());
+    }
+    break;
+    case LightType::Spot:
+    {
+        m_ShadowMapTexture.emplace_back(depthBuffer);
+        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size());
+    }
+    break;
+    case LightType::Infinity:
+    {
+        m_GlobalShadowMapTexture.emplace_back(depthBuffer);
+        ASSERT(lightInfo.LightShadowMapIndex == m_GlobalShadowMapTexture.size());
+    }
+    break;
+    default:
+        ASSERT(false, "Error Light Type");
+        break;
+    }
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {

@@ -46,7 +46,7 @@ namespace My {
 
         void SetPipelineStatus(std::string PSOName) override {}
         void SetBatchResources(Frame& frame) override {}
-        void SetShadowResources(Frame& frame) override {}
+        void SetShadowResources(Frame& frame, Light lightInfo) override {}
 
     protected:
         virtual void BeginScene(const Scene& scene);

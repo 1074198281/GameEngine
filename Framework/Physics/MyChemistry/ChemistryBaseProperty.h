@@ -5,6 +5,8 @@ namespace MyChemistry {
     {
         // basic property
         int temperature;
+        bool canFreeze;
+        bool canBurn;
         bool isMetal;
         bool isWet;
         bool isFreeze;

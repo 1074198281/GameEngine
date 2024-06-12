@@ -15,7 +15,6 @@
 
 #include "WinUtility.h"
 #include "utility.hpp"
-#include "../Common.h"
 #include "../Color.h"
 #include "CommandListManager.h"
 #include "CommandSignature.h"

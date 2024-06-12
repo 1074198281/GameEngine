@@ -2,6 +2,7 @@
 #include <memory>
 #include "GraphicsManager.hpp"
 #include "BaseApplication.hpp"
+#include "ShadowMapPass.hpp"
 #include "ForwardGeometryPass.hpp"
 #include "OverlayPass.hpp"
 #include "PresentPass.hpp"
@@ -20,6 +21,7 @@ int GraphicsManager::Initialize()
     m_nFrameIndex = 0;
     m_Frames.resize(MAX_FRAME_COUNT);
 
+    m_DrawPasses.push_back(std::make_shared<ShadowMapPass>(this));
     m_DrawPasses.push_back(std::make_shared<ForwardGeometryPass>(this, m_pApp));
     m_DrawPasses.push_back(std::make_shared<OverlayPass>(this, m_pApp));
     m_DrawPasses.push_back(std::make_shared<PresentPass>(this, m_pApp));
@@ -84,6 +86,7 @@ void GraphicsManager::BeginScene(const Scene& scene)
         initializeGeometries(scene);
     }
     initializeSkybox(scene);
+    initializeLight(scene);
 
     initializeFixedHandle();
 }

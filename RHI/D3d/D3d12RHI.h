@@ -59,7 +59,7 @@ namespace D3dGraphicsCore {
 
 	public:
 		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle);
+			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast = false);
 		void DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
@@ -72,7 +72,7 @@ namespace D3dGraphicsCore {
 
 		void SetPipelineStatus(std::string PSOName);
 		void SetBatchResources();
-		void SetShadowResources(My::Frame& frame);
+		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light);
 	private:
 		void InitializeCoreHWND();
 	private:
@@ -87,6 +87,7 @@ namespace D3dGraphicsCore {
 
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;
+		My::Light m_CacheLight;
 
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;

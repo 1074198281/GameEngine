@@ -26,6 +26,8 @@
 #define TWO_PI 3.14159265358979323846f * 2.0f
 #endif
 
+using std::ostream;
+
 namespace My {
     template<typename T, size_t SizeOfArray>
         constexpr size_t countof(T (&)[SizeOfArray]) { return SizeOfArray; }
@@ -131,7 +133,7 @@ namespace My {
 		    swizzle<My::Vector4Type, T, 2, 1, 0, 3> bgra;
         };
 
-        Vector4Type<T>() {};
+        Vector4Type<T>() { data[0] = 0; data[1] = 0; data[2] = 0; data[3] = 0; };
         Vector4Type<T>(const T& _v) : x(_v), y(_v), z(_v), w(_v) {};
         Vector4Type<T>(const T& _x, const T& _y, const T& _z, const T& _w) : x(_x), y(_y), z(_z), w(_w) {};
         Vector4Type<T>(const Vector3Type<T>& v3) : x(v3.x), y(v3.y), z(v3.z), w(1.0f) {};
@@ -153,7 +155,7 @@ namespace My {
     typedef Vector4Type<uint8_t> Vector4i;
 
     template <template <typename> class TT, typename T>
-    std::ostream& operator<<(std::ostream& out, TT<T> vector)
+    ostream& operator<<(ostream& out, TT<T> vector)
     {
         out << "( ";
         for (uint32_t i = 0; i < countof(vector.data); i++) {
@@ -356,7 +358,7 @@ namespace My {
     typedef Matrix<float, 8, 8> Matrix8X8f;
 
     template <typename T, int ROWS, int COLS>
-    std::ostream& operator<<(std::ostream& out, Matrix<T, ROWS, COLS> matrix)
+    ostream& operator<<(ostream& out, Matrix<T, ROWS, COLS> matrix)
     {
         out << std::endl;
         for (int i = 0; i < ROWS; i++) {
@@ -463,6 +465,19 @@ namespace My {
         for(int i = 0; i < ROWS; i++) {
             for(int j = 0; j < COLS; j++) {
                 result.data[i][j] = matrix1.data[j][i];
+            }
+        }
+    }
+
+    inline void MatrixMulVector(Vector4f& result, const Vector4f& vec, const Matrix4X4f& mat)
+    {
+#if SSE2
+
+#endif // SSE2
+        for (int c = 0; c < 4; c++) {
+            for (int r = 0; r < 4; r++)
+            {
+                result[c] += vec[r] * mat.data[r][c];
             }
         }
     }

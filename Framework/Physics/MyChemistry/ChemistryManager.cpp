@@ -8,7 +8,7 @@ My::ChemistryManager::~ChemistryManager()
 
 int My::ChemistryManager::Initialize()
 {
-
+	return 0;
 }
 
 void My::ChemistryManager::Finalize()

@@ -260,6 +260,34 @@ namespace glTF
         std::vector<AnimSampler> m_samplers;
     };
 
+    struct Light
+    {
+        enum eLightType { kPoint, kDirectional, kSpot, kLightType };
+        std::string m_name;
+        float m_Color[3];
+        float m_Intensity;
+        eLightType m_Type;
+        union {
+            struct SpotProperties {
+                float innerConnangle;
+                float outerConnAngle;
+            };
+        };
+    };
+
+    struct Light_Punctual {
+        std::vector<Light> m_Lights;
+    };
+
+    struct KHR_Lights
+    {
+        Light_Punctual m_punctualLights;
+    };
+
+    struct Extensions {
+        KHR_Lights m_extLights;
+    };
+
     uint16_t TypeToEnum(const char type[])
     {
         if (strncmp(type, "VEC", 3) == 0)
@@ -483,7 +511,56 @@ namespace glTF
         std::vector<BufferView> m_bufferViews;
         std::vector<Animation> m_animations;
 
+        Extensions m_extensions;
+
     private:
+        void ProcessLightPunctual(json& lightPunctual)
+        {
+            KHR_Lights KHRlights;
+
+            if (lightPunctual.find("lights") != lightPunctual.end())
+            {
+                Light_Punctual pLights;
+                json& lights = lightPunctual.at("lights");
+                for (json::iterator itLight = lights.begin(); itLight != lights.end(); ++itLight)
+                {
+                    Light l;
+                    json& lightPro = itLight.value();
+                    l.m_name = lightPro.at("name");
+                    ReadFloats(lightPro.at("color"), l.m_Color);
+                    l.m_Intensity = lightPro.at("intensity");
+                    std::string type = lightPro.at("type");
+                    if (type == "spot") {
+                        l.m_Type = Light::eLightType::kSpot;
+                    }
+                    else if (type == "directional") {
+                        l.m_Type = Light::eLightType::kDirectional;
+                    }
+                    else if (type == "point") {
+                        l.m_Type = Light::eLightType::kPoint;
+                    }
+
+                    pLights.m_Lights.push_back(l);
+                }
+
+                KHRlights.m_punctualLights = pLights;
+            }
+            m_extensions.m_extLights = KHRlights;
+        }
+
+        void ProcessExtensions(json& extensions)
+        {
+            for (json::iterator it = extensions.begin(); it != extensions.end(); ++it)
+            {
+                std::string itName = it.key();
+                json& itProperty = it.value();
+                if (itName == "KHR_lights_punctual");
+                {
+                    ProcessLightPunctual(itProperty);
+                }
+            }
+        }
+
         void ProcessBuffers(json& buffers, ByteArray chunk1bin)
         {
             m_buffers.reserve(buffers.size());
@@ -1213,7 +1290,8 @@ namespace glTF
             m_AssetPath = m_basePath.substr(offset + 7);
 
             // Parse all state
-
+            if (root.find("extensions") != root.end())
+                ProcessExtensions(root.at("extensions"));
             if (root.find("buffers") != root.end())
                 ProcessBuffers(root.at("buffers"), chunk1Bin);
             if (root.find("bufferViews") != root.end())

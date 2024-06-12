@@ -1,7 +1,9 @@
 #include "D3d12Application.hpp"
 #include "WICImageLoader.h"
 #include "WinUtility.h"
+#include "D3d/D3d12RHI.h"
 #include <tchar.h>
+
 
 void My::D3d12Application::Finalize()
 {
@@ -24,12 +26,14 @@ int My::D3d12Application::CreateMainWindow()
 
     auto getGfxConfigHandler = [this]() { return GetConfiguration(); };
 
-    // 设置回调函数
-    m_GraphicsRHI.SetQueryFrameBufferSize(getFramebufferSize);
-    m_GraphicsRHI.SetGetWindowHandleProc(getWindowHandler);
-    m_GraphicsRHI.SetGetGfxconfiguration(getGfxConfigHandler);
 
-    m_GraphicsRHI.StartUp();
+    m_GraphicsRHI = new D3dGraphicsCore::D3d12RHI();
+    // 设置回调函数
+    m_GraphicsRHI->SetQueryFrameBufferSize(getFramebufferSize);
+    m_GraphicsRHI->SetGetWindowHandleProc(getWindowHandler);
+    m_GraphicsRHI->SetGetGfxconfiguration(getGfxConfigHandler);
+
+    m_GraphicsRHI->StartUp();
 
     InitializeWICLoader();
 
