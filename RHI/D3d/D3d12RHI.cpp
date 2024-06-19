@@ -1,4 +1,4 @@
-ï»¿#include "D3d12RHI.h"
+#include "D3d12RHI.h"
 #include "Core/D3dGraphicsCoreManager.h"
 #include "Core/Pipeline/RootSignature.h"
 #include "Core/Pipeline/PipelineState.h"
@@ -114,7 +114,7 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
     m_MainViewport.Height = g_DisplayHeight;
     
     /*
-    * è¿™é‡ŒminDepthä¸º0.0ï¼ŒmaxDepthä¸º1.0ï¼Œå› ä¸ºæ·±åº¦æµ‹è¯•ã€‚
+    * ÕâÀïminDepthÎª0.0£¬maxDepthÎª1.0£¬ÒòÎªÉî¶È²âÊÔ¡£
     */
     m_MainViewport.MinDepth = 0.0f;
     m_MainViewport.MaxDepth = 1.0f;
@@ -316,7 +316,7 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast)
+    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isNotDrawSkybox)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -399,6 +399,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
     }
     
+    if(!isNotDrawSkybox)
     {
         m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, IBLHeapPtr);
         m_pGraphicsContext->SetDescriptorTable(My::kCommonSRVs, IBLHandle);

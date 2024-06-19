@@ -85,6 +85,18 @@ void My::GuiSubPass::Draw(Frame& frame)
 			auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
 			ImGui::Begin((const char*)u8"Scene Status");
 			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+			
+			//Base Scene Settings
+			if (ImGui::TreeNode("BaseSceneSettings"))
+			{
+				bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
+				ImGui::Checkbox("SkyboxNotVisible", pIsDrawSkybox);
+
+				ImGui::TreePop();
+			}
+
+
+			// SceneNode Settings
 			for (auto& GeoNode : pScene->GeometryNodes) {
 				GeoNode.second->GetRigidBody();
 				std::string GeoName = GeoNode.first;

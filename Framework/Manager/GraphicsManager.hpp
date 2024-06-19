@@ -60,6 +60,8 @@ namespace My {
         virtual void EndFrame(Frame& frame) {}
         virtual void UpdateFrameConstants(Frame& frame);
 
+    public:
+        bool* GetDrawSkyboxStatus() { return &m_bNotDrawSkybox; }
     protected:
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
@@ -67,5 +69,6 @@ namespace My {
         bool m_bInitialized{ false };
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
+        bool m_bNotDrawSkybox{ false };
     };
 }
