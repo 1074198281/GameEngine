@@ -488,11 +488,10 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             std::string name = node.second->GetSceneObjectRef();
             auto lightObject = scene.GetLight(name);
             Matrix4X4f lightMat = *node.second->GetCalculatedTransform().get();
-            Vector4f lightPos = lightObject->GetPosition();
-            Vector4f pos;
-            MatrixMulVector(pos, lightPos, lightMat);
-            l.LightPosition = pos;
-            
+            l.LightPosition = My::Vector4f(lightMat[0][3], lightMat[1][3], lightMat[2][3], 1.0f);
+            l.Insensity = lightObject->GetIntensity();
+            l.LightColor = lightObject->GetColor().Value;
+            l.Type = lightObject->GetLightType();
         }
     }
 }
@@ -805,15 +804,17 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
     for (auto& dbc : frame.BatchContexts) {
+        Matrix4X4f ModelTrans = *dbc->Node->GetCalculatedTransform().get();
+
         Matrix4X4f PhysicsTrans;
         BuildIdentityMatrix(PhysicsTrans);
         if (dbc->Node->GetRigidBody()) {
             PhysicsTrans = pPhysicsManager->GetRigidBodyTransform(dbc->Node->GetRigidBody());
+            ModelTrans[0][3] = 0;
+            ModelTrans[1][3] = 0;
+            ModelTrans[2][3] = 0;
         }
-        Matrix4X4f ModelTrans = *dbc->Node->GetCalculatedTransform().get();
-        ModelTrans[0][3] = 0;
-        ModelTrans[1][3] = 0;
-        ModelTrans[2][3] = 0;
+
         dbc->ModelMatrix = PhysicsTrans * ModelTrans;
     }
 }

@@ -193,6 +193,21 @@ namespace glTF
         float zfar;
     };
 
+    struct Light
+    {
+        enum eLightType { kPoint, kDirectional, kSpot, kLightType };
+        std::string m_name;
+        float m_Color[3];
+        float m_Intensity;
+        eLightType m_Type;
+        union {
+            struct SpotProperties {
+                float innerConnangle;
+                float outerConnAngle;
+            };
+        };
+    };
+
     struct Node
     {
         std::string name;
@@ -204,12 +219,14 @@ namespace glTF
                 bool pointsToCamera : 1;
                 bool hasMatrix : 1;
                 bool skeletonRoot : 1;
+                bool isLight : 1;
             };
         };
         union
         {
             Mesh* mesh;
             Camera* camera;
+            Light* light;
         };
         std::vector<Node*> children;
         union
@@ -260,20 +277,6 @@ namespace glTF
         std::vector<AnimSampler> m_samplers;
     };
 
-    struct Light
-    {
-        enum eLightType { kPoint, kDirectional, kSpot, kLightType };
-        std::string m_name;
-        float m_Color[3];
-        float m_Intensity;
-        eLightType m_Type;
-        union {
-            struct SpotProperties {
-                float innerConnangle;
-                float outerConnAngle;
-            };
-        };
-    };
 
     struct Light_Punctual {
         std::vector<Light> m_Lights;
@@ -1027,6 +1030,19 @@ namespace glTF
                         node.translation[2] = 0.0f;
                     }
                 }
+
+                if (thisNode.find("extensions") != thisNode.end())
+                {
+                    json& ext = thisNode.at("extensions");
+                    if (ext.find("KHR_lights_punctual") != ext.end())
+                    {
+                        json& lights = ext.at("KHR_lights_punctual");
+                        node.isLight = true;
+                        json::iterator light = lights.find("light");
+                        int lightIdx = light.value();
+                        node.light = &m_extensions.m_extLights.m_punctualLights.m_Lights[lightIdx];
+                    }
+                }
             }
         }
 
@@ -1656,14 +1672,67 @@ namespace glTF
             return CameraNode;
         }
 
+        std::shared_ptr<My::BaseSceneNode> ProcessNodeLight(My::Scene& Scene, glTF::Node* pNode)
+        {
+            std::string nodeName = pNode->name;
+            if (pNode->name == "")
+            {
+                nodeName = pNode->light->m_name;
+            }
+
+            std::shared_ptr<My::SceneLightNode> LightNode = std::make_shared<SceneLightNode>(nodeName);
+            std::shared_ptr<My::SceneObjectLight> LightObject;
+
+            std::string lightParam;
+            lightParam = "lightType";
+
+            switch (pNode->light->m_Type)
+            {
+            case Light::eLightType::kPoint:
+            {
+                LightObject = std::make_shared<SceneObjectOmniLight>(nodeName);
+                LightObject->SetParam(lightParam, Omni);
+            }
+            break;
+            case Light::eLightType::kDirectional:
+            {
+                LightObject = std::make_shared<SceneObjectInfiniteLight>(nodeName);
+                LightObject->SetParam(lightParam, Infinity);
+            }
+            break;
+            case Light::eLightType::kSpot:
+            {
+                LightObject = std::make_shared<SceneObjectOmniLight>(nodeName);
+                LightObject->SetParam(lightParam, Spot);
+            }
+            break;
+            default:
+                break;
+            }
+
+            
+            My::Vector4f color(pNode->light->m_Color[0], pNode->light->m_Color[1], pNode->light->m_Color[2], 1.0f);
+            
+            lightParam = "Color";
+            LightObject->SetColor(lightParam, color);
+            lightParam = "intensity";
+            LightObject->SetParam(lightParam, pNode->light->m_Intensity);
+
+
+            Scene.LightNodes.emplace(nodeName, LightNode);
+            Scene.Lights.emplace(nodeName, LightObject);
+            return LightNode;
+        }
+
         void ProcessCurrentNode(std::shared_ptr<My::BaseSceneNode>& node, My::Scene& Scene, glTF::Node* pNode)
         {
             std::shared_ptr<My::BaseSceneNode> newNode;
             if (pNode->pointsToCamera) {
                 // TODO: Multi Camera Support
                 newNode = ProcessNodeCamera(Scene, pNode);;
-            }
-            else {
+            } else if (pNode->isLight) {
+                newNode = ProcessNodeLight(Scene, pNode);
+            } else {
                 newNode = ProcessNodeMesh(Scene, pNode);
             }
 
