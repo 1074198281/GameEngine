@@ -214,6 +214,20 @@ void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::P
     context.SetPrimitiveTopology(d3dType);
 }
 
+void D3dGraphicsCore::D3d12RHI::SetLightInfo(My::LightInfo* lightInfo, int lightNum)
+{
+    m_pLightInfo = lightInfo;
+    m_LightNum = lightNum;
+}
+
+void D3dGraphicsCore::D3d12RHI::FreeLightInfo()
+{
+    if (m_pLightInfo)
+    {
+        dynamic_cast<My::MemoryManager*>(reinterpret_cast<My::BaseApplication*>(m_fGetApplication())->GetMemoryManager())->Free(m_pLightInfo, sizeof(My::LightInfo) + 16);
+    }
+}
+
 void D3dGraphicsCore::D3d12RHI::BeginSubPass(std::string PassName)
 {
     m_pComputeContext = nullptr;
@@ -393,10 +407,11 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         }
 
         pfc.clip_space_type = 1;
-        pfc.LightNum = 0;
+        pfc.LightNum = m_LightNum;
 
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_LightInfo);
     }
     
     if(!isNotDrawSkybox)

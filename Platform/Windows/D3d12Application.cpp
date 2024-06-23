@@ -26,12 +26,15 @@ int My::D3d12Application::CreateMainWindow()
 
     auto getGfxConfigHandler = [this]() { return GetConfiguration(); };
 
+    auto getApplication = [this]() { return GetApplication(); };
+
 
     m_GraphicsRHI = new D3dGraphicsCore::D3d12RHI();
     // 设置回调函数
     m_GraphicsRHI->SetQueryFrameBufferSize(getFramebufferSize);
     m_GraphicsRHI->SetGetWindowHandleProc(getWindowHandler);
     m_GraphicsRHI->SetGetGfxconfiguration(getGfxConfigHandler);
+    m_GraphicsRHI->SetGetApplication(getApplication);
 
     m_GraphicsRHI->StartUp();
 

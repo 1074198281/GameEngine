@@ -27,6 +27,8 @@ namespace My {
 
         virtual void* GetMainWindow() { return nullptr; }
 
+        virtual IApplication* GetApplication() { return this; }
+
     public:
         void SetCommandLineParameters(int argc, char** argv) override;
         int GetCommandLineParametersCount() override;

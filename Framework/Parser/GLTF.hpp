@@ -1680,7 +1680,7 @@ namespace glTF
                 nodeName = pNode->light->m_name;
             }
 
-            std::shared_ptr<My::SceneLightNode> LightNode = std::make_shared<SceneLightNode>(nodeName);
+            std::shared_ptr<My::SceneLightNode> LightNode = std::make_shared<My::SceneLightNode>(nodeName);
             std::shared_ptr<My::SceneObjectLight> LightObject;
 
             std::string lightParam;
@@ -1690,26 +1690,25 @@ namespace glTF
             {
             case Light::eLightType::kPoint:
             {
-                LightObject = std::make_shared<SceneObjectOmniLight>(nodeName);
-                LightObject->SetParam(lightParam, Omni);
+                LightObject = std::make_shared<My::SceneObjectOmniLight>();
+                LightObject->SetParam(lightParam, My::LightType::Omni);
             }
             break;
             case Light::eLightType::kDirectional:
             {
-                LightObject = std::make_shared<SceneObjectInfiniteLight>(nodeName);
-                LightObject->SetParam(lightParam, Infinity);
+                LightObject = std::make_shared<My::SceneObjectInfiniteLight>();
+                LightObject->SetParam(lightParam, My::LightType::Infinity);
             }
             break;
             case Light::eLightType::kSpot:
             {
-                LightObject = std::make_shared<SceneObjectOmniLight>(nodeName);
-                LightObject->SetParam(lightParam, Spot);
+                LightObject = std::make_shared<My::SceneObjectOmniLight>();
+                LightObject->SetParam(lightParam, My::LightType::Spot);
             }
             break;
             default:
                 break;
             }
-
             
             My::Vector4f color(pNode->light->m_Color[0], pNode->light->m_Color[1], pNode->light->m_Color[2], 1.0f);
             
@@ -1718,7 +1717,26 @@ namespace glTF
             lightParam = "intensity";
             LightObject->SetParam(lightParam, pNode->light->m_Intensity);
 
+            //Transform
+            if (pNode->hasMatrix) {
+                My::Matrix4X4f mat;
+                memcpy(mat, pNode->matrix, 16 * sizeof(float));
+                std::shared_ptr<My::SceneObjectTransform> trans;
+                trans = std::make_shared<My::SceneObjectTransform>(mat);
+                LightNode->AppendChild(std::move(trans));
+            }
+            else {
+                My::Matrix4X4f mat, quaternion;
+                std::shared_ptr<My::SceneObjectTransform> trans;
+                auto scale = My::BuildScaleMatrix(pNode->scale[0], pNode->scale[1], pNode->scale[2], 1.0f);
+                My::MatrixRotationQuaternion(quaternion, My::Quaternion(pNode->rotation[0], pNode->rotation[1], pNode->rotation[2], pNode->rotation[3]));
+                auto translation = My::BuildTranslationMatrix(pNode->translation[0], pNode->translation[1], pNode->translation[2], 1.0f);
+                mat = translation * quaternion * scale;
+                trans = std::make_shared<My::SceneObjectTransform>(mat);
+                LightNode->AppendChild(std::move(trans));
+            }
 
+            LightNode->AddSceneObjectRef(nodeName);
             Scene.LightNodes.emplace(nodeName, LightNode);
             Scene.Lights.emplace(nodeName, LightObject);
             return LightNode;

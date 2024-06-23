@@ -35,12 +35,12 @@ namespace My {
 	} MaterialConstants;
 
 	// cb1
-	typedef struct PerBatchConstants {
+	__declspec(align(16)) typedef struct PerBatchConstants {
 		Matrix4X4f ModelMatrix;
 	} PerBatchConstants;
 
 	// cb2
-	typedef struct PerFrameConstants {
+	__declspec(align(16)) typedef struct PerFrameConstants {
 		Matrix4X4f ViewMatrix;
 		Matrix4X4f ProjectionMatrix;
 		Vector4f CameraPosition;
@@ -50,7 +50,7 @@ namespace My {
 	} PerFrameConstants;
 
 	// cb3
-	typedef struct Light {
+	__declspec(align(16)) typedef struct Light {
 		Matrix4X4f LightViewMatrix;
 		Matrix4X4f LightProjectionMatrix;
 		Vector4f LightPosition;
@@ -59,9 +59,10 @@ namespace My {
 		int LightShadowMapIndex;
 		LightType Type;
 		float Insensity;
+		float padding0;
 	} Light;
 
-	typedef struct LightInfo {
+	__declspec(align(16)) typedef struct LightInfo {
 		Light Lights[MAX_LIGHT_NUM];
 	} LightInfo;
 

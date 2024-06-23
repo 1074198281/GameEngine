@@ -92,13 +92,18 @@ void My::GuiSubPass::Draw(Frame& frame)
 				bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
 				ImGui::Checkbox("SkyboxNotVisible", pIsDrawSkybox);
 
+				bool* pIsCastShadow = m_pGraphicsManager->GetCastShadowStatus();
+				ImGui::Checkbox("CastShadow", pIsCastShadow);
+
+				bool* pIsGuassBlur = m_pGraphicsManager->GetGuassBlurStatus();
+				ImGui::Checkbox("GuassBlur", pIsGuassBlur);
+
 				ImGui::TreePop();
 			}
 
 
 			// SceneNode Settings
 			for (auto& GeoNode : pScene->GeometryNodes) {
-				GeoNode.second->GetRigidBody();
 				std::string GeoName = GeoNode.first;
 				if (ImGui::TreeNode(GeoName.c_str()))
 				{
@@ -106,7 +111,14 @@ void My::GuiSubPass::Draw(Frame& frame)
 					ImGui::Checkbox("Visible", &bVisible);
 
 					ImGui::SeparatorTextEx(0, "Model Matrix", NULL, 0);
-					Matrix4X4f model = pPhysicsManager->GetRigidBodyTransform(GeoNode.second->GetRigidBody());
+					Matrix4X4f model;
+					if (GeoNode.second->GetRigidBody())
+					{
+						model = pPhysicsManager->GetRigidBodyTransform(GeoNode.second->GetRigidBody());
+					} else {
+						model = *GeoNode.second->GetCalculatedTransform().get();
+					}
+					 
 					ImGui::InputFloat4("", model[0]);
 					ImGui::InputFloat4("", model[1]);
 					ImGui::InputFloat4("", model[2]);
@@ -131,6 +143,17 @@ void My::GuiSubPass::Draw(Frame& frame)
 					GeoNode.second->SetVisibility(bVisible);
 					ImGui::TreePop();
 				}
+			}
+
+			for (auto& lightNode : pScene->LightNodes)
+			{
+				std::string lightName = lightNode.first;
+				if (ImGui::TreeNode(lightName.c_str()))
+				{
+
+					ImGui::TreePop();
+				}
+
 			}
 			ImGui::End();
 		}

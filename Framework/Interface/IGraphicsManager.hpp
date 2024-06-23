@@ -47,5 +47,7 @@ namespace My {
         virtual void SetShadowResources(Frame& frame, Light lightInfo) = 0;
     public:
         virtual bool* GetDrawSkyboxStatus() = 0;
+        virtual bool* GetCastShadowStatus() = 0;
+        virtual bool* GetGuassBlurStatus() = 0;
 	};
 }

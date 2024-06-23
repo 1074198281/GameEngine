@@ -24,5 +24,7 @@ namespace My {
 		virtual int CreateMainWindow() = 0;
 
 		virtual GfxConfiguration& GetConfiguration() = 0;
+
+		virtual IApplication* GetApplication() = 0;
 	};
 }

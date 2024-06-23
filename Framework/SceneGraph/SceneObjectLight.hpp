@@ -4,6 +4,7 @@
 #include "SceneObjectTypeDef.hpp"
 #include "ParameterValuemap.hpp"
 #include "geommath.hpp"
+#include "shader_base.h"
 #include <string>
 #include <ostream>
 

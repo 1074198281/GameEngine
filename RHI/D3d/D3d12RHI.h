@@ -6,6 +6,7 @@
 #include <functional>
 #include <DirectXMath.h>
 #include "GfxConfiguration.h"
+#include "BaseApplication.hpp"
 #include "StructureSettings.h"
 #include "ShaderSource.h"
 #include "GraphicsStructure.h"
@@ -23,6 +24,7 @@ namespace D3dGraphicsCore {
 		using QueryFrameBufferSize = std::function<void(uint32_t&, uint32_t&)>;
 		using GetWindowHandleProc = std::function<HWND()>;
 		using GetGfxconfiguration = std::function<const My::GfxConfiguration&()>;
+		using GetApplication = std::function<My::IApplication* ()>;
 
 	public:
 		D3d12RHI();
@@ -43,6 +45,11 @@ namespace D3dGraphicsCore {
 
 		void SetGetGfxconfiguration(const GetGfxconfiguration& func) {
 			m_fGetGfxconfiguration = func;
+		}
+
+		void SetGetApplication(const GetApplication& func)
+		{
+			m_fGetApplication = func;
 		}
 
 	public:
@@ -73,6 +80,9 @@ namespace D3dGraphicsCore {
 		void SetPipelineStatus(std::string PSOName);
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light);
+		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
+
+		void FreeLightInfo();
 	private:
 		void InitializeCoreHWND();
 	private:
@@ -88,11 +98,13 @@ namespace D3dGraphicsCore {
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;
 		My::Light m_CacheLight;
-
+		My::LightInfo* m_pLightInfo;
+		int m_LightNum = -1;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;
 		GetGfxconfiguration m_fGetGfxconfiguration;
+		GetApplication m_fGetApplication;
 	};
 
 }

@@ -61,7 +61,9 @@ namespace My {
         virtual void UpdateFrameConstants(Frame& frame);
 
     public:
-        bool* GetDrawSkyboxStatus() { return &m_bNotDrawSkybox; }
+        bool* GetDrawSkyboxStatus() override { return &m_bNotDrawSkybox; }
+        bool* GetCastShadowStatus() override { return &m_bCastShadow; }
+        bool* GetGuassBlurStatus() override { return &m_bGuassBlur; }
     protected:
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
@@ -69,6 +71,9 @@ namespace My {
         bool m_bInitialized{ false };
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
+
         bool m_bNotDrawSkybox{ false };
+        bool m_bCastShadow{ false };
+        bool m_bGuassBlur{ false };
     };
 }

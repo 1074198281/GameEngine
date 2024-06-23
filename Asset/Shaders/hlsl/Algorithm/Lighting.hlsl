@@ -29,10 +29,14 @@ struct SurfaceProperties
 
 struct PerLightPro
 {
+    float4x4 ViewMatrix;
+    float4x4 ProjectionMatrix;
     float4 LightPosition;
     float4 LightColor;
     float4 LightDirection;
     float Insensity;
+    int LightType;
+    float2 padding0;
 };
 
 // in light properties, position is in the world coordinate
@@ -40,6 +44,7 @@ struct LightProperties
 {
     PerLightPro light[MAX_LIGHT_NUM];
     int LightNum;
+    float3 padding0;
 };
 
 static const float3 F0 = float3(0.04, 0.04, 0.04);     
@@ -130,11 +135,13 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
         float4 World_Position = HomogeneousCoordinates(surface.PositionWorld);
         float3 Light_Vec = normalize(Light_Position.xyz - World_Position.xyz);
         float3 Half_Vec = normalize(Light_Vec + surface.View_Vec);
-        float N_dot_L = dot(surface.Normal_Vec, Light_Vec);
+        float N_dot_L = max(dot(surface.Normal_Vec, Light_Vec), 0);
 
         float distance = length(World_Position - Light_Position);
         float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.light[lightIdx].LightColor.rgb * attenuation;
+        float insensity = light.light[lightIdx].Insensity;
+        float3 Light_Color = light.light[lightIdx].LightColor.rgb;
+        float3 radiance = insensity * Light_Color * attenuation;
 
         // indirect lighting, based on Cook-Torrence
         

@@ -52,10 +52,15 @@ cbuffer cbPerFrameConstants : register(b2)
 // cb3
 struct cLight
 {
+    float4x4 gLightViewMatrix;
+    float4x4 gLightProjectMatrix;
     float4 gLightPosition;
     float4 gLightColor;
     float4 gLightDirection;
+    int gShadowMapIndex;
+    int gLightType;
     float gInsensity;
+    float padding0;
 };
 cbuffer LightInfo : register(b3)
 {
@@ -123,7 +128,7 @@ float4 main(VertexOut pin) : SV_Target
     SurfaceProperties surface;
     surface.PositionWorld = HomogeneousCoordinates(pin.WorldPosition);
     surface.Normal_Vec = normal;
-    surface.View_Vec = normalize((surface.PositionWorld - gCameraPosition).xyz);
+    surface.View_Vec = normalize((gCameraPosition - surface.PositionWorld).xyz);
     surface.N_dot_V = dot(surface.Normal_Vec, surface.View_Vec);
     surface.roughness = roughness;
     surface.roughness_sq = roughness * roughness;
@@ -138,9 +143,17 @@ float4 main(VertexOut pin) : SV_Target
 
     // add direct and reflect light
     LightProperties light;
-    for (int i = 0; i < gLightNum; i++)
+    int idx = 0;
+    for (; idx < gLightNum; idx++)
     {
-        light.light[i] = glightinfo[i];
+        light.light[idx].ViewMatrix = glightinfo[idx].gLightViewMatrix;
+        light.light[idx].ProjectionMatrix = glightinfo[idx].gLightProjectMatrix;
+        light.light[idx].Insensity = glightinfo[idx].gInsensity;
+        light.light[idx].LightColor = glightinfo[idx].gLightColor;
+        light.light[idx].LightDirection = glightinfo[idx].gLightDirection;
+        light.light[idx].LightPosition = glightinfo[idx].gLightPosition;
+        light.light[idx].LightType = glightinfo[idx].gLightType;
+        
         light.LightNum = gLightNum;
     }
     colorResult += CalculateDirectionalLighting(surface, light);

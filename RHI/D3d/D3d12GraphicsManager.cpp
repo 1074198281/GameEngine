@@ -476,8 +476,11 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 
 void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
 {
-    std::vector<Light> lights;
-    LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo));
+    auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.FreeLightInfo();
+
+    int lightNum = 0;
+    LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo), 16);
     memset(info, 0, sizeof(LightInfo));
     for (auto& node : scene.LightNodes)
     {
@@ -488,12 +491,18 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             std::string name = node.second->GetSceneObjectRef();
             auto lightObject = scene.GetLight(name);
             Matrix4X4f lightMat = *node.second->GetCalculatedTransform().get();
+            Vector4f defaultLightDir(0.0f, -1.0f, 0.0f, 0.0f);
+
             l.LightPosition = My::Vector4f(lightMat[0][3], lightMat[1][3], lightMat[2][3], 1.0f);
             l.Insensity = lightObject->GetIntensity();
             l.LightColor = lightObject->GetColor().Value;
             l.Type = lightObject->GetLightType();
+            MatrixMulVector(l.LightDirection, defaultLightDir, lightMat);
+            info->Lights[lightNum++] = l;
         }
     }
+
+    GraphicsRHI.SetLightInfo(info, lightNum);
 }
 
 void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)

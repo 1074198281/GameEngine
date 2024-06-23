@@ -13,6 +13,9 @@ void My::GuassBlurSubPass::EndSubPass()
 
 void My::GuassBlurSubPass::Draw(Frame& frame)
 {
-	m_pGraphicsManager->SetPipelineStatus("GuassBlur_CS");
-	m_pGraphicsManager->DrawGuassBlur(frame);
+	if (*m_pGraphicsManager->GetGuassBlurStatus())
+	{
+		m_pGraphicsManager->SetPipelineStatus("GuassBlur_CS");
+		m_pGraphicsManager->DrawGuassBlur(frame);
+	}
 }
