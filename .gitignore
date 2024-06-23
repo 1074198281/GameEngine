@@ -361,7 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/Asset/Scene/glTF
+#/Asset/Scene/glTF
 /External/Windows/include/ImGUI/build_ImGUI
 /build
 /build_shader
