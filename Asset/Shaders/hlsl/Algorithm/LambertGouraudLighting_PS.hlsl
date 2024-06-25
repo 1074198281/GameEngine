@@ -1,4 +1,3 @@
-#include "ShaderInput.hlsl"
 
 #define LAMBERT
 #ifdef LAMBERT
@@ -14,7 +13,7 @@ struct LVertexOut
 
 #endif
 
-float4 lambertFlatShadingMain(LVertexOut pInput)
+float4 lambertGouraudShadingMain(LVertexOut pInput) : SV_Target
 {
     return pInput.Color;
 }

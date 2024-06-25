@@ -18,6 +18,10 @@
 #include "../Asset/Shaders/CompiledShaders/g_MyGuassBlur_CS.h"
 
 
+// lighting
+#include "../Asset/Shaders/CompiledShaders/g_LambertGouraudLighting_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_LambertGouraudLighting_PS.h"
+
 namespace D3dGraphicsCore {
 	std::unordered_map<std::string, ShaderByteCode> g_ShaderByteMap;
 }
@@ -62,7 +66,8 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	GENERATE_SHADER_BYTE_CODE(Present);
 	GENERATE_SHADER_BYTE_CODE(Model);
 
-
+	// lighting
+	GENERATE_SHADER_BYTE_CODE(LambertGouraudLighting);
 #undef TOSTRING
 #undef GENERATE_SHADER_BYTE_CODE
 #endif // !GENERATE_SHADER_BYTE_CODE

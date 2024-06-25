@@ -41,6 +41,16 @@ D3dGraphicsCore::GraphicsPSO::GraphicsPSO(const wchar_t* Name)
     m_PSODesc.InputLayout.NumElements = 0;
 }
 
+D3dGraphicsCore::GraphicsPSO::GraphicsPSO(const char* Name)
+    : PSO(Name)
+{
+    ZeroMemory(&m_PSODesc, sizeof(m_PSODesc));
+    m_PSODesc.NodeMask = 1;
+    m_PSODesc.SampleMask = 0xFFFFFFFFu;
+    m_PSODesc.SampleDesc.Count = 1;
+    m_PSODesc.InputLayout.NumElements = 0;
+}
+
 void D3dGraphicsCore::GraphicsPSO::SetBlendState(const D3D12_BLEND_DESC& BlendDesc)
 {
     m_PSODesc.BlendState = BlendDesc;

@@ -55,6 +55,8 @@ namespace D3dGraphicsCore {
 
 	void FinalizePipelineTemplates();
 
+	void AddLightingShaders();
+
 	void SetPipelineSettings(GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name);
     
 	//---------------------------------------samplers---------------------------------------//

@@ -31,7 +31,14 @@ namespace D3dGraphicsCore {
     {
     public:
 
-        PSO(const wchar_t* Name) : m_Name(Name), m_RootSignature(nullptr), m_PSO(nullptr) {}
+        PSO(const wchar_t* Name) : m_Name(Name), m_cName(nullptr), m_RootSignature(nullptr), m_PSO(nullptr) {}
+        PSO(const char* Name) : m_cName(Name), m_RootSignature(nullptr), m_PSO(nullptr) 
+        { 
+            const size_t len = strlen(Name) + 1;
+            wchar_t* wch = new wchar_t[len];
+            mbstowcs(wch, Name, len);
+            m_Name = wch;
+        }
 
         static void DestroyAll(void);
 
@@ -51,6 +58,7 @@ namespace D3dGraphicsCore {
     protected:
 
         const wchar_t* m_Name;
+        const char* m_cName;
 
         const RootSignature* m_RootSignature;
 
@@ -65,6 +73,7 @@ namespace D3dGraphicsCore {
 
         // Start with empty state
         GraphicsPSO(const wchar_t* Name = L"Unnamed Graphics PSO");
+        GraphicsPSO(const char* Name = "Unnamed Graphics PSO");
 
         void SetBlendState(const D3D12_BLEND_DESC& BlendDesc);
         void SetRasterizerState(const D3D12_RASTERIZER_DESC& RasterizerDesc);

@@ -4,6 +4,7 @@
 #include "Core/Common/GraphicsCommon.h"
 #include "Core/D3dGraphicsCoreManager.h"
 #include "ShaderSource.h"
+#include "../Windows/WinUtility.h"
 
 
 namespace D3dGraphicsCore {
@@ -174,7 +175,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature[My::kCommonSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 20, 15, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_TemplateRootSignature[My::kCommonBatchConstantsCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 	g_TemplateRootSignature[My::kCommonFrameConstantsCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
-	g_TemplateRootSignature[My::kCommonLightConstantsCBV].InitAsConstantBuffer(3, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_TemplateRootSignature[My::kCommonLightConstantsCBV].InitAsConstantBuffer(3, D3D12_SHADER_VISIBILITY_ALL);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);
@@ -225,6 +226,9 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	pPresentPSO->SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);
 	pPresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pPresentPSO->Finalize();
+
+	//lighting
+	AddLightingShaders();
 
 	g_PipelineStatusMap.emplace("Default", std::move(pDefaultPSO));
 	g_PipelineStatusMap.emplace("Skybox", std::move(pSkyBoxPSO));
@@ -310,6 +314,22 @@ void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, con
 	else {
 		ASSERT(false, "InputLayout Type ERROR!");
 	}
+}
+
+void D3dGraphicsCore::AddLightingShaders()
+{
+	std::unique_ptr<GraphicsPSO> pLambertLighting = std::make_unique<GraphicsPSO>(L"LambertGouraudLighting"); \
+	pLambertLighting->SetRootSignature(g_TemplateRootSignature);
+	pLambertLighting->SetRasterizerState(RasterizerDefault);
+	pLambertLighting->SetBlendState(BlendDisable);
+	pLambertLighting->SetDepthStencilState(DepthStateReadWriteLess);
+	pLambertLighting->SetRenderTargetFormat(g_SceneColorBufferFormat, g_SceneDepthBufferFormat);
+	pLambertLighting->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pLambertLighting->SetInputLayout(3, g_PosNorTex);
+	SetShaderByteCode(*pLambertLighting.get(), "LambertGouraudLighting");
+	pLambertLighting->Finalize();
+	g_PipelineStatusMap.emplace("LambertGouraudLighting", std::move(pLambertLighting));
+
 }
 
 void D3dGraphicsCore::InitializeSamplers()
