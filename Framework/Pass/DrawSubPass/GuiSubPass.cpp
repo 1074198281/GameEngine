@@ -145,16 +145,33 @@ void My::GuiSubPass::Draw(Frame& frame)
 				}
 			}
 
-			for (auto& lightNode : pScene->LightNodes)
+			if (pScene->LightNodes.size())
 			{
-				std::string lightName = lightNode.first;
-				if (ImGui::TreeNode(lightName.c_str()))
+				for (auto& lightNode : pScene->LightNodes)
 				{
+					std::string lightName = lightNode.first;
+					std::shared_ptr<SceneLightNode> node = lightNode.second;
+					std::shared_ptr<SceneObjectLight> object = pScene->Lights.at(lightName);
+					if (ImGui::TreeNode(lightName.c_str()))
+					{
+						std::shared_ptr<Matrix4X4f> mat = node->GetCalculatedTransform();
+						float* pos[3] = { 
+							&mat->data[0][3],
+							&mat->data[1][3],
+							&mat->data[2][3]
+						};
+						ImGui::Checkbox("CastShadow", object->GetIfCastShadow());
+						ImGui::SliderFloat4("LightColor", (float*)&(object->GetColor().Value), 0, 1);
+						ImGui::InputFloat3("LightPosition", *pos);
 
-					ImGui::TreePop();
+						m_LightPos.emplace_back(mat);
+						ImGui::TreePop();
+					}
 				}
 
+
 			}
+
 			ImGui::End();
 		}
 

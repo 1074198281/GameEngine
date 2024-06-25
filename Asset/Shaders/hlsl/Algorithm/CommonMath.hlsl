@@ -1,3 +1,20 @@
+static const float3 F0 = float3(0.04, 0.04, 0.04);
+static const float PI = 3.14159265358979;
+
+#define MAX_LIGHT_NUM 16
+
+float Pow5(float x)
+{
+    float xSquare = x * x;
+    return xSquare * xSquare * x;
+}
+
+// calculate hhomegeneous coordinates, trans (x, y, z, w) to (x', y', z', 1.0)
+float4 HomogeneousCoordinates(float4 position)
+{
+    return position / position.w;
+}
+
 // KHR_texture_transform
 // input: TextureUV float2 offset float2 scale float rotation output: transformedUV 
 // 

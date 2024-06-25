@@ -1,13 +1,5 @@
-#define MAX_LIGHT_NUM 16
-
+#include "ShaderInput.hlsl"
 #define PBR
-
-#ifdef LAMBERT
-float4 LambertLighting(float Insensity, float4 LightColor, float3 LightDir, float3 NormalDir)
-{
-    return float4(Insensity * LightColor.xyz * max(0.0f, dot(LightDir, NormalDir)), 1.0f);
-}
-#endif
 
 #ifdef PBR
 
@@ -26,29 +18,6 @@ struct SurfaceProperties
     float Roughness;
     float AmbientOcclusion;
 };
-
-struct PerLightPro
-{
-    float4x4 ViewMatrix;
-    float4x4 ProjectionMatrix;
-    float4 LightPosition;
-    float4 LightColor;
-    float4 LightDirection;
-    float Insensity;
-    int LightType;
-    float2 padding0;
-};
-
-// in light properties, position is in the world coordinate
-struct LightProperties
-{
-    PerLightPro light[MAX_LIGHT_NUM];
-    int LightNum;
-    float3 padding0;
-};
-
-static const float3 F0 = float3(0.04, 0.04, 0.04);     
-static const float PI = 3.14159265358979;
 
 float3 LinearTosRGB(float3 input)
 {
@@ -112,18 +81,6 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
     return ggx1 * ggx2;
 }
 
-float Pow5(float x)
-{
-    float xSquare = x * x;
-    return xSquare * xSquare * x;
-}
-
-// calculate hhomegeneous coordinates, trans (x, y, z, w) to (x', y', z', 1.0)
-float4 HomogeneousCoordinates(float4 position)
-{
-    return position / position.w;
-}
-
 float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties light)
 {
     float3 irradiance = float3(0.0, 0.0, 0.0);
@@ -164,7 +121,7 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
         // calc diffuse
         float3 diffuse = kD * surface.Albedo / PI;
         
-        irradiance += (diffuse + specular) * radiance * N_dot_L;
+        irradiance += (diffuse + specular) * radiance * N_dot_L * Light_Color;
     }
     return irradiance;
 }

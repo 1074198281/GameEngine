@@ -1712,7 +1712,7 @@ namespace glTF
             
             My::Vector4f color(pNode->light->m_Color[0], pNode->light->m_Color[1], pNode->light->m_Color[2], 1.0f);
             
-            lightParam = "Color";
+            lightParam = "light";
             LightObject->SetColor(lightParam, color);
             lightParam = "intensity";
             LightObject->SetParam(lightParam, pNode->light->m_Intensity);

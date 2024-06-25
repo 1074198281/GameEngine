@@ -494,7 +494,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             Vector4f defaultLightDir(0.0f, -1.0f, 0.0f, 0.0f);
 
             l.LightPosition = My::Vector4f(lightMat[0][3], lightMat[1][3], lightMat[2][3], 1.0f);
-            l.Insensity = lightObject->GetIntensity();
+            l.Insensity = *lightObject->GetIntensity();
             l.LightColor = lightObject->GetColor().Value;
             l.Type = lightObject->GetLightType();
             MatrixMulVector(l.LightDirection, defaultLightDir, lightMat);

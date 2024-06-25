@@ -27,7 +27,7 @@ using namespace DirectX;
 
 D3dGraphicsCore::D3d12RHI::D3d12RHI()
 {
-
+    m_pLightInfo = nullptr;
 }
 
 D3dGraphicsCore::D3d12RHI::~D3d12RHI()
@@ -411,7 +411,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
 
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
-        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_LightInfo);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
     }
     
     if(!isNotDrawSkybox)

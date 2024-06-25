@@ -1,35 +1,4 @@
-#define MAX_LIGHT_NUM 16
-
-cbuffer PerBatchConstants : register(b1)
-{
-    float4x4 gModelMatrix;
-};
-
-// cb2
-cbuffer PerFrameConstants : register(b2)
-{
-    float4x4 gViewMatrix;
-    float4x4 gProjMatrix;
-    float4 gCameraPosition;
-    int gLightNum;
-    int clip_space_type; //0: opengl ,1: others ≤√ºÙø’º‰¿‡–Õ
-    float2 padding2;
-};
-
-struct VertexIn
-{
-	float3 Position  : POSITION;
-	float3 Normal : NORMAL;
-	float2 Tex : TEXCOORD;
-};
-
-struct VertexOut
-{
-    float4 ProjectedPosition : SV_POSITION;
-    float4 WorldPosition : POSITION;
-    float3 WorldNormal : NORMAL;
-    float2 TextureUV : TEXCOORD;
-};
+#include "../Algorithm/ShaderInput.hlsl"
 
 VertexOut main(VertexIn vin)
 {
