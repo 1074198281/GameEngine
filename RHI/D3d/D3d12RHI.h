@@ -80,9 +80,12 @@ namespace D3dGraphicsCore {
 		void SetPipelineStatus(std::string PSOName);
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light);
-		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
 
+		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
+		void SetLightNameInfo(std::vector<std::string>& names);
 		void FreeLightInfo();
+		void* GetLightInfo() { return m_pLightInfo; }
+		std::string GetLightName(int index) { return m_LightNameInfo[index]; }
 	private:
 		void InitializeCoreHWND();
 	private:
@@ -99,6 +102,7 @@ namespace D3dGraphicsCore {
 		ComputePSO* m_pComputePSO = nullptr;
 		My::Light m_CacheLight;
 		My::LightInfo* m_pLightInfo;
+		std::vector<std::string> m_LightNameInfo;
 		int m_LightNum = -1;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;

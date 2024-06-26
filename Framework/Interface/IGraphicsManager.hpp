@@ -45,6 +45,9 @@ namespace My {
         virtual void SetPipelineStatus(std::string PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
         virtual void SetShadowResources(Frame& frame, Light lightInfo) = 0;
+
+        virtual void* GetLightInfo() = 0;
+        virtual std::string GetLightName(int index) = 0;
     public:
         virtual bool* GetDrawSkyboxStatus() = 0;
         virtual bool* GetCastShadowStatus() = 0;

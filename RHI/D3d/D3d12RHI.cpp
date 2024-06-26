@@ -220,6 +220,11 @@ void D3dGraphicsCore::D3d12RHI::SetLightInfo(My::LightInfo* lightInfo, int light
     m_LightNum = lightNum;
 }
 
+void D3dGraphicsCore::D3d12RHI::SetLightNameInfo(std::vector<std::string>& names)
+{
+    m_LightNameInfo = names;
+}
+
 void D3dGraphicsCore::D3d12RHI::FreeLightInfo()
 {
     if (m_pLightInfo)

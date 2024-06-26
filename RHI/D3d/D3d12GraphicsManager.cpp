@@ -482,6 +482,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
     int lightNum = 0;
     LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo), 16);
     memset(info, 0, sizeof(LightInfo));
+    std::vector<std::string> lightNames;
     for (auto& node : scene.LightNodes)
     {
         if (node.second->CastShadow())
@@ -489,6 +490,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             Light l;
             
             std::string name = node.second->GetSceneObjectRef();
+            lightNames.push_back(name);
             auto lightObject = scene.GetLight(name);
             Matrix4X4f lightMat = *node.second->GetCalculatedTransform().get();
             Vector4f defaultLightDir(0.0f, -1.0f, 0.0f, 0.0f);
@@ -498,11 +500,13 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             l.LightColor = lightObject->GetColor().Value;
             l.Type = lightObject->GetLightType();
             MatrixMulVector(l.LightDirection, defaultLightDir, lightMat);
+            l.padding0 = lightNum;
             info->Lights[lightNum++] = l;
         }
     }
 
     GraphicsRHI.SetLightInfo(info, lightNum);
+    GraphicsRHI.SetLightNameInfo(lightNames);
 }
 
 void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
@@ -808,6 +812,18 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
         ASSERT(false, "Error Light Type");
         break;
     }
+}
+
+void* My::D3d12GraphicsManager::GetLightInfo()
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    return GraphicsRHI.GetLightInfo();
+}
+
+std::string My::D3d12GraphicsManager::GetLightName(int index)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    return GraphicsRHI.GetLightName(index);
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {

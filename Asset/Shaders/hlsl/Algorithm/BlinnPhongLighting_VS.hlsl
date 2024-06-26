@@ -48,18 +48,9 @@ struct LVertexOut
     float4 WorldPosition : POSITION;
     float3 WorldNormal : NORMAL;
     float2 TextureUV : TEXCOORD;
-    float4 Color : COLOR;
 };
 
-float4 LambertLighting(float Insensity, float4 LightColor, float3 LightDir, float3 NormalDir)
-{
-    float L_dot_N = dot(normalize(LightDir), normalize(NormalDir));
-    return float4(Insensity * LightColor.xyz * max(0.0f, L_dot_N), 1.0f);
-}
-
-
-//------------------------------ flat shading ------------------------------//
-LVertexOut lambertGouraudShadingMain(LVertexIn vInput)
+LVertexOut blinnPhongLighting(LVertexIn vInput)
 {
     LVertexOut vOutput;
     
@@ -67,16 +58,6 @@ LVertexOut lambertGouraudShadingMain(LVertexIn vInput)
     vOutput.WorldPosition = mul(float4(vInput.Position, 1.0f), gModelMatrix);
     vOutput.TextureUV = vInput.Tex;
     vOutput.WorldNormal = mul(float4(vInput.Normal, 1.0f), gModelMatrix).xyz;
-    
-    float4 color = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    for (int idx = 0; idx < gLightNum; idx++)
-    {
-        float3 lightDir = (glightinfo[idx].gLightPosition - HomogeneousCoordinates(vOutput.WorldPosition)).xyz;
-        float4 currlightColor = LambertLighting(glightinfo[idx].gInsensity, glightinfo[idx].gLightColor, lightDir, vOutput.WorldNormal);
-        color.rgb += currlightColor.rgb;
-    }
-    
-    vOutput.Color = color;
     
     return vOutput;
 }

@@ -48,6 +48,8 @@ namespace My {
         void SetBatchResources(Frame& frame) override {}
         void SetShadowResources(Frame& frame, Light lightInfo) override {}
 
+        void* GetLightInfo() override { return nullptr; };
+        std::string GetLightName(int index) override { return std::string(); };
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();

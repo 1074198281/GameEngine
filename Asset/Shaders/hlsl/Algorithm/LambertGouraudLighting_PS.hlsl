@@ -1,7 +1,4 @@
 
-#define LAMBERT
-#ifdef LAMBERT
-
 struct LVertexOut
 {
     float4 ProjectedPosition : SV_POSITION;
@@ -10,8 +7,6 @@ struct LVertexOut
     float2 TextureUV : TEXCOORD;
     float4 Color : COLOR;
 };
-
-#endif
 
 float4 lambertGouraudShadingMain(LVertexOut pInput) : SV_Target
 {

@@ -21,6 +21,8 @@
 // lighting
 #include "../Asset/Shaders/CompiledShaders/g_LambertGouraudLighting_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_LambertGouraudLighting_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_BlinnPhongLighting_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_BlinnPhongLighting_PS.h"
 
 namespace D3dGraphicsCore {
 	std::unordered_map<std::string, ShaderByteCode> g_ShaderByteMap;
@@ -68,6 +70,7 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 
 	// lighting
 	GENERATE_SHADER_BYTE_CODE(LambertGouraudLighting);
+	GENERATE_SHADER_BYTE_CODE(BlinnPhongLighting);
 #undef TOSTRING
 #undef GENERATE_SHADER_BYTE_CODE
 #endif // !GENERATE_SHADER_BYTE_CODE

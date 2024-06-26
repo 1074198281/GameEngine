@@ -330,6 +330,17 @@ void D3dGraphicsCore::AddLightingShaders()
 	pLambertLighting->Finalize();
 	g_PipelineStatusMap.emplace("LambertGouraudLighting", std::move(pLambertLighting));
 
+	std::unique_ptr<GraphicsPSO> pBlinnPhongLighting = std::make_unique<GraphicsPSO>(L"BlinnPhongLighting"); \
+	pBlinnPhongLighting->SetRootSignature(g_TemplateRootSignature);
+	pBlinnPhongLighting->SetRasterizerState(RasterizerDefault);
+	pBlinnPhongLighting->SetBlendState(BlendDisable);
+	pBlinnPhongLighting->SetDepthStencilState(DepthStateReadWriteLess);
+	pBlinnPhongLighting->SetRenderTargetFormat(g_SceneColorBufferFormat, g_SceneDepthBufferFormat);
+	pBlinnPhongLighting->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pBlinnPhongLighting->SetInputLayout(3, g_PosNorTex);
+	SetShaderByteCode(*pBlinnPhongLighting.get(), "BlinnPhongLighting");
+	pBlinnPhongLighting->Finalize();
+	g_PipelineStatusMap.emplace("BlinnPhongLighting", std::move(pBlinnPhongLighting));
 }
 
 void D3dGraphicsCore::InitializeSamplers()
