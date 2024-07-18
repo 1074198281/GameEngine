@@ -896,6 +896,11 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
         m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
 }
 
+void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
+{
+
+}
+
 void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
