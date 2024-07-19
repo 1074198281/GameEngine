@@ -71,6 +71,7 @@ namespace D3dGraphicsCore {
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
+		void DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src);
 
 		void BeginSubPass(std::string PassName);
 		void EndSubPass();

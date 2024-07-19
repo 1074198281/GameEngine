@@ -898,7 +898,8 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
 
 void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
 {
-
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    GraphicsRHI.DrawOverlay(frame);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)

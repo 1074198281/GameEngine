@@ -526,3 +526,22 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pComputeContext->CopyBuffer(src, result);
 }
+
+void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src)
+{
+    m_pGraphicsContext->SetRootSignature(m_pGraphicsPSO->GetRootSignature());
+    m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
+    m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
+    m_pGraphicsContext->SetRenderTarget(result.GetRTV());
+
+    m_pGraphicsContext->Draw(3);
+
+    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
+
+    m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    m_pComputeContext->CopyBuffer(src, result);
+}
