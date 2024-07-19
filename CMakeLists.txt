@@ -196,3 +196,7 @@ MESSAGE("---------- Platform Viewer End ----------")
 MESSAGE("---------- Starting Test Make ----------")
 add_subdirectory(Test)
 MESSAGE("---------- Test Make End ----------")
+
+MESSAGE("---------- Starting Shader Make ----------")
+add_subdirectory(Asset/Shaders/hlsl)
+MESSAGE("---------- Test Make End ----------")

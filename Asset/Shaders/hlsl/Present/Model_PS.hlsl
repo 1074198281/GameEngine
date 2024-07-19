@@ -1,5 +1,4 @@
 #include "../Algorithm/Lighting.hlsl"
-#include "../Algorithm/CommonMath.hlsl"
 
 Texture2D<float4> BaseColorTexture : register(t0);
 Texture2D<float4> MetallicRoughnessTexture : register(t1);

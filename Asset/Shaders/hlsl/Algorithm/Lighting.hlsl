@@ -1,4 +1,4 @@
-
+#include "CommonMath.hlsl"
 #define PBR
 
 #ifdef LAMBERT
@@ -45,9 +45,6 @@ struct LightProperties
     int LightNum;
     float3 padding0;
 };
-
-static const float3 F0 = float3(0.04, 0.04, 0.04);     
-static const float PI = 3.14159265358979;
 
 float3 LinearTosRGB(float3 input)
 {

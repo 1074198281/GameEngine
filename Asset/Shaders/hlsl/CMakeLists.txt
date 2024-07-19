@@ -4,11 +4,11 @@ MESSAGE("HLSL PROPERTIES CONFIG")
 MESSAGE("CMAKE CURRENT DIRECTORY : " ${CMAKE_CURRENT_SOURCE_DIR})
 
 #add extra hlsl project
-cmake_minimum_required(VERSION 3.18)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+#cmake_minimum_required(VERSION 3.18)
+#set(CMAKE_C_STANDARD 11)
+#set(CMAKE_CXX_STANDARD 20)
 
-project(Shader_Compiler VERSION 1.0 LANGUAGES CXX)
+#project(Shader_Compiler VERSION 1.0 LANGUAGES CXX)
 
 file(GLOB ALGORITHM_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/Algorithm/*.hlsl)
@@ -98,7 +98,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
 endforeach()
 
 
-add_executable(COMPILER 
+add_executable(SHADER_COMPILER 
 ${MAIN_FILE}
 ${SHADER_FILES}
 )
