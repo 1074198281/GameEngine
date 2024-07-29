@@ -59,6 +59,13 @@ namespace My {
 		kComputeRootBindings
 	};
 
+	enum OverlayRootBindings {
+		kOverlaySRV,
+		kOverlayCBV,
+
+		kOverlayRootBindings
+	};
+
 	typedef struct DXSampler
 	{
 		D3D12_FILTER filter;

@@ -62,6 +62,21 @@ void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
 {
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.Resize(width, height);
+
+    ResizeFrameBuffer();
+}
+
+void My::D3d12GraphicsManager::ResizeFrameBuffer()
+{
+    if (m_ColorBufferMap.find("OverlaySrc") != m_ColorBufferMap.end()) {
+        m_ColorBufferMap["OverlaySrc"]->Destroy();
+        m_ColorBufferMap["OverlaySrc"]->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    }
+    if (m_ColorBufferMap.find("OverlayDes") != m_ColorBufferMap.end()) {
+        m_ColorBufferMap["OverlayDes"]->Destroy();
+        m_ColorBufferMap["OverlayDes"]->Create(L"OverlayDes", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    }
+
 }
 
 void My::D3d12GraphicsManager::Present()
@@ -763,7 +778,7 @@ void My::D3d12GraphicsManager::EndFrame(Frame& frame)
     ImGui::Render();
 }
 
-void My::D3d12GraphicsManager::SetPipelineStatus(std::string PSOName)
+void My::D3d12GraphicsManager::SetPipelineStatus(const std::string& PSOName)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.SetPipelineStatus(PSOName);
@@ -899,10 +914,17 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
 void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.DrawOverlay(frame);
+
+    auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
+    auto& desBuffer = m_ColorBufferMap["OverlayDes"];
+    ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
+
+
+    GraphicsRHI.DrawOverlay(frame, *desBuffer, *srcBuffer,
+        m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
 }
 
-void My::D3d12GraphicsManager::BeginSubPass(std::string PassName)
+void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.BeginSubPass(PassName);

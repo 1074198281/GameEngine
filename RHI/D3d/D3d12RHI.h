@@ -71,14 +71,14 @@ namespace D3dGraphicsCore {
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
-		void DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src);
+		void DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 
-		void BeginSubPass(std::string PassName);
+		void BeginSubPass(const std::string& PassName);
 		void EndSubPass();
 		void BeginOverlayPass(ColorBuffer& result, ColorBuffer& src);
 		void EndOverlayPass(ColorBuffer& result, ColorBuffer& src);
 
-		void SetPipelineStatus(std::string PSOName);
+		void SetPipelineStatus(const std::string& PSOName);
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light);
 

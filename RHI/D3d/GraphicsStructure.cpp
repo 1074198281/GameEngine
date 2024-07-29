@@ -23,6 +23,7 @@ namespace D3dGraphicsCore {
 
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
+	RootSignature g_OverlaySubRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
 	RootSignature g_GuassBlurRootSignature;
@@ -188,6 +189,18 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_PresentRootSignature.InitStaticSampler(17, g_linearClamp);
 	g_PresentRootSignature.Finalize(L"PresentRootSig");
 
+	g_OverlaySubRootSignature.Reset(2, 6);
+	g_OverlaySubRootSignature[My::kOverlaySRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_OverlaySubRootSignature[My::kOverlayCBV].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_OverlaySubRootSignature.InitStaticSampler(16, g_linearWarp);
+	g_OverlaySubRootSignature.InitStaticSampler(17, g_linearClamp);
+	g_OverlaySubRootSignature.InitStaticSampler(18, g_pointWarp);
+	g_OverlaySubRootSignature.InitStaticSampler(19, g_pointClamp);
+	g_OverlaySubRootSignature.InitStaticSampler(20, g_anisotropicWarp);
+	g_OverlaySubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
+	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
+
+
 	// Default
 	std::unique_ptr<GraphicsPSO> pDefaultPSO = std::make_unique<GraphicsPSO>(L"Default PSO");
 	pDefaultPSO->SetRootSignature(g_TemplateRootSignature);
@@ -217,22 +230,34 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	// Present
 	std::unique_ptr<GraphicsPSO> pPresentPSO = std::make_unique<GraphicsPSO>(L"Present PSO");
 	pPresentPSO->SetRootSignature(g_PresentRootSignature);
-	pPresentPSO->SetRasterizerState(RasterizerTwoSided);
+	pPresentPSO->SetRasterizerState(RasterizerDefault);
 	pPresentPSO->SetBlendState(BlendDisable);
 	pPresentPSO->SetDepthStencilState(DepthStateDisabled);
 	pPresentPSO->SetSampleMask(0xFFFFFFFF);
 	pPresentPSO->SetInputLayout(0, nullptr);
 	SetShaderByteCode(*pPresentPSO.get(), "Present");
-	pPresentPSO->SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);
+	pPresentPSO->SetRenderTargetFormat(DXGI_FORMAT_R10G10B10A2_UNORM, DXGI_FORMAT_UNKNOWN);		// RT是DisplayBuffer
 	pPresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pPresentPSO->Finalize();
 
-	//lighting
-	AddLightingShaders();
+	// Overlay Sub
+	std::unique_ptr<GraphicsPSO> pOverlaySubPSO = std::make_unique<GraphicsPSO>(L"OverlaySub PSO");
+	pOverlaySubPSO->SetRootSignature(g_OverlaySubRootSignature);
+	pOverlaySubPSO->SetRasterizerState(RasterizerDefault);
+	pOverlaySubPSO->SetBlendState(BlendDisable);
+	pOverlaySubPSO->SetDepthStencilState(DepthStateDisabled);
+	pOverlaySubPSO->SetSampleMask(0xFFFFFFFF);
+	pOverlaySubPSO->SetInputLayout(0, nullptr);
+	SetShaderByteCode(*pOverlaySubPSO.get(), "OverlaySub");
+	pOverlaySubPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
+	pOverlaySubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pOverlaySubPSO->Finalize();
+
 
 	g_PipelineStatusMap.emplace("Default", std::move(pDefaultPSO));
 	g_PipelineStatusMap.emplace("Skybox", std::move(pSkyBoxPSO));
 	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
+	g_PipelineStatusMap.emplace("OverlaySub", std::move(pOverlaySubPSO));
 
 
 	// Compute RootSignature and PSOs
@@ -249,6 +274,9 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	GuassBlurPSO->SetComputeShader(GuassBlurShader);
 	GuassBlurPSO->Finalize();
 	g_ComputePSOMap.emplace("GuassBlur_CS", std::move(GuassBlurPSO));
+
+	//lighting
+	AddLightingShaders();
 }
 
 void D3dGraphicsCore::FinalizePipelineTemplates()

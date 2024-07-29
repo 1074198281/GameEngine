@@ -39,11 +39,11 @@ namespace My {
         virtual void DrawGuassBlur(Frame& frame) = 0;
         virtual void DrawOverlay(Frame& frame) = 0;
 
-        virtual void BeginSubPass(std::string PassName) = 0;
+        virtual void BeginSubPass(const std::string& PassName) = 0;
         virtual void EndSubPass() = 0;
         virtual void BeginOverlayPass() = 0;
         virtual void EndOverlayPass() = 0;
-        virtual void SetPipelineStatus(std::string PSOName) = 0;
+        virtual void SetPipelineStatus(const std::string& PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
         virtual void SetShadowResources(Frame& frame, Light lightInfo) = 0;
 

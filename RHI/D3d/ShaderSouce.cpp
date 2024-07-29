@@ -13,6 +13,9 @@
 #include "../Asset/Shaders/CompiledShaders/g_Present_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Model_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Model_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_OverlaySub_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_OverlaySub_PS.h"
+
 
 #include "../Asset/Shaders/CompiledShaders/g_GuassBlur_CS.h"
 #include "../Asset/Shaders/CompiledShaders/g_MyGuassBlur_CS.h"
@@ -67,6 +70,7 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	GENERATE_SHADER_BYTE_CODE(SkyBox);
 	GENERATE_SHADER_BYTE_CODE(Present);
 	GENERATE_SHADER_BYTE_CODE(Model);
+	GENERATE_SHADER_BYTE_CODE(OverlaySub);
 
 	// lighting
 	GENERATE_SHADER_BYTE_CODE(LambertGouraudLighting);

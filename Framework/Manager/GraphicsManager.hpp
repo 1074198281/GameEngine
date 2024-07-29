@@ -40,12 +40,12 @@ namespace My {
         void DrawGuassBlur(Frame& frame) override {}
         void DrawOverlay(Frame& frame) override {}
 
-        void BeginSubPass(std::string PassName) override {}
+        void BeginSubPass(const std::string& PassName) override {}
         void EndSubPass() override {}
         void BeginOverlayPass() override {}
         void EndOverlayPass() override {}
 
-        void SetPipelineStatus(std::string PSOName) override {}
+        void SetPipelineStatus(const std::string& PSOName) override {}
         void SetBatchResources(Frame& frame) override {}
         void SetShadowResources(Frame& frame, Light lightInfo) override {}
 

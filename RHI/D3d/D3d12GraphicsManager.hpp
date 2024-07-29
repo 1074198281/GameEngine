@@ -50,12 +50,12 @@ namespace My {
         void DrawGuassBlur(Frame& frame) override;
         void DrawOverlay(Frame& frame) override;
 
-        void BeginSubPass(std::string PassName) override;
+        void BeginSubPass(const std::string& PassName) override;
         void EndSubPass() override;
         void BeginOverlayPass() override;
         void EndOverlayPass() override;
 
-        void SetPipelineStatus(std::string PSOName) override;
+        void SetPipelineStatus(const std::string& PSOName) override;
         void SetBatchResources(Frame& frame) override;
         void SetShadowResources(Frame& frame, Light lightInfo) override;
 
@@ -73,6 +73,7 @@ namespace My {
         void LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName);
         bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
         
+        void ResizeFrameBuffer();
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;

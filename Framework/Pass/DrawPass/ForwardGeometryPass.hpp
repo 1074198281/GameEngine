@@ -3,7 +3,6 @@
 #include "BaseDrawPass.hpp"
 #include "GeometrySubPass.hpp"
 #include "SkyboxSubPass.hpp"
-#include "PresentSubPass.hpp"
 
 namespace My {
 	class ForwardGeometryPass : __implements BaseDrawPass {

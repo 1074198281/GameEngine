@@ -233,7 +233,7 @@ void D3dGraphicsCore::D3d12RHI::FreeLightInfo()
     }
 }
 
-void D3dGraphicsCore::D3d12RHI::BeginSubPass(std::string PassName)
+void D3dGraphicsCore::D3d12RHI::BeginSubPass(const std::string& PassName)
 {
     m_pComputeContext = nullptr;
     m_pGraphicsContext = nullptr;
@@ -282,7 +282,7 @@ void D3dGraphicsCore::D3d12RHI::EndOverlayPass(ColorBuffer& result, ColorBuffer&
     EndOverlayContext.Finish();
 }
 
-void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(std::string PSOName)
+void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
 {
     if (PSOName.substr(PSOName.size() - 3, 3) == "_CS") {
         if (g_ComputePSOMap.find(PSOName) != g_ComputePSOMap.end()) {
@@ -527,21 +527,37 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
     m_pComputeContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src)
+void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
     m_pGraphicsContext->SetRootSignature(m_pGraphicsPSO->GetRootSignature());
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
-    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_RENDER_TARGET);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
     m_pGraphicsContext->SetRenderTarget(result.GetRTV());
 
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
+    m_pGraphicsContext->SetDescriptorTable(My::kOverlaySRV, ColorBufferHandle);
+
+    __declspec(align(16)) struct OverlayPSCB
+    {
+        float ScreenSize[2];
+        float padding0[2];
+    } overlayPSCB;
+
+    memset(&overlayPSCB, 0, sizeof(OverlayPSCB));
+
+    overlayPSCB.ScreenSize[0] = g_DisplayWidth;
+    overlayPSCB.ScreenSize[1] = g_DisplayHeight;
+
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kOverlayCBV, sizeof(OverlayPSCB), &overlayPSCB);
+
     m_pGraphicsContext->Draw(3);
 
-    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
 
-    m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
-    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
-    m_pComputeContext->CopyBuffer(src, result);
+    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    m_pGraphicsContext->CopyBuffer(src, result);
 }

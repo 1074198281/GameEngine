@@ -55,7 +55,12 @@ ${PRESENT_FILES}
 # 设置 HLSL 文件的属性
 foreach(PER_SHADER_FILE ${SHADER_FILES})
     get_filename_component(FILE_NAME ${PER_SHADER_FILE} NAME)
-    
+
+    #set_source_files_properties(${PER_SHADER_FILE}
+    #PROPERTIES
+    #HEADER_FILE_ONLY TRUE
+    #)
+
     # 判断文件名是否以 "_VS" 结尾
     if(FILE_NAME MATCHES "_VS.hlsl$")
         set_source_files_properties(${PER_SHADER_FILE}
@@ -97,8 +102,9 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
     endif()
 endforeach()
 
+list(APPEND MAIN_FILE ${SHADER_FILES})
 
 add_executable(SHADER_COMPILER 
 ${MAIN_FILE}
-${SHADER_FILES}
+#${SHADER_FILES}
 )
