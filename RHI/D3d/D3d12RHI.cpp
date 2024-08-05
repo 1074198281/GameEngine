@@ -335,7 +335,7 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isNotDrawSkybox)
+    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isDrawSkybox)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -419,7 +419,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
     }
     
-    if(!isNotDrawSkybox)
+    if(isDrawSkybox)
     {
         m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, IBLHeapPtr);
         m_pGraphicsContext->SetDescriptorTable(My::kCommonSRVs, IBLHandle);

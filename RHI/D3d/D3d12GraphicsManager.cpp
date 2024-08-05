@@ -550,7 +550,7 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
     int HeapIdx = -1;
     Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     DescriptorHeapHandleInfo status{ HeapIdx, Handle };
-    m_FixedHandleStatus.emplace("Skybox", status);
+    m_FixedHandleStatus.emplace(imageName, status);
 
     HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
         pSpecularTex->GetAddressOf(), Handle);
@@ -841,6 +841,16 @@ std::string My::D3d12GraphicsManager::GetLightName(int index)
     return GraphicsRHI.GetLightName(index);
 }
 
+std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
+{
+    std::vector<std::string> skyboxInfo;
+    for (auto& _it : m_IBLResource->IBLImages) {
+        skyboxInfo.push_back(_it.second->name);
+    }
+
+    return skyboxInfo;
+}
+
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     auto pPhysicsManager = dynamic_cast<D3d12Application*>(m_pApp)->GetPhysicsManager();
     for (auto& dbc : frame.BatchContexts) {
@@ -865,10 +875,11 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         if (d3dbatch->Node->Visible()) {
+            std::string currentSkybox = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
             GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
                 m_BatchHandleStatus,
-                D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
-                m_FixedHandleStatus["Skybox"].Handle, false, m_bNotDrawSkybox);
+                D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus[currentSkybox].HeapIndex].GetHeapPointer(),
+                m_FixedHandleStatus[currentSkybox].Handle, false, m_bDrawSkybox);
         }
     }
 }
@@ -876,13 +887,14 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
 void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    if (m_bNotDrawSkybox)
+    if (!m_bDrawSkybox)
     {
         return;
     }
-    GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
-        m_FixedHandleStatus["Skybox"].Handle,
-        m_IBLResource->IBLImages[0]->pSpecular.get(),
+    std::string currentSkybox = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
+    GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus[currentSkybox].HeapIndex].GetHeapPointer(),
+        m_FixedHandleStatus[currentSkybox].Handle,
+        m_IBLResource->IBLImages[m_iSkyboxIndex]->pSpecular.get(),
         m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
 }
 

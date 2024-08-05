@@ -49,8 +49,11 @@ namespace My {
         void SetBatchResources(Frame& frame) override {}
         void SetShadowResources(Frame& frame, Light lightInfo) override {}
 
+    public:
         void* GetLightInfo() override { return nullptr; };
         std::string GetLightName(int index) override { return std::string(); };
+
+        std::vector<std::string> GetSkyboxInfo() { return std::vector<std::string>(); }
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();
@@ -64,9 +67,10 @@ namespace My {
         virtual void UpdateFrameConstants(Frame& frame);
 
     public:
-        bool* GetDrawSkyboxStatus() override { return &m_bNotDrawSkybox; }
+        bool* GetDrawSkyboxStatus() override { return &m_bDrawSkybox; }
         bool* GetCastShadowStatus() override { return &m_bCastShadow; }
         bool* GetGuassBlurStatus() override { return &m_bGuassBlur; }
+        int* GetSkyboxIndex() override { return &m_iSkyboxIndex; }
     protected:
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
@@ -75,8 +79,10 @@ namespace My {
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
 
-        bool m_bNotDrawSkybox{ false };
+        bool m_bDrawSkybox{ false };
         bool m_bCastShadow{ false };
         bool m_bGuassBlur{ false };
+
+        int m_iSkyboxIndex{ 0 };
     };
 }
