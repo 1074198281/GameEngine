@@ -90,13 +90,16 @@ void My::GuiSubPass::Draw(Frame& frame)
 			if (ImGui::TreeNode("BaseSceneSettings"))
 			{
 				bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
-				ImGui::Checkbox("SkyboxNotVisible", pIsDrawSkybox);
+				ImGui::Checkbox("SkyboxVisible", pIsDrawSkybox);
 
 				bool* pIsCastShadow = m_pGraphicsManager->GetCastShadowStatus();
 				ImGui::Checkbox("CastShadow", pIsCastShadow);
 
 				bool* pIsGuassBlur = m_pGraphicsManager->GetGuassBlurStatus();
 				ImGui::Checkbox("GuassBlur", pIsGuassBlur);
+
+				bool* pIsOverlay = m_pGraphicsManager->GetOverlayStatus();
+				ImGui::Checkbox("Overlay", pIsOverlay);
 
 				ImGui::TreePop();
 			}

@@ -868,7 +868,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
             GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
                 m_BatchHandleStatus,
                 D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
-                m_FixedHandleStatus["Skybox"].Handle, false, m_bNotDrawSkybox);
+                m_FixedHandleStatus["Skybox"].Handle, false, m_bDrawSkybox);
         }
     }
 }
@@ -876,14 +876,13 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
 void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    if (m_bNotDrawSkybox)
+    if (m_bDrawSkybox)
     {
-        return;
+        GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
+            m_FixedHandleStatus["Skybox"].Handle,
+            m_IBLResource->IBLImages[0]->pSpecular.get(),
+            m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
     }
-    GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus["Skybox"].HeapIndex].GetHeapPointer(),
-        m_FixedHandleStatus["Skybox"].Handle,
-        m_IBLResource->IBLImages[0]->pSpecular.get(),
-        m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
 }
 
 void My::D3d12GraphicsManager::DrawGui(Frame& frame)
@@ -913,15 +912,17 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
 
 void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
 {
-    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    if (m_bDrawOverlay) {
+        auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
-    auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
-    auto& desBuffer = m_ColorBufferMap["OverlayDes"];
-    ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
+        auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
+        auto& desBuffer = m_ColorBufferMap["OverlayDes"];
+        ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
 
 
-    GraphicsRHI.DrawOverlay(frame, *desBuffer, *srcBuffer,
-        m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
+        GraphicsRHI.DrawOverlay(frame, *desBuffer, *srcBuffer,
+            m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
+    }
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)

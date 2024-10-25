@@ -1750,8 +1750,10 @@ namespace glTF
                 newNode = ProcessNodeCamera(Scene, pNode);;
             } else if (pNode->isLight) {
                 newNode = ProcessNodeLight(Scene, pNode);
-            } else {
+            } else if (pNode->mesh) {
                 newNode = ProcessNodeMesh(Scene, pNode);
+            } else {
+
             }
 
             if (pNode->children.size()) {
@@ -1797,7 +1799,9 @@ namespace glTF
                 if (!nodeIt->mesh && !nodeIt->camera) {
                     if (!nodeIt->children.size()) {
                         std::cout << "Blank Node, Nothing In It! ERROR!" << "Node Name: " << nodeIt->name << std::endl;
+#ifdef _DEBUG
                         //__debugbreak();
+#endif
                         continue;
                     }
                     ProcessRootParentNode(StructureNode, *pScene, &*nodeIt);

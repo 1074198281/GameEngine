@@ -20,6 +20,7 @@ namespace My {
 
 		Matrix4X4f GetRigidBodyTransform(void* rigidBody) override = 0;
 
+		uint32_t GetTimestamp() override = 0;
 	protected:
 		uint64_t m_nSceneRevision;
 	};

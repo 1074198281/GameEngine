@@ -19,6 +19,8 @@ namespace My {
 		void ClearRigidBodies() override;
 
 		Matrix4X4f GetRigidBodyTransform(void* rigidBody) override;
+
+		uint32_t GetTimestamp() override;
 	protected:
 		physx::PxDefaultErrorCallback m_DefaultErrorCallBack;
 		physx::PxDefaultAllocator m_DefaultAllocatorCallBack;

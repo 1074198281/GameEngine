@@ -33,6 +33,7 @@ int My::MyViewerLogic::ExecuteCommandLine()
 		strcpy(directory, _ASSET_RESOURCE_DIRECTORY);
 		//const char* ScenePath = "Scene/glTF/ToyCar/glTF/ToyCar.gltf";
 		const char* ScenePath = "Scene/glTF/Box/glTF/box.gltf";
+		//const char* ScenePath = "Scene/glTF/Island/1.gltf";
 		//const char* ScenePath = "Scene/glTF/ray_tracing/ray_tracing.gltf";
 		char* default_loading = strcat(directory, "/Scene/glTF/ToyCar/glTF/ToyCar.gltf");
 		pSceneManager->LoadScene(ScenePath);

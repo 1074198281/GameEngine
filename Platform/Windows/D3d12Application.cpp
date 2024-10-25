@@ -28,6 +28,7 @@ int My::D3d12Application::CreateMainWindow()
 
     auto getApplication = [this]() { return GetApplication(); };
 
+    auto getTimestamp = [this]() { return m_pPhysicsManager->GetTimestamp(); };
 
     m_GraphicsRHI = new D3dGraphicsCore::D3d12RHI();
     // 设置回调函数
@@ -35,6 +36,7 @@ int My::D3d12Application::CreateMainWindow()
     m_GraphicsRHI->SetGetWindowHandleProc(getWindowHandler);
     m_GraphicsRHI->SetGetGfxconfiguration(getGfxConfigHandler);
     m_GraphicsRHI->SetGetApplication(getApplication);
+    m_GraphicsRHI->SetGetTimestamp(getTimestamp);
 
     m_GraphicsRHI->StartUp();
 

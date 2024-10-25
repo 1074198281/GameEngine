@@ -53,5 +53,6 @@ namespace My {
         virtual bool* GetDrawSkyboxStatus() = 0;
         virtual bool* GetCastShadowStatus() = 0;
         virtual bool* GetGuassBlurStatus() = 0;
+        virtual bool* GetOverlayStatus() = 0;
 	};
 }

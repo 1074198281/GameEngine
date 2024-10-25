@@ -213,3 +213,8 @@ My::Matrix4X4f My::PhysXPhysicsManager::GetRigidBodyTransform(void* rigidBody)
 	result[2][3] = trans.p.z;
 	return result;
 }
+
+uint32_t My::PhysXPhysicsManager::GetTimestamp()
+{
+	return m_PxScene->getTimestamp();
+}

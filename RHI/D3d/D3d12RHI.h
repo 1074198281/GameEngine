@@ -25,6 +25,7 @@ namespace D3dGraphicsCore {
 		using GetWindowHandleProc = std::function<HWND()>;
 		using GetGfxconfiguration = std::function<const My::GfxConfiguration&()>;
 		using GetApplication = std::function<My::IApplication* ()>;
+		using GetTimestamp = std::function<uint32_t()>;
 
 	public:
 		D3d12RHI();
@@ -52,6 +53,11 @@ namespace D3dGraphicsCore {
 			m_fGetApplication = func;
 		}
 
+		void SetGetTimestamp(const GetTimestamp& func)
+		{
+			m_fGetTimestamp = func;
+		}
+
 	public:
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
@@ -66,7 +72,7 @@ namespace D3dGraphicsCore {
 
 	public:
 		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast = false, bool isNotDrawSkybox = true);
+			std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast = false, bool isDrawSkybox = false);
 		void DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
@@ -110,6 +116,7 @@ namespace D3dGraphicsCore {
 		GetWindowHandleProc m_fGetWindowHandleProc;
 		GetGfxconfiguration m_fGetGfxconfiguration;
 		GetApplication m_fGetApplication;
+		GetTimestamp m_fGetTimestamp;
 	};
 
 }

@@ -18,5 +18,7 @@ namespace My {
 		virtual void ClearRigidBodies() = 0;
 
 		virtual Matrix4X4f GetRigidBodyTransform(void* rigidbody) = 0;
+
+		virtual uint32_t GetTimestamp() = 0;
 	};
 }
