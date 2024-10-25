@@ -31,6 +31,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/SkyBox/*.hlsl)
 file(GLOB PRESENT_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/Present/*.hlsl)
 
+file(GLOB ATMOSPHERE_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/PrecomputeAtmosphere/*.hlsl)
+
 file(GLOB MAIN_FILE
 ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
@@ -41,6 +44,7 @@ source_group(ABeautifulGame FILES ${ABEAUTIFULGAME_FILES})
 source_group(EnvironmentTest FILES ${ENVIRONMENTTEST_FILES})
 source_group(SkyBox FILES ${SKYBOX_FILES})
 source_group(Present FILES ${PRESENT_FILES})
+source_group(Atmosphere FILES ${ATMOSPHERE_FILES})
 
 set(SHADER_FILES 
 ${ALGORITHM_FILES}
@@ -50,6 +54,7 @@ ${ABEAUTIFULGAME_FILES}
 ${ENVIRONMENTTEST_FILES}
 ${SKYBOX_FILES}
 ${PRESENT_FILES}
+${ATMOSPHERE_FILES}
 )
 
 # 设置 HLSL 文件的属性

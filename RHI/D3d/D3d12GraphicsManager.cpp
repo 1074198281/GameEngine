@@ -550,7 +550,7 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
     int HeapIdx = -1;
     Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     DescriptorHeapHandleInfo status{ HeapIdx, Handle };
-    m_FixedHandleStatus.emplace("Skybox", status);
+    m_FixedHandleStatus.emplace(imageName, status);
 
     HRESULT hr = CreateDDSTextureFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
         pSpecularTex->GetAddressOf(), Handle);
@@ -839,6 +839,16 @@ std::string My::D3d12GraphicsManager::GetLightName(int index)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     return GraphicsRHI.GetLightName(index);
+}
+
+std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
+{
+    std::vector<std::string> skyboxInfo;
+    for (auto& _it : m_IBLResource->IBLImages) {
+        skyboxInfo.push_back(_it.second->name);
+    }
+
+    return skyboxInfo;
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {

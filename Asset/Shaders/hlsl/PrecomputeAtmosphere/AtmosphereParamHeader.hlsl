@@ -1,0 +1,7 @@
+
+
+struct AtmosphereParams
+{
+    float atmosphereDensity;
+    
+};

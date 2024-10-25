@@ -59,9 +59,11 @@ namespace My {
         void SetBatchResources(Frame& frame) override;
         void SetShadowResources(Frame& frame, Light lightInfo) override;
 
+    public:
         void* GetLightInfo() override;
         std::string GetLightName(int index) override;
 
+        std::vector<std::string> GetSkyboxInfo() override;
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;

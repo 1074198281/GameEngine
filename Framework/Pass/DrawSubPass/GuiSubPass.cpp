@@ -89,8 +89,17 @@ void My::GuiSubPass::Draw(Frame& frame)
 			//Base Scene Settings
 			if (ImGui::TreeNode("BaseSceneSettings"))
 			{
-				bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
-				ImGui::Checkbox("SkyboxVisible", pIsDrawSkybox);
+				if (ImGui::TreeNode("Skybox")) {
+					bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
+					ImGui::Checkbox("SkyboxVisible", pIsDrawSkybox);
+
+					int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
+					std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
+
+					ImGui::SliderInt("SkyboxIndex", skyboxIndex, 0, skyboxInfo.size() - 1);
+
+					ImGui::TreePop();
+				}
 
 				bool* pIsCastShadow = m_pGraphicsManager->GetCastShadowStatus();
 				ImGui::Checkbox("CastShadow", pIsCastShadow);
