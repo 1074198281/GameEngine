@@ -64,6 +64,8 @@ namespace My {
         std::string GetLightName(int index) override;
 
         std::vector<std::string> GetSkyboxInfo() override;
+
+        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName) override;
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
@@ -87,5 +89,8 @@ namespace My {
         std::unique_ptr<IBLImageResource> m_IBLResource;
         std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;
         std::unordered_map<std::string, My::DescriptorHeapHandleInfo> m_FixedHandleStatus;
+
+        std::unordered_map<std::string, My::STextureResource> m_TextureResource;
+        std::unordered_map<std::string, My::STextureResource> m_Resources;
     };
 }

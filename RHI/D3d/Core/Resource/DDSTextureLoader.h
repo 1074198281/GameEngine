@@ -21,6 +21,7 @@
 #pragma once
 
 #include <d3d12.h>
+#include <tuple>
 
 #pragma warning(push)
 #pragma warning(disable : 4005)
@@ -52,6 +53,16 @@ HRESULT __cdecl CreateDDSTextureFromFile(_In_ ID3D12Device* d3dDevice,
     _In_ bool forceSRGB,
     _Outptr_opt_ ID3D12Resource** texture,
     _In_ D3D12_CPU_DESCRIPTOR_HANDLE textureView,
+    _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
+);
+
+HRESULT __cdecl CreateDDSTextureInfoFromFile(_In_ ID3D12Device* d3dDevice,
+    _In_z_ const wchar_t* szFileName,
+    _In_ size_t maxsize,
+    _In_ bool forceSRGB,
+    _Outptr_opt_ ID3D12Resource** texture,
+    _In_ D3D12_CPU_DESCRIPTOR_HANDLE textureView,
+    _Out_opt_ std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t>& imageInfo,
     _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr
 );
 

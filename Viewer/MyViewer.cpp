@@ -5,6 +5,9 @@ int My::MyViewerLogic::Initialize()
 {
 	int result = 0;
 
+	std::cout << "key help:" << std::endl;
+	std::cout << "speed up: page up, speed down: page down. R to reset." << std::endl;
+
 	ExecuteCommandLine();
 
 	return result;
@@ -31,12 +34,26 @@ int My::MyViewerLogic::ExecuteCommandLine()
 		// default loading settings
 		char directory[256];
 		strcpy(directory, _ASSET_RESOURCE_DIRECTORY);
+		int loadIndex = -1;
+		std::vector<std::string> filePath;
+		filePath.push_back("Scene/glTF/ToyCar/glTF/ToyCar.gltf");
+		filePath.push_back("Scene/glTF/Box/glTF/box.gltf");
+		filePath.push_back("Scene/glTF/LightTest/LightTest.gltf");
+		filePath.push_back("Scene/glTF/ray_tracing/ray_tracing.gltf");
+
 		//const char* ScenePath = "Scene/glTF/ToyCar/glTF/ToyCar.gltf";
-		const char* ScenePath = "Scene/glTF/Box/glTF/box.gltf";
-		//const char* ScenePath = "Scene/glTF/Island/1.gltf";
+		//const char* ScenePath = "Scene/glTF/Box/glTF/box.gltf";
+		//const char* ScenePath = "Scene/glTF/LightTest/LightTest.gltf";
 		//const char* ScenePath = "Scene/glTF/ray_tracing/ray_tracing.gltf";
-		char* default_loading = strcat(directory, "/Scene/glTF/ToyCar/glTF/ToyCar.gltf");
-		pSceneManager->LoadScene(ScenePath);
+		//char* default_loading = strcat(directory, "/Scene/glTF/ToyCar/glTF/ToyCar.gltf");
+		std::cout << "0. toycar   1.box   2.lighttest   3.ray_tracing" << std::endl;
+		std::cout << "Select Load Index: ";
+		std::cin >> loadIndex;
+		if (loadIndex < 0) {
+
+		} else {
+			pSceneManager->LoadScene(filePath[loadIndex].c_str());
+		}
 	}
 	return 0;
 }

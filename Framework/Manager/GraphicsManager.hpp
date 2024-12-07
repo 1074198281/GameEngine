@@ -53,7 +53,9 @@ namespace My {
         void* GetLightInfo() override { return nullptr; };
         std::string GetLightName(int index) override { return std::string(); };
 
-        std::vector<std::string> GetSkyboxInfo() { return std::vector<std::string>(); }
+        std::vector<std::string> GetSkyboxInfo() override { return std::vector<std::string>(); }
+
+        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName) override { return 0; }
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();

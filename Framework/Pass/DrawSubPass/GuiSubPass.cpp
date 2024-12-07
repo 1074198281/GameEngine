@@ -25,6 +25,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 		static bool show_app_metrics = false;
 		static bool show_app_about = false;
 		static bool show_app_scene_status = false;
+		static bool show_app_debug_texture = false;
 
 		ImVec2 next_window_pos(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y);
 		ImGui::SetNextWindowPos(next_window_pos, ImGuiCond_FirstUseEver);
@@ -36,6 +37,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 				ImGui::MenuItem((const char*)u8"Debug Window", NULL, &show_app_debug_panel);
 				ImGui::MenuItem((const char*)u8"ImGui Status And Debug Window", NULL, &show_app_metrics);
 				ImGui::MenuItem((const char*)u8"Scene Status", NULL, &show_app_scene_status);
+				ImGui::MenuItem((const char*)u8"Texture Status", NULL, &show_app_debug_texture);
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu((const char*)u8"Helper"))
@@ -92,12 +94,15 @@ void My::GuiSubPass::Draw(Frame& frame)
 				if (ImGui::TreeNode("Skybox")) {
 					bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
 					ImGui::Checkbox("SkyboxVisible", pIsDrawSkybox);
-
 					int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
 					std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
-
 					ImGui::SliderInt("SkyboxIndex", skyboxIndex, 0, skyboxInfo.size() - 1);
 
+					if (ImGui::TreeNode("Texture Debug")) {
+						//size_t handle_ptr = m_pGraphicsManager->GetSkyboxTextureGpuPtr(skyboxInfo[*skyboxIndex]);
+						//ImGui::Image((ImTextureID)handle_ptr, ImVec2((float)1024, (float)1024));
+						ImGui::TreePop();
+					}
 					ImGui::TreePop();
 				}
 
@@ -124,8 +129,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 
 					ImGui::SeparatorTextEx(0, "Model Matrix", NULL, 0);
 					Matrix4X4f model;
-					if (GeoNode.second->GetRigidBody())
-					{
+					if (GeoNode.second->GetRigidBody()) {
 						model = pPhysicsManager->GetRigidBodyTransform(GeoNode.second->GetRigidBody());
 					} else {
 						model = *GeoNode.second->GetCalculatedTransform().get();
@@ -152,6 +156,12 @@ void My::GuiSubPass::Draw(Frame& frame)
 					ImGui::SliderFloat3("Emissive", pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
 					ImGui::SliderFloat("NormalScale", pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
 
+					if (ImGui::TreeNode("BaseColor Texture")) {
+
+
+						ImGui::TreePop();
+					}
+
 					GeoNode.second->SetVisibility(bVisible);
 					ImGui::TreePop();
 				}
@@ -176,6 +186,20 @@ void My::GuiSubPass::Draw(Frame& frame)
 				}
 			}
 
+			ImGui::End();
+		}
+
+		if (show_app_debug_texture) {
+			ImGui::Begin((const char*)u8"Texture Status");
+			if (ImGui::TreeNode("Skybox Texture")) {
+				// get skybox index and its gpu handle
+				int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
+				std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
+				size_t handle_ptr = m_pGraphicsManager->GetSkyboxTextureGpuPtr(skyboxInfo[*skyboxIndex]);
+
+				ImGui::Image((ImTextureID)handle_ptr, ImVec2((float)1024, (float)1024));
+				ImGui::TreePop();
+			}
 			ImGui::End();
 		}
 

@@ -73,9 +73,28 @@ namespace My {
 		D3D12_TEXTURE_ADDRESS_MODE wrapT;
 	} DXSampler;
 
+	typedef struct SResourceBase {
+		std::string name;
+		// descriptor heap and handle info
+		int iHeapIndex{ -1 };
+		D3dGraphicsCore::DescriptorHandle handle;
+	} SResource;
+
+	typedef struct STextureResource : public SResourceBase {
+		uint32_t iSize;
+		uint32_t iWidth;
+		uint32_t iHeight;
+		uint32_t iPitchOrLinearSize;
+		uint32_t iDepth;
+		uint32_t iMipMapCount;
+		std::unique_ptr<D3dGraphicsCore::GpuTexture> pTexture;
+	} STextureResource;
+
 	typedef struct IBLImageMap
 	{
 		std::string name;
+		std::unique_ptr<STextureResource> sSpecular;
+		std::unique_ptr<STextureResource> sDiffuse;
 		std::unique_ptr<D3dGraphicsCore::GpuTexture> pSpecular;
 		std::unique_ptr<D3dGraphicsCore::GpuTexture> pDiffuse;
 	} IBLImageMap;
@@ -93,4 +112,6 @@ namespace My {
 		int HeapIndex{-1};
 		D3dGraphicsCore::DescriptorHandle Handle;
 	} DescriptorHeapHandleInfo;
+
+
 }

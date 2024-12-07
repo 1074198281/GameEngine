@@ -1347,3 +1347,64 @@ HRESULT CreateDDSTextureFromFile(
 
     return hr;
 }
+
+_Use_decl_annotations_
+HRESULT CreateDDSTextureInfoFromFile(
+    ID3D12Device* d3dDevice,
+    const wchar_t* fileName,
+    size_t maxsize,
+    bool forceSRGB,
+    ID3D12Resource** texture,
+    D3D12_CPU_DESCRIPTOR_HANDLE textureView,
+    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t>& imageInfo,
+    DDS_ALPHA_MODE* alphaMode)
+{
+    if (texture)
+    {
+        *texture = nullptr;
+    }
+
+    if (alphaMode)
+    {
+        *alphaMode = DDS_ALPHA_MODE_UNKNOWN;
+    }
+
+    if (!d3dDevice || !fileName)
+    {
+        return E_INVALIDARG;
+    }
+
+    DDS_HEADER* header = nullptr;
+    uint8_t* bitData = nullptr;
+    size_t bitSize = 0;
+
+    std::unique_ptr<uint8_t[]> ddsData;
+    HRESULT hr = LoadTextureDataFromFile(fileName, ddsData, &header, &bitData, &bitSize);
+    if (FAILED(hr))
+    {
+        return hr;
+    }
+
+    hr = CreateTextureFromDDS(d3dDevice,
+        header, bitData, bitSize, maxsize,
+        forceSRGB, texture, textureView);
+
+    if (alphaMode)
+        *alphaMode = GetAlphaMode(header);
+
+    if (SUCCEEDED(hr))
+        (*texture)->SetName(fileName);
+
+    if (SUCCEEDED(hr)) {
+        imageInfo = std::make_tuple(
+            header->size, 
+            header->width, 
+            header->height, 
+            header->pitchOrLinearSize,
+            header->depth, 
+            header->mipMapCount);
+    }
+
+    return hr;
+}
+
