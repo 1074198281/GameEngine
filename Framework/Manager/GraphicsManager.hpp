@@ -55,7 +55,8 @@ namespace My {
 
         std::vector<std::string> GetSkyboxInfo() override { return std::vector<std::string>(); }
 
-        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName) override { return 0; }
+        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) override { return 0; }
+        size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) override { return 0; }
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();
@@ -66,7 +67,6 @@ namespace My {
 
         virtual void BeginFrame(Frame& frame) {}
         virtual void EndFrame(Frame& frame) {}
-        virtual void UpdateFrameConstants(Frame& frame);
 
     public:
         bool* GetDrawSkyboxStatus() override { return &m_bDrawSkybox; }

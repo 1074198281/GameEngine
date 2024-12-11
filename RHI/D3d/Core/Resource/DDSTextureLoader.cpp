@@ -1356,7 +1356,7 @@ HRESULT CreateDDSTextureInfoFromFile(
     bool forceSRGB,
     ID3D12Resource** texture,
     D3D12_CPU_DESCRIPTOR_HANDLE textureView,
-    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t>& imageInfo,
+    My::SResourceTextureInfo* pTextureInfo,
     DDS_ALPHA_MODE* alphaMode)
 {
     if (texture)
@@ -1396,13 +1396,12 @@ HRESULT CreateDDSTextureInfoFromFile(
         (*texture)->SetName(fileName);
 
     if (SUCCEEDED(hr)) {
-        imageInfo = std::make_tuple(
-            header->size, 
-            header->width, 
-            header->height, 
-            header->pitchOrLinearSize,
-            header->depth, 
-            header->mipMapCount);
+        pTextureInfo->iWidth = header->width;
+        pTextureInfo->iHeight = header->height;
+        pTextureInfo->iDepth = header->depth;
+        pTextureInfo->iSize = header->size;
+        pTextureInfo->iPitchOrLinearSize = header->pitchOrLinearSize;
+        pTextureInfo->iMipMapCount = header->mipMapCount;
     }
 
     return hr;

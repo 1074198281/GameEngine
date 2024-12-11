@@ -65,7 +65,8 @@ namespace My {
 
         std::vector<std::string> GetSkyboxInfo() override;
 
-        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName) override;
+        size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) override;
+        size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) override;
     private:
         void initializeGeometries(const Scene& scene) override;
         void initializeSkybox(const Scene& scene) override;
@@ -81,16 +82,13 @@ namespace My {
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
-        std::vector<std::shared_ptr<D3dGraphicsCore::GpuTexture>> m_VecTexture;
+
         std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowMapTexture;
         std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_GlobalShadowMapTexture;
         std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_CubeShadowMapTexture;
-        std::unordered_map<std::string, std::shared_ptr<D3dGraphicsCore::ColorBuffer>> m_ColorBufferMap;
-        std::unique_ptr<IBLImageResource> m_IBLResource;
-        std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo> m_BatchHandleStatus;
-        std::unordered_map<std::string, My::DescriptorHeapHandleInfo> m_FixedHandleStatus;
 
-        std::unordered_map<std::string, My::STextureResource> m_TextureResource;
-        std::unordered_map<std::string, My::STextureResource> m_Resources;
+        std::unique_ptr<SResourceIBLImage> m_IBLResource;
+        std::unordered_map<uint32_t, std::unique_ptr<My::SResourceBatchInfo>> m_BatchTextureResource;
+        std::unordered_map<std::string, std::unique_ptr<SResourceColorBufferInfo>> m_PixelBufferResources;
     };
 }

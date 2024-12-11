@@ -8,6 +8,17 @@
 
 #include <deque>
 
+
+namespace My {
+	static const std::string debug_texture_name_array[5] = {
+		"BaseColor Texture",
+		"Metallic Texture",
+		"Roughness Texture",
+		"Emissive Texture",
+		"Normal Texture"
+	};
+}
+
 void My::GuiSubPass::BeginSubPass()
 {
 	m_pGraphicsManager->BeginSubPass("RenderGui");
@@ -120,49 +131,64 @@ void My::GuiSubPass::Draw(Frame& frame)
 
 
 			// SceneNode Settings
-			for (auto& GeoNode : pScene->GeometryNodes) {
-				std::string GeoName = GeoNode.first;
+			for (auto& batch_Context : frame.BatchContexts) {
+				auto& GeoNode = batch_Context->Node;
+				std::string GeoName = GeoNode->GetSceneObjectRef();
 				if (ImGui::TreeNode(GeoName.c_str()))
 				{
-					bool bVisible = GeoNode.second->Visible();
+					bool bVisible = GeoNode->Visible();
 					ImGui::Checkbox("Visible", &bVisible);
 
 					ImGui::SeparatorTextEx(0, "Model Matrix", NULL, 0);
 					Matrix4X4f model;
-					if (GeoNode.second->GetRigidBody()) {
-						model = pPhysicsManager->GetRigidBodyTransform(GeoNode.second->GetRigidBody());
+					if (GeoNode->GetRigidBody()) {
+						model = pPhysicsManager->GetRigidBodyTransform(GeoNode->GetRigidBody());
 					} else {
-						model = *GeoNode.second->GetCalculatedTransform().get();
+						model = *GeoNode->GetCalculatedTransform().get();
 					}
 					 
-					ImGui::InputFloat4("", model[0]);
-					ImGui::InputFloat4("", model[1]);
-					ImGui::InputFloat4("", model[2]);
-					ImGui::InputFloat4("", model[3]);
-					
+					if (ImGui::TreeNode("Model Matrix")) {
+						ImGui::InputFloat4("", model[0]);
+						ImGui::InputFloat4("", model[1]);
+						ImGui::InputFloat4("", model[2]);
+						ImGui::InputFloat4("", model[3]);
+						ImGui::TreePop();
+					}
+
 					std::string MaterialName = GeoName + "Material";
 					ImGui::SeparatorTextEx(0, MaterialName.c_str(), NULL, 0);
-					std::string GeoMaterialName = GeoNode.second->GetMaterialCount() > 0 ? GeoNode.second->GetMaterialRef(0) : "default";
+					std::string GeoMaterialName = GeoNode->GetMaterialCount() > 0 ? GeoNode->GetMaterialRef(0) : "default";
 					if (!pScene->Materials[GeoMaterialName]) {
 						std::cout << "Node " << GeoName << " Has No Material!" << std::endl;
 						//assert(false, "Material Not Exist!");
-						GeoNode.second->SetVisibility(bVisible);
+						GeoNode->SetVisibility(bVisible);
 						ImGui::TreePop();
 						continue;
 					}
-					ImGui::SliderFloat4("BaseColor", pScene->Materials[GeoMaterialName]->GetBaseColorFactorData(), 0, 1);
-					ImGui::SliderFloat("Metallic", pScene->Materials[GeoMaterialName]->GetMetallicFactorData(), 0, 1);
-					ImGui::SliderFloat("Roughness", pScene->Materials[GeoMaterialName]->GetRoughnessFactorData(), 0, 1);
-					ImGui::SliderFloat3("Emissive", pScene->Materials[GeoMaterialName]->GetEmissiveFactorData(), 0, 1);
-					ImGui::SliderFloat("NormalScale", pScene->Materials[GeoMaterialName]->GetNornalScaleFactorData(), 0, 1);
-
-					if (ImGui::TreeNode("BaseColor Texture")) {
-
-
+					if (ImGui::TreeNode("PBR Properties")) {
+						ImGui::SliderFloat4("BaseColor", frame.BatchContexts[batch_Context->BatchIndex]->BaseColorFactor, 0, 1);
+						ImGui::SliderFloat("Metallic", &frame.BatchContexts[batch_Context->BatchIndex]->MetallicRoughnessFactor[0], 0, 1);
+						ImGui::SliderFloat("Roughness", &frame.BatchContexts[batch_Context->BatchIndex]->MetallicRoughnessFactor[1], 0, 1);
+						ImGui::SliderFloat3("Emissive", frame.BatchContexts[batch_Context->BatchIndex]->EmissiveFactor, 0, 1);
+						ImGui::SliderFloat("NormalScale", &frame.BatchContexts[batch_Context->BatchIndex]->NormalTextureScale, 0, 1);
 						ImGui::TreePop();
 					}
+					
+					ImGui::SeparatorTextEx(0, "Debug_Texture_Show", NULL, 0);
+					uint32_t debug_texture_width, debug_texture_height, debug_texture_size;
+					size_t debug_texture_gpu_handle = 0;
 
-					GeoNode.second->SetVisibility(bVisible);
+					for (int i = 0; i < _countof(debug_texture_name_array); i++) {
+						if (ImGui::TreeNode(debug_texture_name_array[i].c_str())) {
+							debug_texture_gpu_handle = m_pGraphicsManager->GetTextureGpuPtr(batch_Context->BatchIndex, i, debug_texture_width, debug_texture_height, debug_texture_size);
+							if (debug_texture_gpu_handle != 0) {
+								ImGui::Image((ImTextureID)debug_texture_gpu_handle, ImVec2((float)256, (float)256));
+							}
+							ImGui::TreePop();
+						}
+					}
+
+					GeoNode->SetVisibility(bVisible);
 					ImGui::TreePop();
 				}
 			}
@@ -193,11 +219,12 @@ void My::GuiSubPass::Draw(Frame& frame)
 			ImGui::Begin((const char*)u8"Texture Status");
 			if (ImGui::TreeNode("Skybox Texture")) {
 				// get skybox index and its gpu handle
+				uint32_t width, height;
 				int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
 				std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
-				size_t handle_ptr = m_pGraphicsManager->GetSkyboxTextureGpuPtr(skyboxInfo[*skyboxIndex]);
+				size_t handle_ptr = m_pGraphicsManager->GetSkyboxTextureGpuPtr(skyboxInfo[*skyboxIndex], width, height);
 
-				ImGui::Image((ImTextureID)handle_ptr, ImVec2((float)1024, (float)1024));
+				ImGui::Image((ImTextureID)handle_ptr, ImVec2((float)width, (float)height));
 				ImGui::TreePop();
 			}
 			ImGui::End();

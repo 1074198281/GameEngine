@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Resource/Texture.h"
 #include "Core/Pipeline/DescriptorHeap.h"
+#include "Core/Resource/ColorBuffer.h"
 #include "FrameStructure.hpp"
 #include <vector>
 #include <math.h>
@@ -75,43 +76,55 @@ namespace My {
 
 	typedef struct SResourceBase {
 		std::string name;
+	} SResource;
+
+	typedef struct SResourceDescriptorInfo {
 		// descriptor heap and handle info
 		int iHeapIndex{ -1 };
 		D3dGraphicsCore::DescriptorHandle handle;
-	} SResource;
+	} SResourceDescriptorInfo;
 
-	typedef struct STextureResource : public SResourceBase {
+	typedef struct SResourceTextureInfo {
+		std::string texture_name;
 		uint32_t iSize;
 		uint32_t iWidth;
 		uint32_t iHeight;
 		uint32_t iPitchOrLinearSize;
 		uint32_t iDepth;
 		uint32_t iMipMapCount;
-		std::unique_ptr<D3dGraphicsCore::GpuTexture> pTexture;
-	} STextureResource;
+		std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexture;
+	} SResourceTextureInfo;
 
-	typedef struct IBLImageMap
+	typedef struct SResourceBatchInfo
+		: public SResourceBase,
+		public SResourceDescriptorInfo
+	{
+		uint32_t batch_index{ 0xFFFFFFFF };
+		uint32_t texture_info_flag{ 0 };
+		std::vector<std::shared_ptr<SResourceTextureInfo>> texture_info;
+	} SResourceBatchInfo;
+
+	typedef struct SResourceIBLImageMap : public SResourceDescriptorInfo
 	{
 		std::string name;
-		std::unique_ptr<STextureResource> sSpecular;
-		std::unique_ptr<STextureResource> sDiffuse;
-		std::unique_ptr<D3dGraphicsCore::GpuTexture> pSpecular;
-		std::unique_ptr<D3dGraphicsCore::GpuTexture> pDiffuse;
-	} IBLImageMap;
+		std::unique_ptr<SResourceTextureInfo> pSpecular;
+		std::unique_ptr<SResourceTextureInfo> pDiffuse;
+	} SResourceIBLImageMap;
 
-	typedef struct IBLImageResource
+	typedef struct SResourceIBLImage
 	{
-		std::unordered_map<int, std::unique_ptr<IBLImageMap> > IBLImages;
+		std::unordered_map<int, std::unique_ptr<SResourceIBLImageMap> > IBLImages;
 		std::unique_ptr<D3dGraphicsCore::GpuTexture> BRDF_LUT_Image;
 		float SpecularIBLRange;
 		float SpecularIBLBias;
 		int IBLImageCount = 0;
-	} IBLImageResource;
+	} SResourceIBLImage;
 
-	typedef struct DescriptorHeapHandleInfo {
-		int HeapIndex{-1};
-		D3dGraphicsCore::DescriptorHandle Handle;
-	} DescriptorHeapHandleInfo;
-
+	typedef struct SResourceColorBufferInfo
+		: public SResourceBase,
+		public SResourceDescriptorInfo
+	{
+		std::shared_ptr<D3dGraphicsCore::ColorBuffer> pGpuBuffer;
+	} SResourceColorBufferInfo;
 
 }

@@ -51,7 +51,8 @@ namespace My {
         virtual std::string GetLightName(int index) = 0;
 
         virtual std::vector<std::string> GetSkyboxInfo() = 0;
-        virtual size_t GetSkyboxTextureGpuPtr(const std::string skyboxName) = 0;
+        virtual size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) = 0;
+        virtual size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) = 0;
 
     public:
         virtual bool* GetDrawSkyboxStatus() = 0;

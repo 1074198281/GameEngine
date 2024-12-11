@@ -335,14 +335,14 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    std::unordered_map<uint32_t, My::DescriptorHeapHandleInfo>& batch_map, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isDrawSkybox)
+    const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isDrawSkybox)
 {
     m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
 
     SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
 
-    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[batch_map[pdbc->BatchIndex].HeapIndex].GetHeapPointer());
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[TextureHeapIndex].GetHeapPointer());
 
     {
         My::MaterialConstants MatCbv;
@@ -394,7 +394,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
     }
 
     {
-        m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, batch_map[pdbc->BatchIndex].Handle);
+        m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, TextureHandle);
     }
     
     {

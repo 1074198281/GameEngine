@@ -28,7 +28,7 @@
                         0,
                         1
                     ],
-                    "intensity" : 1000000,
+                    "intensity" : 20,
                     "type" : "point",
                     "name" : "Omini"
                 },
@@ -38,7 +38,7 @@
                         1,
                         0
                     ],
-                    "intensity" : 100000,
+                    "intensity" : 20,
                     "spot" : {
                         "innerConeAngle" : 0.3337942263919169,
                         "outerConeAngle" : 0.39269909262657166

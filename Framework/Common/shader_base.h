@@ -66,7 +66,6 @@ namespace My {
 
 	typedef struct TextureBase {
 		TextureHandle handle;
-		TextureHandle testHandle;
 		PIXEL_FORMAT pixel_format;
 
 		uint32_t width;

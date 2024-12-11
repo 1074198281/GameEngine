@@ -40,14 +40,17 @@ void My::D3d12GraphicsManager::Finalize()
 
 void My::D3d12GraphicsManager::Clear()
 {
+    m_VecIndexBuffer.clear();
+    m_VecVertexBuffer.clear();
+
     if (m_IBLResource) {
         for (auto it = m_IBLResource->IBLImages.begin(); it != m_IBLResource->IBLImages.end(); it++) {
             if (it->second->pDiffuse) {
-                it->second->pDiffuse->Destroy();
+                it->second->pDiffuse->pTexture->Destroy();
                 it->second->pDiffuse.reset();
             }
             if (it->second->pSpecular) {
-                it->second->pSpecular->Destroy();
+                it->second->pSpecular->pTexture->Destroy();
                 it->second->pSpecular.reset();
             }
             
@@ -57,12 +60,9 @@ void My::D3d12GraphicsManager::Clear()
         m_IBLResource->BRDF_LUT_Image.reset();
         m_IBLResource->IBLImages.clear();
     }
-    m_VecIndexBuffer.clear();
-    m_VecVertexBuffer.clear();
-    m_VecTexture.clear();
-    m_ColorBufferMap.clear();
-    m_BatchHandleStatus.clear();
-    m_FixedHandleStatus.clear();
+
+    m_BatchTextureResource.clear();
+    m_PixelBufferResources.clear();
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
@@ -75,13 +75,13 @@ void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
 
 void My::D3d12GraphicsManager::ResizeFrameBuffer()
 {
-    if (m_ColorBufferMap.find("OverlaySrc") != m_ColorBufferMap.end()) {
-        m_ColorBufferMap["OverlaySrc"]->Destroy();
-        m_ColorBufferMap["OverlaySrc"]->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    if (m_PixelBufferResources.find("OverlaySrc") != m_PixelBufferResources.end()) {
+        m_PixelBufferResources["OverlaySrc"]->pGpuBuffer->Destroy();
+        m_PixelBufferResources["OverlaySrc"]->pGpuBuffer->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
     }
-    if (m_ColorBufferMap.find("OverlayDes") != m_ColorBufferMap.end()) {
-        m_ColorBufferMap["OverlayDes"]->Destroy();
-        m_ColorBufferMap["OverlayDes"]->Create(L"OverlayDes", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+    if (m_PixelBufferResources.find("OverlayDes") != m_PixelBufferResources.end()) {
+        m_PixelBufferResources["OverlayDes"]->pGpuBuffer->Destroy();
+        m_PixelBufferResources["OverlayDes"]->pGpuBuffer->Create(L"OverlayDes", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
     }
 
 }
@@ -205,60 +205,54 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         if (GeometryNode->GetMaterialCount()) {
             auto pMaterial = scene.GetMaterial(GeometryNode->GetMaterialRef(0));
 
+            std::unique_ptr<SResourceBatchInfo> pRe = std::make_unique<SResourceBatchInfo>();
+            pRe->name = pMaterial->GetName();
+            pRe->batch_index = batch_index;
             for (int type = 0; type < My::SceneObjectMaterial::TextureType::kpbrType; type++) {
                 auto TextureRef = pMaterial->GetTexture((My::SceneObjectMaterial::TextureType)type);
                 // if texture has loaded its image data, then create gpu data
                 size_t cpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
-                size_t testcpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
+                std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex = std::make_shared<D3dGraphicsCore::GpuTexture>();
+                std::shared_ptr<SResourceTextureInfo> pTexInfo = std::make_shared<SResourceTextureInfo>();
                 if (TextureRef) {
                     Image& img = TextureRef->GetTextureImage();
-                    std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex = std::make_shared<D3dGraphicsCore::GpuTexture>();
                     DXGI_FORMAT format;
                     GetDXGIFormat(img.format, format);
                     pTex->Create2D(img.pitch, img.Width, img.Height, DXGI_FORMAT_R8G8B8A8_UNORM, img.data);
-                    cpuHandle = m_VecTexture.size();
-                    testcpuHandle = pTex->GetSRV().ptr;
-                    m_VecTexture.push_back(std::move(pTex));
+                    
+                    cpuHandle = pTex->GetSRV().ptr;
+                    pTexInfo->iWidth = img.Width;
+                    pTexInfo->iHeight = img.Height;
+                    pTexInfo->iPitchOrLinearSize = img.pitch;
+                    pTexInfo->iDepth = 1;
+                    pTexInfo->iMipMapCount = 0;
+                    pTexInfo->iSize = img.data_size;
+                    pTexInfo->texture_name = TextureRef->GetName();
                 } else {                  
                     switch (type) {
                     case My::SceneObjectMaterial::kBaseColor:
                     {
-                        cpuHandle = m_VecTexture.size();
-                        std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex(D3dGraphicsCore::g_DefaultBaseColorTexture);
-                        testcpuHandle = pTex->GetSRV().ptr;
-                        m_VecTexture.push_back(std::move(pTex));
+                        cpuHandle = D3dGraphicsCore::g_DefaultBaseColorTexture->GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kMetallicRoughness:
                     {
-                        cpuHandle = m_VecTexture.size();
-                        std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture);
-                        testcpuHandle = pTex->GetSRV().ptr;
-                        m_VecTexture.push_back(std::move(pTex));
+                        cpuHandle = D3dGraphicsCore::g_DefaultRoughnessMetallicTexture->GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kOcclusion:
                     {
-                        cpuHandle = m_VecTexture.size();
-                        std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex(D3dGraphicsCore::g_DefaultOcclusionTexture);
-                        testcpuHandle = pTex->GetSRV().ptr;
-                        m_VecTexture.push_back(std::move(pTex));
+                        cpuHandle = D3dGraphicsCore::g_DefaultOcclusionTexture->GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kEmissive:
                     {
-                        cpuHandle = m_VecTexture.size();
-                        std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex(D3dGraphicsCore::g_DefaultEmissiveTexture);
-                        testcpuHandle = pTex->GetSRV().ptr; 
-                        m_VecTexture.push_back(std::move(pTex));
+                        cpuHandle = D3dGraphicsCore::g_DefaultEmissiveTexture->GetSRV().ptr;
                     }
                     break;
                     case My::SceneObjectMaterial::kNormal:
                     {
-                        cpuHandle = m_VecTexture.size();
-                        std::shared_ptr<D3dGraphicsCore::GpuTexture> pTex(D3dGraphicsCore::g_DefaultNormalTexture);
-                        testcpuHandle = pTex->GetSRV().ptr;
-                        m_VecTexture.push_back(std::move(pTex));
+                        cpuHandle = D3dGraphicsCore::g_DefaultNormalTexture->GetSRV().ptr;
                     }
                     break;
                     default:
@@ -272,36 +266,38 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 case My::SceneObjectMaterial::kBaseColor:
                 {
                     dbc->Material.DiffuseMap.handle = cpuHandle;
-                    dbc->Material.DiffuseMap.testHandle = testcpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kMetallicRoughness:
                 {
                     dbc->Material.MetallicRoughnessMap.handle = cpuHandle;
-                    dbc->Material.MetallicRoughnessMap.testHandle = testcpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kOcclusion:
                 {
                     dbc->Material.AmbientOcclusionMap.handle = cpuHandle;
-                    dbc->Material.AmbientOcclusionMap.testHandle = testcpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kEmissive:
                 {
                     dbc->Material.EmissiveMap.handle = cpuHandle;
-                    dbc->Material.EmissiveMap.testHandle = testcpuHandle;
                 }
                 break;
                 case My::SceneObjectMaterial::kNormal:
                 {
                     dbc->Material.NormalMap.handle = cpuHandle;
-                    dbc->Material.NormalMap.testHandle = testcpuHandle;
                 }
                 break;
                 default:
                     ASSERT(false, "Material Type ERROR!");
                     break;
+                }
+
+                if (pTex) {
+                    // if pTex exists, then use external texture, save its info
+                    pTexInfo->pTexture = std::move(pTex);
+                    pRe->texture_info_flag |= (1 << type);
+                    pRe->texture_info.push_back(std::move(pTexInfo));
                 }
 
                 // texture transform
@@ -357,6 +353,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                     break;
                 }
             }
+            m_BatchTextureResource.emplace(batch_index, std::move(pRe));
 
             // factor param / 
             dbc->BaseColorFactor[0] = pMaterial->GetBaseColorFactor()[0];
@@ -374,37 +371,15 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             dbc->NormalTextureScale = pMaterial->GetNormalScaleFactor();
         }
         else {
-            size_t cpuHandle = D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN;
+            dbc->Material.DiffuseMap.handle = D3dGraphicsCore::g_DefaultBaseColorTexture->GetSRV().ptr;
 
-            cpuHandle = m_VecTexture.size();
-            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexBaseColor(D3dGraphicsCore::g_DefaultBaseColorTexture);
-            m_VecTexture.push_back(std::move(pTexBaseColor));
-            dbc->Material.DiffuseMap.handle = cpuHandle;
-            dbc->Material.DiffuseMap.testHandle = pTexBaseColor->GetSRV().ptr;
+            dbc->Material.MetallicRoughnessMap.handle = D3dGraphicsCore::g_DefaultRoughnessMetallicTexture->GetSRV().ptr;
 
-            cpuHandle = m_VecTexture.size();
-            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexRoughnessMetallic(D3dGraphicsCore::g_DefaultRoughnessMetallicTexture);
-            m_VecTexture.push_back(std::move(pTexRoughnessMetallic));
-            dbc->Material.MetallicRoughnessMap.handle = cpuHandle;
-            dbc->Material.MetallicRoughnessMap.testHandle = pTexRoughnessMetallic->GetSRV().ptr;
+            dbc->Material.AmbientOcclusionMap.handle = D3dGraphicsCore::g_DefaultOcclusionTexture->GetSRV().ptr;
 
-            cpuHandle = m_VecTexture.size();
-            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexOcclusion(D3dGraphicsCore::g_DefaultOcclusionTexture);
-            m_VecTexture.push_back(std::move(pTexOcclusion));
-            dbc->Material.AmbientOcclusionMap.handle = cpuHandle;
-            dbc->Material.AmbientOcclusionMap.testHandle = pTexOcclusion->GetSRV().ptr;
+            dbc->Material.EmissiveMap.handle = D3dGraphicsCore::g_DefaultEmissiveTexture->GetSRV().ptr;
 
-            cpuHandle = m_VecTexture.size();
-            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexEmissive(D3dGraphicsCore::g_DefaultEmissiveTexture);
-            m_VecTexture.push_back(std::move(pTexEmissive));
-            dbc->Material.EmissiveMap.handle = cpuHandle;
-            dbc->Material.EmissiveMap.testHandle = pTexEmissive->GetSRV().ptr;
-
-            cpuHandle = m_VecTexture.size();
-            std::shared_ptr<D3dGraphicsCore::GpuTexture> pTexNormal(D3dGraphicsCore::g_DefaultNormalTexture);
-            m_VecTexture.push_back(std::move(pTexNormal));
-            dbc->Material.NormalMap.handle = cpuHandle;
-            dbc->Material.NormalMap.testHandle = pTexNormal->GetSRV().ptr;
+            dbc->Material.NormalMap.handle = D3dGraphicsCore::g_DefaultNormalTexture->GetSRV().ptr;
 
             My::TextureTransform trans;
             trans.offset[0] = 0;
@@ -460,7 +435,6 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         //transform
         //dbc->ModelMatrix = *GeometryNode->GetCalculatedTransform().get();
         dbc->Node = _it.second;
-        
 
         batch_index++;
         for (auto& frame : m_Frames) {
@@ -471,7 +445,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 {
-    m_IBLResource = std::make_unique<IBLImageResource>();
+    m_IBLResource = std::make_unique<SResourceIBLImage>();
     int HeapIdx = -1;
 
     std::vector<std::string> IBLFiles;
@@ -562,51 +536,43 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
         return;
     }
 
-    std::unique_ptr<D3dGraphicsCore::GpuTexture> pSpecularTex, pDiffuseTex;
+    std::unique_ptr<SResourceIBLImageMap> map = std::make_unique<SResourceIBLImageMap>();
+    map->name = imageName;
+    map->pDiffuse = std::make_unique<SResourceTextureInfo>();
+    map->pSpecular = std::make_unique<SResourceTextureInfo>();
 
-    pSpecularTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
-    pDiffuseTex = std::make_unique<D3dGraphicsCore::GpuTexture>();
+    std::shared_ptr<D3dGraphicsCore::GpuTexture> pSpecularTex, pDiffuseTex;
+    pSpecularTex = std::make_shared<D3dGraphicsCore::GpuTexture>();
+    pDiffuseTex = std::make_shared<D3dGraphicsCore::GpuTexture>();
 
     uint64_t size = 0;
     std::string specularImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + specular_suffix;
     std::string diffuseImage = std::string(_IBL_RESOURCE_DIRECTORY) + '/' + imageName + diffuse_suffix;
     D3dGraphicsCore::DescriptorHandle Handle;
     int HeapIdx = -1;
-    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
-    DescriptorHeapHandleInfo status{ HeapIdx, Handle };
-    m_FixedHandleStatus.emplace(imageName, status);
+    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(2, HeapIdx);
 
-    std::tuple<uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t> imageInfo;
+    map->iHeapIndex = HeapIdx;
+    map->handle = Handle;
+
     HRESULT hr = CreateDDSTextureInfoFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(specularImage).c_str(), size, false,
-        pSpecularTex->GetAddressOf(), Handle, imageInfo);
+        pSpecularTex->GetAddressOf(), Handle, map->pDiffuse.get());
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
     }
 
-    std::unique_ptr<STextureResource> sSpecularTex = std::make_unique<STextureResource>();
-    GENERATE_TEXTURE_INFO(sSpecularTex, HeapIdx, Handle, imageInfo);
-    sSpecularTex->pTexture = std::move(pSpecularTex);
-    sSpecularTex->name = specularImage;
-
-    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    D3dGraphicsCore::OffsetDescriptorHandle(Handle);
     hr = CreateDDSTextureInfoFromFile(D3dGraphicsCore::g_Device, My::UTF8ToWideString(diffuseImage).c_str(), size, false,
-        pDiffuseTex->GetAddressOf(), Handle, imageInfo);
+        pDiffuseTex->GetAddressOf(), Handle, map->pSpecular.get());
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
     }
-
-    std::unique_ptr<STextureResource> sDiffuseTex = std::make_unique<STextureResource>();
-    GENERATE_TEXTURE_INFO(sDiffuseTex, HeapIdx, Handle, imageInfo);
-    sDiffuseTex->pTexture = std::move(pDiffuseTex);
-    sDiffuseTex->name = diffuseImage;
-
-    std::unique_ptr<IBLImageMap> map = std::make_unique<IBLImageMap>();
+    
     map->name = imageName;
-    map->sSpecular = std::move(sSpecularTex);
-    map->sDiffuse = std::move(sDiffuseTex);
-
-    map->pSpecular = std::move(pSpecularTex);
-    map->pDiffuse = std::move(pDiffuseTex);
+    map->pSpecular->texture_name = specularImage;
+    map->pDiffuse->texture_name = diffuseImage;
+    map->pSpecular->pTexture = std::move(pSpecularTex);
+    map->pDiffuse->pTexture = std::move(pDiffuseTex);
     m_IBLResource->IBLImages.emplace(m_IBLResource->IBLImages.size(), std::move(map));
 
     ImageName.emplace(imageName, m_IBLResource->IBLImages.size());
@@ -616,22 +582,18 @@ void My::D3d12GraphicsManager::initializeFixedHandle()
     D3dGraphicsCore::DescriptorHandle Handle;
     int HeapIdx = -1;
     Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
-    DescriptorHeapHandleInfo status{ HeapIdx, Handle };
-    m_FixedHandleStatus.emplace("ColorBuffer", status);
+    std::unique_ptr<SResourceColorBufferInfo> pSceneColorBuffer = std::make_unique<SResourceColorBufferInfo>();
+    pSceneColorBuffer->handle = Handle;
+    pSceneColorBuffer->iHeapIndex = HeapIdx;
+    pSceneColorBuffer->name = "ColorBuffer";
+    pSceneColorBuffer->pGpuBuffer = std::make_shared<D3dGraphicsCore::ColorBuffer>(D3dGraphicsCore::g_SceneColorBuffer);
+    m_PixelBufferResources.emplace(pSceneColorBuffer->name, std::move(pSceneColorBuffer));
 
-    //std::shared_ptr<D3dGraphicsCore::ColorBuffer> GuassBlur = std::make_shared<D3dGraphicsCore::ColorBuffer>();
-    //GuassBlur->Create(L"Guass Blur", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
-    //int HeapIndex = -1;
-    //D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIndex);
-    //std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
-    //vecHandle.push_back(GuassBlur->GetUAV());
-    //D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 1);
-    //m_FixedHandleStatus.emplace("GuassBlur", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
-
-    //m_ColorBufferMap.emplace("GuassBlur", GuassBlur);
 
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
     int HeapIndex = -1;
+    std::unique_ptr<SResourceColorBufferInfo> pOverlaySrcInfo = std::make_unique<SResourceColorBufferInfo>();
+    std::unique_ptr<SResourceColorBufferInfo> pOverlayDesInfo = std::make_unique<SResourceColorBufferInfo>();
 
     std::shared_ptr<D3dGraphicsCore::ColorBuffer> OverlaySrc = std::make_shared<D3dGraphicsCore::ColorBuffer>();
     OverlaySrc->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
@@ -643,12 +605,19 @@ void My::D3d12GraphicsManager::initializeFixedHandle()
 
     D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(2, HeapIndex);
     D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 2);
-    m_FixedHandleStatus.emplace("OverlaySrc", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
-    D3dGraphicsCore::OffsetDescriptorHandle(handle);
-    m_FixedHandleStatus.emplace("OverlayDes", My::DescriptorHeapHandleInfo{ HeapIndex , handle });
 
-    m_ColorBufferMap.emplace("OverlaySrc", OverlaySrc);
-    m_ColorBufferMap.emplace("OverlayDes", OverlayDes);
+    pOverlaySrcInfo->handle = handle;
+    pOverlaySrcInfo->iHeapIndex = HeapIdx;
+    pOverlaySrcInfo->name = "OverlaySrc";
+    pOverlaySrcInfo->pGpuBuffer = std::move(OverlaySrc);
+    m_PixelBufferResources.emplace(pOverlaySrcInfo->name, std::move(pOverlaySrcInfo));
+
+    D3dGraphicsCore::OffsetDescriptorHandle(handle);
+    pOverlayDesInfo->handle = handle;
+    pOverlayDesInfo->iHeapIndex = HeapIdx;
+    pOverlayDesInfo->name = "OverlayDes";
+    pOverlayDesInfo->pGpuBuffer = std::move(OverlayDes);
+    m_PixelBufferResources.emplace(pOverlayDesInfo->name, std::move(pOverlayDesInfo));
 }
 
 int My::D3d12GraphicsManager::InitializeD3dImGUI()
@@ -667,8 +636,12 @@ int My::D3d12GraphicsManager::InitializeD3dImGUI()
         ImGUIHandle,
         ImGUIHandle);
 
-    DescriptorHeapHandleInfo status{ HeapIdx, ImGUIHandle };
-    m_FixedHandleStatus.emplace("Gui", status);
+    std::unique_ptr<SResourceColorBufferInfo> pGuiBuffer = std::make_unique<SResourceColorBufferInfo>();
+    pGuiBuffer->name = "Gui";
+    pGuiBuffer->handle = ImGUIHandle;
+    pGuiBuffer->iHeapIndex = HeapIdx;
+    pGuiBuffer->pGpuBuffer = nullptr;
+
     return 0;
 }
 
@@ -694,38 +667,12 @@ void My::D3d12GraphicsManager::RightArrowKeyDown()
 
 void My::D3d12GraphicsManager::NumPadKeyDown(int64_t key)
 {
-    auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
-    switch (key) {
-    case VK_NUMPAD0:
-        
-        break;
-    case VK_NUMPAD1:
-        break;
-    case VK_NUMPAD2:
-        break;
-    case VK_NUMPAD3:
-        break;
-    case VK_NUMPAD4:
-        
-        break;
-    case VK_NUMPAD5:
-        
-        break;
-    case VK_NUMPAD6:
-        
-        break;
-    case VK_NUMPAD7:
-        
-        break;
-    case VK_NUMPAD8:
-        
-        break;
-    case VK_NUMPAD9:
-        
-        break;
-    default:
-        ASSERT(false, "RECIEVE UNKOWN NUMPAD INPUT! ERROR!");
-    }
+
+}
+
+void My::D3d12GraphicsManager::NumPadKeyUp(int64_t key)
+{
+
 }
 
 void My::D3d12GraphicsManager::FunctionKeyDown(int64_t key)
@@ -734,11 +681,6 @@ void My::D3d12GraphicsManager::FunctionKeyDown(int64_t key)
     GraphicsRHI.UpdateCameraParams(key);
 }
 void My::D3d12GraphicsManager::FunctionKeyUp(int64_t key)
-{
-
-}
-
-void My::D3d12GraphicsManager::NumPadKeyUp(int64_t key)
 {
 
 }
@@ -774,7 +716,6 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     ImGui::NewFrame();
     //ImGui::ShowDemoWindow(); // Show demo window! :)
 
-    UpdateFrameConstants(frame);
     UpdateD3dFrameConstants(frame);
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateConstants(frame);
@@ -785,27 +726,20 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
             D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
             D3D12_CPU_DESCRIPTOR_HANDLE diffuseHandle, metallicRoughnessHandle,
                 ambientOcclusionHandle, emissiveHandle, normalHandle;
-            diffuseHandle.ptr = d3dbatch->Material.DiffuseMap.testHandle;
-            metallicRoughnessHandle.ptr = d3dbatch->Material.MetallicRoughnessMap.testHandle;
-            ambientOcclusionHandle.ptr = d3dbatch->Material.AmbientOcclusionMap.testHandle;
-            emissiveHandle.ptr = d3dbatch->Material.EmissiveMap.testHandle;
-            normalHandle.ptr = d3dbatch->Material.NormalMap.testHandle;
+            diffuseHandle.ptr = d3dbatch->Material.DiffuseMap.handle;
+            metallicRoughnessHandle.ptr = d3dbatch->Material.MetallicRoughnessMap.handle;
+            ambientOcclusionHandle.ptr = d3dbatch->Material.AmbientOcclusionMap.handle;
+            emissiveHandle.ptr = d3dbatch->Material.EmissiveMap.handle;
+            normalHandle.ptr = d3dbatch->Material.NormalMap.handle;
             
-            //D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
-            //    diffuseHandle,
-            //    metallicRoughnessHandle,
-            //    ambientOcclusionHandle,
-            //    emissiveHandle,
-            //    normalHandle
-            //};
-
             D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
-                m_VecTexture[d3dbatch->Material.DiffuseMap.handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.MetallicRoughnessMap.handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.AmbientOcclusionMap.handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.EmissiveMap.handle]->GetSRV(),
-                m_VecTexture[d3dbatch->Material.NormalMap.handle]->GetSRV()
+                diffuseHandle,
+                metallicRoughnessHandle,
+                ambientOcclusionHandle,
+                emissiveHandle,
+                normalHandle
             };
+
             const uint32_t NumSrc = _countof(CpuHandle);
             uint32_t pArray[NumSrc];
             for (int i = 0; i < NumSrc; i++) {
@@ -813,8 +747,12 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
             }
             D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(NumSrc, HeapIndex);
             D3dGraphicsCore::g_Device->CopyDescriptors(1, &GpuHandle, &NumDest, NumSrc, CpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-            DescriptorHeapHandleInfo status{ HeapIndex, GpuHandle };
-            m_BatchHandleStatus.emplace(d3dbatch->BatchIndex, status);
+            
+            auto pRe = m_BatchTextureResource.find(d3dbatch->BatchIndex);
+            if (pRe != m_BatchTextureResource.end()) {
+                pRe->second->handle = GpuHandle;
+                pRe->second->iHeapIndex = HeapIndex;
+            }
         }
 
         m_bInitialized = true;
@@ -822,7 +760,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 
     std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
     HandleVec.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
-    CopyDescriptors(m_FixedHandleStatus["ColorBuffer"].Handle, HandleVec, 1);
+    CopyDescriptors(m_PixelBufferResources["ColorBuffer"]->handle, HandleVec, 1);
 }
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)
@@ -905,13 +843,34 @@ std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
     return skyboxInfo;
 }
 
-size_t My::D3d12GraphicsManager::GetSkyboxTextureGpuPtr(const std::string skyboxName)
+size_t My::D3d12GraphicsManager::GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height)
 {
-    if (!m_FixedHandleStatus.contains(skyboxName)) {
+    if (!m_IBLResource->IBLImages.contains(m_iSkyboxIndex)) {
         ASSERT(false, "Skybox Not Exist!");
+        return 0;
     }
 
-    return m_FixedHandleStatus.find(skyboxName)->second.Handle.GetGpuPtr();
+    return m_IBLResource->IBLImages[m_iSkyboxIndex]->handle.GetGpuPtr();
+}
+
+size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size)
+{
+    if (m_BatchTextureResource.find(batch_index) != m_BatchTextureResource.end()) {
+        auto pInfo = m_BatchTextureResource[batch_index].get();
+        if (pInfo->texture_info_flag & (1 << material_index)) {
+            height = pInfo->texture_info[material_index]->iHeight;
+            width = pInfo->texture_info[material_index]->iWidth;
+            size = pInfo->texture_info[material_index]->iSize;
+            auto handle = pInfo->handle;
+            D3dGraphicsCore::OffsetDescriptorHandle(handle, material_index);
+            return handle.GetGpuPtr();
+        } else {
+            ASSERT(false, "Geo %s Has No Texture. Type: %d", pInfo->name, material_index);
+        }
+    } else {
+        ASSERT(false, "No Such Texture. Batch: %d", batch_index);
+    }
+    return 0;
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
@@ -938,11 +897,23 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         std::string skyboxName = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
+        ID3D12DescriptorHeap* pHeap = nullptr;
+        D3dGraphicsCore::DescriptorHandle handle;
+        if (m_bDrawSkybox) {
+            if (m_IBLResource->IBLImages.find(m_iSkyboxIndex) != m_IBLResource->IBLImages.end()) {
+                pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[m_iSkyboxIndex]->iHeapIndex].GetHeapPointer();
+                handle = m_IBLResource->IBLImages[m_iSkyboxIndex]->handle;
+            } else {
+                ASSERT(false, "No Such Skybox Texture, Name: %s", skyboxName);
+                m_bDrawSkybox = false;
+            }
+        }
         if (d3dbatch->Node->Visible()) {
             GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
-                m_BatchHandleStatus,
-                D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus[skyboxName].HeapIndex].GetHeapPointer(),
-                m_FixedHandleStatus[skyboxName].Handle, false, m_bDrawSkybox);
+                m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
+                m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
+                pHeap,
+                handle, false, m_bDrawSkybox);
         }
     }
 }
@@ -953,9 +924,11 @@ void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
     if (m_bDrawSkybox)
     {
         std::string skyboxName = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
-        GraphicsRHI.DrawSkybox(frame, D3dGraphicsCore::g_BaseDescriptorHeap[m_FixedHandleStatus[skyboxName].HeapIndex].GetHeapPointer(),
-            m_FixedHandleStatus[skyboxName].Handle,
-            m_IBLResource->IBLImages[0]->pSpecular.get(),
+        ID3D12DescriptorHeap* pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[m_iSkyboxIndex]->iHeapIndex].GetHeapPointer();
+        D3dGraphicsCore::DescriptorHandle handle = m_IBLResource->IBLImages[m_iSkyboxIndex]->handle;
+        GraphicsRHI.DrawSkybox(frame, pHeap,
+            handle,
+            m_IBLResource->IBLImages[0]->pSpecular->pTexture.get(),
             m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
     }
 }
@@ -969,7 +942,7 @@ void My::D3d12GraphicsManager::DrawGui(Frame& frame)
 void My::D3d12GraphicsManager::DrawPresent(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.DrawPresent(frame, m_FixedHandleStatus["ColorBuffer"].Handle, m_FixedHandleStatus["ColorBuffer"].HeapIndex);
+    GraphicsRHI.DrawPresent(frame, m_PixelBufferResources["ColorBuffer"]->handle, m_PixelBufferResources["ColorBuffer"]->iHeapIndex);
 }
 
 void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
@@ -977,12 +950,12 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     auto& config = dynamic_cast<D3d12Application*>(m_pApp)->GetConfiguration();
 
-    auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
-    auto& desBuffer = m_ColorBufferMap["OverlayDes"];
-    ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
+    auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
+    auto& desBuffer = m_PixelBufferResources["OverlayDes"];
+    ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
 
-    GraphicsRHI.DrawGuassBlur(frame, *desBuffer, *srcBuffer,
-        m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
+    GraphicsRHI.DrawGuassBlur(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+        m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
 }
 
 void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
@@ -990,13 +963,13 @@ void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
     if (m_bDrawOverlay) {
         auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
-        auto& srcBuffer = m_ColorBufferMap["OverlaySrc"];
-        auto& desBuffer = m_ColorBufferMap["OverlayDes"];
-        ASSERT(m_FixedHandleStatus["OverlayDes"].HeapIndex == m_FixedHandleStatus["OverlaySrc"].HeapIndex, "Descriptors Not In Same Heap!");
+        auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
+        auto& desBuffer = m_PixelBufferResources["OverlayDes"];
+        ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
 
 
-        GraphicsRHI.DrawOverlay(frame, *desBuffer, *srcBuffer,
-            m_FixedHandleStatus["OverlayDes"].Handle, m_FixedHandleStatus["OverlaySrc"].Handle, m_FixedHandleStatus["OverlayDes"].HeapIndex);
+        GraphicsRHI.DrawOverlay(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+            m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
     }
 }
 
@@ -1015,11 +988,11 @@ void My::D3d12GraphicsManager::EndSubPass()
 void My::D3d12GraphicsManager::BeginOverlayPass()
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.BeginOverlayPass(*m_ColorBufferMap["OverlaySrc"], D3dGraphicsCore::g_SceneColorBuffer);
+    GraphicsRHI.BeginOverlayPass(*m_PixelBufferResources["OverlaySrc"]->pGpuBuffer, D3dGraphicsCore::g_SceneColorBuffer);
 }
 
 void My::D3d12GraphicsManager::EndOverlayPass()
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.EndOverlayPass(D3dGraphicsCore::g_SceneColorBuffer, *m_ColorBufferMap["OverlaySrc"]);
+    GraphicsRHI.EndOverlayPass(D3dGraphicsCore::g_SceneColorBuffer, *m_PixelBufferResources["OverlaySrc"]->pGpuBuffer);
 }
