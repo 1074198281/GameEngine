@@ -29,6 +29,11 @@ namespace D3dGraphicsCore {
 	RootSignature g_GuassBlurRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<ComputePSO>> g_ComputePSOMap;
 
+	RootSignature g_ShadowOmniRootSignature;
+	RootSignature g_ShadowAreaRootSignature;
+	RootSignature g_ShadowSpotRootSignature;
+	RootSignature g_ShadowInfiRootSignature;
+
 	D3D12_SAMPLER_DESC g_pointWarp;
 	D3D12_SAMPLER_DESC g_pointClamp;
 	D3D12_SAMPLER_DESC g_linearWarp;

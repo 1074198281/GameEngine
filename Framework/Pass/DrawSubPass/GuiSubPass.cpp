@@ -182,7 +182,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 						if (ImGui::TreeNode(debug_texture_name_array[i].c_str())) {
 							debug_texture_gpu_handle = m_pGraphicsManager->GetTextureGpuPtr(batch_Context->BatchIndex, i, debug_texture_width, debug_texture_height, debug_texture_size);
 							if (debug_texture_gpu_handle != 0) {
-								ImGui::Image((ImTextureID)debug_texture_gpu_handle, ImVec2((float)256, (float)256));
+								ImGui::Image((ImTextureID)debug_texture_gpu_handle, ImVec2((float)128, (float)128));
 							}
 							ImGui::TreePop();
 						}
@@ -203,7 +203,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 					std::string lightName = m_pGraphicsManager->GetLightName(l->padding0);
 					if (ImGui::TreeNode(lightName.c_str()))
 					{
-						ImGui::SliderFloat("LightInsensity", &l->Insensity, 0, 100);
+						ImGui::SliderFloat("LightInsensity", &l->Insensity, 0, l->Insensity);
 						ImGui::SliderFloat4("LightColor", l->LightColor, 0, 1);
 						ImGui::SliderFloat4("LightPosition", l->LightPosition, -100, 100);
 
@@ -217,14 +217,10 @@ void My::GuiSubPass::Draw(Frame& frame)
 
 		if (show_app_debug_texture) {
 			ImGui::Begin((const char*)u8"Texture Status");
-			if (ImGui::TreeNode("Skybox Texture")) {
-				// get skybox index and its gpu handle
-				uint32_t width, height;
-				int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
-				std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
-				size_t handle_ptr = m_pGraphicsManager->GetSkyboxTextureGpuPtr(skyboxInfo[*skyboxIndex], width, height);
+			if (ImGui::TreeNode((const char*)u8"Light Shadow Map")) {
 
-				ImGui::Image((ImTextureID)handle_ptr, ImVec2((float)width, (float)height));
+
+
 				ImGui::TreePop();
 			}
 			ImGui::End();

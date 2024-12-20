@@ -63,12 +63,11 @@ namespace D3dGraphicsCore {
 		void FinalizeGraphicsSettings();
 		
 	public:
-		void UpdateStatus();
 		void UpdateCamera();
 		void UpdateCameraParams(int64_t key);
 		void UpdatePresent();
 
-		void UpdateConstants(My::Frame& frame);
+		void UpdateCameraConstants(My::Frame& frame);
 
 	public:
 		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
@@ -104,6 +103,7 @@ namespace D3dGraphicsCore {
 		D3D12_RECT m_MainScissor;
 		GraphicsContext* m_pGraphicsContext = nullptr;
 		GraphicsPSO* m_pGraphicsPSO = nullptr;
+		RootSignature* m_pRootSignature = nullptr;
 
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;

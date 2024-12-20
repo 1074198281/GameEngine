@@ -103,7 +103,7 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
         m_Camera = std::make_unique<XM_Camera::Camera>();
         m_Camera->SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
         m_Camera->SetFOV(120.f);
-        m_Camera->SetZRange(0.0001f, 1000.0f);
+        m_Camera->SetZRange(0.1f, 1000.0f);
         m_Camera->SetPosition(XM_Math::Vector3(0, 5, 150));
     }
     if (!m_CameraController) {
@@ -130,11 +130,6 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
 void D3dGraphicsCore::D3d12RHI::FinalizeGraphicsSettings()
 {
     m_CameraController.reset(nullptr);
-}
-
-void D3dGraphicsCore::D3d12RHI::UpdateStatus()
-{
-    UpdateCamera();
 }
 
 void D3dGraphicsCore::D3d12RHI::UpdateCamera()
@@ -287,23 +282,29 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
     if (PSOName.substr(PSOName.size() - 3, 3) == "_CS") {
         if (g_ComputePSOMap.find(PSOName) != g_ComputePSOMap.end()) {
             m_pComputePSO = g_ComputePSOMap[PSOName].get();
+            m_pRootSignature = m_pComputePSO->GetRootSignaturePtr();
         }
         else {
-            ASSERT(false, "InValid Compute Pipeline Status Name!")
+            ASSERT(false, "InValid Compute Pipeline Status Name!");
+            m_pComputePSO = nullptr;
         }
         return;
     }
 
     if (g_PipelineStatusMap.find(PSOName) != g_PipelineStatusMap.end()) {
         m_pGraphicsPSO = g_PipelineStatusMap[PSOName].get();
+        m_pRootSignature = m_pGraphicsPSO->GetRootSignaturePtr();
     }
     else {
         ASSERT(false, "InValid Pipeline Status Name!");
         m_pGraphicsPSO = g_PipelineStatusMap["Default"].get();
+        m_pRootSignature = g_PipelineStatusMap["Default"]->GetRootSignaturePtr();
     }
+
+    ASSERT(m_pGraphicsPSO);
 }
 
-void D3dGraphicsCore::D3d12RHI::UpdateConstants(My::Frame& frame)
+void D3dGraphicsCore::D3d12RHI::UpdateCameraConstants(My::Frame& frame)
 {
     UpdateCamera();
     memcpy(&frame.FrameContext.ProjectionMatrix, &m_Camera->GetProjMatrix(), sizeof(float) * 16);
@@ -325,10 +326,11 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
 void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light)
 {
     m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
-    m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    //m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
-    m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
-    m_pGraphicsContext->ClearColor(colorBuffer);
+    //m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
+    m_pGraphicsContext->SetDepthStencilTarget(depthBuffer.GetDSV());
+    //m_pGraphicsContext->ClearColor(colorBuffer);
     m_pGraphicsContext->ClearDepth(depthBuffer);
 
     m_CacheLight = light;
@@ -337,7 +339,7 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
     const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isDrawSkybox)
 {
-    m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
 
     SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
@@ -405,18 +407,24 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
             pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
             pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
             pfc.CameraPosition = frame.FrameContext.CameraPosition;
+
+            pfc.clip_space_type = 1;
+            pfc.LightNum = m_LightNum;
+
+            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
+            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
+            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
         } else {
             pfc.ViewMatrix = m_CacheLight.LightViewMatrix;
             pfc.ProjectionMatrix = m_CacheLight.LightProjectionMatrix;
             pfc.CameraPosition = m_CacheLight.LightPosition;
+
+
+
+
         }
 
-        pfc.clip_space_type = 1;
-        pfc.LightNum = m_LightNum;
 
-        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
-        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
-        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
     }
     
     if(isDrawSkybox)
@@ -457,7 +465,7 @@ void D3dGraphicsCore::D3d12RHI::DrawSkybox(const My::Frame& frame, ID3D12Descrip
     skyPSCB.TextureLevel = SpecularIBLBias;
 
     //Common SRVs for cubemap -- register 10 
-    m_pGraphicsContext->SetRootSignature(g_TemplateRootSignature);
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
@@ -492,7 +500,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGui(const My::Frame& frame)
 
 void D3dGraphicsCore::D3d12RHI::DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
-    m_pGraphicsContext->SetRootSignature(g_PresentRootSignature);
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
@@ -513,7 +521,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
 
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, true);
     
-    m_pComputeContext->SetRootSignature(g_GuassBlurRootSignature);
+    m_pComputeContext->SetRootSignature(*m_pRootSignature);
     m_pComputeContext->SetPipelineState(*m_pComputePSO);
     m_pComputeContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
     m_pComputeContext->SetDescriptorTable(My::kComputeSRV, ColorBufferHandle);
@@ -529,7 +537,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffe
 
 void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
-    m_pGraphicsContext->SetRootSignature(m_pGraphicsPSO->GetRootSignature());
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
     m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);

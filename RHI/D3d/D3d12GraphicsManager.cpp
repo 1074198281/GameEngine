@@ -718,7 +718,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
 
     UpdateD3dFrameConstants(frame);
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.UpdateConstants(frame);
+    GraphicsRHI.UpdateCameraConstants(frame);
     if (!m_bInitialized) {
         uint32_t NumDest = 5;
         int HeapIndex = -1;
@@ -785,8 +785,55 @@ void My::D3d12GraphicsManager::SetBatchResources(Frame& frame)
 void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+
+    // each light already has its own depthbuffer  
+    switch (lightInfo.Type)
+    {
+    case LightType::Omni:
+    {
+        if (m_CubeShadowMapTexture.size()) {
+            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
+                *m_CubeShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+            return;
+        }
+    }
+    break;
+    case LightType::Area:
+    {
+        if (m_ShadowMapTexture.size()) {
+            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
+                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+            return;
+        }
+    }
+    break;
+    case LightType::Spot:
+    {
+        if (m_ShadowMapTexture.size()) {
+            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
+                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+            return;
+        }
+    }
+    break;
+    case LightType::Infinity:
+    {
+        if (m_GlobalShadowMapTexture.size()) {
+            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
+                *m_GlobalShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+            return;
+        }
+    }
+    break;
+    default:
+        ASSERT(false, "ERROR LIGHT TYPE!");
+        break;
+    }
+
+
     std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>();
-    depthBuffer->Create(L"ShadowMap", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
+    std::wstring depthBufferName = L"ShadowMap_" + std::to_wstring(lightInfo.LightShadowMapIndex);
+    depthBuffer->Create(depthBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
     GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer, lightInfo);
 
     switch (lightInfo.Type)

@@ -28,6 +28,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/EnvironmentTest/*.hlsl)
 file(GLOB SKYBOX_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/SkyBox/*.hlsl)
 
+file(GLOB SHADOWMAP_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Shadow/*.hlsl)
+
 file(GLOB PRESENT_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/Present/*.hlsl)
 
@@ -43,6 +46,7 @@ source_group(ToyCar FILES ${TOYCAR_FILES})
 source_group(ABeautifulGame FILES ${ABEAUTIFULGAME_FILES})
 source_group(EnvironmentTest FILES ${ENVIRONMENTTEST_FILES})
 source_group(SkyBox FILES ${SKYBOX_FILES})
+source_group(Shadow FILES ${SHADOWMAP_FILES})
 source_group(Present FILES ${PRESENT_FILES})
 source_group(Atmosphere FILES ${ATMOSPHERE_FILES})
 
@@ -53,6 +57,7 @@ ${TOYCAR_FILES}
 ${ABEAUTIFULGAME_FILES}
 ${ENVIRONMENTTEST_FILES}
 ${SKYBOX_FILES}
+${SHADOWMAP_FILES}
 ${PRESENT_FILES}
 ${ATMOSPHERE_FILES}
 )

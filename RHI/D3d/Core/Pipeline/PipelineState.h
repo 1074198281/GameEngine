@@ -53,6 +53,12 @@ namespace D3dGraphicsCore {
             return *m_RootSignature;
         }
 
+        RootSignature* GetRootSignaturePtr(void)
+        {
+            ASSERT(m_RootSignature != nullptr);
+            return const_cast<RootSignature*>(m_RootSignature);
+        }
+
         ID3D12PipelineState* GetPipelineStateObject(void) const { return m_PSO; }
 
     protected:
