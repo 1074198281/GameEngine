@@ -300,8 +300,6 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
         m_pGraphicsPSO = g_PipelineStatusMap["Default"].get();
         m_pRootSignature = g_PipelineStatusMap["Default"]->GetRootSignaturePtr();
     }
-
-    ASSERT(m_pGraphicsPSO);
 }
 
 void D3dGraphicsCore::D3d12RHI::UpdateCameraConstants(My::Frame& frame)

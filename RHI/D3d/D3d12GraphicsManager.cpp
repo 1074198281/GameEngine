@@ -124,7 +124,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             ASSERT(vtArray.GetDataSize() / vtArray.GetElementCount() == sizeof(float), "Vertex Type Double, Not Realize! ERROR!");
             vertexPerCount += vtArray.GetDataSize() / vtArray.GetVertexCount() / (vtArray.GetDataSize() / vtArray.GetElementCount());
         }
-        float* pVertexData = new float[elementCount * vertexPerCount];
+        float* pVertexData = new float[(uint64_t)elementCount * vertexPerCount];
 
         for (int i = 0; i < elementCount; i++) {
             int _dataCount = 0;
@@ -440,6 +440,27 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         for (auto& frame : m_Frames) {
             frame.BatchContexts.push_back(dbc);
         }
+    }
+
+    uint32_t light_index = 0;
+    for (auto _it : scene.LightNodes) {
+        auto& LightNode = _it.second;
+        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef());
+        Light l;
+        l.Insensity = *pLight->GetIntensity();
+        l.LightColor = pLight->GetColor().Value;
+        l.LightDirection = g_VectorZero;
+        l.LightPosition = LightNode->GetCalculatedTransform().get()[3];
+        l.LightProjectionMatrix = g_IdentityMatrix;
+        l.LightViewMatrix = g_IdentityMatrix;
+        l.Type = pLight->GetLightType();
+        for (auto& frame : m_Frames) {
+            frame.LightInfomation.Lights[light_index] = l;
+        }
+        light_index++;
+    }
+    for (auto& frame : m_Frames) {
+        frame.FrameContext.LightNum = light_index;
     }
 }
 

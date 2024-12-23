@@ -774,4 +774,18 @@ namespace My {
         return trans;
     }
 
+    static Matrix4X4f g_IdentityMatrix = {{{
+            { 1.0f, 0.0f, 0.0f, 0.0f},
+            { 0.0f, 1.0f, 0.0f, 0.0f},
+            { 0.0f, 0.0f, 1.0f, 0.0f},
+            { 0.0f, 0.0f, 0.0f, 1.0f}
+        }}};
+
+    static Vector4f g_PositionX = { 1.0f, 0.0f, 0.0f, 1.0f };
+    static Vector4f g_PositionY = { 0.0f, 1.0f, 0.0f, 1.0f };
+    static Vector4f g_PositionZ = { 0.0f, 0.0f, 1.0f, 1.0f };
+    static Vector4f g_VectorX = { 1.0f, 0.0f, 0.0f, 0.0f };
+    static Vector4f g_VectorY = { 0.0f, 1.0f, 0.0f, 0.0f };
+    static Vector4f g_VectorZ = { 0.0f, 0.0f, 1.0f, 0.0f };
+    static Vector4f g_VectorZero = { 0.0f, 0.0f, 1.0f, 0.0f };
 }
