@@ -49,6 +49,10 @@ cbuffer cbPerFrameConstants : register(b2)
 };
 
 // cb3
+// padding0 contains 
+// bool iscastshadow
+// int lightindex
+// char padding[2]
 struct cLight
 {
     float4x4 gLightViewMatrix;
@@ -59,7 +63,7 @@ struct cLight
     int gShadowMapIndex;
     int gLightType;
     float gInsensity;
-    float padding0;
+    uint padding0;
 };
 cbuffer LightInfo : register(b3)
 {
@@ -152,6 +156,8 @@ float4 main(VertexOut pin) : SV_Target
         light.light[idx].LightDirection = glightinfo[idx].gLightDirection;
         light.light[idx].LightPosition = glightinfo[idx].gLightPosition;
         light.light[idx].LightType = glightinfo[idx].gLightType;
+        light.light[idx].ShadowMapIndex = glightinfo[idx].gShadowMapIndex;
+        light.light[idx].IsCastShadow = glightinfo[idx].padding0 >> 24;
         
         light.LightNum = gLightNum;
     }

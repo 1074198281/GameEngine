@@ -193,23 +193,25 @@ void My::GuiSubPass::Draw(Frame& frame)
 				}
 			}
 
-			if (pScene->LightNodes.size())
-			{
+			if (ImGui::TreeNode("Light Info")) {
 				LightInfo* pLightInfo = reinterpret_cast<LightInfo*>(m_pGraphicsManager->GetLightInfo());
 				int lightNum = pScene->LightNodes.size();
 				for (int i = 0; i < lightNum; i++)
 				{
 					Light* l = &pLightInfo->Lights[i];
-					std::string lightName = m_pGraphicsManager->GetLightName(l->padding0);
+					std::string lightName = m_pGraphicsManager->GetLightName(l->LightIndex);
 					if (ImGui::TreeNode(lightName.c_str()))
 					{
-						ImGui::SliderFloat("LightInsensity", &l->Insensity, 0, l->Insensity);
+						ImGui::SliderFloat("LightInsensity", &l->Insensity, 0, pScene->GetLight(lightName)->GetIntensity());
 						ImGui::SliderFloat4("LightColor", l->LightColor, 0, 1);
 						ImGui::SliderFloat4("LightPosition", l->LightPosition, -100, 100);
+						ImGui::Checkbox("CastShadow", &l->IsCastShadow);
 
 						ImGui::TreePop();
 					}
 				}
+
+				ImGui::TreePop();
 			}
 
 			ImGui::End();

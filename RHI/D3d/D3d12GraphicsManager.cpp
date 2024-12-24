@@ -441,27 +441,6 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
             frame.BatchContexts.push_back(dbc);
         }
     }
-
-    uint32_t light_index = 0;
-    for (auto _it : scene.LightNodes) {
-        auto& LightNode = _it.second;
-        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef());
-        Light l;
-        l.Insensity = *pLight->GetIntensity();
-        l.LightColor = pLight->GetColor().Value;
-        l.LightDirection = g_VectorZero;
-        l.LightPosition = LightNode->GetCalculatedTransform().get()[3];
-        l.LightProjectionMatrix = g_IdentityMatrix;
-        l.LightViewMatrix = g_IdentityMatrix;
-        l.Type = pLight->GetLightType();
-        for (auto& frame : m_Frames) {
-            frame.LightInfomation.Lights[light_index] = l;
-        }
-        light_index++;
-    }
-    for (auto& frame : m_Frames) {
-        frame.FrameContext.LightNum = light_index;
-    }
 }
 
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
@@ -513,33 +492,39 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.FreeLightInfo();
 
-    int lightNum = 0;
     LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo), 16);
     memset(info, 0, sizeof(LightInfo));
     std::vector<std::string> lightNames;
-    for (auto& node : scene.LightNodes)
-    {
-        if (node.second->CastShadow())
-        {
-            Light l;
-            
-            std::string name = node.second->GetSceneObjectRef();
-            lightNames.push_back(name);
-            auto lightObject = scene.GetLight(name);
-            Matrix4X4f lightMat = *node.second->GetCalculatedTransform().get();
-            Vector4f defaultLightDir(0.0f, -1.0f, 0.0f, 0.0f);
 
-            l.LightPosition = My::Vector4f(lightMat[0][3], lightMat[1][3], lightMat[2][3], 1.0f);
-            l.Insensity = *lightObject->GetIntensity();
-            l.LightColor = lightObject->GetColor().Value;
-            l.Type = lightObject->GetLightType();
-            MatrixMulVector(l.LightDirection, defaultLightDir, lightMat);
-            l.padding0 = lightNum;
-            info->Lights[lightNum++] = l;
-        }
+    uint32_t light_index = 0;
+    for (auto _it : scene.LightNodes) {
+        auto& LightNode = _it.second;
+        lightNames.push_back(LightNode->GetSceneObjectRef());
+        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef());
+        Matrix4X4f trans = *LightNode->GetCalculatedTransform().get();
+
+        Light l;
+        memset(&l, 0, sizeof(Light));
+        l.Insensity = pLight->GetIntensity();
+        l.LightColor = pLight->GetColor().Value;
+        l.Type = pLight->GetLightType();
+        l.IsCastShadow = pLight->GetIfCastShadow();
+        l.LightIndex = light_index;
+
+        // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
+        MatrixMulVector(l.LightDirection, g_VectorZReserve, trans);
+
+        l.LightPosition = Vector4f(trans[0][3], trans[1][3], trans[2][3], 1.0f);
+
+        l.LightProjectionMatrix = g_IdentityMatrix;
+        l.LightViewMatrix = g_IdentityMatrix;
+
+        info->Lights[light_index] = l;
+        light_index++;
     }
 
-    GraphicsRHI.SetLightInfo(info, lightNum);
+
+    GraphicsRHI.SetLightInfo(info, light_index);
     GraphicsRHI.SetLightNameInfo(lightNames);
 }
 
@@ -956,6 +941,12 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
         }
 
         dbc->ModelMatrix = PhysicsTrans * ModelTrans;
+    }
+
+    auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
+    for (auto& frame : m_Frames) {
+        frame.LightInfomation = *reinterpret_cast<My::LightInfo*>(GraphicsRHI.GetLightInfo());
+        frame.FrameContext.LightNum = GraphicsRHI.GetLightCount();
     }
 }
 

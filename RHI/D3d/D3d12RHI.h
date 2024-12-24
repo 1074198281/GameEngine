@@ -91,6 +91,7 @@ namespace D3dGraphicsCore {
 		void SetLightNameInfo(std::vector<std::string>& names);
 		void FreeLightInfo();
 		void* GetLightInfo() { return m_pLightInfo; }
+		int GetLightCount() { return m_LightNum; }
 		std::string GetLightName(int index) { return m_LightNameInfo[index]; }
 	private:
 		void InitializeCoreHWND();

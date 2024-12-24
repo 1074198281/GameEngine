@@ -59,7 +59,9 @@ namespace My {
 		int LightShadowMapIndex;
 		LightType Type;
 		float Insensity;
-		float padding0;
+		bool IsCastShadow;
+		uint8_t LightIndex;
+		uint8_t padding0[2];
 	} Light;
 
 	__declspec(align(16)) typedef struct LightInfo {

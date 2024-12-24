@@ -56,9 +56,9 @@ namespace My {
         }
 
         const Color& GetColor() { return m_LightColor; };
-        float* GetIntensity() { return &m_fIntensity; };
+        float GetIntensity() { return m_fIntensity; };
         LightType GetLightType() { return m_LightType; };
-        bool* GetIfCastShadow() { return &m_bCastShadows; };
+        bool GetIfCastShadow() { return m_bCastShadows; };
     protected:
         // can only be used as base class of delivered lighting objects
         SceneObjectLight(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeLight), m_LightColor(Vector4f(1.0f)), m_fIntensity(100.0f), m_LightAttenuation(DefaultAttenFunc), m_bCastShadows(false) {};
@@ -81,6 +81,12 @@ namespace My {
         float   m_fPenumbraAngle;
     public:
         SceneObjectSpotLight(void) : SceneObjectLight(), m_fConeAngle(PI / 4.0f), m_fPenumbraAngle(PI / 3.0f) {};
+
+        void SetAngleParam(float coneAngle, float penumbraAngle) 
+        { 
+            m_fConeAngle = coneAngle; 
+            m_fPenumbraAngle = penumbraAngle;
+        }
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectSpotLight& obj);
     };

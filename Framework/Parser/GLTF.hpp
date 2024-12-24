@@ -201,10 +201,10 @@ namespace glTF
         float m_Intensity;
         eLightType m_Type;
         union {
-            struct SpotProperties {
-                float innerConnangle;
+            struct {
+                float innerConnAngle;
                 float outerConnAngle;
-            };
+            }SpotProperties;
         };
     };
 
@@ -1681,41 +1681,45 @@ namespace glTF
             }
 
             std::shared_ptr<My::SceneLightNode> LightNode = std::make_shared<My::SceneLightNode>(nodeName);
-            std::shared_ptr<My::SceneObjectLight> LightObject;
 
-            std::string lightParam;
-            lightParam = "lightType";
+            std::string lightTypeParam("lightType");
+            std::string lightColorParam("light");
+            std::string lightInsensityParam("intensity");
+            My::Vector4f color(pNode->light->m_Color[0], pNode->light->m_Color[1], pNode->light->m_Color[2], 1.0f);
 
             switch (pNode->light->m_Type)
             {
             case Light::eLightType::kPoint:
             {
-                LightObject = std::make_shared<My::SceneObjectOmniLight>();
-                LightObject->SetParam(lightParam, My::LightType::Omni);
+                std::shared_ptr<My::SceneObjectOmniLight> LightObject = std::make_shared<My::SceneObjectOmniLight>();
+                LightObject->SetParam(lightTypeParam, My::LightType::Omni);
+                LightObject->SetColor(lightColorParam, color);
+                LightObject->SetParam(lightInsensityParam, pNode->light->m_Intensity);
+                Scene.Lights.emplace(nodeName, LightObject);
             }
             break;
             case Light::eLightType::kDirectional:
             {
-                LightObject = std::make_shared<My::SceneObjectInfiniteLight>();
-                LightObject->SetParam(lightParam, My::LightType::Infinity);
+                std::shared_ptr<My::SceneObjectInfiniteLight> LightObject = std::make_shared<My::SceneObjectInfiniteLight>();
+                LightObject->SetParam(lightTypeParam, My::LightType::Infinity);
+                LightObject->SetColor(lightColorParam, color);
+                LightObject->SetParam(lightInsensityParam, pNode->light->m_Intensity);
+                Scene.Lights.emplace(nodeName, LightObject);
             }
             break;
             case Light::eLightType::kSpot:
             {
-                LightObject = std::make_shared<My::SceneObjectOmniLight>();
-                LightObject->SetParam(lightParam, My::LightType::Spot);
+                std::shared_ptr<My::SceneObjectSpotLight> LightObject = std::make_shared<My::SceneObjectSpotLight>();
+                LightObject->SetParam(lightTypeParam, My::LightType::Spot);
+                LightObject->SetColor(lightColorParam, color);
+                LightObject->SetParam(lightInsensityParam, pNode->light->m_Intensity);
+                LightObject->SetAngleParam(pNode->light->SpotProperties.innerConnAngle, pNode->light->SpotProperties.outerConnAngle);
+                Scene.Lights.emplace(nodeName, LightObject);
             }
             break;
             default:
                 break;
             }
-            
-            My::Vector4f color(pNode->light->m_Color[0], pNode->light->m_Color[1], pNode->light->m_Color[2], 1.0f);
-            
-            lightParam = "light";
-            LightObject->SetColor(lightParam, color);
-            lightParam = "intensity";
-            LightObject->SetParam(lightParam, pNode->light->m_Intensity);
 
             //Transform
             if (pNode->hasMatrix) {
@@ -1738,7 +1742,6 @@ namespace glTF
 
             LightNode->AddSceneObjectRef(nodeName);
             Scene.LightNodes.emplace(nodeName, LightNode);
-            Scene.Lights.emplace(nodeName, LightObject);
             return LightNode;
         }
 

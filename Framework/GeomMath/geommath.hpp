@@ -787,5 +787,8 @@ namespace My {
     static Vector4f g_VectorX = { 1.0f, 0.0f, 0.0f, 0.0f };
     static Vector4f g_VectorY = { 0.0f, 1.0f, 0.0f, 0.0f };
     static Vector4f g_VectorZ = { 0.0f, 0.0f, 1.0f, 0.0f };
+    static Vector4f g_VectorXReserve = { -1.0f, 0.0f, 0.0f, 0.0f };
+    static Vector4f g_VectorYReserve = { 0.0f, -1.0f, 0.0f, 0.0f };
+    static Vector4f g_VectorZReserve = { 0.0f, 0.0f, -1.0f, 0.0f };
     static Vector4f g_VectorZero = { 0.0f, 0.0f, 1.0f, 0.0f };
 }

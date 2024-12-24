@@ -33,9 +33,10 @@ struct PerLightPro
     float4 LightPosition;
     float4 LightColor;
     float4 LightDirection;
-    float Insensity;
+    int ShadowMapIndex;
     int LightType;
-    float2 padding0;
+    float Insensity;
+    half IsCastShadow;
 };
 
 // in light properties, position is in the world coordinate
@@ -148,7 +149,7 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, LightProperties l
         // calc diffuse
         float3 diffuse = kD * surface.Albedo / PI;
         
-        irradiance += (diffuse + specular) * radiance * N_dot_L;
+        irradiance += (diffuse + specular) * radiance * N_dot_L * light.light[lightIdx].IsCastShadow;
     }
     return irradiance;
 }
