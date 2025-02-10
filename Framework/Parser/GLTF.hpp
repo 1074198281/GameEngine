@@ -579,16 +579,16 @@ namespace glTF
 
                     ByteArray ba = My::ReadFileSyncDirectly(filepath.c_str(), true);
                     assert(ba->size() > 0);
-                    printf("Missing bin file %s\n", filepath.c_str());
+                    printf("[GLTF Parser] Missing bin file %s\n", filepath.c_str());
                     m_buffers.push_back(ba);
                 }
                 else
                 {
                     //ASSERT(it == buffers.begin(), "Only the 1st buffer allowed to be internal");
                     assert(it == buffers.begin());
-                    printf("Only the 1st buffer allowed to be internal");
+                    printf("[GLTF Parser] Only the 1st buffer allowed to be internal");
                     assert(chunk1bin->size() > 0);
-                    printf("GLB chunk1 missing data or not a GLB file");
+                    printf("[GLTF Parser] GLB chunk1 missing data or not a GLB file");
                     m_buffers.push_back(chunk1bin);
                 }
             }
@@ -693,8 +693,12 @@ namespace glTF
                     material.baseColorFactor[1] = 1.0f;
                     material.baseColorFactor[2] = 1.0f;
                     material.baseColorFactor[3] = 1.0f;
+                    material.emissiveFactor[0] = 0.0f;
+                    material.emissiveFactor[1] = 0.0f;
+                    material.emissiveFactor[2] = 0.0f;
                     material.metallicFactor = 1.0f;
                     material.roughnessFactor = 1.0f;
+                    material.normalTextureScale = 0.0f;
                     for (uint32_t i = 0; i < Material::kNumTextures; ++i)
                         material.textures[i] = nullptr;
 
@@ -1801,7 +1805,7 @@ namespace glTF
                 }
                 if (!nodeIt->mesh && !nodeIt->camera) {
                     if (!nodeIt->children.size()) {
-                        std::cout << "Blank Node, Nothing In It! ERROR!" << "Node Name: " << nodeIt->name << std::endl;
+                        std::cout << "[GLTF Parser] Blank Node, Nothing In It! ERROR!" << "Node Name: " << nodeIt->name << std::endl;
 #ifdef _DEBUG
                         //__debugbreak();
 #endif

@@ -23,7 +23,7 @@ int My::BaseApplication::Initialize()
 	for (auto& mgr : m_RuntimeModule) {
 		int ret = mgr->Initialize();
 		if (ret > 0) {
-			printf("Initialize RuntimeModule Failed!");
+			printf("[RuntimeModuleInit] Initialize RuntimeModule Failed!");
 			break;
 		}
 	}

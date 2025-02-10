@@ -43,7 +43,7 @@ namespace My {
         void UpdateD3dFrameConstants(Frame& frame);
     public:
         // pass interface
-        void DrawBatch(Frame& frame) override;
+        void DrawBatch(Frame& frame, bool castShadow = false, bool isDrawSkybox = false) override;
         void DrawSkybox(Frame& frame) override;
         void DrawGui(Frame& frame) override;
         void DrawPresent(Frame& frame) override;

@@ -28,8 +28,8 @@ void My::ShadowMapPass::Draw(Frame& frame)
 				continue;
 			}
 			const char* PipelineStatusName = "Omni Light";
-			//m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			//m_pGraphicsManager->SetShadowResources(frame, light);
+			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
+			m_pGraphicsManager->SetShadowResources(frame, light);
 			light.LightShadowMapIndex = cube_shadow_map_index++;
 		}
 		break;
@@ -39,8 +39,8 @@ void My::ShadowMapPass::Draw(Frame& frame)
 				continue;
 			}
 			const char* PipelineStatusName = "Spot Light";
-			//m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			//m_pGraphicsManager->SetShadowResources(frame, light);
+			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
+			m_pGraphicsManager->SetShadowResources(frame, light);
 			light.LightShadowMapIndex = shadow_map_index++;
 		}
 		break;
@@ -50,8 +50,8 @@ void My::ShadowMapPass::Draw(Frame& frame)
 				continue;
 			}
 			const char* PipelineStatusName = "Area Light";
-			//m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			//m_pGraphicsManager->SetShadowResources(frame, light);
+			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
+			m_pGraphicsManager->SetShadowResources(frame, light);
 			light.LightShadowMapIndex = shadow_map_index++;
 		}
 		break;
@@ -61,8 +61,8 @@ void My::ShadowMapPass::Draw(Frame& frame)
 				continue;
 			}
 			const char* PipelineStatusName = "Infi Light";
-			//m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			//m_pGraphicsManager->SetShadowResources(frame, light);
+			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
+			m_pGraphicsManager->SetShadowResources(frame, light);
 			light.LightShadowMapIndex = global_shadow_map_index++;
 		}
 		break;
@@ -70,7 +70,7 @@ void My::ShadowMapPass::Draw(Frame& frame)
 			break;
 		}
 
-		//m_pGraphicsManager->DrawBatch(frame);
+		m_pGraphicsManager->DrawBatch(frame, true, false);
 	}
 
 	frame.FrameContext.ShadowMap.size = shadow_map_index;

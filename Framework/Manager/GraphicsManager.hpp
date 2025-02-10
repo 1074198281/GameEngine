@@ -33,7 +33,7 @@ namespace My {
 
     public:
         // pass interface
-        void DrawBatch(Frame& frame) override {}
+        void DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox) override {}
         void DrawSkybox(Frame& frame) override {}
         void DrawGui(Frame& frame) override {}
         void DrawPresent(Frame& frame) override {}

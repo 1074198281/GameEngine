@@ -32,7 +32,7 @@ namespace My {
 
     public:
     // pass interface
-        virtual void DrawBatch(Frame& frame) = 0;
+        virtual void DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox) = 0;
         virtual void DrawSkybox(Frame& frame) = 0;
         virtual void DrawGui(Frame& frame) = 0;
         virtual void DrawPresent(Frame& frame) = 0;

@@ -107,6 +107,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         auto pMesh = pGeometry->GetMesh().lock();
         if (!pMesh) {
             ASSERT(false, "Mesh Is Empty,ERROR!");
+            std::cout << "[D3d12 Initialize Geometry] Mesh Is Empty!" << std::endl;
             continue;
         }
 
@@ -193,6 +194,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         break;
         default:
             ASSERT(false, "Convert Index Type ERROR!");
+            std::cout << "[D3d12 Initialize Geometry] Convert Index Type ERROR!" << std::endl;
             break;
         }
         dbc->m_indice_buffer_index = m_VecIndexBuffer.size();
@@ -257,6 +259,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                     break;
                     default:
                         ASSERT(false, "NO BLANK DESCRIPTOR TO FILL HEAP,ERROR!");
+                        std::cout << "[D3d12 Initialize Geometry] NO BLANK DESCRIPTOR TO FILL HEAP,ERROR!" << std::endl;
                         break;
                     }
                 }
@@ -290,6 +293,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 break;
                 default:
                     ASSERT(false, "Material Type ERROR!");
+                    std::cout << "[D3d12 Initialize Geometry] Material Type ERROR!" << std::endl;
                     break;
                 }
 
@@ -350,6 +354,7 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                 break;
                 default:
                     ASSERT(false, "TEXTURE TRANSFORM ERROR!");
+                    std::cout << "[D3d12 Initialize Geometry] TEXTURE TRANSFORM ERROR!" << std::endl;
                     break;
                 }
             }
@@ -484,6 +489,7 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
         m_IBLResource->BRDF_LUT_Image->GetAddressOf(), Handle);
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+        std::cout << "[D3d12 Load DDS] CREATE DDS FROM FILE FAILED! ERROR!" << std::endl;
     }
 }
 
@@ -565,6 +571,7 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
         pSpecularTex->GetAddressOf(), Handle, map->pDiffuse.get());
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+        std::cout << "[D3d12 Load DDS] CREATE DDS FROM FILE FAILED! ERROR!" << std::endl;
     }
 
     D3dGraphicsCore::OffsetDescriptorHandle(Handle);
@@ -572,6 +579,7 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
         pDiffuseTex->GetAddressOf(), Handle, map->pSpecular.get());
     if (FAILED(hr)) {
         ASSERT(false, "CREATE DDS FROM FILE FAILED! ERROR!");
+        std::cout << "[D3d12 Load DDS] CREATE DDS FROM FILE FAILED! ERROR!" << std::endl;
     }
     
     map->name = imageName;
@@ -633,6 +641,7 @@ int My::D3d12GraphicsManager::InitializeD3dImGUI()
     ImGUIHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
     if (HeapIdx == -1) {
         ASSERT(false, "Allocate Descriptor From Heap For ImGUI Failed! ERROR!");
+        std::cout << "[D3d12 Init ImGUI] Allocate Descriptor From Heap For ImGUI Failed! ERROR!" << std::endl;
         return -1;
     }
 
@@ -709,7 +718,8 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
         InputLayoutType |= (1 << kTexcoord1);
     }
     else {
-        ASSERT(false, "Set InputLayout Type Error!")
+        ASSERT(false, "Set InputLayout Type Error!");
+        std::cout << "[D3d12 Layout Error] Set InputLayout Type Error!" << std::endl;
         return false;
     }
     return true;
@@ -833,6 +843,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     break;
     default:
         ASSERT(false, "ERROR LIGHT TYPE!");
+        std::cout << "[D3d12 Shadow Resource] ERROR LIGHT TYPE!" << std::endl;
         break;
     }
 
@@ -870,6 +881,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     break;
     default:
         ASSERT(false, "Error Light Type");
+        std::cout << "[D3d12 Shadow Resource] Error Light Type!" << std::endl;
         break;
     }
 }
@@ -900,6 +912,7 @@ size_t My::D3d12GraphicsManager::GetSkyboxTextureGpuPtr(const std::string skybox
 {
     if (!m_IBLResource->IBLImages.contains(m_iSkyboxIndex)) {
         ASSERT(false, "Skybox Not Exist!");
+        std::cout << "[D3d12 Get Skybox Error] Skybox Not Exist!" << std::endl;
         return 0;
     }
 
@@ -919,9 +932,11 @@ size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int ma
             return handle.GetGpuPtr();
         } else {
             ASSERT(false, "Geo %s Has No Texture. Type: %d", pInfo->name, material_index);
+            std::cout << "[D3d12 Get Texture Error] Geo " << pInfo->name << "Has No Texture. Type: " << material_index << std::endl;
         }
     } else {
         ASSERT(false, "No Such Texture. Batch: %d", batch_index);
+        std::cout << "[D3d12 Get Texture Error] No Such Texture. Batch: " << batch_index << std::endl;
     }
     return 0;
 }
@@ -950,7 +965,7 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     }
 }
 
-void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
+void My::D3d12GraphicsManager::DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     for (auto& batch : frame.BatchContexts) {
@@ -964,6 +979,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
                 handle = m_IBLResource->IBLImages[m_iSkyboxIndex]->handle;
             } else {
                 ASSERT(false, "No Such Skybox Texture, Name: %s", skyboxName);
+                std::cout << "[D3d12 Draw Batch] No Such Skybox Texture, Name: " << skyboxName << std::endl;
                 m_bDrawSkybox = false;
             }
         }
@@ -972,7 +988,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame)
                 m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
                 m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
                 pHeap,
-                handle, false, m_bDrawSkybox);
+                handle, castShadow, m_bDrawSkybox & isDrawSkybox);
         }
     }
 }

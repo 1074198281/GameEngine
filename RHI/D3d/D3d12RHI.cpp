@@ -203,6 +203,7 @@ void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::P
     break;
     default:
         ASSERT(false, "ERROR! No Configured Primitive Type!");
+        std::cout << "[PrimitiveType ERROR] No Configured Primitive Type!" << std::endl;
         break;
     }
 
@@ -286,6 +287,7 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
         }
         else {
             ASSERT(false, "InValid Compute Pipeline Status Name!");
+            std::cout << "[PSO ERROR] InValid Compute Pipeline Status Name!" << std::endl;
             m_pComputePSO = nullptr;
         }
         return;
@@ -297,6 +299,7 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
     }
     else {
         ASSERT(false, "InValid Pipeline Status Name!");
+        std::cout << "[PSO ERROR] InValid Pipeline Status Name!" << std::endl;
         m_pGraphicsPSO = g_PipelineStatusMap["Default"].get();
         m_pRootSignature = g_PipelineStatusMap["Default"]->GetRootSignaturePtr();
     }
@@ -416,13 +419,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
             pfc.ViewMatrix = m_CacheLight.LightViewMatrix;
             pfc.ProjectionMatrix = m_CacheLight.LightProjectionMatrix;
             pfc.CameraPosition = m_CacheLight.LightPosition;
-
-
-
-
         }
-
-
     }
     
     if(isDrawSkybox)
