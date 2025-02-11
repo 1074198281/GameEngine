@@ -88,6 +88,15 @@ namespace My {
             m_fPenumbraAngle = penumbraAngle;
         }
 
+        void GetAngleParam(float& conAngle, float& penumbraAngle) 
+        {
+            conAngle = m_fConeAngle;
+            penumbraAngle = m_fPenumbraAngle;
+        }
+
+        float GetConAngle() { return m_fConeAngle; }
+        float GetPenumbraAngle() { return m_fPenumbraAngle; }
+
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectSpotLight& obj);
     };
 

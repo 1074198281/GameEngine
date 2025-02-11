@@ -506,7 +506,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
     for (auto _it : scene.LightNodes) {
         auto& LightNode = _it.second;
         lightNames.push_back(LightNode->GetSceneObjectRef());
-        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef());
+        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef()).get();
         Matrix4X4f trans = *LightNode->GetCalculatedTransform().get();
 
         Light l;
@@ -519,11 +519,38 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
 
         // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
         MatrixMulVector(l.LightDirection, g_VectorZReserve, trans);
-
         l.LightPosition = Vector4f(trans[0][3], trans[1][3], trans[2][3], 1.0f);
 
-        l.LightProjectionMatrix = g_IdentityMatrix;
-        l.LightViewMatrix = g_IdentityMatrix;
+        switch (l.Type)
+        {
+        case LightType::Omni:
+        {
+
+        }
+        break;
+        case LightType::Infinity:
+        {
+
+        }
+        break;
+        case LightType::Spot:
+        {
+            float conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
+            float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
+            l.LightProjectionMatrix = My::BuildPerspectiveMatrix(conAngle, 1.0f, 1.0f, 50.0f);
+            l.LightViewMatrix;
+        }
+        break;
+        case LightType::Area:
+        {
+
+        }
+        break;
+        default:
+            ASSERT(false, "Unknown Light Type!");
+            std::cout << "[D3d12 Initialize Light] Unknown Light Type!" << std::endl;
+            break;
+        }
 
         info->Lights[light_index] = l;
         light_index++;
@@ -798,10 +825,11 @@ void My::D3d12GraphicsManager::SetBatchResources(Frame& frame)
     GraphicsRHI.SetBatchResources();
 }
 
-void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
+void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
+    auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
     // each light already has its own depthbuffer  
     switch (lightInfo.Type)
     {
@@ -809,7 +837,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     {
         if (m_CubeShadowMapTexture.size()) {
             GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_CubeShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+                *m_CubeShadowMapTexture[lightInfo.LightShadowMapIndex]);
             return;
         }
     }
@@ -818,7 +846,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     {
         if (m_ShadowMapTexture.size()) {
             GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex]);
             return;
         }
     }
@@ -827,7 +855,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     {
         if (m_ShadowMapTexture.size()) {
             GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex]);
             return;
         }
     }
@@ -836,7 +864,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     {
         if (m_GlobalShadowMapTexture.size()) {
             GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_GlobalShadowMapTexture[lightInfo.LightShadowMapIndex], lightInfo);
+                *m_GlobalShadowMapTexture[lightInfo.LightShadowMapIndex]);
             return;
         }
     }
@@ -851,7 +879,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, Light lightInfo)
     std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>();
     std::wstring depthBufferName = L"ShadowMap_" + std::to_wstring(lightInfo.LightShadowMapIndex);
     depthBuffer->Create(depthBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
-    GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer, lightInfo);
+    GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer);
 
     switch (lightInfo.Type)
     {
@@ -965,7 +993,7 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     }
 }
 
-void My::D3d12GraphicsManager::DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox)
+void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool castShadow, bool isDrawSkybox)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     for (auto& batch : frame.BatchContexts) {

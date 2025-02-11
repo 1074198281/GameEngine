@@ -71,7 +71,7 @@ namespace D3dGraphicsCore {
 
 	public:
 		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-			const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast = false, bool isDrawSkybox = false);
+			const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, uint8_t lightIdx = -1, bool bShadowCast = false, bool isDrawSkybox = false);
 		void DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
@@ -85,7 +85,7 @@ namespace D3dGraphicsCore {
 
 		void SetPipelineStatus(const std::string& PSOName);
 		void SetBatchResources();
-		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light);
+		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 
 		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
 		void SetLightNameInfo(std::vector<std::string>& names);

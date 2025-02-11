@@ -33,7 +33,7 @@ namespace My {
 
     public:
         // pass interface
-        void DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox) override {}
+        void DrawBatch(Frame& frame, uint8_t lightIdx = -1, bool castShadow = false, bool isDrawSkybox = false) override {}
         void DrawSkybox(Frame& frame) override {}
         void DrawGui(Frame& frame) override {}
         void DrawPresent(Frame& frame) override {}
@@ -47,7 +47,7 @@ namespace My {
 
         void SetPipelineStatus(const std::string& PSOName) override {}
         void SetBatchResources(Frame& frame) override {}
-        void SetShadowResources(Frame& frame, Light lightInfo) override {}
+        void SetShadowResources(Frame& frame, uint8_t lightIdx) override {}
 
     public:
         void* GetLightInfo() override { return nullptr; };

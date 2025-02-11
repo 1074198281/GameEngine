@@ -32,7 +32,7 @@ namespace My {
 
     public:
     // pass interface
-        virtual void DrawBatch(Frame& frame, bool castShadow, bool isDrawSkybox) = 0;
+        virtual void DrawBatch(Frame& frame, uint8_t lightIdx = -1, bool castShadow = false, bool isDrawSkybox = false) = 0;
         virtual void DrawSkybox(Frame& frame) = 0;
         virtual void DrawGui(Frame& frame) = 0;
         virtual void DrawPresent(Frame& frame) = 0;
@@ -45,7 +45,7 @@ namespace My {
         virtual void EndOverlayPass() = 0;
         virtual void SetPipelineStatus(const std::string& PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
-        virtual void SetShadowResources(Frame& frame, Light lightInfo) = 0;
+        virtual void SetShadowResources(Frame& frame, uint8_t lightIdx) = 0;
     public:
         virtual void* GetLightInfo() = 0;
         virtual std::string GetLightName(int index) = 0;
