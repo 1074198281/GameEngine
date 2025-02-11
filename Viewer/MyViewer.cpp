@@ -5,8 +5,7 @@ int My::MyViewerLogic::Initialize()
 {
 	int result = 0;
 
-	std::cout << "key help:" << std::endl;
-	std::cout << "speed up: page up, speed down: page down. R to reset." << std::endl;
+	std::cout << "[AppInitialize] key help: speed up: page up, speed down: page down. R to reset." << std::endl;
 
 	ExecuteCommandLine();
 
@@ -46,8 +45,8 @@ int My::MyViewerLogic::ExecuteCommandLine()
 		//const char* ScenePath = "Scene/glTF/LightTest/LightTest.gltf";
 		//const char* ScenePath = "Scene/glTF/ray_tracing/ray_tracing.gltf";
 		//char* default_loading = strcat(directory, "/Scene/glTF/ToyCar/glTF/ToyCar.gltf");
-		std::cout << "0. toycar   1.box   2.lighttest   3.ray_tracing" << std::endl;
-		std::cout << "Select Load Index: ";
+		std::cout << "[Scene Select] 0. toycar   1.box   2.lighttest   3.ray_tracing" << std::endl;
+		std::cout << "[Scene Select] Select Load Index: ";
 		std::cin >> loadIndex;
 		if (loadIndex < 0) {
 

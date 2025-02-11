@@ -14,6 +14,7 @@ using namespace My;
 #ifdef WINPIX_DEBUG
 #include <filesystem>
 #include <ShlObj.h>
+#include "pix3.h"
 static std::wstring GetLatestWinPixGpuCapturerPath_Cpp17()
 {
 	LPWSTR programFilesPath = nullptr;
@@ -41,6 +42,43 @@ static std::wstring GetLatestWinPixGpuCapturerPath_Cpp17()
 	}
 
 	return pixInstallationPath / newestVersionFound / L"WinPixGpuCapturer.dll";
+}
+
+#include <windows.h>
+#include <strsafe.h>
+void ErrorExit(LPCTSTR lpszFunction)
+{
+	// Retrieve the system error message for the last-error code
+
+	LPVOID lpMsgBuf;
+	LPVOID lpDisplayBuf;
+	DWORD dw = GetLastError();
+
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		dw,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf,
+		0, NULL);
+
+	// Display the error message and exit the process
+
+	lpDisplayBuf = (LPVOID)LocalAlloc(LMEM_ZEROINIT,
+		(lstrlen((LPCTSTR)lpMsgBuf) + lstrlen((LPCTSTR)lpszFunction) + 40) * sizeof(TCHAR));
+	StringCchPrintf((LPTSTR)lpDisplayBuf,
+		LocalSize(lpDisplayBuf) / sizeof(TCHAR),
+		TEXT("%s failed with error %d: %s"),
+		lpszFunction, dw, lpMsgBuf);
+	//MessageBox(NULL, (LPCTSTR)lpDisplayBuf, TEXT("Error"), MB_OK);
+
+	std::cout << "[PixDebugError] " << (LPCTSTR)lpDisplayBuf << std::endl;
+
+	LocalFree(lpMsgBuf);
+	LocalFree(lpDisplayBuf);
+	//ExitProcess(dw);
 }
 
 #endif // WINPIX_DEBUG
@@ -71,9 +109,25 @@ static std::wstring GetLatestWinPixGpuCapturerPath_Cpp17()
 
 int main(int argc, char** argv) {
 #ifdef WINPIX_DEBUG
-	if (GetModuleHandle((LPCSTR)L"WinPixGpuCapturer.dll") == 0)
+	auto current_path = std::filesystem::current_path();
+	auto runtimePath = current_path / L"Debug\\WinPixEventRuntime.dll";
+	auto capturerPath = current_path / L"Debug\\WinPixGpuCapturer.dll";
+	LoadLibrary(TEXT((LPCSTR)runtimePath.c_str()));
+	ErrorExit(TEXT("LoadDLLRuntime"));
+	LoadLibrary(TEXT((LPCSTR)capturerPath.c_str()));
+	ErrorExit(TEXT("LoadDLLCapturer"));
+
+	HMODULE hModule = GetModuleHandle((LPCSTR)L"WinPixEventRuntime.dll");
+	//ErrorExit(TEXT("GetRuntimeModule"));
+
+	hModule = GetModuleHandle((LPCSTR)L"WinPixGpuCapturer.dll");
+	if (hModule == 0)
 	{
-		LoadLibrary((LPCSTR)GetLatestWinPixGpuCapturerPath_Cpp17().c_str());
+		ErrorExit(TEXT("GetCapturerModule"));
+
+		if (!LoadLibrary((LPCSTR)GetLatestWinPixGpuCapturerPath_Cpp17().c_str())) {
+			ErrorExit(TEXT("GetBaseModule"));
+		}
 	}
 #endif
 	int ret;

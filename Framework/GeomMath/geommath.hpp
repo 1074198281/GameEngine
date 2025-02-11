@@ -580,6 +580,14 @@ namespace My {
         result = tmp;
     }
 
+    inline void BuildViewMatrix(Matrix4X4f& result, const Vector4f position, const Vector4f lookAt, const Vector4f up)
+    {
+        Vector3f eyePos3(position.x, position.y, position.z);
+        Vector3f lookAt3(lookAt.x, lookAt.y, lookAt.z);
+        Vector3f up3(up.x, up.y, up.z);
+        BuildViewMatrix(result, eyePos3, lookAt3, up3);
+    }
+
     inline void BuildIdentityMatrix(Matrix4X4f& matrix)
     {
         Matrix4X4f identity = {{{
@@ -773,6 +781,31 @@ namespace My {
         trans = v;
         return trans;
     }
+
+
+    inline Matrix4X4f BuildOrthographicMatrix(float left, float right, float bottom, float top, float nearF, float farF) {
+        Matrix4X4f result;
+        result[0][0] = 2.0f / (right - left);
+        result[1][1] = 2.0f / (top - bottom);
+        result[2][2] = -2.0f / (farF - nearF);
+        result[3][0] = -(right + left) / (right - left);
+        result[3][1] = -(top + bottom) / (top - bottom);
+        result[3][2] = -(farF + nearF) / (farF - nearF);
+        result[3][3] = 1.0f;
+        return result;
+    }
+
+    Matrix4X4f BuildPerspectiveMatrix(float fov, float aspect, float nearF, float farF) {
+        Matrix4X4f result;
+        float tanHalfFov = tan(fov / 2.0f);
+        result[0][0] = 1.0f / (aspect * tanHalfFov);
+        result[1][1] = 1.0f / tanHalfFov;
+        result[2][2] = -(farF + nearF) / (farF - nearF);
+        result[2][3] = -1.0f;
+        result[3][2] = -(2.0f * farF * nearF) / (farF - nearF);
+        return result;
+    }
+
 
     static Matrix4X4f g_IdentityMatrix = {{{
             { 1.0f, 0.0f, 0.0f, 0.0f},

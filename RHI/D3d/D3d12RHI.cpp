@@ -203,6 +203,7 @@ void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::P
     break;
     default:
         ASSERT(false, "ERROR! No Configured Primitive Type!");
+        std::cout << "[PrimitiveType ERROR] No Configured Primitive Type!" << std::endl;
         break;
     }
 
@@ -286,6 +287,7 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
         }
         else {
             ASSERT(false, "InValid Compute Pipeline Status Name!");
+            std::cout << "[PSO ERROR] InValid Compute Pipeline Status Name!" << std::endl;
             m_pComputePSO = nullptr;
         }
         return;
@@ -297,6 +299,7 @@ void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
     }
     else {
         ASSERT(false, "InValid Pipeline Status Name!");
+        std::cout << "[PSO ERROR] InValid Pipeline Status Name!" << std::endl;
         m_pGraphicsPSO = g_PipelineStatusMap["Default"].get();
         m_pRootSignature = g_PipelineStatusMap["Default"]->GetRootSignaturePtr();
     }
@@ -321,7 +324,7 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
     m_pGraphicsContext->ClearDepth(g_DepthBuffer);
 }
 
-void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer, const My::Light& light)
+void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
     m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
     //m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
@@ -330,12 +333,10 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
     m_pGraphicsContext->SetDepthStencilTarget(depthBuffer.GetDSV());
     //m_pGraphicsContext->ClearColor(colorBuffer);
     m_pGraphicsContext->ClearDepth(depthBuffer);
-
-    m_CacheLight = light;
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, bool bShadowCast, bool isDrawSkybox)
+    const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, uint8_t lightIdx, bool bShadowCast, bool isDrawSkybox)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -413,16 +414,11 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
             m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
             m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
         } else {
-            pfc.ViewMatrix = m_CacheLight.LightViewMatrix;
-            pfc.ProjectionMatrix = m_CacheLight.LightProjectionMatrix;
-            pfc.CameraPosition = m_CacheLight.LightPosition;
-
-
-
-
+            auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
+            pfc.ViewMatrix = lightInfo.LightViewMatrix;
+            pfc.ProjectionMatrix = lightInfo.LightProjectionMatrix;
+            pfc.CameraPosition = lightInfo.LightPosition;
         }
-
-
     }
     
     if(isDrawSkybox)

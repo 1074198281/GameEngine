@@ -37,8 +37,8 @@ namespace My {
 
         friend std::ostream& operator<<(std::ostream& out, const GfxConfiguration& conf)
         { 
-            out << "App Name:" << conf.appName << std::endl;
-            out << "GfxConfiguration:" << 
+            out << "[AppConfiguration] App Name:" << conf.appName << std::endl;
+            out << "[AppConfiguration] GfxConfiguration:" << 
                 " R:"  << conf.redBits << 
                 " G:"  << conf.greenBits <<
                 " B:"  << conf.blueBits <<

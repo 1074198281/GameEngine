@@ -43,7 +43,7 @@ namespace My {
         void UpdateD3dFrameConstants(Frame& frame);
     public:
         // pass interface
-        void DrawBatch(Frame& frame) override;
+        void DrawBatch(Frame& frame, uint8_t lightIdx = -1, bool castShadow = false, bool isDrawSkybox = false) override;
         void DrawSkybox(Frame& frame) override;
         void DrawGui(Frame& frame) override;
         void DrawPresent(Frame& frame) override;
@@ -57,7 +57,7 @@ namespace My {
 
         void SetPipelineStatus(const std::string& PSOName) override;
         void SetBatchResources(Frame& frame) override;
-        void SetShadowResources(Frame& frame, Light lightInfo) override;
+        void SetShadowResources(Frame& frame, uint8_t lightIdx) override;
 
     public:
         void* GetLightInfo() override;
@@ -79,6 +79,9 @@ namespace My {
         bool GenerateInputLayoutType(uint32_t& InputLayout, const std::string& name);
         
         void ResizeFrameBuffer();
+
+    private:
+        
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
