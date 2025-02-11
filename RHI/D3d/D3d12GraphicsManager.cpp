@@ -538,7 +538,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             float conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
             float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
             l.LightProjectionMatrix = My::BuildPerspectiveMatrix(conAngle, 1.0f, 1.0f, 50.0f);
-            l.LightViewMatrix;
+            BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
         }
         break;
         case LightType::Area:

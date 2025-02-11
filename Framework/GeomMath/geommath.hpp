@@ -580,6 +580,14 @@ namespace My {
         result = tmp;
     }
 
+    inline void BuildViewMatrix(Matrix4X4f& result, const Vector4f position, const Vector4f lookAt, const Vector4f up)
+    {
+        Vector3f eyePos3(position.x, position.y, position.z);
+        Vector3f lookAt3(lookAt.x, lookAt.y, lookAt.z);
+        Vector3f up3(up.x, up.y, up.z);
+        BuildViewMatrix(result, eyePos3, lookAt3, up3);
+    }
+
     inline void BuildIdentityMatrix(Matrix4X4f& matrix)
     {
         Matrix4X4f identity = {{{
