@@ -1,11 +1,11 @@
 
 
-cbuffer Spot_Light_Batch : register(b1)
+cbuffer Omni_Light_Batch : register(b1)
 {
     float4x4 gModelMatrix;
 };
 
-cbuffer Spot_Light_Frame : register(b2)
+cbuffer Omni_Light_Frame : register(b2)
 {
     float4x4 gViewMatrix;
     float4x4 gProjMatrix;

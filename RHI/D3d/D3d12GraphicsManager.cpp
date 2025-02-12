@@ -507,7 +507,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         auto& LightNode = _it.second;
         lightNames.push_back(LightNode->GetSceneObjectRef());
         auto pLight = scene.GetLight(LightNode->GetSceneObjectRef()).get();
-        Matrix4X4f trans = *LightNode->GetCalculatedTransform().get();
+        Matrix4X4f lightTrans = *LightNode->GetCalculatedTransform().get();
 
         Light l;
         memset(&l, 0, sizeof(Light));
@@ -517,9 +517,11 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         l.IsCastShadow = pLight->GetIfCastShadow();
         l.LightIndex = light_index;
 
+        Matrix4X4f T;
+        Transpose(T, lightTrans);
         // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
-        MatrixMulVector(l.LightDirection, g_VectorZReserve, trans);
-        l.LightPosition = Vector4f(trans[0][3], trans[1][3], trans[2][3], 1.0f);
+        MatrixMulVector(l.LightDirection, g_VectorZReserve, T);
+        l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
 
         switch (l.Type)
         {
@@ -538,7 +540,24 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             float conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
             float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
             l.LightProjectionMatrix = My::BuildPerspectiveMatrix(conAngle, 1.0f, 1.0f, 50.0f);
-            BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
+
+            Vector4f up = Vector4f(.0f, 1.0f, .0f, .0f);
+            Vector4f right = CrossProduct(up, l.LightDirection);
+            up = CrossProduct(l.LightDirection, right);
+
+            float lightDotRight = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(right.x, right.y, right.z));
+            float lightDotUp = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(up.x, up.y, up.z));
+            float lightDotDir = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(l.LightDirection.x, l.LightDirection.y, l.LightDirection.z));
+
+            l.LightViewMatrix = { {{
+                {right.x, up.x, -l.LightDirection.x, 0.0f},
+                {right.y, up.y, -l.LightDirection.y, 0.0f},
+                {right.z, up.z, -l.LightDirection.z, 0.0f},
+                {lightDotRight, lightDotUp, lightDotDir, 1.0f},
+
+            }} };
+
+            //BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightPosition + l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
         }
         break;
         case LightType::Area:
@@ -556,6 +575,9 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         light_index++;
     }
 
+    for (auto& frame : m_Frames) {
+        frame.LightInfomation = *info;
+    }
 
     GraphicsRHI.SetLightInfo(info, light_index);
     GraphicsRHI.SetLightNameInfo(lightNames);
@@ -876,7 +898,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
     }
 
 
-    std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>();
+    std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>(1.0f);
     std::wstring depthBufferName = L"ShadowMap_" + std::to_wstring(lightInfo.LightShadowMapIndex);
     depthBuffer->Create(depthBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
     GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer);
@@ -886,25 +908,25 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
     case LightType::Omni:
     {
         m_CubeShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_CubeShadowMapTexture.size());
+        ASSERT(lightInfo.LightShadowMapIndex == m_CubeShadowMapTexture.size() - 1);
     }
     break;
     case LightType::Area:
     {
         m_ShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size());
+        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size() - 1);
     }
     break;
     case LightType::Spot:
     {
         m_ShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size());
+        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size() - 1);
     }
     break;
     case LightType::Infinity:
     {
         m_GlobalShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_GlobalShadowMapTexture.size());
+        ASSERT(lightInfo.LightShadowMapIndex == m_GlobalShadowMapTexture.size() - 1);
     }
     break;
     default:
@@ -1016,7 +1038,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
                 m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
                 m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
                 pHeap,
-                handle, castShadow, m_bDrawSkybox & isDrawSkybox);
+                handle, lightIdx, castShadow, m_bDrawSkybox & isDrawSkybox);
         }
     }
 }

@@ -24,6 +24,7 @@ namespace D3dGraphicsCore {
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
 	RootSignature g_OverlaySubRootSignature;
+	RootSignature g_ShadowRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
 	RootSignature g_GuassBlurRootSignature;
@@ -206,6 +207,11 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
 
 
+	g_ShadowSpotRootSignature.Reset(My::kShadowRootBindings);
+	g_ShadowSpotRootSignature[My::kShadowBatchCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
+	g_ShadowSpotRootSignature[My::kShadowFrameCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
+	g_ShadowSpotRootSignature.Finalize(L"SpotLightRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+
 	// Default
 	std::unique_ptr<GraphicsPSO> pDefaultPSO = std::make_unique<GraphicsPSO>(L"Default PSO");
 	pDefaultPSO->SetRootSignature(g_TemplateRootSignature);
@@ -258,11 +264,27 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	pOverlaySubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pOverlaySubPSO->Finalize();
 
+	//Spot light
+	std::unique_ptr<GraphicsPSO> pSpotLightPSO = std::make_unique<GraphicsPSO>(L"SpotLight PSO");
+	pSpotLightPSO->SetRootSignature(g_ShadowSpotRootSignature);
+	pSpotLightPSO->SetRasterizerState(RasterizerDefault);
+	pSpotLightPSO->SetBlendState(BlendDisable);
+	pSpotLightPSO->SetDepthStencilState(DepthStateReadWrite);
+	pSpotLightPSO->SetSampleMask(0xFFFFFFFF);
+	pSpotLightPSO->SetInputLayout(3, g_PosNorTex);
+	SetShaderByteCode(*pSpotLightPSO.get(), "SpotLight");
+	pSpotLightPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
+	pSpotLightPSO->SetDepthTargetFormat(DSV_FORMAT);	// RT是ColorBuffer
+	pSpotLightPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pSpotLightPSO->Finalize();
+
+
 
 	g_PipelineStatusMap.emplace("Default", std::move(pDefaultPSO));
 	g_PipelineStatusMap.emplace("Skybox", std::move(pSkyBoxPSO));
 	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
 	g_PipelineStatusMap.emplace("OverlaySub", std::move(pOverlaySubPSO));
+	g_PipelineStatusMap.emplace("SpotLight", std::move(pSpotLightPSO));
 
 
 	// Compute RootSignature and PSOs

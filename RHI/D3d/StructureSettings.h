@@ -67,6 +67,13 @@ namespace My {
 		kOverlayRootBindings
 	};
 
+	enum ShadowRootSignature {
+		kShadowBatchCBV,
+		kShadowFrameCBV,
+
+		kShadowRootBindings
+	};
+
 	typedef struct DXSampler
 	{
 		D3D12_FILTER filter;

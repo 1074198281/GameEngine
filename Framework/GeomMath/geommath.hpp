@@ -784,7 +784,12 @@ namespace My {
 
 
     inline Matrix4X4f BuildOrthographicMatrix(float left, float right, float bottom, float top, float nearF, float farF) {
-        Matrix4X4f result;
+        Matrix4X4f result = { {{
+            { 1.0f, 0.0f, 0.0f, 0.0f},
+            { 0.0f, 1.0f, 0.0f, 0.0f},
+            { 0.0f, 0.0f, 1.0f, 0.0f},
+            { 0.0f, 0.0f, 0.0f, 1.0f}
+        }} };
         result[0][0] = 2.0f / (right - left);
         result[1][1] = 2.0f / (top - bottom);
         result[2][2] = -2.0f / (farF - nearF);
@@ -795,8 +800,13 @@ namespace My {
         return result;
     }
 
-    Matrix4X4f BuildPerspectiveMatrix(float fov, float aspect, float nearF, float farF) {
-        Matrix4X4f result;
+    inline Matrix4X4f BuildPerspectiveMatrix(float fov, float aspect, float nearF, float farF) {
+        Matrix4X4f result = { {{
+            { 1.0f, 0.0f, 0.0f, 0.0f},
+            { 0.0f, 1.0f, 0.0f, 0.0f},
+            { 0.0f, 0.0f, 1.0f, 0.0f},
+            { 0.0f, 0.0f, 0.0f, 1.0f}
+        }} };
         float tanHalfFov = tan(fov / 2.0f);
         result[0][0] = 1.0f / (aspect * tanHalfFov);
         result[1][1] = 1.0f / tanHalfFov;

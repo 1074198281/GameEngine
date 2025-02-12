@@ -24,13 +24,14 @@ void My::ShadowMapPass::Draw(Frame& frame)
 		{
 		case LightType::Omni:
 		{
+			continue;
 			if (cube_shadow_map_index > MAX_LIGHT_NUM) {
 				continue;
 			}
-			const char* PipelineStatusName = "Omni Light";
+			const char* PipelineStatusName = "OmniLight";
 			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			m_pGraphicsManager->SetShadowResources(frame, i);
 			light.LightShadowMapIndex = cube_shadow_map_index++;
+			m_pGraphicsManager->SetShadowResources(frame, i);
 		}
 		break;
 		case LightType::Spot:
@@ -38,39 +39,41 @@ void My::ShadowMapPass::Draw(Frame& frame)
 			if (shadow_map_index > MAX_LIGHT_NUM) {
 				continue;
 			}
-			const char* PipelineStatusName = "Spot Light";
+			const char* PipelineStatusName = "SpotLight";
 			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			m_pGraphicsManager->SetShadowResources(frame, i);
 			light.LightShadowMapIndex = shadow_map_index++;
+			m_pGraphicsManager->SetShadowResources(frame, i);
 		}
 		break;
 		case LightType::Area:
 		{
+			continue;
 			if (shadow_map_index > MAX_LIGHT_NUM) {
 				continue;
 			}
-			const char* PipelineStatusName = "Area Light";
+			const char* PipelineStatusName = "AreaLight";
 			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			m_pGraphicsManager->SetShadowResources(frame, i);
 			light.LightShadowMapIndex = shadow_map_index++;
+			m_pGraphicsManager->SetShadowResources(frame, i);
 		}
 		break;
 		case LightType::Infinity:
 		{
+			continue;
 			if (global_shadow_map_index > MAX_LIGHT_NUM) {
 				continue;
 			}
-			const char* PipelineStatusName = "Infi Light";
+			const char* PipelineStatusName = "InfiLight";
 			m_pGraphicsManager->SetPipelineStatus(PipelineStatusName);
-			m_pGraphicsManager->SetShadowResources(frame, i);
 			light.LightShadowMapIndex = global_shadow_map_index++;
+			m_pGraphicsManager->SetShadowResources(frame, i);
 		}
 		break;
 		default:
 			break;
 		}
 
-		m_pGraphicsManager->DrawBatch(frame, true, false);
+		m_pGraphicsManager->DrawBatch(frame, i, true, false);
 	}
 
 	frame.FrameContext.ShadowMap.size = shadow_map_index;

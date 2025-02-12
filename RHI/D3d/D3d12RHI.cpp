@@ -345,6 +345,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
 
     m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[TextureHeapIndex].GetHeapPointer());
 
+    if(!bShadowCast)
     {
         My::MaterialConstants MatCbv;
         memset(&MatCbv, 0, sizeof(My::MaterialConstants));
@@ -394,15 +395,16 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstants, sizeof(My::MaterialConstants), &MatCbv);
     }
 
+    if (!bShadowCast)
     {
         m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, TextureHandle);
     }
     
     {
-        My::PerBatchConstants pbc;
-        pbc.ModelMatrix = pdbc->ModelMatrix;
-        My::PerFrameConstants pfc;
         if (!bShadowCast) {
+            My::PerBatchConstants pbc;
+            pbc.ModelMatrix = pdbc->ModelMatrix;
+            My::PerFrameConstants pfc;
             pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
             pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
             pfc.CameraPosition = frame.FrameContext.CameraPosition;
@@ -415,9 +417,23 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
             m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
         } else {
             auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
-            pfc.ViewMatrix = lightInfo.LightViewMatrix;
-            pfc.ProjectionMatrix = lightInfo.LightProjectionMatrix;
-            pfc.CameraPosition = lightInfo.LightPosition;
+
+            struct ShadowBatchConstants {
+                My::Matrix4X4f modelMatrix;
+            } SBC;
+            struct ShadowFrameConstants {
+                My::Matrix4X4f viewMatrix;
+                My::Matrix4X4f projectionMatrix;
+                My::Vector4f lightPos;
+            } SFC;
+            
+            SBC.modelMatrix = pdbc->ModelMatrix;
+            SFC.viewMatrix = lightInfo.LightViewMatrix;
+            SFC.projectionMatrix = lightInfo.LightProjectionMatrix;
+            SFC.lightPos = lightInfo.LightPosition;
+
+            m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
+            m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);
         }
     }
     
