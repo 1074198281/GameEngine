@@ -86,6 +86,7 @@ namespace D3dGraphicsCore {
 		void SetPipelineStatus(const std::string& PSOName);
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		void SetShadowPassEnd(DepthBuffer& depthBuffer);
 
 		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
 		void SetLightNameInfo(std::vector<std::string>& names);

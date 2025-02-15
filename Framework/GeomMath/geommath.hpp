@@ -714,7 +714,7 @@ namespace My {
         Matrix4X4f rotation = { {{
             {   1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,  2.0f * q.x * q.y + 2.0f * q.w * q.z,   2.0f * q.x * q.z - 2.0f * q.w * q.y,    0.0f    },
             {   2.0f * q.x * q.y - 2.0f * q.w * q.z,    1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z, 2.0f * q.y * q.z + 2.0f * q.w * q.x,    0.0f    },
-            {   2.0f * q.x * q.z + 2.0f * q.w * q.y,    2.0f * q.y * q.z - 2.0f * q.y * q.z - 2.0f * q.w * q.x, 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y, 0.0f    },
+            {   2.0f * q.x * q.z + 2.0f * q.w * q.y,    2.0f * q.y * q.z - 2.0f * q.w * q.x, 1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y,    0.0f    },
             {   0.0f,   0.0f,   0.0f,   1.0f    }
         }} };
 
@@ -816,6 +816,15 @@ namespace My {
         return result;
     }
 
+    inline Vector4f ConvertZPositive2YPositive(const Vector4f& vec)
+    {
+        Matrix4X4f trans = { {{
+            {1.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, -1.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        }} };
+    }
 
     static Matrix4X4f g_IdentityMatrix = {{{
             { 1.0f, 0.0f, 0.0f, 0.0f},

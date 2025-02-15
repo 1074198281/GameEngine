@@ -335,6 +335,11 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
     m_pGraphicsContext->ClearDepth(depthBuffer);
 }
 
+void D3dGraphicsCore::D3d12RHI::SetShadowPassEnd(DepthBuffer& depthBuffer)
+{
+    m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+}
+
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
     const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, uint8_t lightIdx, bool bShadowCast, bool isDrawSkybox)
 {

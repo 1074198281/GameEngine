@@ -269,7 +269,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	pSpotLightPSO->SetRootSignature(g_ShadowSpotRootSignature);
 	pSpotLightPSO->SetRasterizerState(RasterizerDefault);
 	pSpotLightPSO->SetBlendState(BlendDisable);
-	pSpotLightPSO->SetDepthStencilState(DepthStateReadWrite);
+	pSpotLightPSO->SetDepthStencilState(DepthStateReadWriteLess);
 	pSpotLightPSO->SetSampleMask(0xFFFFFFFF);
 	pSpotLightPSO->SetInputLayout(3, g_PosNorTex);
 	SetShaderByteCode(*pSpotLightPSO.get(), "SpotLight");

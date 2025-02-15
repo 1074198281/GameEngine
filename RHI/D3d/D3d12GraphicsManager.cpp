@@ -521,6 +521,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         Transpose(T, lightTrans);
         // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
         MatrixMulVector(l.LightDirection, g_VectorZReserve, T);
+        l.LightDirection = Vector4f(l.LightDirection.x, -l.LightDirection.z, l.LightDirection.y, 0.0f);
         l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
 
         switch (l.Type)
@@ -541,7 +542,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
             l.LightProjectionMatrix = My::BuildPerspectiveMatrix(conAngle, 1.0f, 1.0f, 50.0f);
 
-            Vector4f up = Vector4f(.0f, 1.0f, .0f, .0f);
+            Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
             Vector4f right = CrossProduct(up, l.LightDirection);
             up = CrossProduct(l.LightDirection, right);
 
@@ -936,6 +937,40 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
     }
 }
 
+void My::D3d12GraphicsManager::SetShadowMapState(My::LightType lightType, uint8_t lightIdx)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    switch (lightType)
+    {
+    case My::Omni:
+    {
+        ASSERT(lightIdx < m_CubeShadowMapTexture.size());
+        GraphicsRHI.SetShadowPassEnd(*m_CubeShadowMapTexture[lightIdx]);
+    }
+    break;
+    case My::Spot:
+    {
+        ASSERT(lightIdx < m_ShadowMapTexture.size());
+        GraphicsRHI.SetShadowPassEnd(*m_ShadowMapTexture[lightIdx]);
+    }
+    break;
+    case My::Infinity:
+    {
+        ASSERT(lightIdx < m_GlobalShadowMapTexture.size());
+        GraphicsRHI.SetShadowPassEnd(*m_GlobalShadowMapTexture[lightIdx]);
+    }
+    break;
+    case My::Area:
+    {
+        ASSERT(lightIdx < m_ShadowMapTexture.size());
+        GraphicsRHI.SetShadowPassEnd(*m_ShadowMapTexture[lightIdx]);
+    }
+    break;
+    default:
+        break;
+    }
+}
+
 void* My::D3d12GraphicsManager::GetLightInfo()
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
@@ -989,6 +1024,37 @@ size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int ma
         std::cout << "[D3d12 Get Texture Error] No Such Texture. Batch: " << batch_index << std::endl;
     }
     return 0;
+}
+
+size_t My::D3d12GraphicsManager::GetShadowMapPtr(My::LightType type, int index)
+{
+    size_t handle = 0;
+    switch (type) {
+    case My::LightType::Omni:
+    {
+        handle = m_CubeShadowMapTexture[index]->GetDepthSRV().ptr;
+    }
+    break;
+    case My::LightType::Infinity:
+    {
+        handle = m_GlobalShadowMapTexture[index]->GetDSV().ptr;
+    }
+    break;
+    case My::LightType::Spot:
+    {
+        handle = m_ShadowMapTexture[index]->GetDepthSRV().ptr;
+    }
+    break;
+    case My::LightType::Area:
+    {
+        handle = m_ShadowMapTexture[index]->GetDSV().ptr;
+    }
+    break;
+    default:
+        break;
+    }
+
+    return handle;
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {

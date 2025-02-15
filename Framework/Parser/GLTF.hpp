@@ -543,6 +543,36 @@ namespace glTF
                         l.m_Type = Light::eLightType::kPoint;
                     }
 
+                    switch (l.m_Type)
+                    {
+                    case Light::eLightType::kSpot:
+                    {
+                        if (lightPro.find("spot") != lightPro.end()) {
+                            auto& spotAngle = lightPro.at("spot");
+                            if (spotAngle.find("innerConeAngle") != spotAngle.end()) {
+                                l.SpotProperties.innerConnAngle = spotAngle.at("innerConeAngle");
+                            }
+                            if (spotAngle.find("outerConeAngle") != spotAngle.end()) {
+                                l.SpotProperties.outerConnAngle = spotAngle.at("outerConeAngle");
+                            }
+                        }
+                        
+                    }
+                    break;
+                    case Light::eLightType::kDirectional:
+                    {
+
+                    }
+                    break;
+                    case Light::eLightType::kPoint:
+                    {
+
+                    }
+                    break;
+                    default:
+                        break;
+                    }
+
                     pLights.m_Lights.push_back(l);
                 }
 

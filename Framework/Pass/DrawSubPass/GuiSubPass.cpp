@@ -207,6 +207,41 @@ void My::GuiSubPass::Draw(Frame& frame)
 						ImGui::SliderFloat4("LightPosition", l->LightPosition, -100, 100);
 						ImGui::Checkbox("CastShadow", &l->IsCastShadow);
 
+						if (ImGui::TreeNode("ShadowMap")) {
+							size_t shadow_debug_depth_texture = 0;
+							switch (l->Type)
+							{
+							case My::LightType::Omni:
+							{
+
+							}
+							break;
+							case My::LightType::Infinity:
+							{
+
+							}
+							break;
+							case My::LightType::Area:
+							{
+
+							}
+							break;
+							case My::LightType::Spot:
+							{
+								shadow_debug_depth_texture = m_pGraphicsManager->GetShadowMapPtr(l->Type, l->LightShadowMapIndex);
+							}
+							break;
+							default:
+								break;
+							}
+
+							if (shadow_debug_depth_texture != 0) {
+								ImGui::Image((ImTextureID)shadow_debug_depth_texture, ImVec2((float)128, (float)128));
+							}
+
+							ImGui::TreePop();
+						}
+
 						ImGui::TreePop();
 					}
 				}
@@ -220,7 +255,10 @@ void My::GuiSubPass::Draw(Frame& frame)
 		if (show_app_debug_texture) {
 			ImGui::Begin((const char*)u8"Texture Status");
 			if (ImGui::TreeNode((const char*)u8"Light Shadow Map")) {
-
+				for (int l = 0; l < frame.FrameContext.LightNum; l++) {
+					frame.FrameContext.ShadowMap;
+				}
+				
 
 
 				ImGui::TreePop();
