@@ -3,7 +3,7 @@
 #include "StructureSettings.h"
 #include "Core/Common/GraphicsCommon.h"
 #include "Core/D3dGraphicsCoreManager.h"
-#include "ShaderSource.h"
+#include "Modules/ShaderSource/ShaderSource.h"
 #include "../Windows/WinUtility.h"
 
 
@@ -207,9 +207,11 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
 
 
-	g_ShadowSpotRootSignature.Reset(My::kShadowRootBindings);
+	g_ShadowSpotRootSignature.Reset(My::kShadowRootBindings, 1);
 	g_ShadowSpotRootSignature[My::kShadowBatchCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 	g_ShadowSpotRootSignature[My::kShadowFrameCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
+	g_ShadowSpotRootSignature[My::kShadowSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_ShadowSpotRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	g_ShadowSpotRootSignature.Finalize(L"SpotLightRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	// Default
@@ -273,8 +275,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	pSpotLightPSO->SetSampleMask(0xFFFFFFFF);
 	pSpotLightPSO->SetInputLayout(3, g_PosNorTex);
 	SetShaderByteCode(*pSpotLightPSO.get(), "SpotLight");
-	pSpotLightPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
-	pSpotLightPSO->SetDepthTargetFormat(DSV_FORMAT);	// RT是ColorBuffer
+	pSpotLightPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DSV_FORMAT);	// RT是ColorBuffer
 	pSpotLightPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pSpotLightPSO->Finalize();
 

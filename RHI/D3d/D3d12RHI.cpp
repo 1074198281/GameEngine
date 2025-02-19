@@ -11,7 +11,7 @@
 #include "Core/Resource/DDSTextureLoader.h"
 #include "MemoryManager.hpp"
 #include "GraphicsStructure.h"
-#include "ShaderSource.h"
+#include "Modules/ShaderSource/ShaderSource.h"
 #include "D3dComponents/XMInput/XMInput.h"
 #include "cbuffer.h"
 #include "WinUtility.h"
@@ -27,7 +27,7 @@ using namespace DirectX;
 
 D3dGraphicsCore::D3d12RHI::D3d12RHI()
 {
-    m_pLightInfo = nullptr;
+    
 }
 
 D3dGraphicsCore::D3d12RHI::~D3d12RHI()
@@ -210,25 +210,6 @@ void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::P
     context.SetPrimitiveTopology(d3dType);
 }
 
-void D3dGraphicsCore::D3d12RHI::SetLightInfo(My::LightInfo* lightInfo, int lightNum)
-{
-    m_pLightInfo = lightInfo;
-    m_LightNum = lightNum;
-}
-
-void D3dGraphicsCore::D3d12RHI::SetLightNameInfo(std::vector<std::string>& names)
-{
-    m_LightNameInfo = names;
-}
-
-void D3dGraphicsCore::D3d12RHI::FreeLightInfo()
-{
-    if (m_pLightInfo)
-    {
-        dynamic_cast<My::MemoryManager*>(reinterpret_cast<My::BaseApplication*>(m_fGetApplication())->GetMemoryManager())->Free(m_pLightInfo, sizeof(My::LightInfo) + 16);
-    }
-}
-
 void D3dGraphicsCore::D3d12RHI::BeginSubPass(const std::string& PassName)
 {
     m_pComputeContext = nullptr;
@@ -326,12 +307,12 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
 
 void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
+    
     m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
-    //m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+    m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
-    //m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
-    m_pGraphicsContext->SetDepthStencilTarget(depthBuffer.GetDSV());
-    //m_pGraphicsContext->ClearColor(colorBuffer);
+    m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
+    m_pGraphicsContext->ClearColor(colorBuffer);
     m_pGraphicsContext->ClearDepth(depthBuffer);
 }
 
@@ -341,7 +322,8 @@ void D3dGraphicsCore::D3d12RHI::SetShadowPassEnd(DepthBuffer& depthBuffer)
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-    const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, uint8_t lightIdx, bool bShadowCast, bool isDrawSkybox)
+    const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, 
+    std::unique_ptr<My::D3d12LightManager>& pLightManager, uint8_t lightIdx, bool bShadowCast, bool isDrawSkybox)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -405,42 +387,43 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, TextureHandle);
     }
     
-    {
-        if (!bShadowCast) {
-            My::PerBatchConstants pbc;
-            pbc.ModelMatrix = pdbc->ModelMatrix;
-            My::PerFrameConstants pfc;
-            pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
-            pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
-            pfc.CameraPosition = frame.FrameContext.CameraPosition;
+    if (!bShadowCast) {
+        My::PerBatchConstants pbc;
+        pbc.ModelMatrix = pdbc->ModelMatrix;
+        My::PerFrameConstants pfc;
+        pfc.ViewMatrix = frame.FrameContext.ViewMatrix;
+        pfc.ProjectionMatrix = frame.FrameContext.ProjectionMatrix;
+        pfc.CameraPosition = frame.FrameContext.CameraPosition;
 
-            pfc.clip_space_type = 1;
-            pfc.LightNum = m_LightNum;
+        pfc.clip_space_type = 1;
+        pfc.LightNum = pLightManager->GetLightNum();
 
-            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
-            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
-            m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), m_pLightInfo);
-        } else {
-            auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
-
-            struct ShadowBatchConstants {
-                My::Matrix4X4f modelMatrix;
-            } SBC;
-            struct ShadowFrameConstants {
-                My::Matrix4X4f viewMatrix;
-                My::Matrix4X4f projectionMatrix;
-                My::Vector4f lightPos;
-            } SFC;
-            
-            SBC.modelMatrix = pdbc->ModelMatrix;
-            SFC.viewMatrix = lightInfo.LightViewMatrix;
-            SFC.projectionMatrix = lightInfo.LightProjectionMatrix;
-            SFC.lightPos = lightInfo.LightPosition;
-
-            m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
-            m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);
-        }
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), pLightManager->GetAllLightInfoPtr());
     }
+    else {
+        auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
+
+        struct ShadowBatchConstants {
+            My::Matrix4X4f modelMatrix;
+        } SBC;
+        struct ShadowFrameConstants {
+            My::Matrix4X4f viewMatrix;
+            My::Matrix4X4f projectionMatrix;
+            My::Vector4f lightPos;
+        } SFC;
+
+        SBC.modelMatrix = pdbc->ModelMatrix;
+        SFC.viewMatrix = lightInfo.LightViewMatrix;
+        SFC.projectionMatrix = lightInfo.LightProjectionMatrix;
+        SFC.lightPos = lightInfo.LightPosition;
+
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
+        m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);
+        m_pGraphicsContext->SetDescriptorTable(My::kShadowSRV, pLightManager->GetDepthSRVDescriptorHandle(lightIdx));
+    }
+
     
     if(isDrawSkybox)
     {

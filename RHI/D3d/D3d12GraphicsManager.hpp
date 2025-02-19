@@ -11,7 +11,7 @@
 #include "Core/Resource/GpuBuffer.h"
 #include "Core/Resource/DepthBuffer.h"
 #include "Core/Resource/ColorBuffer.h"
-
+#include "Modules/LightManager/D3d12LightManager.h"
 
 
 namespace My {
@@ -58,7 +58,6 @@ namespace My {
         void SetPipelineStatus(const std::string& PSOName) override;
         void SetBatchResources(Frame& frame) override;
         void SetShadowResources(Frame& frame, uint8_t lightIdx) override;
-        void SetShadowMapState(My::LightType lightType, uint8_t lightIdx) override;
 
     public:
         void* GetLightInfo() override;
@@ -84,14 +83,12 @@ namespace My {
         void ResizeFrameBuffer();
 
     private:
-        
+        std::unique_ptr<D3d12LightManager> m_pLightManager;
     private:
         std::vector<std::unique_ptr<D3dGraphicsCore::StructuredBuffer>> m_VecVertexBuffer;
         std::vector<std::unique_ptr<D3dGraphicsCore::ByteAddressBuffer>> m_VecIndexBuffer;
 
-        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowMapTexture;
-        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_GlobalShadowMapTexture;
-        std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_CubeShadowMapTexture;
+
 
         std::unique_ptr<SResourceIBLImage> m_IBLResource;
         std::unordered_map<uint32_t, std::unique_ptr<My::SResourceBatchInfo>> m_BatchTextureResource;

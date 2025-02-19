@@ -10,8 +10,6 @@
 #include "SceneObject.hpp"
 #include "StructureSettings.h"
 #include "GraphicsStructure.h"
-#include "ShaderSource.h"
-#include "GraphicsStructure.h"
 #include "D3d_Helper.hpp"
 #include "CommonDefine.h"
 #include "Core/Resource/DDSTextureLoader.h"
@@ -27,6 +25,8 @@ int My::D3d12GraphicsManager::Initialize()
 
     result = InitializeD3dImGUI();
 
+    m_pLightManager = std::make_unique<D3d12LightManager>(reinterpret_cast<BaseApplication*>(m_pApp));
+    m_IBLResource = std::make_unique<SResourceIBLImage>();
     return result;
 }
 
@@ -450,7 +450,6 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
 
 void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 {
-    m_IBLResource = std::make_unique<SResourceIBLImage>();
     int HeapIdx = -1;
 
     std::vector<std::string> IBLFiles;
@@ -496,16 +495,12 @@ void My::D3d12GraphicsManager::initializeSkybox(const Scene& scene)
 void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
 {
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
-    GraphicsRHI.FreeLightInfo();
 
-    LightInfo* info = (LightInfo*)dynamic_cast<MemoryManager*>(reinterpret_cast<BaseApplication*>(m_pApp)->GetMemoryManager())->Allocate(sizeof(LightInfo), 16);
-    memset(info, 0, sizeof(LightInfo));
-    std::vector<std::string> lightNames;
+    m_pLightManager->Create();
 
     uint32_t light_index = 0;
     for (auto _it : scene.LightNodes) {
         auto& LightNode = _it.second;
-        lightNames.push_back(LightNode->GetSceneObjectRef());
         auto pLight = scene.GetLight(LightNode->GetSceneObjectRef()).get();
         Matrix4X4f lightTrans = *LightNode->GetCalculatedTransform().get();
 
@@ -572,16 +567,14 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
             break;
         }
 
-        info->Lights[light_index] = l;
+        m_pLightManager->SetPerLightInfo(light_index, l, LightNode->GetSceneObjectRef());
         light_index++;
     }
 
     for (auto& frame : m_Frames) {
-        frame.LightInfomation = *info;
+        frame.LightInfomation = m_pLightManager->GetAllLightInfo();
+        frame.FrameContext.LightNum = m_pLightManager->GetLightNum();
     }
-
-    GraphicsRHI.SetLightInfo(info, light_index);
-    GraphicsRHI.SetLightNameInfo(lightNames);
 }
 
 void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
@@ -852,135 +845,24 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
-    auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
-    // each light already has its own depthbuffer  
-    switch (lightInfo.Type)
-    {
-    case LightType::Omni:
-    {
-        if (m_CubeShadowMapTexture.size()) {
-            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_CubeShadowMapTexture[lightInfo.LightShadowMapIndex]);
-            return;
-        }
+    std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = m_pLightManager->GetDepthBuffer(lightIdx);
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> colorBuffer = m_pLightManager->GetColorBuffer(lightIdx);
+    if (colorBuffer) {
+        GraphicsRHI.SetShadowResources(frame, *colorBuffer, *depthBuffer);
     }
-    break;
-    case LightType::Area:
-    {
-        if (m_ShadowMapTexture.size()) {
-            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex]);
-            return;
-        }
-    }
-    break;
-    case LightType::Spot:
-    {
-        if (m_ShadowMapTexture.size()) {
-            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_ShadowMapTexture[lightInfo.LightShadowMapIndex]);
-            return;
-        }
-    }
-    break;
-    case LightType::Infinity:
-    {
-        if (m_GlobalShadowMapTexture.size()) {
-            GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, 
-                *m_GlobalShadowMapTexture[lightInfo.LightShadowMapIndex]);
-            return;
-        }
-    }
-    break;
-    default:
-        ASSERT(false, "ERROR LIGHT TYPE!");
-        std::cout << "[D3d12 Shadow Resource] ERROR LIGHT TYPE!" << std::endl;
-        break;
-    }
-
-
-    std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>(1.0f);
-    std::wstring depthBufferName = L"ShadowMap_" + std::to_wstring(lightInfo.LightShadowMapIndex);
-    depthBuffer->Create(depthBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, DSV_FORMAT);
-    GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer);
-
-    switch (lightInfo.Type)
-    {
-    case LightType::Omni:
-    {
-        m_CubeShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_CubeShadowMapTexture.size() - 1);
-    }
-    break;
-    case LightType::Area:
-    {
-        m_ShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size() - 1);
-    }
-    break;
-    case LightType::Spot:
-    {
-        m_ShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_ShadowMapTexture.size() - 1);
-    }
-    break;
-    case LightType::Infinity:
-    {
-        m_GlobalShadowMapTexture.emplace_back(depthBuffer);
-        ASSERT(lightInfo.LightShadowMapIndex == m_GlobalShadowMapTexture.size() - 1);
-    }
-    break;
-    default:
-        ASSERT(false, "Error Light Type");
-        std::cout << "[D3d12 Shadow Resource] Error Light Type!" << std::endl;
-        break;
-    }
-}
-
-void My::D3d12GraphicsManager::SetShadowMapState(My::LightType lightType, uint8_t lightIdx)
-{
-    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    switch (lightType)
-    {
-    case My::Omni:
-    {
-        ASSERT(lightIdx < m_CubeShadowMapTexture.size());
-        GraphicsRHI.SetShadowPassEnd(*m_CubeShadowMapTexture[lightIdx]);
-    }
-    break;
-    case My::Spot:
-    {
-        ASSERT(lightIdx < m_ShadowMapTexture.size());
-        GraphicsRHI.SetShadowPassEnd(*m_ShadowMapTexture[lightIdx]);
-    }
-    break;
-    case My::Infinity:
-    {
-        ASSERT(lightIdx < m_GlobalShadowMapTexture.size());
-        GraphicsRHI.SetShadowPassEnd(*m_GlobalShadowMapTexture[lightIdx]);
-    }
-    break;
-    case My::Area:
-    {
-        ASSERT(lightIdx < m_ShadowMapTexture.size());
-        GraphicsRHI.SetShadowPassEnd(*m_ShadowMapTexture[lightIdx]);
-    }
-    break;
-    default:
-        break;
+    else {
+        GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer);
     }
 }
 
 void* My::D3d12GraphicsManager::GetLightInfo()
 {
-    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    return GraphicsRHI.GetLightInfo();
+    return m_pLightManager->GetAllLightInfoPtr();
 }
 
 std::string My::D3d12GraphicsManager::GetLightName(int index)
 {
-    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    return GraphicsRHI.GetLightName(index);
+    return m_pLightManager->GetLightName(index);
 }
 
 std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
@@ -1028,33 +910,7 @@ size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int ma
 
 size_t My::D3d12GraphicsManager::GetShadowMapPtr(My::LightType type, int index)
 {
-    size_t handle = 0;
-    switch (type) {
-    case My::LightType::Omni:
-    {
-        handle = m_CubeShadowMapTexture[index]->GetDepthSRV().ptr;
-    }
-    break;
-    case My::LightType::Infinity:
-    {
-        handle = m_GlobalShadowMapTexture[index]->GetDSV().ptr;
-    }
-    break;
-    case My::LightType::Spot:
-    {
-        handle = m_ShadowMapTexture[index]->GetDepthSRV().ptr;
-    }
-    break;
-    case My::LightType::Area:
-    {
-        handle = m_ShadowMapTexture[index]->GetDSV().ptr;
-    }
-    break;
-    default:
-        break;
-    }
-
-    return handle;
+    return m_pLightManager->GetShadowMapHandle(index);
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
@@ -1076,8 +932,8 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
 
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
     for (auto& frame : m_Frames) {
-        frame.LightInfomation = *reinterpret_cast<My::LightInfo*>(GraphicsRHI.GetLightInfo());
-        frame.FrameContext.LightNum = GraphicsRHI.GetLightCount();
+        frame.LightInfomation = m_pLightManager->GetAllLightInfo();
+        frame.FrameContext.LightNum = m_pLightManager->GetLightNum();
     }
 }
 
@@ -1104,7 +960,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
                 m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
                 m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
                 pHeap,
-                handle, lightIdx, castShadow, m_bDrawSkybox & isDrawSkybox);
+                handle, m_pLightManager, lightIdx, castShadow, m_bDrawSkybox & isDrawSkybox);
         }
     }
 }

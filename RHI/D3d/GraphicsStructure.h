@@ -13,7 +13,6 @@
 #include "Core/D3dGraphicsCoreManager.h"
 #include "Core/Resource/Texture.h"
 
-#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
 
 namespace D3dGraphicsCore {
 	//------------------------------------DescriptorHeap------------------------------------//

@@ -8,6 +8,8 @@
 #include "Resource/ColorBuffer.h"
 #include "Resource/DepthBuffer.h"
 
+#define DSV_FORMAT DXGI_FORMAT_D32_FLOAT
+
 namespace D3dGraphicsCore {
 
 	/*-------------------------Graphics Column--------------------------*/

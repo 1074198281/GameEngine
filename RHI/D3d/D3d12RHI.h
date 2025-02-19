@@ -8,7 +8,8 @@
 #include "GfxConfiguration.h"
 #include "BaseApplication.hpp"
 #include "StructureSettings.h"
-#include "ShaderSource.h"
+#include "Modules/ShaderSource/ShaderSource.h"
+#include "Modules/LightManager/D3d12LightManager.h"
 #include "GraphicsStructure.h"
 
 #include "D3dComponents/XMCamera/XMCamera.h"
@@ -71,7 +72,8 @@ namespace D3dGraphicsCore {
 
 	public:
 		void DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
-			const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, uint8_t lightIdx = -1, bool bShadowCast = false, bool isDrawSkybox = false);
+			const int TextureHeapIndex, const DescriptorHandle& TextureHandle, ID3D12DescriptorHeap* IBLHeapPtr, DescriptorHandle IBLHandle, 
+			std::unique_ptr<My::D3d12LightManager>& pLightManager, uint8_t lightIdx = -1, bool bShadowCast = false, bool isDrawSkybox = false);
 		void DrawSkybox(const My::Frame& frame, ID3D12DescriptorHeap* HeapPtr, DescriptorHandle IBLHandle, GpuTexture* pSpecularTexture, float& SpecularIBLRange, float& SpecularIBLBias);
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
@@ -87,13 +89,6 @@ namespace D3dGraphicsCore {
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
 		void SetShadowPassEnd(DepthBuffer& depthBuffer);
-
-		void SetLightInfo(My::LightInfo* lightInfo, int lightNum);
-		void SetLightNameInfo(std::vector<std::string>& names);
-		void FreeLightInfo();
-		void* GetLightInfo() { return m_pLightInfo; }
-		int GetLightCount() { return m_LightNum; }
-		std::string GetLightName(int index) { return m_LightNameInfo[index]; }
 	private:
 		void InitializeCoreHWND();
 	private:
@@ -110,9 +105,6 @@ namespace D3dGraphicsCore {
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;
 		My::Light m_CacheLight;
-		My::LightInfo* m_pLightInfo;
-		std::vector<std::string> m_LightNameInfo;
-		int m_LightNum = -1;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;

@@ -1,5 +1,8 @@
 
 
+Texture2D<float4> ShadowMap : register(t0);
+SamplerState DefaultSampler : register(s10);
+
 cbuffer Spot_Light_Batch : register(b1)
 {
     float4x4 gModelMatrix;
@@ -30,5 +33,5 @@ struct VertexOut
 
 float4 main(VertexOut pin) : SV_Target
 {
-    return float4(1.0f, 1.0f, 1.0f, 1.0f);
+    return ShadowMap.Sample(DefaultSampler, pin.TextureUV);
 }
