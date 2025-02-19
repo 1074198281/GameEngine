@@ -855,6 +855,14 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
     }
 }
 
+void My::D3d12GraphicsManager::SetShadowMapState(uint8_t lightIdx)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+
+    auto colorBuffer = m_pLightManager->GetColorBuffer(lightIdx);
+    GraphicsRHI.SetShadowPassEnd(*colorBuffer);
+}
+
 void* My::D3d12GraphicsManager::GetLightInfo()
 {
     return m_pLightManager->GetAllLightInfoPtr();
@@ -908,7 +916,7 @@ size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int ma
     return 0;
 }
 
-size_t My::D3d12GraphicsManager::GetShadowMapPtr(My::LightType type, int index)
+size_t My::D3d12GraphicsManager::GetShadowMapPtr(uint8_t index)
 {
     return m_pLightManager->GetShadowMapHandle(index);
 }

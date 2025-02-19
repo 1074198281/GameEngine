@@ -74,7 +74,7 @@ void My::ShadowMapPass::Draw(Frame& frame)
 		}
 
 		m_pGraphicsManager->DrawBatch(frame, i, true, false);
-		m_pGraphicsManager->SetShadowMapState(light.Type, light.LightShadowMapIndex);
+		m_pGraphicsManager->SetShadowMapState(i);
 	}
 
 	frame.FrameContext.ShadowMap.size = shadow_map_index;

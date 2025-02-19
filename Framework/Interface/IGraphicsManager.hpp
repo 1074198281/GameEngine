@@ -46,7 +46,7 @@ namespace My {
         virtual void SetPipelineStatus(const std::string& PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
         virtual void SetShadowResources(Frame& frame, uint8_t lightIdx) = 0;
-        virtual void SetShadowMapState(My::LightType lightType, uint8_t lightIdx) = 0;
+        virtual void SetShadowMapState(uint8_t lightIdx) = 0;
     public:
         virtual void* GetLightInfo() = 0;
         virtual std::string GetLightName(int index) = 0;
@@ -54,7 +54,7 @@ namespace My {
         virtual std::vector<std::string> GetSkyboxInfo() = 0;
         virtual size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) = 0;
         virtual size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) = 0;
-        virtual size_t GetShadowMapPtr(My::LightType type, int index) = 0;
+        virtual size_t GetShadowMapPtr(uint8_t index) = 0;
     public:
         virtual bool* GetDrawSkyboxStatus() = 0;
         virtual bool* GetCastShadowStatus() = 0;

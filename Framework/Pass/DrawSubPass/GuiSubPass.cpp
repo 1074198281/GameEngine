@@ -228,7 +228,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 							break;
 							case My::LightType::Spot:
 							{
-								shadow_debug_depth_texture = m_pGraphicsManager->GetShadowMapPtr(l->Type, l->LightShadowMapIndex);
+								shadow_debug_depth_texture = m_pGraphicsManager->GetShadowMapPtr(i);
 							}
 							break;
 							default:
@@ -236,7 +236,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 							}
 
 							if (shadow_debug_depth_texture != 0) {
-								ImGui::Image((ImTextureID)shadow_debug_depth_texture, ImVec2((float)128, (float)128));
+								ImGui::Image((ImTextureID)shadow_debug_depth_texture, ImVec2((float)512, (float)512));
 							}
 
 							ImGui::TreePop();

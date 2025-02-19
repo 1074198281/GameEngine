@@ -1,7 +1,7 @@
 #include "D3dGraphicsCoreManager.h"
 #include "Command/CommandLineArg.h"
 #include "Common/SystemTime.h"
-
+#include <algorithm>
 #include <cwctype>
 
 #ifdef _GAMING_DESKTOP

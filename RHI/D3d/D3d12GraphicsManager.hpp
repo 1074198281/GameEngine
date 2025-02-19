@@ -58,7 +58,7 @@ namespace My {
         void SetPipelineStatus(const std::string& PSOName) override;
         void SetBatchResources(Frame& frame) override;
         void SetShadowResources(Frame& frame, uint8_t lightIdx) override;
-
+        void SetShadowMapState(uint8_t lightIdx);
     public:
         void* GetLightInfo() override;
         std::string GetLightName(int index) override;
@@ -67,7 +67,7 @@ namespace My {
 
         size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) override;
         size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) override;
-        size_t GetShadowMapPtr(My::LightType type, int index) override;
+        size_t GetShadowMapPtr(uint8_t index) override;
         
     private:
         void initializeGeometries(const Scene& scene) override;
