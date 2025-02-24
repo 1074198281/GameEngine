@@ -26,6 +26,7 @@ namespace My {
 		D3d12LightManager(BaseApplication* pApp);
 		virtual ~D3d12LightManager();
 
+		void Clear() override;
 	public:
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> GetDepthBuffer(uint8_t idx);
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetColorBuffer(uint8_t idx);

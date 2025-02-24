@@ -490,6 +490,7 @@ namespace My {
         for(int count = 0; count < countof(result.data); count++) {
             length += result.data[count] * result.data[count];
         }
+        length = sqrt(length);
         length = 1.0f / length;
         for(int count = 0; count < countof(result.data); count++) {
             result.data[count] *= length;

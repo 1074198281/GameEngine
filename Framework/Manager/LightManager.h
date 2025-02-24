@@ -12,6 +12,7 @@ namespace My {
 		LightManager();
 		virtual ~LightManager();
 
+		virtual void Clear() {};
 	public:
 		void Reset();
 		void Create();

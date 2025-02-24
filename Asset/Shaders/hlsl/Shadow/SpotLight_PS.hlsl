@@ -13,7 +13,9 @@ cbuffer Spot_Light_Frame : register(b2)
     float4x4 gViewMatrix;
     float4x4 gProjMatrix;
     float4 gLightPos;
-    
+    float gScreenWidth;
+    float gScreenHeight;
+    float2 padding0;
 };
 
 //struct VertexIn
@@ -33,5 +35,7 @@ struct VertexOut
 
 float4 main(VertexOut pin) : SV_Target
 {
-    return ShadowMap.Sample(DefaultSampler, pin.TextureUV);
+    float2 uv = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
+    float4 color = ShadowMap.Sample(DefaultSampler, uv);
+    return color;
 }

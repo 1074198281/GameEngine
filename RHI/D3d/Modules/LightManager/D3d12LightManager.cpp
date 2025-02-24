@@ -16,7 +16,25 @@ My::D3d12LightManager::D3d12LightManager(BaseApplication* pApp)
 
 My::D3d12LightManager::~D3d12LightManager()
 {
+    Clear();
+}
 
+void My::D3d12LightManager::Clear()
+{
+    for (auto& it : m_CubeShadowMapTexture) {
+        it.second.pColorBuffer->Destroy();
+        it.second.pDepthBuffer->Destroy();
+    }
+    for (auto& it : m_ShadowMapTexture) {
+        it.second.pColorBuffer->Destroy();
+        it.second.pDepthBuffer->Destroy();
+    }
+    for (auto& it : m_GlobalShadowMapTexture) {
+        it.second.pColorBuffer->Destroy();
+        it.second.pDepthBuffer->Destroy();
+    }
+
+    Reset();
 }
 
 std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::GetDepthBuffer(uint8_t idx)
@@ -180,6 +198,8 @@ size_t My::D3d12LightManager::GetShadowMapHandle(uint8_t idx)
         std::cout << "[D3d12 Light Manager] Undefined Light Type." << std::endl;
         break;
     }
+
+    return 0;
 }
 
 std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepthBuffer(uint8_t idx)

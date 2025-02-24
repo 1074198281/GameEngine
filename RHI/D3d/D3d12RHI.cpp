@@ -412,12 +412,17 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
             My::Matrix4X4f viewMatrix;
             My::Matrix4X4f projectionMatrix;
             My::Vector4f lightPos;
+            float screenWidth;
+            float screenHeight;
+            float padding0[2];
         } SFC;
 
         SBC.modelMatrix = pdbc->ModelMatrix;
         SFC.viewMatrix = lightInfo.LightViewMatrix;
         SFC.projectionMatrix = lightInfo.LightProjectionMatrix;
         SFC.lightPos = lightInfo.LightPosition;
+        SFC.screenWidth = g_DisplayWidth;
+        SFC.screenHeight = g_DisplayHeight;
 
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);

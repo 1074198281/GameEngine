@@ -9,7 +9,7 @@ My::LightManager::LightManager()
 
 My::LightManager::~LightManager()
 {
-	
+	m_LightInfoMap.clear();
 }
 
 void My::LightManager::Reset()
@@ -37,7 +37,7 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, const Light& perLightInfo, s
 	m_pLightInfo->Lights[idx] = perLightInfo;
 	m_LightInfoMap.emplace(idx, name);
 	m_iLightNum++;
-	std::cout << "[LightManager] Add Light Index: " << idx << "Light Name: " << name << std::endl;
+	std::cout << "[LightManager] Add Light Index: " << (int)idx << ", Light Name: " << name << std::endl;
 }
 
 My::LightInfo My::LightManager::GetAllLightInfo()

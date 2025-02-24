@@ -63,6 +63,7 @@ void My::D3d12GraphicsManager::Clear()
 
     m_BatchTextureResource.clear();
     m_PixelBufferResources.clear();
+    m_pLightManager->Clear();
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
@@ -515,8 +516,8 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         Matrix4X4f T;
         Transpose(T, lightTrans);
         // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
-        MatrixMulVector(l.LightDirection, g_VectorZReserve, T);
-        l.LightDirection = Vector4f(l.LightDirection.x, -l.LightDirection.z, l.LightDirection.y, 0.0f);
+        MatrixMulVector(l.LightDirection, g_VectorYReserve, T);
+        //l.LightDirection = Vector4f(l.LightDirection.y, l.LightDirection.z, l.LightDirection.x, 0.0f);
         l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
 
         switch (l.Type)
@@ -539,21 +540,22 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
 
             Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
             Vector4f right = CrossProduct(up, l.LightDirection);
+            Normalize(right);
             up = CrossProduct(l.LightDirection, right);
+            Normalize(up);
 
             float lightDotRight = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(right.x, right.y, right.z));
             float lightDotUp = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(up.x, up.y, up.z));
             float lightDotDir = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(l.LightDirection.x, l.LightDirection.y, l.LightDirection.z));
 
             l.LightViewMatrix = { {{
-                {right.x, up.x, -l.LightDirection.x, 0.0f},
-                {right.y, up.y, -l.LightDirection.y, 0.0f},
-                {right.z, up.z, -l.LightDirection.z, 0.0f},
-                {lightDotRight, lightDotUp, lightDotDir, 1.0f},
-
+                {right.x, up.x, l.LightDirection.x, 0.0f},
+                {right.y, up.y, l.LightDirection.y, 0.0f},
+                {right.z, up.z, l.LightDirection.z, 0.0f},
+                {lightDotRight, lightDotUp, lightDotDir, 1.0f}
             }} };
 
-            //BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightPosition + l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
+            BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightPosition + l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
         }
         break;
         case LightType::Area:
