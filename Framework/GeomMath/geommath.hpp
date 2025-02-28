@@ -722,6 +722,17 @@ namespace My {
         matrix = rotation;
     }
 
+    inline Quaternion ReserveQuaternion(Quaternion q)
+    {
+        Quaternion conjugate = Quaternion(-q.x, -q.y, -q.z, q.w);
+        double length = std::pow(q.x, 2) + std::pow(q.y, 2) + std::pow(q.z, 2) + std::pow(q.w, 2);
+        conjugate.x = conjugate.x / length;
+        conjugate.y = conjugate.y / length;
+        conjugate.z = conjugate.z / length;
+        conjugate.w = conjugate.w / length;
+        return conjugate;
+    }
+
     inline Matrix8X8f DCT8X8(const Matrix8X8f& matrix)
     {
         Matrix8X8f result;
@@ -793,7 +804,7 @@ namespace My {
         }} };
         result[0][0] = 2.0f / (right - left);
         result[1][1] = 2.0f / (top - bottom);
-        result[2][2] = -2.0f / (farF - nearF);
+        result[2][2] = 2.0f / (farF - nearF);
         result[3][0] = -(right + left) / (right - left);
         result[3][1] = -(top + bottom) / (top - bottom);
         result[3][2] = -(farF + nearF) / (farF - nearF);
@@ -812,6 +823,7 @@ namespace My {
         result[0][0] = 1.0f / (aspect * tanHalfFov);
         result[1][1] = 1.0f / tanHalfFov;
         result[2][2] = -(farF + nearF) / (farF - nearF);
+        result[3][3] = 0.0f;
         result[2][3] = -1.0f;
         result[3][2] = -(2.0f * farF * nearF) / (farF - nearF);
         return result;
@@ -825,6 +837,13 @@ namespace My {
             {0.0f, -1.0f, 0.0f, 0.0f},
             {0.0f, 0.0f, 0.0f, 1.0f}
         }} };
+    }
+
+    inline void OpsiteVector(Vector4f& vec)
+    {
+        vec.x = -vec.x;
+        vec.y = -vec.y;
+        vec.z = -vec.z;
     }
 
     static Matrix4X4f g_IdentityMatrix = {{{

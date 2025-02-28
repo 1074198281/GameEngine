@@ -536,9 +536,12 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         {
             float conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
             float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
-            l.LightProjectionMatrix = My::BuildPerspectiveMatrix(conAngle, 1.0f, 1.0f, 50.0f);
+            Matrix4X4f perM = My::BuildPerspectiveMatrix(2 * penumbraAngle, 1.0f, 1.0f, 50.0f);
+            l.LightProjectionMatrix = perM;
 
             Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
+            // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。
+            OpsiteVector(l.LightDirection);
             Vector4f right = CrossProduct(up, l.LightDirection);
             Normalize(right);
             up = CrossProduct(l.LightDirection, right);
@@ -555,7 +558,27 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
                 {lightDotRight, lightDotUp, lightDotDir, 1.0f}
             }} };
 
-            BuildViewMatrix(l.LightViewMatrix, l.LightPosition, l.LightPosition + l.LightDirection, Vector4f(.0f, 1.0f, .0f, .0f));
+            My::Vector4f lookAt = l.LightPosition + l.LightDirection;
+            //BuildViewMatrix(l.LightViewMatrix, l.LightPosition, lookAt, Vector4f(.0f, 1.0f, .0f, .0f));
+        
+            XM_Camera::Camera cam;
+            cam.SetAspectRatio(1);
+            cam.SetFOV(conAngle);
+            cam.SetZRange(1, 50.0f);
+            cam.SetPosition(XM_Math::Vector3(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z));
+            XM_Math::Vector3 pos, at, up3;
+            pos = XM_Math::Vector3(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z);
+            at = XM_Math::Vector3(lookAt.x, lookAt.y, lookAt.z);
+            up3 = XM_Math::Vector3(0, 1, 0);
+            cam.SetEyeAtUp(pos, at, up3);
+            cam.Update();
+            XM_Math::Matrix4 vm = cam.GetViewMatrix();
+            XM_Math::Matrix4 pm = cam.GetProjMatrix();
+            XM_Math::Matrix4 vpm = cam.GetViewProjMatrix();
+            int ii = 0;
+
+            //memcpy(l.LightViewMatrix, &vm, 16 * sizeof(float));
+            //memcpy(l.LightProjectionMatrix, &pm, 16 * sizeof(float));
         }
         break;
         case LightType::Area:
