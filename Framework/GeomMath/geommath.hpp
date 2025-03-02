@@ -26,6 +26,11 @@
 #define TWO_PI 3.14159265358979323846f * 2.0f
 #endif
 
+#ifndef EP
+#define EP  1e-7
+#endif // !EP
+
+
 using std::ostream;
 
 namespace My {
@@ -495,6 +500,16 @@ namespace My {
         for(int count = 0; count < countof(result.data); count++) {
             result.data[count] *= length;
         }
+    }
+
+    inline bool isNear(Vector4f vec1, Vector4f vec2, float tiny = EP)
+    {
+        for (int i = 0; i < 4; i++) {
+            if (abs(vec1[i] - vec2[i]) > EP) {
+                return false;
+            }
+        }
+        return true;
     }
 
     inline void MatrixRotationYawPitchRoll(Matrix4X4f& matrix, const float yaw, const float pitch, const float roll)

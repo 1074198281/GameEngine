@@ -307,7 +307,6 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
 
 void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
 {
-    
     m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
     m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);

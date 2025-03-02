@@ -58,7 +58,7 @@ namespace My {
 		Vector4f LightDirection;
 		int LightShadowMapIndex;
 		LightType Type;
-		float Insensity;
+		float Intensity;
 		bool IsCastShadow;
 		uint8_t LightIndex;
 		uint8_t padding0[2];

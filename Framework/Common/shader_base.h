@@ -49,7 +49,7 @@ uint FIRSTBITHIGH_SLOW(uint input)
 
 
 namespace My {
-	enum LightType { Omni = 0, Spot = 1, Infinity = 2, Area = 3 };
+	enum LightType { Omni = 0, Spot = 1, Infinity = 2, Area = 3, None = 4 };
 #define MAX_LIGHT_NUM 100
 
 #ifdef USING_DX12

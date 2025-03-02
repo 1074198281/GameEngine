@@ -502,97 +502,11 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
     uint32_t light_index = 0;
     for (auto _it : scene.LightNodes) {
         auto& LightNode = _it.second;
-        auto pLight = scene.GetLight(LightNode->GetSceneObjectRef()).get();
+        auto& pLight = scene.GetLight(LightNode->GetSceneObjectRef());
         Matrix4X4f lightTrans = *LightNode->GetCalculatedTransform().get();
 
-        Light l;
-        memset(&l, 0, sizeof(Light));
-        l.Insensity = pLight->GetIntensity();
-        l.LightColor = pLight->GetColor().Value;
-        l.Type = pLight->GetLightType();
-        l.IsCastShadow = pLight->GetIfCastShadow();
-        l.LightIndex = light_index;
+        m_pLightManager->SetPerLightInfo(light_index, LightNode, pLight, LightNode->GetSceneObjectRef());
 
-        Matrix4X4f T;
-        Transpose(T, lightTrans);
-        // direction, in gltf default light direction is set by z-reserve, multiple its rotation matrix to get its dir 
-        MatrixMulVector(l.LightDirection, g_VectorYReserve, T);
-        //l.LightDirection = Vector4f(l.LightDirection.y, l.LightDirection.z, l.LightDirection.x, 0.0f);
-        l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
-
-        switch (l.Type)
-        {
-        case LightType::Omni:
-        {
-
-        }
-        break;
-        case LightType::Infinity:
-        {
-
-        }
-        break;
-        case LightType::Spot:
-        {
-            float conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
-            float penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
-            Matrix4X4f perM = My::BuildPerspectiveMatrix(2 * penumbraAngle, 1.0f, 1.0f, 50.0f);
-            l.LightProjectionMatrix = perM;
-
-            Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
-            // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。
-            OpsiteVector(l.LightDirection);
-            Vector4f right = CrossProduct(up, l.LightDirection);
-            Normalize(right);
-            up = CrossProduct(l.LightDirection, right);
-            Normalize(up);
-
-            float lightDotRight = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(right.x, right.y, right.z));
-            float lightDotUp = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(up.x, up.y, up.z));
-            float lightDotDir = -DotProduct(Vector3f(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z), Vector3f(l.LightDirection.x, l.LightDirection.y, l.LightDirection.z));
-
-            l.LightViewMatrix = { {{
-                {right.x, up.x, l.LightDirection.x, 0.0f},
-                {right.y, up.y, l.LightDirection.y, 0.0f},
-                {right.z, up.z, l.LightDirection.z, 0.0f},
-                {lightDotRight, lightDotUp, lightDotDir, 1.0f}
-            }} };
-
-            My::Vector4f lookAt = l.LightPosition + l.LightDirection;
-            //BuildViewMatrix(l.LightViewMatrix, l.LightPosition, lookAt, Vector4f(.0f, 1.0f, .0f, .0f));
-        
-            XM_Camera::Camera cam;
-            cam.SetAspectRatio(1);
-            cam.SetFOV(conAngle);
-            cam.SetZRange(1, 50.0f);
-            cam.SetPosition(XM_Math::Vector3(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z));
-            XM_Math::Vector3 pos, at, up3;
-            pos = XM_Math::Vector3(l.LightPosition.x, l.LightPosition.y, l.LightPosition.z);
-            at = XM_Math::Vector3(lookAt.x, lookAt.y, lookAt.z);
-            up3 = XM_Math::Vector3(0, 1, 0);
-            cam.SetEyeAtUp(pos, at, up3);
-            cam.Update();
-            XM_Math::Matrix4 vm = cam.GetViewMatrix();
-            XM_Math::Matrix4 pm = cam.GetProjMatrix();
-            XM_Math::Matrix4 vpm = cam.GetViewProjMatrix();
-            int ii = 0;
-
-            //memcpy(l.LightViewMatrix, &vm, 16 * sizeof(float));
-            //memcpy(l.LightProjectionMatrix, &pm, 16 * sizeof(float));
-        }
-        break;
-        case LightType::Area:
-        {
-
-        }
-        break;
-        default:
-            ASSERT(false, "Unknown Light Type!");
-            std::cout << "[D3d12 Initialize Light] Unknown Light Type!" << std::endl;
-            break;
-        }
-
-        m_pLightManager->SetPerLightInfo(light_index, l, LightNode->GetSceneObjectRef());
         light_index++;
     }
 
@@ -801,6 +715,7 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     //ImGui::ShowDemoWindow(); // Show demo window! :)
 
     UpdateD3dFrameConstants(frame);
+    m_pLightManager->UpdateLight();
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateCameraConstants(frame);
     if (!m_bInitialized) {
