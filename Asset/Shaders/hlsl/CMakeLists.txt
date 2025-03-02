@@ -66,10 +66,8 @@ ${ATMOSPHERE_FILES}
 foreach(PER_SHADER_FILE ${SHADER_FILES})
     get_filename_component(FILE_NAME ${PER_SHADER_FILE} NAME)
 
-    #set_source_files_properties(${PER_SHADER_FILE}
-    #PROPERTIES
-    #HEADER_FILE_ONLY TRUE
-    #)
+    #set_source_files_properties(${PER_SHADER_FILE} PROPERTIES HEADER_FILE_ONLY TRUE)
+    set_property(SOURCE ${PER_SHADER_FILE} PROPERTY VS_SETTINGS "ExcludedFromBuild=true")
 
     # 判断文件名是否以 "_VS" 结尾
     if(FILE_NAME MATCHES "_VS.hlsl$")
@@ -114,7 +112,4 @@ endforeach()
 
 list(APPEND MAIN_FILE ${SHADER_FILES})
 
-add_executable(SHADER_COMPILER 
-${MAIN_FILE}
-#${SHADER_FILES}
-)
+add_library(SHADER_COMPILER ${MAIN_FILE} )
