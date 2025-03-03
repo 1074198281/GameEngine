@@ -27,6 +27,10 @@ namespace My {
 		virtual ~D3d12LightManager();
 
 		void Clear() override;
+		void InitHandle() override;
+		void Create() override;
+	public:
+		uint64_t GetGpuHandle() override;
 	public:
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> GetDepthBuffer(uint8_t idx);
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetColorBuffer(uint8_t idx);
@@ -38,12 +42,10 @@ namespace My {
 
 
 	protected:
-
+		D3dGraphicsCore::DescriptorHandle m_FirstHandle;
+		int m_iHeapIdx;
 		std::unordered_map<uint8_t, DepthResource> m_ShadowMapTexture;
 		std::unordered_map<uint8_t, DepthResource> m_GlobalShadowMapTexture;
 		std::unordered_map<uint8_t, DepthResource> m_CubeShadowMapTexture;
-		//std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_ShadowMapTexture;
-		//std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_GlobalShadowMapTexture;
-		//std::vector<std::shared_ptr<D3dGraphicsCore::DepthBuffer>> m_CubeShadowMapTexture;
 	};
 }

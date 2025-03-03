@@ -48,6 +48,7 @@ namespace My {
 		kCommonFrameConstantsCBV,
 		kCommonLightConstantsCBV,
 		kCommonSRVs,
+		kShadowSRVs,
 
         kNumRootBindings
 	};

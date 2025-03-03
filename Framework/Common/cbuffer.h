@@ -46,7 +46,8 @@ namespace My {
 		Vector4f CameraPosition;
 		int LightNum;
 		int clip_space_type;			//0: opengl ,1: others ≤√ºÙø’º‰¿‡–Õ
-		float padding0[2];
+		float screenWidth;
+		float screenHeight;
 	} PerFrameConstants;
 
 	// cb3

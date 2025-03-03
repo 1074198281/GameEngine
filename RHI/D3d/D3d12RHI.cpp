@@ -396,10 +396,13 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
 
         pfc.clip_space_type = 1;
         pfc.LightNum = pLightManager->GetLightNum();
+        pfc.screenHeight = g_DisplayHeight;
+        pfc.screenWidth = g_DisplayWidth;
 
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), pLightManager->GetAllLightInfoPtr());
+        m_pGraphicsContext->SetDescriptorTable(My::kShadowSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pLightManager->GetGpuHandle()));
     }
     else {
         auto& lightInfo = frame.LightInfomation.Lights[lightIdx];

@@ -19,6 +19,13 @@ My::D3d12LightManager::~D3d12LightManager()
     Clear();
 }
 
+void My::D3d12LightManager::Create()
+{
+    Clear();
+    LightManager::Create();
+    InitHandle();
+}
+
 void My::D3d12LightManager::Clear()
 {
     for (auto& it : m_CubeShadowMapTexture) {
@@ -35,6 +42,17 @@ void My::D3d12LightManager::Clear()
     }
 
     Reset();
+    m_iHeapIdx = -1;
+}
+
+void My::D3d12LightManager::InitHandle()
+{
+    m_FirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(3, m_iHeapIdx);
+}
+
+uint64_t My::D3d12LightManager::GetGpuHandle()
+{
+    return m_FirstHandle.GetGpuPtr();
 }
 
 std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::GetDepthBuffer(uint8_t idx)
@@ -204,7 +222,7 @@ size_t My::D3d12LightManager::GetShadowMapHandle(uint8_t idx)
 
 std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepthBuffer(uint8_t idx)
 {
-	auto l = m_pLightInfo->Lights[idx];
+	auto& l = m_pLightInfo->Lights[idx];
 
 	std::shared_ptr<D3dGraphicsCore::DepthBuffer> pDepthBuffer = std::make_shared<D3dGraphicsCore::DepthBuffer>(1.0);
 	std::wstring depthBufferName = L"ShadowMap_" + std::to_wstring(l.LightShadowMapIndex);
@@ -214,7 +232,6 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
     std::wstring colorBufferName = L"ShadowColor_" + std::to_wstring(l.LightShadowMapIndex);
     pColorBuffer->Create(colorBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
 
-    int HeapIndex = -1;
     D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
         pColorBuffer->GetSRV(),
         pDepthBuffer->GetDepthSRV()
@@ -225,13 +242,13 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
         pArray[i] = 1;
     }
     uint32_t NumDest = NumSrc;
-    D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(NumSrc, HeapIndex);
+    D3dGraphicsCore::DescriptorHandle GpuHandle = m_FirstHandle;
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &GpuHandle, &NumDest, NumSrc, CpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3dGraphicsCore::DescriptorHandle colorbufferSRV = GpuHandle;
     D3dGraphicsCore::OffsetDescriptorHandle(GpuHandle);
     D3dGraphicsCore::DescriptorHandle depthbufferSRV = GpuHandle;
 
-    DepthResource depthRe{ pDepthBuffer, pColorBuffer, colorbufferSRV, depthbufferSRV, HeapIndex };
+    DepthResource depthRe{ pDepthBuffer, pColorBuffer, colorbufferSRV, depthbufferSRV, m_iHeapIdx };
     switch (l.Type)
     {
     case LightType::Omni:

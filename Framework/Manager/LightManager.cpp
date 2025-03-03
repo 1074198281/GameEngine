@@ -162,7 +162,7 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
     }
     break;
     default:
-        assert(false, "Unknown Light Type!");
+        assert(false);
         std::cout << "[D3d12 Initialize Light] Unknown Light Type!" << std::endl;
         break;
     }

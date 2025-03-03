@@ -74,10 +74,12 @@ namespace My {
 		virtual ~LightManager();
 
 		virtual void Clear() {};
+		virtual void InitHandle() {};
+		virtual void Create() ;
+	public:
+		virtual uint64_t GetGpuHandle() { return 0; };
 	public:
 		void Reset();
-		void Create();
-
 		void UpdateLight();
 
 		void SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNode>& pNodeLight, const std::shared_ptr<SceneObjectLight>& pSceneLight, std::string name);

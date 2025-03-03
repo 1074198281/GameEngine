@@ -183,6 +183,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_TemplateRootSignature[My::kCommonBatchConstantsCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 	g_TemplateRootSignature[My::kCommonFrameConstantsCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
 	g_TemplateRootSignature[My::kCommonLightConstantsCBV].InitAsConstantBuffer(3, D3D12_SHADER_VISIBILITY_ALL);
+	g_TemplateRootSignature[My::kShadowSRVs].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 100, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	//g_TemplateRootSignature[kSkinMatrices].InitAsBufferSRV(20, D3D12_SHADER_VISIBILITY_VERTEX);
 	g_TemplateRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	//g_TemplateRootSignature.InitStaticSampler(11, ShadowMapSamplerDesc);
