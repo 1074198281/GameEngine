@@ -315,9 +315,9 @@ void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer
     m_pGraphicsContext->ClearDepth(depthBuffer);
 }
 
-void D3dGraphicsCore::D3d12RHI::SetShadowPassEnd(ColorBuffer& colorBuffer)
+void D3dGraphicsCore::D3d12RHI::TransitionResourceState(GpuResource& re, D3D12_RESOURCE_STATES state, bool flush)
 {
-    m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
+    m_pGraphicsContext->TransitionResource(re, state, flush);
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dDrawBatchContext* pdbc, StructuredBuffer* vbuffer, ByteAddressBuffer* ibuffer,
@@ -402,7 +402,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonBatchConstantsCBV, sizeof(My::PerBatchConstants), &pbc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonFrameConstantsCBV, sizeof(My::PerFrameConstants), &pfc);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kCommonLightConstantsCBV, sizeof(My::LightInfo), pLightManager->GetAllLightInfoPtr());
-        m_pGraphicsContext->SetDescriptorTable(My::kShadowSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pLightManager->GetGpuHandle()));
+        m_pGraphicsContext->SetDescriptorTable(My::kShadowSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pLightManager->GetDepthGpuHandle()));
     }
     else {
         auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
@@ -425,7 +425,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         SFC.lightPos = lightInfo.LightPosition;
         SFC.screenWidth = g_DisplayWidth;
         SFC.screenHeight = g_DisplayHeight;
-
+        
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);
         m_pGraphicsContext->SetDescriptorTable(My::kShadowSRV, pLightManager->GetDepthSRVDescriptorHandle(lightIdx));

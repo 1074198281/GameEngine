@@ -88,8 +88,8 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNo
     break;
     case LightType::Spot:
     {
-        lo->Spot.conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
-        lo->Spot.penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
+        l.conAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetConAngle();
+        l.penumbraAngle = reinterpret_cast<SceneObjectSpotLight*>(pLight)->GetPenumbraAngle();
     }
     break;
     case LightType::Area:
@@ -108,6 +108,8 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNo
 
     m_LightInfoMap[idx]->LightProjectionMatrix = &l.LightProjectionMatrix;
     m_LightInfoMap[idx]->LightViewMatrix = &l.LightViewMatrix;
+    m_LightInfoMap[idx]->Spot.conAngle = &l.conAngle;
+    m_LightInfoMap[idx]->Spot.penumbraAngle = &l.penumbraAngle;
 
     m_iLightNum++;
     std::cout << "[Light Manager] Add Light Index: " << (int)idx << std::endl;
@@ -131,7 +133,7 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
     break;
     case LightType::Spot:
     {
-        l.LightProjectionMatrix = My::BuildPerspectiveMatrix(2 * info->Spot.penumbraAngle, 1.0f, 1.0f, l.Intensity);
+        l.LightProjectionMatrix = My::BuildPerspectiveMatrix(2 * l.penumbraAngle, 1.0f, 1.0f, l.Intensity);
 
         Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
         // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。

@@ -30,7 +30,8 @@ namespace My {
 		void InitHandle() override;
 		void Create() override;
 	public:
-		uint64_t GetGpuHandle() override;
+		uint64_t GetColorGpuHandle() override;
+		uint64_t GetDepthGpuHandle() override;
 	public:
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> GetDepthBuffer(uint8_t idx);
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetColorBuffer(uint8_t idx);
@@ -42,7 +43,10 @@ namespace My {
 
 
 	protected:
-		D3dGraphicsCore::DescriptorHandle m_FirstHandle;
+		D3dGraphicsCore::DescriptorHandle m_ColorBufferFirstHandle;
+		D3dGraphicsCore::DescriptorHandle m_ColorBufferCurrHandle;
+		D3dGraphicsCore::DescriptorHandle m_DepthBufferFirstHandle;
+		D3dGraphicsCore::DescriptorHandle m_DepthBufferCurrHandle;
 		int m_iHeapIdx;
 		std::unordered_map<uint8_t, DepthResource> m_ShadowMapTexture;
 		std::unordered_map<uint8_t, DepthResource> m_GlobalShadowMapTexture;

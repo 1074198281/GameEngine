@@ -10,7 +10,6 @@
 #include "MyViewer.hpp"
 
 using namespace My;
-#define WINPIX_DEBUG
 #ifdef WINPIX_DEBUG
 #include <filesystem>
 #include <ShlObj.h>
@@ -124,7 +123,7 @@ int main(int argc, char** argv) {
 	if (hModule == 0)
 	{
 		ErrorExit(TEXT("GetCapturerModule"));
-
+		
 		if (!LoadLibrary((LPCSTR)GetLatestWinPixGpuCapturerPath_Cpp17().c_str())) {
 			ErrorExit(TEXT("GetBaseModule"));
 		}

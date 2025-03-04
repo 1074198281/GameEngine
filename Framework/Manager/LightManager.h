@@ -35,9 +35,9 @@ namespace My {
 		Vector4f* LightDirection;
 		int* LightShadowMapIndex;
 		float* intensity;
-		bool* IsCastShadow;
+		int* IsCastShadow;
 		LightType Type;
-		uint8_t LightIndex;
+		int LightIndex;
 
 		std::string name;
 
@@ -54,8 +54,8 @@ namespace My {
 			} Infinity;
 
 			struct {
-				float conAngle;
-				float penumbraAngle;
+				float* conAngle;
+				float* penumbraAngle;
 			} Spot;
 
 			struct {
@@ -77,7 +77,8 @@ namespace My {
 		virtual void InitHandle() {};
 		virtual void Create() ;
 	public:
-		virtual uint64_t GetGpuHandle() { return 0; };
+		virtual uint64_t GetColorGpuHandle() { return 0; };
+		virtual uint64_t GetDepthGpuHandle() { return 0; };
 	public:
 		void Reset();
 		void UpdateLight();

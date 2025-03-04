@@ -52,18 +52,30 @@ namespace My {
 
 	// cb3
 	__declspec(align(16)) typedef struct Light {
-		Matrix4X4f LightViewMatrix;
-		Matrix4X4f LightProjectionMatrix;
-		Vector4f LightPosition;
-		Vector4f LightColor;
-		Vector4f LightDirection;
-		int LightShadowMapIndex;
-		LightType Type;
-		float Intensity;
-		bool IsCastShadow;
-		uint8_t LightIndex;
-		uint8_t padding0[2];
+		Matrix4X4f LightViewMatrix;				// 16 float
+		Matrix4X4f LightProjectionMatrix;		// 16 float
+		Vector4f LightPosition;					// 4  float
+		Vector4f LightColor;					// 4  float
+		Vector4f LightDirection;				// 4  float
+		int LightShadowMapIndex;				// 
+		LightType Type;							// 
+		float Intensity;						// 
+		float conAngle;							// 4  float
+		float penumbraAngle;					// 
+		int IsCastShadow;						//
+		int LightIndex;							//
+		int padding0;							// 4  float
 	} Light;
+
+	// cb4
+	__declspec(align(16)) typedef struct LightProperties {
+		union {
+			struct {
+				float conAngle;
+				float penumbraAngle;
+			} Spot;
+		};
+	} LightProperties;
 
 	__declspec(align(16)) typedef struct LightInfo {
 		Light Lights[MAX_LIGHT_NUM];

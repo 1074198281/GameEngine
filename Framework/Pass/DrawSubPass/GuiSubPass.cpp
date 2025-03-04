@@ -202,10 +202,10 @@ void My::GuiSubPass::Draw(Frame& frame)
 					std::string lightName = m_pGraphicsManager->GetLightName(l->LightIndex);
 					if (ImGui::TreeNode(lightName.c_str()))
 					{
-						ImGui::SliderFloat("LightIntensity", &l->Intensity, 0, pScene->GetLight(lightName)->GetIntensity());
+						ImGui::SliderFloat("LightIntensity", &l->Intensity, 0, 10 * pScene->GetLight(lightName)->GetIntensity());
 						ImGui::SliderFloat4("LightColor", l->LightColor, 0, 1);
 						ImGui::SliderFloat4("LightPosition", l->LightPosition, -100, 100);
-						ImGui::Checkbox("CastShadow", &l->IsCastShadow);
+						ImGui::SliderInt("CastShadow", &l->IsCastShadow, 0, 1);
 
 						if (ImGui::TreeNode("ShadowMap")) {
 							size_t shadow_debug_depth_texture = 0;

@@ -36,6 +36,7 @@ struct VertexOut
 float4 main(VertexOut pin) : SV_Target
 {
     //float2 uv = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
-    float4 color = float4(pin.ProjectedPosition.z, pin.ProjectedPosition.z, pin.ProjectedPosition.z, 1.0f);
+    float4 projPos = pin.ProjectedPosition / pin.ProjectedPosition.w;
+    float4 color = float4(projPos.z, projPos.z, projPos.z, 1.0f);
     return color;
 }

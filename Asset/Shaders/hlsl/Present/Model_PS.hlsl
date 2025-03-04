@@ -126,7 +126,7 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, cLight light)
     // calc diffuse
     float3 diffuse = kD * surface.Albedo / PI;
         
-    irradiance = (diffuse + specular) * radiance * N_dot_L * GetIsCastShadow(light.padding0);
+    irradiance = (diffuse + specular) * radiance * N_dot_L;// * light.isCastShadow;
 
     return irradiance;
 }
@@ -176,11 +176,39 @@ float4 main(VertexOut pin) : SV_Target
 
     // pre calculate current z in shadow map
     float4 World_Position = HomogeneousCoordinates(surface.PositionWorld);
-    float2 screenUV = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
+    float2 screenUV = float2(WorldPos.x / gScreenWidth, WorldPos.y / gScreenHeight);
     float shadowMapZ = ShadowMaps.Sample(DefaultSampler, screenUV);
     // add direct and reflect light    
     for (int idx = 0; idx < gLightNum; idx++)
-    {        
+    {
+        if (!glightinfo[idx].isCastShadow)
+        {
+            continue;
+        }
+        
+        if (glightinfo[idx].gLightType == 0)
+        {
+            
+        }
+        else if (glightinfo[idx].gLightType == 1)
+        {
+            
+        }
+        else if (glightinfo[idx].gLightType == 2)
+        {
+            //spot light clac angle if needs to end
+            float4 light_pos_vec = World_Position - glightinfo[idx].gLightPosition;
+            float light_angle = dot(light_pos_vec, glightinfo[idx].gLightDirection);
+            if (light_angle < cos(glightinfo[idx].penumbraAngle))
+            {
+                continue;
+            }
+        }
+        else if (glightinfo[idx].gLightType == 3)
+        {
+            
+        }
+        
         // calculate cuurent world pos in light view coordinate to get if has light cast
         float4x4 lightProjectedMat = transpose(mul(glightinfo[idx].gLightProjectMatrix, glightinfo[idx].gLightViewMatrix));
         float4 lightViewPos = mul(World_Position, lightProjectedMat);

@@ -61,7 +61,11 @@ struct cLight
     int gShadowMapIndex;
     int gLightType;
     float gInsensity;
-    uint padding0;
+    float conAngle;
+    float penumbraAngle;
+    int isCastShadow;
+    int lightIndex;
+    float padding0;
 };
 
 // >> bits represents its pos int a int

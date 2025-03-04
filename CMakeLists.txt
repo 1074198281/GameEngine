@@ -27,6 +27,13 @@ endif ()
 
 # add GraphicsInterface Type
 add_compile_definitions(USING_DX12)
+add_compile_definitions(WINPIX_DEBUG)
+
+add_compile_definitions(USE_PIX)
+add_compile_definitions(DBG)
+add_compile_definitions(_DEBUG)
+add_compile_definitions(PROFILE)
+add_compile_definitions(PROFILE_BUILD)
 
 # 添加预处理器定义屏蔽vs的全局max和min宏
 add_compile_definitions(NOMINMAX)
@@ -65,6 +72,8 @@ find_library(OPENDDL_LIBRARY OpenDDL PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAK
 find_library(OPENGEX_LIBRARY OpenGEX PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
 find_library(ZLIB_LIBRARY zlib PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
 find_library(ZLIB_DEBUG_LIBRARY zlibd PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
+find_library(WINPIX_DEBUG_LIBRARY WinPixEventRuntime PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} NO_CMAKE_FIND_ROOT_PATH)
+
 
 MESSAGE(STATUS "(1 for debug and 0 for release) DEBUG_FLAG Value : " ${DEBUG_FLAG})
 

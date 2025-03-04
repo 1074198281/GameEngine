@@ -88,7 +88,8 @@ namespace D3dGraphicsCore {
 		void SetPipelineStatus(const std::string& PSOName);
 		void SetBatchResources();
 		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
-		void SetShadowPassEnd(ColorBuffer& colorBuffer);
+
+		void TransitionResourceState(GpuResource& re, D3D12_RESOURCE_STATES state, bool flush);
 	private:
 		void InitializeCoreHWND();
 	private:

@@ -443,8 +443,8 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
         dbc->Node = _it.second;
 
         batch_index++;
-        for (auto& frame : m_Frames) {
-            frame.BatchContexts.push_back(dbc);
+        for (int f = 0; f < MAX_FRAME_COUNT; f++) {
+            m_Frames[f].BatchContexts.push_back(dbc);
         }
     }
 }
@@ -800,7 +800,7 @@ void My::D3d12GraphicsManager::SetShadowMapState(uint8_t lightIdx)
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
     auto colorBuffer = m_pLightManager->GetColorBuffer(lightIdx);
-    GraphicsRHI.SetShadowPassEnd(*colorBuffer);
+    GraphicsRHI.TransitionResourceState(*colorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
 }
 
 void* My::D3d12GraphicsManager::GetLightInfo()
@@ -901,6 +901,12 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
                 ASSERT(false, "No Such Skybox Texture, Name: %s", skyboxName);
                 std::cout << "[D3d12 Draw Batch] No Such Skybox Texture, Name: " << skyboxName << std::endl;
                 m_bDrawSkybox = false;
+            }
+        }
+        if (lightIdx == -1) {
+            for (int i = 0; i < m_pLightManager->GetLightNum(); i++) {
+                auto pDepthBuffer = m_pLightManager->GetDepthBuffer(i);
+                GraphicsRHI.TransitionResourceState(*pDepthBuffer, D3D12_RESOURCE_STATE_DEPTH_READ, true);
             }
         }
         if (d3dbatch->Node->Visible()) {

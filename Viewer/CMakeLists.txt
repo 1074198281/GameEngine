@@ -6,7 +6,13 @@ source_group(src/ FILES ${MYVIEWER_SOURCE_FILES})
 add_executable(MyEngineViewer 
 ${MYVIEWER_HEADER_FILES} ${MYVIEWER_SOURCE_FILES}
 )
-target_link_libraries(MyEngineViewer PlatformInterface Framework ${OPENGEX_LIBRARY} ${OPENDDL_LIBRARY} ${XG_LIBRARY} ${ZLIB_DEBUG_LIBRARY} d3d12 dxgi d3dcompiler D3dRHI)
+target_link_libraries(MyEngineViewer PlatformInterface Framework d3d12 dxgi d3dcompiler D3dRHI
+${OPENGEX_LIBRARY} 
+${OPENDDL_LIBRARY} 
+${XG_LIBRARY} 
+${ZLIB_DEBUG_LIBRARY} 
+${WINPIX_DEBUG_LIBRARY})
+
 if(DEBUG_FLAG EQUAL 1)
     target_link_libraries(MyEngineViewer 
     ${BULLETLINEARMATH_DEBUG_LIBRARY}
