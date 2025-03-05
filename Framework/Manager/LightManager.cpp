@@ -38,8 +38,10 @@ void My::LightManager::UpdateLight()
     for (int i = 0; i < m_iLightNum; i++) {
         auto& l = m_pLightInfo->Lights[i];
         auto& info = m_LightInfoMap[l.LightIndex];
-        if (!isNear(info->lastPosition, *info->LightPosition) || abs(info->defaultIntensity - *info->intensity) > EP) {
+        if (!isNear(info->lastPosition, *info->LightPosition) || abs(info->lastIntensity - *info->intensity) > EP) {
             UpdateLightViewProjMatrix(l);
+            info->lastPosition = *info->LightPosition;
+            info->lastIntensity = *info->intensity;
         }
         
     }
@@ -64,7 +66,7 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNo
     MatrixMulVector(l.LightDirection, g_VectorYReserve, T);
     l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
 
-    lo->defaultIntensity = l.Intensity;
+    lo->lastIntensity = l.Intensity;
     lo->intensity = &l.Intensity;
     lo->IsCastShadow = &l.IsCastShadow;
     lo->lastPosition = l.LightPosition;

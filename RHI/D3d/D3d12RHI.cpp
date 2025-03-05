@@ -405,7 +405,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDescriptorTable(My::kShadowSRVs, D3D12_GPU_DESCRIPTOR_HANDLE(pLightManager->GetDepthGpuHandle()));
     }
     else {
-        auto& lightInfo = frame.LightInfomation.Lights[lightIdx];
+        auto& lightInfo = pLightManager->GetAllLightInfoPtr()->Lights[lightIdx];
 
         struct ShadowBatchConstants {
             My::Matrix4X4f modelMatrix;

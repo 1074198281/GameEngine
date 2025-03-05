@@ -51,6 +51,7 @@ void My::D3d12LightManager::InitHandle()
     m_DepthBufferFirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(MAX_LIGHT_NUM, m_iHeapIdx);
     m_ColorBufferCurrHandle = m_ColorBufferFirstHandle;
     m_DepthBufferCurrHandle = m_DepthBufferFirstHandle;
+    m_DescriptorOffset = 0;
 }
 
 uint64_t My::D3d12LightManager::GetColorGpuHandle()
@@ -255,11 +256,12 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
     uint32_t NumDest = NumSrc;
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_ColorBufferCurrHandle, &NumDest, NumSrc, ColorCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_DepthBufferCurrHandle, &NumDest, NumSrc, DepthCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-
+    l.DescriptorOffset = m_DescriptorOffset;
     DepthResource depthRe{ pDepthBuffer, pColorBuffer, m_ColorBufferCurrHandle, m_DepthBufferCurrHandle, m_iHeapIdx };
 
     D3dGraphicsCore::OffsetDescriptorHandle(m_ColorBufferCurrHandle);
     D3dGraphicsCore::OffsetDescriptorHandle(m_DepthBufferCurrHandle);
+    m_DescriptorOffset++;
     switch (l.Type)
     {
     case LightType::Omni:

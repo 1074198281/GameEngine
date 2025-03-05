@@ -109,6 +109,12 @@ void XM_Camera::FlyingFPSCamera::Update(float deltaTime)
     else if (m_CurrentHeading <= -DirectX::XM_PI)
         m_CurrentHeading += DirectX::XM_2PI;
 
+#ifdef _DEBUG
+    if (yaw != 0 || pitch != 0) {
+        std::cout << "Current Pitch: " << 360 * m_CurrentPitch / DirectX::XM_2PI << ", Current Heading: " << 360 * m_CurrentHeading / DirectX::XM_2PI << std::endl;
+    }
+#endif // _DEBUG
+
     Matrix3 orientation = Matrix3(m_WorldEast, m_WorldUp, -m_WorldNorth) * Matrix3::MakeYRotation(m_CurrentHeading) * Matrix3::MakeXRotation(m_CurrentPitch);
     Vector3 position = orientation * Vector3(strafe, ascent, -forward) + m_TargetCamera.GetPosition();
     Vector3 CamPos = m_TargetCamera.GetPosition();

@@ -10,7 +10,7 @@ TextureCube<float3> RadianceIBLTexture : register(t20);
 TextureCube<float3> IrradianceIBLTexture : register(t21);
 Texture2D<float4> BRDF_LUT : register(t32);
 
-Texture2D<float> ShadowMaps : register(t100);
+Texture2D<float> ShadowMaps[100] : register(t100);
 
 SamplerState DefaultSampler : register(s10);
 
@@ -133,14 +133,11 @@ float3 CalculateDirectionalLighting(SurfaceProperties surface, cLight light)
 
 float4 main(VertexOut pin) : SV_Target
 {
+#ifdef LAMBERT
     float LumenIns = 4.0;
     float4 LightColor = float4(1.0, 1.0, 1.0, 1.0);
-
-    float4 WorldPos = pin.ProjectedPosition.xyzw / pin.ProjectedPosition.w;
     
     float3 NormalDir = normalize(mul(float4(pin.WorldNormal, 0.0f), gModelMatrix).xyz);
-
-#ifdef LAMBERT
     return LambertLighting(LumenIns, LightColor, LightDir, NormalDir);
 #endif
 #ifdef PBR
@@ -175,11 +172,11 @@ float4 main(VertexOut pin) : SV_Target
     colorResult += emissive;
 
     // pre calculate current z in shadow map
-    float4 World_Position = HomogeneousCoordinates(surface.PositionWorld);
-    float2 screenUV = float2(WorldPos.x / gScreenWidth, WorldPos.y / gScreenHeight);
-    float shadowMapZ = ShadowMaps.Sample(DefaultSampler, screenUV);
+    float2 screenUV = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
+    
     // add direct and reflect light    
-    for (int idx = 0; idx < gLightNum; idx++)
+    int idx = 0;
+    for (; idx < gLightNum; idx++)
     {
         if (!glightinfo[idx].isCastShadow)
         {
@@ -192,26 +189,28 @@ float4 main(VertexOut pin) : SV_Target
         }
         else if (glightinfo[idx].gLightType == 1)
         {
-            
-        }
-        else if (glightinfo[idx].gLightType == 2)
-        {
             //spot light clac angle if needs to end
-            float4 light_pos_vec = World_Position - glightinfo[idx].gLightPosition;
-            float light_angle = dot(light_pos_vec, glightinfo[idx].gLightDirection);
+            float4 light_pos_vec = HomogeneousCoordinates(pin.WorldPosition) - glightinfo[idx].gLightPosition;
+            float light_angle = dot(light_pos_vec, -glightinfo[idx].gLightDirection);
             if (light_angle < cos(glightinfo[idx].penumbraAngle))
             {
                 continue;
             }
+        }
+        else if (glightinfo[idx].gLightType == 2)
+        {
+
         }
         else if (glightinfo[idx].gLightType == 3)
         {
             
         }
         
+        Texture2D<float> shadow = ShadowMaps[glightinfo[idx].gDescriptorOffset];
+        float shadowMapZ = shadow.Sample(DefaultSampler, screenUV);
         // calculate cuurent world pos in light view coordinate to get if has light cast
         float4x4 lightProjectedMat = transpose(mul(glightinfo[idx].gLightProjectMatrix, glightinfo[idx].gLightViewMatrix));
-        float4 lightViewPos = mul(World_Position, lightProjectedMat);
+        float4 lightViewPos = mul(HomogeneousCoordinates(pin.WorldPosition), lightProjectedMat);
         lightViewPos = HomogeneousCoordinates(lightViewPos);
         if (lightViewPos.z > shadowMapZ)
         {

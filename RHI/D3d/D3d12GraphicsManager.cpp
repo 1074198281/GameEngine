@@ -511,7 +511,7 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
     }
 
     for (auto& frame : m_Frames) {
-        frame.LightInfomation = m_pLightManager->GetAllLightInfo();
+        frame.LightInfomation = m_pLightManager->GetAllLightInfoPtr();
         frame.FrameContext.LightNum = m_pLightManager->GetLightNum();
     }
 }
@@ -879,10 +879,6 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
     }
 
     auto& GraphicsRHI = reinterpret_cast<D3d12Application*>(m_pApp)->GetRHI();
-    for (auto& frame : m_Frames) {
-        frame.LightInfomation = m_pLightManager->GetAllLightInfo();
-        frame.FrameContext.LightNum = m_pLightManager->GetLightNum();
-    }
 }
 
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool castShadow, bool isDrawSkybox)

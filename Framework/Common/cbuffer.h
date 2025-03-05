@@ -64,7 +64,7 @@ namespace My {
 		float penumbraAngle;					// 
 		int IsCastShadow;						//
 		int LightIndex;							//
-		int padding0;							// 4  float
+		int DescriptorOffset;					// 4  float
 	} Light;
 
 	// cb4

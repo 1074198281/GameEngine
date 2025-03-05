@@ -47,6 +47,7 @@ namespace My {
 		D3dGraphicsCore::DescriptorHandle m_ColorBufferCurrHandle;
 		D3dGraphicsCore::DescriptorHandle m_DepthBufferFirstHandle;
 		D3dGraphicsCore::DescriptorHandle m_DepthBufferCurrHandle;
+		int m_DescriptorOffset;
 		int m_iHeapIdx;
 		std::unordered_map<uint8_t, DepthResource> m_ShadowMapTexture;
 		std::unordered_map<uint8_t, DepthResource> m_GlobalShadowMapTexture;

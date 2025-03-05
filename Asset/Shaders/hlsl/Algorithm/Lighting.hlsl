@@ -65,7 +65,7 @@ struct cLight
     float penumbraAngle;
     int isCastShadow;
     int lightIndex;
-    float padding0;
+    int gDescriptorOffset;
 };
 
 // >> bits represents its pos int a int

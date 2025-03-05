@@ -18,7 +18,7 @@ void My::ShadowMapPass::Draw(Frame& frame)
 	uint32_t cube_shadow_map_index = 0;
 
 	for (int i = 0; i < frame.FrameContext.LightNum; i++) {
-		auto& light = frame.LightInfomation.Lights[i];
+		auto& light = frame.LightInfomation->Lights[i];
 
 		switch (light.Type)
 		{

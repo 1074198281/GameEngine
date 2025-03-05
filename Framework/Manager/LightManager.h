@@ -21,7 +21,7 @@ namespace My {
 			Type = LightType::None;
 			LightIndex = -1;
 			name = "";
-			defaultIntensity = 0;
+			lastIntensity = 0;
 			lastPosition = Vector4f();
 			Spot.conAngle = 0;
 			Spot.penumbraAngle = 0;
@@ -41,7 +41,7 @@ namespace My {
 
 		std::string name;
 
-		float defaultIntensity;
+		float lastIntensity;
 		Vector4f lastPosition;
 
 		union {
