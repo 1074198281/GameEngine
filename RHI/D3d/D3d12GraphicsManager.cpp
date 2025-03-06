@@ -803,14 +803,9 @@ void My::D3d12GraphicsManager::SetShadowMapState(uint8_t lightIdx)
     GraphicsRHI.TransitionResourceState(*colorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
 }
 
-void* My::D3d12GraphicsManager::GetLightInfo()
+My::LightManager* My::D3d12GraphicsManager::GetLightManager()
 {
-    return m_pLightManager->GetAllLightInfoPtr();
-}
-
-std::string My::D3d12GraphicsManager::GetLightName(int index)
-{
-    return m_pLightManager->GetLightName(index);
+    return m_pLightManager.get();
 }
 
 std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
@@ -854,11 +849,6 @@ size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int ma
         std::cout << "[D3d12 Get Texture Error] No Such Texture. Batch: " << batch_index << std::endl;
     }
     return 0;
-}
-
-size_t My::D3d12GraphicsManager::GetShadowMapPtr(uint8_t index)
-{
-    return m_pLightManager->GetShadowMapHandle(index);
 }
 
 void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {

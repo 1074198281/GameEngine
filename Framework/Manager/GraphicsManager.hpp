@@ -5,6 +5,7 @@
 #include "IDrawPass.hpp"
 
 namespace My {
+    class LightManager;
     class GraphicsManager : __implements IGraphicsManager
     {
     public:
@@ -51,14 +52,12 @@ namespace My {
         void SetShadowMapState(uint8_t lightIdx) override {}
 
     public:
-        void* GetLightInfo() override { return nullptr; };
-        std::string GetLightName(int index) override { return std::string(); };
+        LightManager* GetLightManager() override { return nullptr; };
 
         std::vector<std::string> GetSkyboxInfo() override { return std::vector<std::string>(); }
 
         size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) override { return 0; }
         size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) override { return 0; }
-        size_t GetShadowMapPtr(uint8_t index) override { return 0; }
     protected:
         virtual void BeginScene(const Scene& scene);
         virtual void EndScene();

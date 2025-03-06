@@ -89,7 +89,10 @@ namespace My {
 		LightInfo* GetAllLightInfoPtr();
 		uint8_t GetLightNum();
 		std::string GetLightName(uint8_t idx);
+		float* GetDepthBias();
 
+	public:
+		virtual size_t GetShadowMapHandle(uint8_t idx) { return 0; };
 	protected:
 		void UpdateLightViewProjMatrix(Light& l);
 	protected:
@@ -98,5 +101,7 @@ namespace My {
 		std::unordered_map<uint8_t, std::unique_ptr<LightObject> > m_LightInfoMap;
 
 		BaseApplication* m_pApp;
+
+		float m_fDepthBias;
 	};
 }

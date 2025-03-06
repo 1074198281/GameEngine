@@ -36,7 +36,7 @@ namespace My {
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> GetDepthBuffer(uint8_t idx);
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetColorBuffer(uint8_t idx);
 		D3dGraphicsCore::DescriptorHandle GetDepthSRVDescriptorHandle(uint8_t idx);
-		size_t GetShadowMapHandle(uint8_t idx);
+		size_t GetShadowMapHandle(uint8_t idx) override;
 
 	private:
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> CreateDepthBuffer(uint8_t idx);

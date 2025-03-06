@@ -31,7 +31,8 @@ cbuffer cbMaterialConstants : register(b0)
     float OcclusionRotation;
     float EmissiveRotation;
     float NormalRotation;
-    float3 padding1;
+    float depth_bias;
+    float2 padding1;
 };
 
 cbuffer cbPerBatchConstants : register(b1)
@@ -172,7 +173,10 @@ float4 main(VertexOut pin) : SV_Target
     colorResult += emissive;
 
     // pre calculate current z in shadow map
-    float2 screenUV = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
+    //float2 screenUV = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
+    
+    float4 p1 = float4(0, 0, 0, 0);
+    float p2 = 0;
     
     // add direct and reflect light    
     int idx = 0;
@@ -190,9 +194,9 @@ float4 main(VertexOut pin) : SV_Target
         else if (glightinfo[idx].gLightType == 1)
         {
             //spot light clac angle if needs to end
-            float4 light_pos_vec = HomogeneousCoordinates(pin.WorldPosition) - glightinfo[idx].gLightPosition;
-            float light_angle = dot(light_pos_vec, -glightinfo[idx].gLightDirection);
-            if (light_angle < cos(glightinfo[idx].penumbraAngle))
+            p1 = HomogeneousCoordinates(pin.WorldPosition) - glightinfo[idx].gLightPosition;
+            p2 = dot(p1, glightinfo[idx].gLightDirection) / length(p1);
+            if (acos(p2) > glightinfo[idx].penumbraAngle)
             {
                 continue;
             }
@@ -207,12 +211,12 @@ float4 main(VertexOut pin) : SV_Target
         }
         
         Texture2D<float> shadow = ShadowMaps[glightinfo[idx].gDescriptorOffset];
-        float shadowMapZ = shadow.Sample(DefaultSampler, screenUV);
+        p2 = shadow.Load(int3(pin.ProjectedPosition.xy, 0));
         // calculate cuurent world pos in light view coordinate to get if has light cast
-        float4x4 lightProjectedMat = transpose(mul(glightinfo[idx].gLightProjectMatrix, glightinfo[idx].gLightViewMatrix));
-        float4 lightViewPos = mul(HomogeneousCoordinates(pin.WorldPosition), lightProjectedMat);
-        lightViewPos = HomogeneousCoordinates(lightViewPos);
-        if (lightViewPos.z > shadowMapZ)
+        //float4x4 lightProjectedMat = transpose(mul(glightinfo[idx].gLightProjectMatrix, glightinfo[idx].gLightViewMatrix));
+        p1 = mul(pin.WorldPosition, transpose(glightinfo[idx].gLightViewMatrix));
+        p1 = mul(p1, transpose(glightinfo[idx].gLightProjectMatrix));
+        if ((p1.z / p1.w) - depth_bias > p2)
         {
             continue;
         }

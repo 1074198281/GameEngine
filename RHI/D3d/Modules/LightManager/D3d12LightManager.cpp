@@ -10,7 +10,7 @@ My::D3d12LightManager::D3d12LightManager()
 
 My::D3d12LightManager::D3d12LightManager(BaseApplication* pApp)
 {
-    LightManager();
+    LightManager::LightManager();
     m_pApp = pApp;
 }
 

@@ -1,5 +1,6 @@
 ﻿#include "GuiSubPass.hpp"
 #include "BaseApplication.hpp"
+#include "LightManager.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -194,12 +195,14 @@ void My::GuiSubPass::Draw(Frame& frame)
 			}
 
 			if (ImGui::TreeNode("Light Info")) {
-				LightInfo* pLightInfo = reinterpret_cast<LightInfo*>(m_pGraphicsManager->GetLightInfo());
+				LightManager* pLightManager = m_pGraphicsManager->GetLightManager();
+				LightInfo* pLightInfo = pLightManager->GetAllLightInfoPtr();
 				int lightNum = pScene->LightNodes.size();
+				ImGui::SliderFloat("Depth Bias", pLightManager->GetDepthBias(), 0, 0.5);
 				for (int i = 0; i < lightNum; i++)
 				{
 					Light* l = &pLightInfo->Lights[i];
-					std::string lightName = m_pGraphicsManager->GetLightName(l->LightIndex);
+					std::string lightName = pLightManager->GetLightName(l->LightIndex);
 					if (ImGui::TreeNode(lightName.c_str()))
 					{
 						ImGui::SliderFloat("LightIntensity", &l->Intensity, 0, 10 * pScene->GetLight(lightName)->GetIntensity());
@@ -228,7 +231,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 							break;
 							case My::LightType::Spot:
 							{
-								shadow_debug_depth_texture = m_pGraphicsManager->GetShadowMapPtr(i);
+								shadow_debug_depth_texture = pLightManager->GetShadowMapHandle(i);
 							}
 							break;
 							default:

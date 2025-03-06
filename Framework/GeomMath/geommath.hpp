@@ -854,11 +854,16 @@ namespace My {
         }} };
     }
 
-    inline void OpsiteVector(Vector4f& vec)
+    inline void ReserveVector(Vector4f& vec)
     {
         vec.x = -vec.x;
         vec.y = -vec.y;
         vec.z = -vec.z;
+    }
+
+    inline Vector4f GetReserveVector(const Vector4f& vec)
+    {
+        return Vector4f(-vec.x, -vec.y, -vec.z, vec.w);
     }
 
     static Matrix4X4f g_IdentityMatrix = {{{

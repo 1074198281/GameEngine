@@ -31,7 +31,8 @@ namespace My {
 		float OcclusionRotation;
 		float EmissiveRotation;
 		float NormalRotation;
-		float padding1[3];
+		float depth_bias;
+		float padding1[2];
 	} MaterialConstants;
 
 	// cb1

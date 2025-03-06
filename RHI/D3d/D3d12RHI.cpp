@@ -378,6 +378,8 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         MatCbv.NormalTextureTransform[3] = pdbc->NormalTextureTransform[3];
         MatCbv.NormalRotation = pdbc->NormalRotation;
 
+        MatCbv.depth_bias = *pLightManager->GetDepthBias();
+
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstants, sizeof(My::MaterialConstants), &MatCbv);
     }
 

@@ -67,7 +67,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
     get_filename_component(FILE_NAME ${PER_SHADER_FILE} NAME)
 
     #set_source_files_properties(${PER_SHADER_FILE} PROPERTIES HEADER_FILE_ONLY TRUE)
-    set_property(SOURCE ${PER_SHADER_FILE} PROPERTY VS_SETTINGS "ExcludedFromBuild=true")
+    set_property(SOURCE ${PER_SHADER_FILE} PROPERTY VS_SETTINGS "ExcludedFromBuild=false")
 
     # 判断文件名是否以 "_VS" 结尾
     if(FILE_NAME MATCHES "_VS.hlsl$")
@@ -77,7 +77,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Vertex"
-            VS_SHADER_MODEL "5.1"
+            VS_SHADER_MODEL "6.3"
             VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""
@@ -90,7 +90,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Pixel"
-            VS_SHADER_MODEL "5.1"
+            VS_SHADER_MODEL "6.3"
             VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""
@@ -102,7 +102,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Compute"
-            VS_SHADER_MODEL "5.1"
+            VS_SHADER_MODEL "6.3"
             VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""

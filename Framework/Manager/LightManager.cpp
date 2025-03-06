@@ -8,6 +8,7 @@ My::LightManager::LightManager()
 	m_pLightInfo = nullptr;
 	m_pApp = nullptr;
 	m_iLightNum = 0;
+    m_fDepthBias = 0.01;
 }
 
 My::LightManager::~LightManager()
@@ -21,6 +22,7 @@ void My::LightManager::Reset()
 		dynamic_cast<MemoryManager*>(m_pApp->GetMemoryManager())->Free(m_pLightInfo, sizeof(My::LightInfo));
 		m_pLightInfo = nullptr;
 		m_iLightNum = 0;
+        m_fDepthBias = 0.01;
 	}
 }
 
@@ -139,7 +141,7 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
 
         Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
         // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。
-        OpsiteVector(l.LightDirection);
+        Vector4f dir = GetReserveVector(l.LightDirection);
         //Vector4f right = CrossProduct(up, l.LightDirection);
         //Normalize(right);
         //up = CrossProduct(l.LightDirection, right);
@@ -156,7 +158,7 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
         //    {lightDotRight, lightDotUp, lightDotDir, 1.0f}
         //}} };
 
-        My::Vector4f lookAt = l.LightPosition + l.LightDirection;
+        My::Vector4f lookAt = l.LightPosition + dir;
         BuildViewMatrix(l.LightViewMatrix, l.LightPosition, lookAt, up);
     }
     break;
@@ -193,4 +195,9 @@ std::string My::LightManager::GetLightName(uint8_t idx)
 		return m_LightInfoMap[idx]->name;
 	}
 	return std::string();
+}
+
+float* My::LightManager::GetDepthBias()
+{
+    return &m_fDepthBias;
 }
