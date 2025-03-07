@@ -171,10 +171,8 @@ float4 main(VertexOut pin) : SV_Target
     
     // add emissive color
     colorResult += emissive;
-
-    // pre calculate current z in shadow map
-    //float2 screenUV = float2(pin.ProjectedPosition.x / gScreenWidth, pin.ProjectedPosition.y / gScreenHeight);
     
+    // consider reuse about float4 and float
     float4 p1 = float4(0, 0, 0, 0);
     float p2 = 0;
     
@@ -194,8 +192,8 @@ float4 main(VertexOut pin) : SV_Target
         else if (glightinfo[idx].gLightType == 1)
         {
             //spot light clac angle if needs to end
-            p1 = HomogeneousCoordinates(pin.WorldPosition) - glightinfo[idx].gLightPosition;
-            p2 = dot(p1, glightinfo[idx].gLightDirection) / length(p1);
+            p1 = pin.WorldPosition - glightinfo[idx].gLightPosition;
+            p2 = dot(p1, glightinfo[idx].gLightDirection) / (length(p1) * length(glightinfo[idx].gLightDirection));
             if (acos(p2) > glightinfo[idx].penumbraAngle)
             {
                 continue;
@@ -211,11 +209,13 @@ float4 main(VertexOut pin) : SV_Target
         }
         
         Texture2D<float> shadow = ShadowMaps[glightinfo[idx].gDescriptorOffset];
-        p2 = shadow.Load(int3(pin.ProjectedPosition.xy, 0));
         // calculate cuurent world pos in light view coordinate to get if has light cast
-        //float4x4 lightProjectedMat = transpose(mul(glightinfo[idx].gLightProjectMatrix, glightinfo[idx].gLightViewMatrix));
         p1 = mul(pin.WorldPosition, transpose(glightinfo[idx].gLightViewMatrix));
         p1 = mul(p1, transpose(glightinfo[idx].gLightProjectMatrix));
+        // in dx coordinate, screen coordinate x+ points to right and y+ points to down, so when get depth from shadowmap,
+        // we have to convert to x+ points to right and y+ points to up in its coordinate
+        int2 uv = int2(((p1.x / p1.w) + 1) * 0.5  * gScreenWidth, (-p1.y / p1.w + 1) * 0.5 * gScreenHeight);
+        p2 = shadow.Load(int3(uv, 0));
         if ((p1.z / p1.w) - depth_bias > p2)
         {
             continue;
