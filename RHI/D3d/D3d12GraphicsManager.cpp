@@ -960,6 +960,11 @@ void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
     }
 }
 
+void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
+{
+
+}
+
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
