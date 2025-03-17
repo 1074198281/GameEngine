@@ -47,7 +47,7 @@ namespace My {
         virtual void SetPipelineStatus(const std::string& PSOName) = 0;
         virtual void SetBatchResources(Frame& frame) = 0;
         virtual void SetShadowResources(Frame& frame, uint8_t lightIdx) = 0;
-        virtual void SetShadowMapState(uint8_t lightIdx) = 0;
+        virtual void SetShadowMapDebugPresent(uint8_t lightIdx) = 0;
     public:
         virtual LightManager* GetLightManager() = 0;
         virtual std::vector<std::string> GetSkyboxInfo() = 0;

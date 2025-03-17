@@ -1,5 +1,3 @@
-
-
 Texture2D<float4> ShadowMap : register(t0);
 SamplerState DefaultSampler : register(s10);
 

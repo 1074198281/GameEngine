@@ -58,7 +58,7 @@ namespace My {
         void SetPipelineStatus(const std::string& PSOName) override;
         void SetBatchResources(Frame& frame) override;
         void SetShadowResources(Frame& frame, uint8_t lightIdx) override;
-        void SetShadowMapState(uint8_t lightIdx);
+        void SetShadowMapDebugPresent(uint8_t lightIdx);
     public:
         LightManager* GetLightManager() override;
 

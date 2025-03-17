@@ -514,6 +514,8 @@ void My::D3d12GraphicsManager::initializeLight(const Scene& scene)
         frame.LightInfomation = m_pLightManager->GetAllLightInfoPtr();
         frame.FrameContext.LightNum = m_pLightManager->GetLightNum();
     }
+
+    GraphicsRHI.SetLightManager(m_pLightManager.get());
 }
 
 void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::string& suffix, std::unordered_map<std::string, int>& ImageName)
@@ -787,12 +789,14 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
 
     std::shared_ptr<D3dGraphicsCore::DepthBuffer> depthBuffer = m_pLightManager->GetDepthBuffer(lightIdx);
     std::shared_ptr<D3dGraphicsCore::ColorBuffer> colorBuffer = m_pLightManager->GetColorBuffer(lightIdx);
-    if (colorBuffer) {
-        GraphicsRHI.SetShadowResources(frame, *colorBuffer, *depthBuffer);
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> volumnBuffer = m_pLightManager->GetVolumnBuffer(lightIdx);
+
+    if (!colorBuffer) {
+        ASSERT(!colorBuffer, "Blank Debug Color Buffer");
+        std::cout << "[D3d12 Set Shadow Resource] No Debug Shadow Color Buffer!" << std::endl;
     }
-    else {
-        GraphicsRHI.SetShadowResources(frame, D3dGraphicsCore::g_SceneColorBuffer, *depthBuffer);
-    }
+    
+    GraphicsRHI.SetShadowResources(frame, lightIdx, colorBuffer.get(), depthBuffer.get(), volumnBuffer.get());
 }
 
 void My::D3d12GraphicsManager::SetShadowMapState(uint8_t lightIdx)

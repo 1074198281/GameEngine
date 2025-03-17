@@ -16,13 +16,14 @@ namespace My {
 			LightColor = nullptr;
 			LightDirection = nullptr;
 			LightShadowMapIndex = nullptr;
-			intensity = nullptr;
+			Intensity = nullptr;
 			IsCastShadow = nullptr;
 			Type = LightType::None;
 			LightIndex = -1;
 			name = "";
 			lastIntensity = 0;
 			lastPosition = Vector4f();
+			isCastVolumetric = false;
 			Spot.conAngle = 0;
 			Spot.penumbraAngle = 0;
 		}
@@ -34,7 +35,7 @@ namespace My {
 		Vector4f* LightColor;
 		Vector4f* LightDirection;
 		int* LightShadowMapIndex;
-		float* intensity;
+		float* Intensity;
 		int* IsCastShadow;
 		LightType Type;
 		int LightIndex;
@@ -44,6 +45,7 @@ namespace My {
 		float lastIntensity;
 		Vector4f lastPosition;
 
+		bool isCastVolumetric;
 		union {
 			struct {
 
@@ -79,6 +81,7 @@ namespace My {
 	public:
 		virtual uint64_t GetColorGpuHandle() { return 0; };
 		virtual uint64_t GetDepthGpuHandle() { return 0; };
+		virtual uint64_t GetVolumnGpuHandle() { return 0; }
 	public:
 		void Reset();
 		void UpdateLight();
@@ -88,9 +91,11 @@ namespace My {
 		LightInfo GetAllLightInfo();
 		LightInfo* GetAllLightInfoPtr();
 		uint8_t GetLightNum();
-		std::string GetLightName(uint8_t idx);
 		float* GetDepthBias();
 
+		std::string GetLightName(uint8_t idx);
+		bool* GetCastVolumetricPtr(uint8_t idx);
+		bool GetCastVolumetric(uint8_t idx);
 	public:
 		virtual size_t GetShadowMapHandle(uint8_t idx) { return 0; };
 	protected:

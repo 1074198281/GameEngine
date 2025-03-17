@@ -53,7 +53,7 @@ namespace My {
                 img.Height = pBmpHeader->Height;
                 img.bitcount = 32;
                 img.pitch = ((img.Width * img.bitcount >> 3) + 3) & ~3;
-                img.data_size = img.pitch * img.Height;
+                img.data_size = (size_t)img.pitch * (size_t)img.Height;
                 img.data = new uint8_t[img.data_size];
 
                 if (img.bitcount < 24) {
@@ -62,7 +62,7 @@ namespace My {
                     uint8_t* pSourceData = buf.m_pData + pFileHeader->BitsOffset;
                     for (int32_t y = img.Height - 1; y >= 0; y--) {
                         for (uint32_t x = 0; x < img.Width; x++) {
-                            *(img.data + img.Width * (img.Height - y - 1) + x) = *(pSourceData + img.pitch * y + x * (img.bitcount >> 3));
+                            *(img.data + (size_t)img.Width * ((size_t)img.Height - y - 1) + x) = *(pSourceData + (size_t)img.pitch * y + x * ((size_t)img.bitcount >> 3));
                         }
                     }
                 }

@@ -71,6 +71,7 @@ namespace My {
 	enum ShadowRootSignature {
 		kShadowBatchCBV,
 		kShadowFrameCBV,
+		kShadowLightInfoCBV,
 		kShadowSRV,
 
 		kShadowRootBindings

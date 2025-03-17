@@ -40,10 +40,10 @@ void My::LightManager::UpdateLight()
     for (int i = 0; i < m_iLightNum; i++) {
         auto& l = m_pLightInfo->Lights[i];
         auto& info = m_LightInfoMap[l.LightIndex];
-        if (!isNear(info->lastPosition, *info->LightPosition) || abs(info->lastIntensity - *info->intensity) > EP) {
+        if (!isNear(info->lastPosition, *info->LightPosition) || abs(info->lastIntensity - *info->Intensity) > EP) {
             UpdateLightViewProjMatrix(l);
             info->lastPosition = *info->LightPosition;
-            info->lastIntensity = *info->intensity;
+            info->lastIntensity = *info->Intensity;
         }
         
     }
@@ -69,7 +69,7 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNo
     l.LightPosition = Vector4f(lightTrans[0][3], lightTrans[1][3], lightTrans[2][3], 1.0f);
 
     lo->lastIntensity = l.Intensity;
-    lo->intensity = &l.Intensity;
+    lo->Intensity = &l.Intensity;
     lo->IsCastShadow = &l.IsCastShadow;
     lo->lastPosition = l.LightPosition;
     lo->LightColor = &l.LightColor;
@@ -123,6 +123,11 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
 {
     auto& info = m_LightInfoMap[l.LightIndex];
 
+    Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
+    // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。
+    Vector4f dir = GetReserveVector(l.LightDirection);
+    My::Vector4f lookAt = l.LightPosition + dir;
+
     switch (l.Type)
     {
     case LightType::Omni:
@@ -132,16 +137,17 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
     break;
     case LightType::Infinity:
     {
+        
+        l.LightProjectionMatrix = My::BuildOrthographicMatrix(0, m_pApp->GetConfiguration().screenWidth,
+            0, m_pApp->GetConfiguration().screenHeight, 1.0f, l.Intensity);
 
+        BuildViewMatrix(l.LightViewMatrix, l.LightPosition, lookAt, up);
     }
     break;
     case LightType::Spot:
     {
         l.LightProjectionMatrix = My::BuildPerspectiveMatrix(2 * l.penumbraAngle, 1.0f, 1.0f, l.Intensity);
 
-        Vector4f up = Vector4f(.0f, 1.0f, 0.0f, .0f);
-        // 为了投影矩阵的方向正确性，矩阵的正方向与光照方向相反。
-        Vector4f dir = GetReserveVector(l.LightDirection);
         //Vector4f right = CrossProduct(up, l.LightDirection);
         //Normalize(right);
         //up = CrossProduct(l.LightDirection, right);
@@ -158,7 +164,7 @@ void My::LightManager::UpdateLightViewProjMatrix(Light& l)
         //    {lightDotRight, lightDotUp, lightDotDir, 1.0f}
         //}} };
 
-        My::Vector4f lookAt = l.LightPosition + dir;
+        
         BuildViewMatrix(l.LightViewMatrix, l.LightPosition, lookAt, up);
     }
     break;
@@ -200,4 +206,20 @@ std::string My::LightManager::GetLightName(uint8_t idx)
 float* My::LightManager::GetDepthBias()
 {
     return &m_fDepthBias;
+}
+
+bool* My::LightManager::GetCastVolumetricPtr(uint8_t idx)
+{
+    if (m_LightInfoMap.find(idx) != m_LightInfoMap.end()) {
+        return &m_LightInfoMap[idx]->isCastVolumetric;
+    }
+    return nullptr;
+}
+
+bool My::LightManager::GetCastVolumetric(uint8_t idx)
+{
+    if (m_LightInfoMap.find(idx) != m_LightInfoMap.end()) {
+        return m_LightInfoMap[idx]->isCastVolumetric;
+    }
+    return false;
 }

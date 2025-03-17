@@ -62,7 +62,7 @@ namespace D3dGraphicsCore {
 	public:
 		void InitializeGraphicsSettings();
 		void FinalizeGraphicsSettings();
-		
+		void SetLightManager(My::D3d12LightManager* pLightManager);
 	public:
 		void UpdateCamera();
 		void UpdateCameraParams(int64_t key);
@@ -87,7 +87,7 @@ namespace D3dGraphicsCore {
 
 		void SetPipelineStatus(const std::string& PSOName);
 		void SetBatchResources();
-		void SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer);
+		void SetShadowResources(My::Frame& frame, uint8_t lightIdx, ColorBuffer* colorBuffer, DepthBuffer* depthBuffer, ColorBuffer* volumnBuffer);
 
 		void TransitionResourceState(GpuResource& re, D3D12_RESOURCE_STATES state, bool flush);
 	private:
@@ -105,7 +105,7 @@ namespace D3dGraphicsCore {
 
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;
-		My::Light m_CacheLight;
+		My::D3d12LightManager* m_pLightManager;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;

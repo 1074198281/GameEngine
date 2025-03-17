@@ -132,6 +132,11 @@ void D3dGraphicsCore::D3d12RHI::FinalizeGraphicsSettings()
     m_CameraController.reset(nullptr);
 }
 
+void D3dGraphicsCore::D3d12RHI::SetLightManager(My::D3d12LightManager* pLightManager)
+{
+    m_pLightManager = pLightManager;
+}
+
 void D3dGraphicsCore::D3d12RHI::UpdateCamera()
 {
     float DeltaTime = GetFrameTime();
@@ -305,14 +310,28 @@ void D3dGraphicsCore::D3d12RHI::SetBatchResources()
     m_pGraphicsContext->ClearDepth(g_DepthBuffer);
 }
 
-void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, ColorBuffer& colorBuffer, DepthBuffer& depthBuffer)
+void D3dGraphicsCore::D3d12RHI::SetShadowResources(My::Frame& frame, uint8_t lightIdx, ColorBuffer* colorBuffer, DepthBuffer* depthBuffer, ColorBuffer* volumnBuffer)
 {
-    m_pGraphicsContext->TransitionResource(depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
-    m_pGraphicsContext->TransitionResource(colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
-    m_pGraphicsContext->SetRenderTarget(colorBuffer.GetRTV(), depthBuffer.GetDSV());
-    m_pGraphicsContext->ClearColor(colorBuffer);
-    m_pGraphicsContext->ClearDepth(depthBuffer);
+
+    m_pGraphicsContext->TransitionResource(*depthBuffer, D3D12_RESOURCE_STATE_DEPTH_WRITE, true);
+    m_pGraphicsContext->TransitionResource(*colorBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+
+    if (m_pLightManager->GetCastVolumetric(lightIdx) && volumnBuffer) {
+        m_pGraphicsContext->TransitionResource(*volumnBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, true);
+        D3D12_CPU_DESCRIPTOR_HANDLE rts[] = {
+            colorBuffer->GetRTV(),
+            volumnBuffer->GetRTV()
+        };
+        m_pGraphicsContext->SetRenderTargets(2, rts, depthBuffer->GetDSV());
+        m_pGraphicsContext->ClearColor(*volumnBuffer);
+    }
+    else {
+        m_pGraphicsContext->SetRenderTarget(colorBuffer->GetRTV(), depthBuffer->GetDSV());
+    }
+    
+    m_pGraphicsContext->ClearColor(*colorBuffer);
+    m_pGraphicsContext->ClearDepth(*depthBuffer);
 }
 
 void D3dGraphicsCore::D3d12RHI::TransitionResourceState(GpuResource& re, D3D12_RESOURCE_STATES state, bool flush)
@@ -427,6 +446,8 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         SFC.lightPos = lightInfo.LightPosition;
         SFC.screenWidth = g_DisplayWidth;
         SFC.screenHeight = g_DisplayHeight;
+        SFC.padding0[0] = 0;
+        SFC.padding0[1] = 0;
         
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowBatchCBV, sizeof(My::PerBatchConstants), &SBC);
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kShadowFrameCBV, sizeof(My::PerFrameConstants), &SFC);

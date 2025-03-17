@@ -14,8 +14,10 @@ namespace My {
 	typedef struct DepthResource {
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> pDepthBuffer;
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> pColorBuffer;	//colorbuffer for gui show
+		std::shared_ptr<D3dGraphicsCore::ColorBuffer> pVolumnBuffer;	//colorbuffer for gui show
 		D3dGraphicsCore::DescriptorHandle colorBufferSRVHandle;
 		D3dGraphicsCore::DescriptorHandle depthBufferSRVHandle;
+		D3dGraphicsCore::DescriptorHandle volumnBufferSRVHandle;
 		int heapIndex;
 	} DepthResource;
 
@@ -32,9 +34,11 @@ namespace My {
 	public:
 		uint64_t GetColorGpuHandle() override;
 		uint64_t GetDepthGpuHandle() override;
+		uint64_t GetVolumnGpuHandle() override;
 	public:
 		std::shared_ptr<D3dGraphicsCore::DepthBuffer> GetDepthBuffer(uint8_t idx);
 		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetColorBuffer(uint8_t idx);
+		std::shared_ptr<D3dGraphicsCore::ColorBuffer> GetVolumnBuffer(uint8_t idx);
 		D3dGraphicsCore::DescriptorHandle GetDepthSRVDescriptorHandle(uint8_t idx);
 		size_t GetShadowMapHandle(uint8_t idx) override;
 
@@ -47,6 +51,8 @@ namespace My {
 		D3dGraphicsCore::DescriptorHandle m_ColorBufferCurrHandle;
 		D3dGraphicsCore::DescriptorHandle m_DepthBufferFirstHandle;
 		D3dGraphicsCore::DescriptorHandle m_DepthBufferCurrHandle;
+		D3dGraphicsCore::DescriptorHandle m_VolumnBufferFirstHandle;
+		D3dGraphicsCore::DescriptorHandle m_VolumnBufferCurrHandle;
 		int m_DescriptorOffset;
 		int m_iHeapIdx;
 		std::unordered_map<uint8_t, DepthResource> m_ShadowMapTexture;

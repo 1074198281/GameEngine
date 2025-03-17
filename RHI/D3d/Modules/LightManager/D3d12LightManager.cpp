@@ -10,7 +10,7 @@ My::D3d12LightManager::D3d12LightManager()
 
 My::D3d12LightManager::D3d12LightManager(BaseApplication* pApp)
 {
-    LightManager::LightManager();
+    LightManager();
     m_pApp = pApp;
 }
 
@@ -31,26 +31,36 @@ void My::D3d12LightManager::Clear()
     for (auto& it : m_CubeShadowMapTexture) {
         it.second.pColorBuffer->Destroy();
         it.second.pDepthBuffer->Destroy();
+        it.second.pVolumnBuffer->Destroy();
     }
     for (auto& it : m_ShadowMapTexture) {
         it.second.pColorBuffer->Destroy();
         it.second.pDepthBuffer->Destroy();
+        it.second.pVolumnBuffer->Destroy();
     }
     for (auto& it : m_GlobalShadowMapTexture) {
         it.second.pColorBuffer->Destroy();
         it.second.pDepthBuffer->Destroy();
+        it.second.pVolumnBuffer->Destroy();
     }
 
     Reset();
     m_iHeapIdx = -1;
+
+    m_ColorBufferCurrHandle = m_ColorBufferFirstHandle;
+    m_DepthBufferCurrHandle = m_DepthBufferFirstHandle;
+    m_VolumnBufferCurrHandle = m_VolumnBufferFirstHandle;
+    m_DescriptorOffset = 0;
 }
 
 void My::D3d12LightManager::InitHandle()
 {
     m_ColorBufferFirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(MAX_LIGHT_NUM, m_iHeapIdx);
     m_DepthBufferFirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(MAX_LIGHT_NUM, m_iHeapIdx);
+    m_VolumnBufferFirstHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(MAX_LIGHT_NUM, m_iHeapIdx);
     m_ColorBufferCurrHandle = m_ColorBufferFirstHandle;
     m_DepthBufferCurrHandle = m_DepthBufferFirstHandle;
+    m_VolumnBufferCurrHandle = m_VolumnBufferFirstHandle;
     m_DescriptorOffset = 0;
 }
 
@@ -62,6 +72,11 @@ uint64_t My::D3d12LightManager::GetColorGpuHandle()
 uint64_t My::D3d12LightManager::GetDepthGpuHandle()
 {
     return m_DepthBufferFirstHandle.GetGpuPtr();
+}
+
+uint64_t My::D3d12LightManager::GetVolumnGpuHandle()
+{
+    return m_VolumnBufferFirstHandle.GetGpuPtr();
 }
 
 std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::GetDepthBuffer(uint8_t idx)
@@ -136,6 +151,47 @@ std::shared_ptr<D3dGraphicsCore::ColorBuffer> My::D3d12LightManager::GetColorBuf
     {
         if (m_GlobalShadowMapTexture.find(l.LightShadowMapIndex) != m_GlobalShadowMapTexture.end()) {
             return m_GlobalShadowMapTexture[l.LightShadowMapIndex].pColorBuffer;
+        }
+    }
+    break;
+    default:
+        std::cout << "[D3d12 Light Manager] Undefined Light Type." << std::endl;
+        break;
+    }
+
+    return nullptr;
+}
+
+std::shared_ptr<D3dGraphicsCore::ColorBuffer> My::D3d12LightManager::GetVolumnBuffer(uint8_t idx)
+{
+    auto l = m_pLightInfo->Lights[idx];
+    switch (l.Type)
+    {
+    case LightType::Omni:
+    {
+        if (m_CubeShadowMapTexture.find(l.LightShadowMapIndex) != m_CubeShadowMapTexture.end()) {
+            return m_CubeShadowMapTexture[l.LightShadowMapIndex].pVolumnBuffer;
+        }
+    }
+    break;
+    case LightType::Area:
+    {
+        if (m_ShadowMapTexture.find(l.LightShadowMapIndex) != m_ShadowMapTexture.end()) {
+            return m_ShadowMapTexture[l.LightShadowMapIndex].pVolumnBuffer;
+        }
+    }
+    break;
+    case LightType::Spot:
+    {
+        if (m_ShadowMapTexture.find(l.LightShadowMapIndex) != m_ShadowMapTexture.end()) {
+            return m_ShadowMapTexture[l.LightShadowMapIndex].pVolumnBuffer;
+        }
+    }
+    break;
+    case LightType::Infinity:
+    {
+        if (m_GlobalShadowMapTexture.find(l.LightShadowMapIndex) != m_GlobalShadowMapTexture.end()) {
+            return m_GlobalShadowMapTexture[l.LightShadowMapIndex].pVolumnBuffer;
         }
     }
     break;
@@ -241,11 +297,18 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
     std::wstring colorBufferName = L"ShadowColor_" + std::to_wstring(l.LightShadowMapIndex);
     pColorBuffer->Create(colorBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
 
+    std::shared_ptr<D3dGraphicsCore::ColorBuffer> pVolumnBuffer = std::make_shared<D3dGraphicsCore::ColorBuffer>();
+    std::wstring volumnBufferName = L"VolumnBuffer_" + std::to_wstring(l.LightShadowMapIndex);
+    pVolumnBuffer->Create(volumnBufferName, D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
+
     D3D12_CPU_DESCRIPTOR_HANDLE ColorCpuHandle[] = {
         pColorBuffer->GetSRV(),
     };
     D3D12_CPU_DESCRIPTOR_HANDLE DepthCpuHandle[] = {
         pDepthBuffer->GetDepthSRV(),
+    };
+    D3D12_CPU_DESCRIPTOR_HANDLE VolumnCpuHandle[] = {
+        pVolumnBuffer->GetSRV(),
     };
 
     const uint32_t NumSrc = _countof(ColorCpuHandle);
@@ -256,11 +319,13 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
     uint32_t NumDest = NumSrc;
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_ColorBufferCurrHandle, &NumDest, NumSrc, ColorCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_DepthBufferCurrHandle, &NumDest, NumSrc, DepthCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_VolumnBufferCurrHandle, &NumDest, NumSrc, DepthCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     l.DescriptorOffset = m_DescriptorOffset;
-    DepthResource depthRe{ pDepthBuffer, pColorBuffer, m_ColorBufferCurrHandle, m_DepthBufferCurrHandle, m_iHeapIdx };
+    DepthResource depthRe{ pDepthBuffer, pColorBuffer, pVolumnBuffer, m_ColorBufferCurrHandle, m_DepthBufferCurrHandle, m_VolumnBufferCurrHandle, m_iHeapIdx };
 
     D3dGraphicsCore::OffsetDescriptorHandle(m_ColorBufferCurrHandle);
     D3dGraphicsCore::OffsetDescriptorHandle(m_DepthBufferCurrHandle);
+    D3dGraphicsCore::OffsetDescriptorHandle(m_VolumnBufferCurrHandle);
     m_DescriptorOffset++;
     switch (l.Type)
     {

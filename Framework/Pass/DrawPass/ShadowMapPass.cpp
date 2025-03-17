@@ -1,4 +1,5 @@
 #include "ShadowMapPass.hpp"
+#include "LightManager.h"
 
 
 void My::ShadowMapPass::BeginPass(Frame& frame)
@@ -20,6 +21,7 @@ void My::ShadowMapPass::Draw(Frame& frame)
 	for (int i = 0; i < frame.FrameContext.LightNum; i++) {
 		auto& light = frame.LightInfomation->Lights[i];
 
+		// generate shadow map and its color buffer
 		switch (light.Type)
 		{
 		case LightType::Omni:
@@ -74,7 +76,13 @@ void My::ShadowMapPass::Draw(Frame& frame)
 		}
 
 		m_pGraphicsManager->DrawBatch(frame, i, true, false);
-		m_pGraphicsManager->SetShadowMapState(i);
+		m_pGraphicsManager->SetShadowMapDebugPresent(i);
+
+		// check if need to generate volumetric light
+		auto pLightManager = m_pGraphicsManager->GetLightManager();
+		if (pLightManager->GetCastVolumetric(i)) {
+
+		}
 	}
 
 	frame.FrameContext.ShadowMap.size = shadow_map_index;

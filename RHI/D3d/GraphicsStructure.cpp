@@ -211,6 +211,7 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_ShadowSpotRootSignature.Reset(My::kShadowRootBindings, 1);
 	g_ShadowSpotRootSignature[My::kShadowBatchCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 	g_ShadowSpotRootSignature[My::kShadowFrameCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
+	g_ShadowSpotRootSignature[My::kShadowLightInfoCBV].InitAsConstantBuffer(3, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_ShadowSpotRootSignature[My::kShadowSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_ShadowSpotRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	g_ShadowSpotRootSignature.Finalize(L"SpotLightRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
