@@ -221,7 +221,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 							break;
 							case My::LightType::Infinity:
 							{
-
+								shadow_debug_depth_texture = pLightManager->GetShadowMapHandle(i);
 							}
 							break;
 							case My::LightType::Area:

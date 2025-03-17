@@ -46,6 +46,7 @@ namespace D3dGraphicsCore {
 	extern RootSignature g_TemplateRootSignature;
 	extern RootSignature g_PresentRootSignature;
 	extern RootSignature g_OverlaySubRootSignature;
+	extern RootSignature g_VolumetricLightSubRootSignature;
 	extern std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
 	extern RootSignature g_GuassBlurRootSignature;
@@ -57,6 +58,8 @@ namespace D3dGraphicsCore {
 	extern RootSignature g_ShadowInfiRootSignature;
 
 	void InitializePipelineTemplates();
+	void InitializeOverlayPipelines(SamplerDesc desc);
+	void InitializeLightPipelines(SamplerDesc desc);
 
 	void FinalizePipelineTemplates();
 

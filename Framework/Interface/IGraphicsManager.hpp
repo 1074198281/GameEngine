@@ -39,6 +39,7 @@ namespace My {
         virtual void DrawPresent(Frame& frame) = 0;
         virtual void DrawGuassBlur(Frame& frame) = 0;
         virtual void DrawOverlay(Frame& frame) = 0;
+        virtual void DrawVolumetricLight(Frame& frame) = 0;
 
         virtual void BeginSubPass(const std::string& PassName) = 0;
         virtual void EndSubPass() = 0;
