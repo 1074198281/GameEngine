@@ -241,8 +241,12 @@ void D3dGraphicsCore::InitializeOverlayPipelines(SamplerDesc desc)
 	g_OverlaySubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
 	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
 
-	g_VolumetricLightSubRootSignature.Reset(1, 2);
-	g_VolumetricLightSubRootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 2);
+	g_VolumetricLightSubRootSignature.Reset(2, 2);
+	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_VolumetricLightSubRootSignature[My::kLightDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, MAX_LIGHT_NUM, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_VolumetricLightSubRootSignature[My::kBlendSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 101, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_VolumetricLightSubRootSignature[My::kLightCBV].InitAsConstantBuffer(0);
+	g_VolumetricLightSubRootSignature[My::kVolumnCBV].InitAsConstantBuffer(1);
 	g_VolumetricLightSubRootSignature.InitStaticSampler(16, g_linearWarp);
 	g_VolumetricLightSubRootSignature.InitStaticSampler(17, g_linearClamp);
 

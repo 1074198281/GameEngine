@@ -68,6 +68,16 @@ namespace My {
 		kOverlayRootBindings
 	};
 
+	enum VolumetricLightRootBindings {
+		kCameraDepthSRV,
+		kLightDepthSRV,
+		kBlendSRV,
+		kLightCBV,
+		kVolumnCBV,
+
+		kVolumetricLightRootBindings
+	};
+
 	enum ShadowRootSignature {
 		kShadowBatchCBV,
 		kShadowFrameCBV,

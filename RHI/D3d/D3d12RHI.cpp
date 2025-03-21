@@ -599,3 +599,10 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
     m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pGraphicsContext->CopyBuffer(src, result);
 }
+
+void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame)
+{
+
+
+    //m_pGraphicsContext->SetDescriptorTable();
+}

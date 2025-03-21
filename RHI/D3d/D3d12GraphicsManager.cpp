@@ -799,7 +799,7 @@ void My::D3d12GraphicsManager::SetShadowResources(Frame& frame, uint8_t lightIdx
     GraphicsRHI.SetShadowResources(frame, lightIdx, colorBuffer.get(), depthBuffer.get(), volumnBuffer.get());
 }
 
-void My::D3d12GraphicsManager::SetShadowMapState(uint8_t lightIdx)
+void My::D3d12GraphicsManager::SetShadowMapDebugPresent(uint8_t lightIdx)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 
@@ -966,7 +966,7 @@ void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
 
 void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
 {
-
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)
