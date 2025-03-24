@@ -53,7 +53,7 @@ float GetCurrentPositionIntensity(float4 currPos, cLight l)
         return 0;
     }
     
-    return 
+    return 0.5;
 }
 
 float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
@@ -62,6 +62,8 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
     float4 marchingDir = worldPos - gCameraPos;
     float marchingLength = length(marchingDir);
     float _step = marchingLength / gMarchingStep;
+    
+    float4 color = float4(0.0);
     for (int i = 0; i < MAX_LIGHT_NUM; i++)
     {
         cLight l = gLights[i];
@@ -75,13 +77,12 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
         {
             float4 currPos = gCameraPos + marchingDir * m;
             _intensity += GetCurrentPositionIntensity(currPos, l);
-
         }
         _intensity /= gMarchingStep;
         
-        
-
+        color += _intensity * l.gLightColor;
     }
     
-    return PresentMap.Sample(LinearWarp, PresentIn.texUV);
+    return color;
+    //return PresentMap.Sample(LinearWarp, PresentIn.texUV);
 }

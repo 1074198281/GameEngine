@@ -593,16 +593,42 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
 
     m_pGraphicsContext->Draw(3);
 
-    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
-
     m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
     m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame)
+void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src)
 {
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
+    m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
+    m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
+    m_pGraphicsContext->SetRenderTarget(result.GetRTV());
 
+    auto pLightInfo = m_pLightManager->GetAllLightInfo();
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kLightCBV, sizeof(pLightInfo), &pLightInfo);   // cb0
 
-    //m_pGraphicsContext->SetDescriptorTable();
+    struct VolumetricLightCBV {
+        XM_Math::Matrix4 invViewProj;
+        My::Vector4f cameraPos;
+        float gScreenWidth;
+        float gScreenHeight;
+        float gMarchingStep;
+        float gSampleIntensity;
+    } VLCBV;
+    VLCBV.invViewProj = m_Camera->GetReprojectionMatrix();
+    VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
+    VLCBV.gScreenWidth = g_DisplayWidth;
+    VLCBV.gScreenHeight = g_DisplayHeight;
+    VLCBV.gMarchingStep = 20;
+    VLCBV.gSampleIntensity = 1;
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kVolumnCBV, sizeof(VLCBV), &VLCBV);    //cb1
+
+    m_pGraphicsContext->SetDescriptorTable(My::kCameraDepthSRV, );
+
+    m_pGraphicsContext->Draw(3);
+
 }

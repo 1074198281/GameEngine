@@ -64,6 +64,8 @@ void My::D3d12GraphicsManager::Clear()
     m_BatchTextureResource.clear();
     m_PixelBufferResources.clear();
     m_pLightManager->Clear();
+
+    m_bInitialized = false;
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)

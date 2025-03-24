@@ -1,8 +1,11 @@
 cbuffer VolumetricLightConstants : register(b1)
 {
     float4x4 gInvViewProj;
+    float4 gCameraPos;
     float gScreenWidth;
     float gScreenHeight;
+    float gMarchingStep;
+    float gSampleIntensity;
 };
 
 Texture2D<float> gCameraDepthMap : register(t0);

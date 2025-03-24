@@ -58,6 +58,8 @@ void D3dGraphicsCore::InitializeBuffers()
 {
     g_SceneColorBuffer.Destroy();
     g_SceneColorBuffer.Create(L"Scene Buffer", g_DisplayWidth, g_DisplayHeight, 1, g_SceneColorBufferFormat);
+    g_DepthBuffer.Destroy();
+    g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
 }
 
 uint32_t GetDesiredGPUVendor()
@@ -512,8 +514,6 @@ void D3dGraphicsCore::DisplayResize(uint32_t width, uint32_t height)
     DEBUGPRINT("Changing display resolution to %ux%u", width, height);
     g_PreDisplayBuffer.Destroy();
     g_PreDisplayBuffer.Create(L"PreDisplay Buffer", width, height, 1, g_SwapChainFormat);
-    g_DepthBuffer.Destroy();
-    g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
 
     for (uint32_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
         g_DisplayBuffer[i].Destroy();
