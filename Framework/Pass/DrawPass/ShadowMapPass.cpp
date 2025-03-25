@@ -61,6 +61,7 @@ void My::ShadowMapPass::Draw(Frame& frame)
 		break;
 		case LightType::Infinity:
 		{
+			continue;
 			if (global_shadow_map_index > MAX_LIGHT_NUM) {
 				continue;
 			}

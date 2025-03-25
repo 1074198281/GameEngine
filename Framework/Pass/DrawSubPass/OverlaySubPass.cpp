@@ -13,6 +13,6 @@ void My::OverlaySubPass::EndSubPass()
 
 void My::OverlaySubPass::Draw(Frame& frame)
 {
-	m_pGraphicsManager->SetPipelineStatus("OverlaySub");
+	m_pGraphicsManager->SetPipelineStatus("Overlay");
 	m_pGraphicsManager->DrawOverlay(frame);
 }

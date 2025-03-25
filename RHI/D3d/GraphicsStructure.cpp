@@ -170,6 +170,13 @@ void D3dGraphicsCore::FinalizeDefaultTexture()
 
 void D3dGraphicsCore::InitializePipelineTemplates()
 {
+	InitializeGeometryPipelines();
+	InitializeOverlayPipelines();
+	InitializeLightPipelines();
+}
+
+void D3dGraphicsCore::InitializeGeometryPipelines()
+{
 	SamplerDesc DefaultSamplerDesc;
 	DefaultSamplerDesc.MaxAnisotropy = 8;
 
@@ -222,15 +229,18 @@ void D3dGraphicsCore::InitializePipelineTemplates()
 	g_PipelineStatusMap.emplace("Skybox", std::move(pSkyBoxPSO));
 }
 
-void D3dGraphicsCore::InitializeOverlayPipelines(SamplerDesc desc)
+void D3dGraphicsCore::InitializeOverlayPipelines()
 {
+	SamplerDesc DefaultSamplerDesc;
+	DefaultSamplerDesc.MaxAnisotropy = 8;
+
 	g_PresentRootSignature.Reset(1, 2);
 	g_PresentRootSignature[0].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
 	g_PresentRootSignature.InitStaticSampler(16, g_linearWarp);
 	g_PresentRootSignature.InitStaticSampler(17, g_linearClamp);
 	g_PresentRootSignature.Finalize(L"PresentRootSig");
 
-	g_OverlaySubRootSignature.Reset(2, 6);
+	g_OverlaySubRootSignature.Reset(My::kOverlayRootBindings, 6);
 	g_OverlaySubRootSignature[My::kOverlaySRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
 	g_OverlaySubRootSignature[My::kOverlayCBV].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_OverlaySubRootSignature.InitStaticSampler(16, g_linearWarp);
@@ -241,14 +251,15 @@ void D3dGraphicsCore::InitializeOverlayPipelines(SamplerDesc desc)
 	g_OverlaySubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
 	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
 
-	g_VolumetricLightSubRootSignature.Reset(2, 2);
+	g_VolumetricLightSubRootSignature.Reset(My::kVolumetricLightRootBindings, 2);
 	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
-	g_VolumetricLightSubRootSignature[My::kLightDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, MAX_LIGHT_NUM, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_VolumetricLightSubRootSignature[My::kBlendSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 101, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_VolumetricLightSubRootSignature[My::kLightDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, MAX_LIGHT_NUM, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_VolumetricLightSubRootSignature[My::kPresentSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 101, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_VolumetricLightSubRootSignature[My::kLightCBV].InitAsConstantBuffer(0);
 	g_VolumetricLightSubRootSignature[My::kVolumnCBV].InitAsConstantBuffer(1);
 	g_VolumetricLightSubRootSignature.InitStaticSampler(16, g_linearWarp);
 	g_VolumetricLightSubRootSignature.InitStaticSampler(17, g_linearClamp);
+	g_VolumetricLightSubRootSignature.Finalize(L"VolumetricLightSubRootSig");
 
 	// Present
 	std::unique_ptr<GraphicsPSO> pPresentPSO = std::make_unique<GraphicsPSO>(L"Present PSO");
@@ -290,8 +301,8 @@ void D3dGraphicsCore::InitializeOverlayPipelines(SamplerDesc desc)
 	pVolumetricLightPSO->Finalize();
 
 	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
-	g_PipelineStatusMap.emplace("OverlaySub", std::move(pOverlaySubPSO));
-	g_PipelineStatusMap.emplace("VolumetricLightSub", std::move(pVolumetricLightPSO));
+	g_PipelineStatusMap.emplace("Overlay", std::move(pOverlaySubPSO));
+	g_PipelineStatusMap.emplace("VolumetricLight", std::move(pVolumetricLightPSO));
 
 
 	// Compute RootSignature and PSOs
@@ -310,14 +321,16 @@ void D3dGraphicsCore::InitializeOverlayPipelines(SamplerDesc desc)
 	g_ComputePSOMap.emplace("GuassBlur_CS", std::move(GuassBlurPSO));
 }
 
-void D3dGraphicsCore::InitializeLightPipelines(SamplerDesc desc)
+void D3dGraphicsCore::InitializeLightPipelines()
 {
+	SamplerDesc DefaultSamplerDesc;
+	DefaultSamplerDesc.MaxAnisotropy = 8;
 
 	g_ShadowSpotRootSignature.Reset(My::kShadowRootBindings, 1);
 	g_ShadowSpotRootSignature[My::kShadowBatchCBV].InitAsConstantBuffer(1, D3D12_SHADER_VISIBILITY_ALL);
 	g_ShadowSpotRootSignature[My::kShadowFrameCBV].InitAsConstantBuffer(2, D3D12_SHADER_VISIBILITY_ALL);
 	g_ShadowSpotRootSignature[My::kShadowSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_ShadowSpotRootSignature.InitStaticSampler(10, desc);
+	g_ShadowSpotRootSignature.InitStaticSampler(10, DefaultSamplerDesc);
 	g_ShadowSpotRootSignature.Finalize(L"SpotLightRootSig", D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	//Spot light

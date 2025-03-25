@@ -2,7 +2,7 @@
 
 void My::VolumetricLightSubPass::BeginSubPass()
 {
-	m_pGraphicsManager->BeginSubPass("VolumetricLight");
+	m_pGraphicsManager->BeginSubPass("VolumetricLightSubPass");
 }
 
 void My::VolumetricLightSubPass::EndSubPass()

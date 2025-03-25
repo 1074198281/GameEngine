@@ -79,6 +79,8 @@ namespace D3dGraphicsCore {
 	extern ColorBuffer g_PreDisplayBuffer;
 	extern ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
 	extern DepthBuffer g_DepthBuffer;
+	extern DescriptorHandle g_DepthBufferSRVHandle;
+	extern int g_iDepthBufferHeapIdx;
 	extern UINT g_CurrentBuffer;
 	extern IDXGISwapChain1* s_SwapChain1;
 

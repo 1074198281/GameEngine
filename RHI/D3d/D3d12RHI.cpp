@@ -58,6 +58,8 @@ int D3dGraphicsCore::D3d12RHI::StartUp()
     
     InitializeDefaultTexture();
 
+    InitializeBuffers();
+
     return 0;
 }
 
@@ -94,7 +96,6 @@ void D3dGraphicsCore::D3d12RHI::InitializeCoreHWND()
     g_DisplayHeight = height;
 
     Initialize(false);
-    InitializeBuffers();
 }
 
 void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
@@ -598,7 +599,7 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src)
+void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -608,9 +609,21 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
     m_pGraphicsContext->SetRenderTarget(result.GetRTV());
 
-    auto pLightInfo = m_pLightManager->GetAllLightInfo();
-    m_pGraphicsContext->SetDynamicConstantBufferView(My::kLightCBV, sizeof(pLightInfo), &pLightInfo);   // cb0
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[descriptorHeapIdx]->GetHeapPointer());
 
+    // VS t0
+    m_pGraphicsContext->SetDescriptorTable(My::kCameraDepthSRV, g_DepthBufferSRVHandle);
+
+    // PS t0
+    m_pGraphicsContext->SetDescriptorTable(My::kLightDepthSRV, D3D12_GPU_DESCRIPTOR_HANDLE(m_pLightManager->GetDepthGpuHandle()));
+
+    // PS t101
+    m_pGraphicsContext->SetDescriptorTable(My::kPresentSRV, colorBufferHandle);
+
+    // PS cb0
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kLightCBV, sizeof(My::LightInfo), m_pLightManager->GetAllLightInfoPtr());
+
+    // PS cb1
     struct VolumetricLightCBV {
         XM_Math::Matrix4 invViewProj;
         My::Vector4f cameraPos;
@@ -619,16 +632,18 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
         float gMarchingStep;
         float gSampleIntensity;
     } VLCBV;
-    VLCBV.invViewProj = m_Camera->GetReprojectionMatrix();
+    VLCBV.invViewProj = m_Camera->GetViewProjMatrix();
+    Invert(VLCBV.invViewProj);
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
     VLCBV.gScreenWidth = g_DisplayWidth;
     VLCBV.gScreenHeight = g_DisplayHeight;
     VLCBV.gMarchingStep = 20;
     VLCBV.gSampleIntensity = 1;
-    m_pGraphicsContext->SetDynamicConstantBufferView(My::kVolumnCBV, sizeof(VLCBV), &VLCBV);    //cb1
-
-    m_pGraphicsContext->SetDescriptorTable(My::kCameraDepthSRV, );
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kVolumnCBV, sizeof(VLCBV), &VLCBV);
 
     m_pGraphicsContext->Draw(3);
 
+    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    m_pGraphicsContext->CopyBuffer(src, result);
 }

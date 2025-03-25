@@ -58,8 +58,9 @@ namespace D3dGraphicsCore {
 	extern RootSignature g_ShadowInfiRootSignature;
 
 	void InitializePipelineTemplates();
-	void InitializeOverlayPipelines(SamplerDesc desc);
-	void InitializeLightPipelines(SamplerDesc desc);
+	void InitializeGeometryPipelines();
+	void InitializeOverlayPipelines();
+	void InitializeLightPipelines();
 
 	void FinalizePipelineTemplates();
 

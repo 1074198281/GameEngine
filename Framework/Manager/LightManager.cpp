@@ -116,7 +116,7 @@ void My::LightManager::SetPerLightInfo(uint8_t idx, std::shared_ptr<SceneLightNo
     m_LightInfoMap[idx]->Spot.penumbraAngle = &l.penumbraAngle;
 
     m_iLightNum++;
-    std::cout << "[Light Manager] Add Light Index: " << (int)idx << std::endl;
+    std::cout << "[Light Manager] Add Light Index: " << (int)idx << ", Light Name:" << pNodeLight->GetSceneObjectRef() << std::endl;
 }
 
 void My::LightManager::UpdateLightViewProjMatrix(Light& l)

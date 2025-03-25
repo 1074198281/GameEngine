@@ -32,6 +32,10 @@
 #include "../Asset/Shaders/CompiledShaders/g_SpotLight_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_SpotLight_PS.h"
 
+// volumetric light
+#include "../Asset/Shaders/CompiledShaders/g_VolumetricLight_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_VolumetricLight_PS.h"
+
 namespace D3dGraphicsCore {
 	std::unordered_map<std::string, ShaderByteCode> g_ShaderByteMap;
 }
@@ -83,6 +87,7 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 
 	//shadow
 	GENERATE_SHADER_BYTE_CODE(SpotLight);
+	GENERATE_SHADER_BYTE_CODE(VolumetricLight);
 #undef TOSTRING
 #undef GENERATE_SHADER_BYTE_CODE
 #endif // !GENERATE_SHADER_BYTE_CODE

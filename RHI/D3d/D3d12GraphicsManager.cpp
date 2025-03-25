@@ -969,6 +969,13 @@ void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
 void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
+    auto& desBuffer = m_PixelBufferResources["OverlayDes"];
+    ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
+
+
+    GraphicsRHI.DrawVolumetricLight(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+        m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)

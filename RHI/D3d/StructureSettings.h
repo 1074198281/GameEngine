@@ -71,7 +71,7 @@ namespace My {
 	enum VolumetricLightRootBindings {
 		kCameraDepthSRV,
 		kLightDepthSRV,
-		kBlendSRV,
+		kPresentSRV,
 		kLightCBV,
 		kVolumnCBV,
 
@@ -81,7 +81,6 @@ namespace My {
 	enum ShadowRootSignature {
 		kShadowBatchCBV,
 		kShadowFrameCBV,
-		kShadowLightInfoCBV,
 		kShadowSRV,
 
 		kShadowRootBindings

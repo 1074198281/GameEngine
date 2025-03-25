@@ -7,7 +7,6 @@ calculate phase function (HG phase function)
 */
 
 #include "Lighting.hlsl"
-#define MAX_LIGHT_NUM 100
 
 struct VolumetricLightVSOut
 {
@@ -34,7 +33,7 @@ cbuffer VolumetricLightConstants : register(b1)
 SamplerState LinearWarp : register(s16);
 SamplerState LinearClamp : register(s17);
 
-Texture2D<float> LightDepthMap[MAX_LIGHT_NUM] : register(t0);
+Texture2D<float> LightDepthMap[MAX_LIGHT_NUM] : register(t1);
 Texture2D<float4> PresentMap : register(t101);
 
 float GetCurrentPositionIntensity(float4 currPos, cLight l)
@@ -63,7 +62,7 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
     float marchingLength = length(marchingDir);
     float _step = marchingLength / gMarchingStep;
     
-    float4 color = float4(0.0);
+    float4 color = float4(0.0, 0.0, 0.0, 0.0);
     for (int i = 0; i < MAX_LIGHT_NUM; i++)
     {
         cLight l = gLights[i];
@@ -83,6 +82,5 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
         color += _intensity * l.gLightColor;
     }
     
-    return color;
-    //return PresentMap.Sample(LinearWarp, PresentIn.texUV);
+    return color + PresentMap.Sample(LinearWarp, PresentIn.texUV);
 }

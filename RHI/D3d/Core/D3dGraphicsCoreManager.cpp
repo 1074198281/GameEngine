@@ -1,6 +1,7 @@
 #include "D3dGraphicsCoreManager.h"
 #include "Command/CommandLineArg.h"
 #include "Common/SystemTime.h"
+#include "GraphicsStructure.h"
 #include <algorithm>
 #include <cwctype>
 
@@ -49,6 +50,8 @@ namespace D3dGraphicsCore
     ColorBuffer g_PreDisplayBuffer;
     ColorBuffer g_DisplayBuffer[SWAP_CHAIN_BUFFER_COUNT];
     DepthBuffer g_DepthBuffer(1.0f);
+    DescriptorHandle g_DepthBufferSRVHandle;
+    int g_iDepthBufferHeapIdx = -1;
     DXGI_FORMAT g_SceneDepthBufferFormat(DSV_FORMAT);
     UINT g_CurrentBuffer = 0;
     IDXGISwapChain1* s_SwapChain1 = nullptr;
@@ -60,6 +63,14 @@ void D3dGraphicsCore::InitializeBuffers()
     g_SceneColorBuffer.Create(L"Scene Buffer", g_DisplayWidth, g_DisplayHeight, 1, g_SceneColorBufferFormat);
     g_DepthBuffer.Destroy();
     g_DepthBuffer.Create(L"DepthBuffer", g_DisplayWidth, g_DisplayHeight, DSV_FORMAT);
+
+    // set depth srv
+    if (g_DepthBufferSRVHandle.IsNull()) {
+        g_DepthBufferSRVHandle = AllocateFromDescriptorHeap(1, g_iDepthBufferHeapIdx);
+    }
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> cpuHandle;
+    cpuHandle.push_back(g_DepthBuffer.GetDepthSRV());
+    CopyDescriptors(g_DepthBufferSRVHandle, cpuHandle, 1);
 }
 
 uint32_t GetDesiredGPUVendor()
