@@ -104,7 +104,7 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
         m_Camera = std::make_unique<XM_Camera::Camera>();
         m_Camera->SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
         m_Camera->SetFOV(120.f);
-        m_Camera->SetZRange(0.1f, 1000.0f);
+        m_Camera->SetZRange(0.1f, 100.0f);
         m_Camera->SetPosition(XM_Math::Vector3(0, 5, 150));
     }
     if (!m_CameraController) {
@@ -612,9 +612,10 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[descriptorHeapIdx]->GetHeapPointer());
 
     // VS t0
+    m_pGraphicsContext->TransitionResource(g_DepthBuffer, D3D12_RESOURCE_STATE_DEPTH_READ, true);
     m_pGraphicsContext->SetDescriptorTable(My::kCameraDepthSRV, g_DepthBufferSRVHandle);
 
-    // PS t0
+    // PS t1
     m_pGraphicsContext->SetDescriptorTable(My::kLightDepthSRV, D3D12_GPU_DESCRIPTOR_HANDLE(m_pLightManager->GetDepthGpuHandle()));
 
     // PS t101
@@ -625,20 +626,34 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
 
     // PS cb1
     struct VolumetricLightCBV {
-        XM_Math::Matrix4 invViewProj;
+        My::Matrix4X4f invViewProj;
         My::Vector4f cameraPos;
         float gScreenWidth;
         float gScreenHeight;
         float gMarchingStep;
         float gSampleIntensity;
+        float gCameraNearZ;
+        float gCameraFarZ;
+        float padding0[2];
     } VLCBV;
-    VLCBV.invViewProj = m_Camera->GetViewProjMatrix();
-    Invert(VLCBV.invViewProj);
+    auto m = m_Camera->GetViewProjMatrix();
+    Invert(m);
+    My::Matrix4X4f inv;
+    My::Matrix4X4f t = frame.FrameContext.ProjectionMatrix * frame.FrameContext.ViewMatrix;
+    My::Transpose(inv, t) ;
+    if (!My::InvertMatrix(VLCBV.invViewProj, inv)) {
+        std::cout << "[D3dRHI Draw Volumetric Light]: Can't calculate invert matrix!" << std::endl;
+        ASSERT(false);
+    }
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
     VLCBV.gScreenWidth = g_DisplayWidth;
     VLCBV.gScreenHeight = g_DisplayHeight;
     VLCBV.gMarchingStep = 20;
     VLCBV.gSampleIntensity = 1;
+    VLCBV.gCameraNearZ = m_Camera->GetNearClip();
+    VLCBV.gCameraFarZ = m_Camera->GetFarClip();
+    VLCBV.padding0[0] = 0;
+    VLCBV.padding0[1] = 0;
     m_pGraphicsContext->SetDynamicConstantBufferView(My::kVolumnCBV, sizeof(VLCBV), &VLCBV);
 
     m_pGraphicsContext->Draw(3);

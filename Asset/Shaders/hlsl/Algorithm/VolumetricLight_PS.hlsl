@@ -28,6 +28,9 @@ cbuffer VolumetricLightConstants : register(b1)
     float gScreenHeight;
     float gMarchingStep;
     float gSampleIntensity;
+    float gCameraNearZ;
+    float gCameraFarZ;
+    float2 padding0;
 };
 
 SamplerState LinearWarp : register(s16);
@@ -46,7 +49,7 @@ float GetCurrentPositionIntensity(float4 currPos, cLight l)
     }
     
     float4 lightProjPos = mul(mul(currPos, l.gLightViewMatrix), l.gLightProjectMatrix);
-    float depthInLight = LightDepthMap[l.lightIndex].Load(int3(lightProjPos.x / lightProjPos.w * gScreenWidth, lightProjPos.y / lightProjPos.w * gScreenHeight, 0));
+    float depthInLight = LightDepthMap[l.gDescriptorOffset].Load(int3(lightProjPos.x / lightProjPos.w * gScreenWidth, lightProjPos.y / lightProjPos.w * gScreenHeight, 0));
     if (lightProjPos.z / lightProjPos.w > depthInLight)
     {
         return 0;
@@ -58,6 +61,8 @@ float GetCurrentPositionIntensity(float4 currPos, cLight l)
 float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
 {
     float4 worldPos = mul(PresentIn.positionCS, gInvViewProj);
+    worldPos = worldPos / worldPos.w;
+    worldPos.z *= gCameraFarZ - gCameraNearZ;
     float4 marchingDir = worldPos - gCameraPos;
     float marchingLength = length(marchingDir);
     float _step = marchingLength / gMarchingStep;

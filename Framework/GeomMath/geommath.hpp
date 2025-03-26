@@ -30,10 +30,11 @@
 #define EP  1e-7
 #endif // !EP
 
-
 using std::ostream;
 
 namespace My {
+    const int MATRIX4_SIZE = 4;
+
     template<typename T, size_t SizeOfArray>
         constexpr size_t countof(T (&)[SizeOfArray]) { return SizeOfArray; }
 
@@ -376,6 +377,21 @@ namespace My {
         return out;
     }
 
+
+    inline void BuildIdentityMatrix(Matrix4X4f& matrix)
+    {
+        Matrix4X4f identity = { {{
+            { 1.0f, 0.0f, 0.0f, 0.0f},
+            { 0.0f, 1.0f, 0.0f, 0.0f},
+            { 0.0f, 0.0f, 1.0f, 0.0f},
+            { 0.0f, 0.0f, 0.0f, 1.0f}
+        }} };
+
+        matrix = identity;
+
+        return;
+    }
+
     template <typename T, int ROWS, int COLS>
     void MatrixAdd(Matrix<T, ROWS, COLS>& result, const Matrix<T, ROWS, COLS>& matrix1, const Matrix<T, ROWS, COLS>& matrix2)
     {
@@ -563,6 +579,68 @@ namespace My {
         vector.data[2] = vec.data[2];
     }
 
+    inline bool InvertMatrix(Matrix4X4f& result, const Matrix4X4f& input)
+    {
+        BuildIdentityMatrix(result);
+
+        float gaussArray[MATRIX4_SIZE][MATRIX4_SIZE * 2] = {0};
+        for (int i = 0; i < MATRIX4_SIZE; i++) {
+            for (int j = 0; j < MATRIX4_SIZE; j++) {
+                gaussArray[i][j] = input[i][j];
+            }
+            for (int k = MATRIX4_SIZE; k < MATRIX4_SIZE * 2; k++) {
+                gaussArray[i][k] = result[i][k - MATRIX4_SIZE];
+            }
+        }
+
+        for (int i = 0; i < MATRIX4_SIZE; ++i) {
+            // 如果主对角线元素为0，尝试与下面的行交换
+            if (std::abs(gaussArray[i][i]) < EP) {
+                int swapRow = -1;
+                for (int k = i + 1; k < MATRIX4_SIZE; ++k) {
+                    if (std::abs(gaussArray[k][i]) > EP) {
+                        swapRow = k;
+                        break;
+                    }
+                }
+
+                if (swapRow == -1) {
+                    return false; // 矩阵不可逆
+                }
+
+                // 交换行
+                for (int k = 0; k < MATRIX4_SIZE * 2; ++k) {
+                    std::swap(gaussArray[i][k], gaussArray[swapRow][k]);
+                }
+            }
+
+            // 将主对角线元素化为1
+            float pivot = gaussArray[i][i];
+            for (int k = 0; k < MATRIX4_SIZE * 2; ++k) {
+                gaussArray[i][k] /= pivot;
+            }
+
+            // 将其他行的该列元素化为0
+            for (int k = 0; k < MATRIX4_SIZE; ++k) {
+                if (k != i && std::abs(gaussArray[k][i]) > EP) {
+                    float factor = gaussArray[k][i];
+                    for (int j = 0; j < MATRIX4_SIZE * 2; ++j) {
+                        gaussArray[k][j] -= factor * gaussArray[i][j];
+                    }
+                }
+            }
+        }
+
+        // 将结果复制到输出矩阵中
+        for (int i = 0; i < MATRIX4_SIZE; ++i) {
+            for (int j = 0; j < MATRIX4_SIZE; ++j) {
+                result[i][j] = gaussArray[i][j + MATRIX4_SIZE];
+            }
+        }
+
+        return true;
+    }
+
     inline void BuildViewMatrix(Matrix4X4f& result, const Vector3f position, const Vector3f lookAt, const Vector3f up)
     {
         Vector3f zAxis, xAxis, yAxis;
@@ -603,21 +681,6 @@ namespace My {
         Vector3f up3(up.x, up.y, up.z);
         BuildViewMatrix(result, eyePos3, lookAt3, up3);
     }
-
-    inline void BuildIdentityMatrix(Matrix4X4f& matrix)
-    {
-        Matrix4X4f identity = {{{
-            { 1.0f, 0.0f, 0.0f, 0.0f},
-            { 0.0f, 1.0f, 0.0f, 0.0f},
-            { 0.0f, 0.0f, 1.0f, 0.0f},
-            { 0.0f, 0.0f, 0.0f, 1.0f}
-        }}};
-
-        matrix = identity;
-
-        return;
-    }
-
 
     inline void BuildPerspectiveFovLHMatrix(Matrix4X4f& matrix, const float fieldOfView, const float screenAspect, const float screenNear, const float screenDepth)
     {

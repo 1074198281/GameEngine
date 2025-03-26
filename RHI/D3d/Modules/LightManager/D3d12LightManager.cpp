@@ -319,7 +319,7 @@ std::shared_ptr<D3dGraphicsCore::DepthBuffer> My::D3d12LightManager::CreateDepth
     uint32_t NumDest = NumSrc;
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_ColorBufferCurrHandle, &NumDest, NumSrc, ColorCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_DepthBufferCurrHandle, &NumDest, NumSrc, DepthCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_VolumnBufferCurrHandle, &NumDest, NumSrc, DepthCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    D3dGraphicsCore::g_Device->CopyDescriptors(1, &m_VolumnBufferCurrHandle, &NumDest, NumSrc, VolumnCpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     l.DescriptorOffset = m_DescriptorOffset;
     DepthResource depthRe{ pDepthBuffer, pColorBuffer, pVolumnBuffer, m_ColorBufferCurrHandle, m_DepthBufferCurrHandle, m_VolumnBufferCurrHandle, m_iHeapIdx };
 
