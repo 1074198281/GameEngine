@@ -79,7 +79,7 @@ namespace D3dGraphicsCore {
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
-		void DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx);
+		void DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps);
 
 		void BeginSubPass(const std::string& PassName);
 		void EndSubPass();

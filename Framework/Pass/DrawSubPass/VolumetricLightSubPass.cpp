@@ -15,3 +15,8 @@ void My::VolumetricLightSubPass::Draw(Frame& frame)
 	m_pGraphicsManager->SetPipelineStatus("VolumetricLight");
 	m_pGraphicsManager->DrawVolumetricLight(frame);
 }
+
+int* My::VolumetricLightSubPass::GetMarchingSteps()
+{
+	return &m_iMarchingSteps;
+}

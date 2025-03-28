@@ -104,8 +104,8 @@ void D3dGraphicsCore::D3d12RHI::InitializeGraphicsSettings()
         m_Camera = std::make_unique<XM_Camera::Camera>();
         m_Camera->SetAspectRatio((float)g_DisplayHeight / (float)g_DisplayWidth);
         m_Camera->SetFOV(120.f);
-        m_Camera->SetZRange(0.1f, 100.0f);
-        m_Camera->SetPosition(XM_Math::Vector3(0, 5, 150));
+        m_Camera->SetZRange(0.1f, 1000.0f);
+        m_Camera->SetPosition(XM_Math::Vector3(20, 5, 0));
     }
     if (!m_CameraController) {
         m_CameraController = std::make_unique<XM_Camera::FlyingFPSCamera>(*m_Camera.get(), XM_Math::Vector3(0.0f, 1.0f, 0.0f));
@@ -599,7 +599,7 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx)
+void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -622,7 +622,7 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     m_pGraphicsContext->SetDescriptorTable(My::kPresentSRV, colorBufferHandle);
 
     // PS cb0
-    m_pGraphicsContext->SetDynamicConstantBufferView(My::kLightCBV, sizeof(My::LightInfo), m_pLightManager->GetAllLightInfoPtr());
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kLightCBV, sizeof(My::Light) * m_pLightManager->GetLightNum(), m_pLightManager->GetAllLightInfoPtr());
 
     // PS cb1
     struct VolumetricLightCBV {
@@ -636,19 +636,19 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
         float gCameraFarZ;
         float padding0[2];
     } VLCBV;
-    auto m = m_Camera->GetViewProjMatrix();
-    Invert(m);
+    auto& m = m_Camera->GetViewProjMatrix();
+    auto invm = Invert(m);
     My::Matrix4X4f inv;
-    My::Matrix4X4f t = frame.FrameContext.ProjectionMatrix * frame.FrameContext.ViewMatrix;
-    My::Transpose(inv, t) ;
-    if (!My::InvertMatrix(VLCBV.invViewProj, inv)) {
+    My::Matrix4X4f viewProj = frame.FrameContext.ViewMatrix * frame.FrameContext.ProjectionMatrix;
+    if (!My::InvertMatrix(inv, viewProj)) {
         std::cout << "[D3dRHI Draw Volumetric Light]: Can't calculate invert matrix!" << std::endl;
         ASSERT(false);
     }
+    My::Transpose(VLCBV.invViewProj, inv);
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
     VLCBV.gScreenWidth = g_DisplayWidth;
     VLCBV.gScreenHeight = g_DisplayHeight;
-    VLCBV.gMarchingStep = 20;
+    VLCBV.gMarchingStep = marchingSteps;
     VLCBV.gSampleIntensity = 1;
     VLCBV.gCameraNearZ = m_Camera->GetNearClip();
     VLCBV.gCameraFarZ = m_Camera->GetFarClip();

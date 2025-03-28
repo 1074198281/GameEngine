@@ -8,7 +8,7 @@ My::LightManager::LightManager()
 	m_pLightInfo = nullptr;
 	m_pApp = nullptr;
 	m_iLightNum = 0;
-    m_fDepthBias = 0.01;
+    m_fDepthBias = 0.001;
 }
 
 My::LightManager::~LightManager()
@@ -22,7 +22,7 @@ void My::LightManager::Reset()
 		dynamic_cast<MemoryManager*>(m_pApp->GetMemoryManager())->Free(m_pLightInfo, sizeof(My::LightInfo));
 		m_pLightInfo = nullptr;
 		m_iLightNum = 0;
-        m_fDepthBias = 0.01;
+        m_fDepthBias = 0.001;
 	}
 }
 

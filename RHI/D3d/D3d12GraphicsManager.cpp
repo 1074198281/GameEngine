@@ -975,7 +975,7 @@ void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
 
 
     GraphicsRHI.DrawVolumetricLight(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
-        m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex);
+        m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex, 100);
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)

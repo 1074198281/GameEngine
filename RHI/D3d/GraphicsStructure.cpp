@@ -252,7 +252,7 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
 
 	g_VolumetricLightSubRootSignature.Reset(My::kVolumetricLightRootBindings, 2);
-	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_VolumetricLightSubRootSignature[My::kLightDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, MAX_LIGHT_NUM, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_VolumetricLightSubRootSignature[My::kPresentSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 101, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_VolumetricLightSubRootSignature[My::kLightCBV].InitAsConstantBuffer(0);
