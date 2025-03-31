@@ -906,7 +906,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
                 m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
                 m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
                 pHeap,
-                handle, m_pLightManager, lightIdx, castShadow, m_bDrawSkybox & isDrawSkybox);
+                handle, m_pLightManager, lightIdx, castShadow, m_bDrawSkybox && isDrawSkybox);
         }
     }
 }

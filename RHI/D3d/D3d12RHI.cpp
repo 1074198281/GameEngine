@@ -648,8 +648,8 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
     VLCBV.gScreenWidth = g_DisplayWidth;
     VLCBV.gScreenHeight = g_DisplayHeight;
-    VLCBV.gMarchingStep = marchingSteps;
-    VLCBV.gSampleIntensity = 1;
+    VLCBV.gMarchingStep = 256;
+    VLCBV.gSampleIntensity = 5;
     VLCBV.gCameraNearZ = m_Camera->GetNearClip();
     VLCBV.gCameraFarZ = m_Camera->GetFarClip();
     VLCBV.padding0[0] = 0;

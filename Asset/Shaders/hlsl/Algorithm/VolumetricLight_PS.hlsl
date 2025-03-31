@@ -50,14 +50,14 @@ float GetCurrentPositionIntensity(float4 currPos, cLight l)
     }
     
     float4 lightProjPos = mul(mul(currPos, transpose(l.gLightViewMatrix)), transpose(l.gLightProjectMatrix));
-    int3 load = int3(lightProjPos.x / lightProjPos.w * gScreenWidth, lightProjPos.y / lightProjPos.w * gScreenHeight, 0);
+    int3 load = int3((lightProjPos.x / lightProjPos.w + 1) * 0.5 * gScreenWidth, (1 - lightProjPos.y / lightProjPos.w * 0.5) * gScreenHeight, 0);
     float depthInLight = LightDepthMap[l.gDescriptorOffset].Load(load);
     if (lightProjPos.z / lightProjPos.w > depthInLight)
     {
         return 0;
     }
     
-    return 0.5;
+    return gSampleIntensity;
 }
 
 float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
