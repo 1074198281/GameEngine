@@ -2,6 +2,10 @@
 #include "BaseApplication.hpp"
 #include "LightManager.h"
 
+#include "OverlayPass.hpp"
+#include "VolumetricLightSubPass.hpp"
+
+
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_win32.h"
@@ -121,8 +125,8 @@ void My::GuiSubPass::Draw(Frame& frame)
 				bool* pIsCastShadow = m_pGraphicsManager->GetCastShadowStatus();
 				ImGui::Checkbox("CastShadow", pIsCastShadow);
 
-				bool* pIsGuassBlur = m_pGraphicsManager->GetGuassBlurStatus();
-				ImGui::Checkbox("GuassBlur", pIsGuassBlur);
+				bool* pIsGaussBlur = m_pGraphicsManager->GetGaussBlurStatus();
+				ImGui::Checkbox("GaussBlur", pIsGaussBlur);
 
 				bool* pIsOverlay = m_pGraphicsManager->GetOverlayStatus();
 				ImGui::Checkbox("Overlay", pIsOverlay);
@@ -196,9 +200,14 @@ void My::GuiSubPass::Draw(Frame& frame)
 
 			if (ImGui::TreeNode("Light Info")) {
 				LightManager* pLightManager = m_pGraphicsManager->GetLightManager();
-				LightInfo* pLightInfo = pLightManager->GetAllLightInfoPtr();
-				int lightNum = pScene->LightNodes.size();
+				
 				ImGui::SliderFloat("Depth Bias", pLightManager->GetDepthBias(), 0, 0.5);
+				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 256);
+				ImGui::SliderFloat("Volumetric Light Sample Intensity", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity(), 0, 100);
+				
+
+				int lightNum = pScene->LightNodes.size();
+				LightInfo* pLightInfo = pLightManager->GetAllLightInfoPtr();
 				for (int i = 0; i < lightNum; i++)
 				{
 					Light* l = &pLightInfo->Lights[i];

@@ -120,7 +120,7 @@ void VertBlurCS(int3 groupThreadID : SV_GroupThreadID,
 Texture2D<float3> InputBuf : register(t0);
 RWTexture2D<float3> Result : register(u0);
 
-// The guassian blur weights (derived from Pascal's triangle)
+// The gaussian blur weights (derived from Pascal's triangle)
 static const float Weights[5] = { 70.0f / 256.0f, 56.0f / 256.0f, 28.0f / 256.0f, 8.0f / 256.0f, 1.0f / 256.0f };
 
 float3 BlurPixels(float3 a, float3 b, float3 c, float3 d, float3 e, float3 f, float3 g, float3 h, float3 i)

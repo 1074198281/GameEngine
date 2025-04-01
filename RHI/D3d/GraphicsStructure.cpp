@@ -28,7 +28,7 @@ namespace D3dGraphicsCore {
 	RootSignature g_ShadowRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
-	RootSignature g_GuassBlurRootSignature;
+	RootSignature g_GaussBlurRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<ComputePSO>> g_ComputePSOMap;
 
 	RootSignature g_ShadowOmniRootSignature;
@@ -306,19 +306,19 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 
 
 	// Compute RootSignature and PSOs
-	g_GuassBlurRootSignature.Reset(My::kComputeRootBindings - 1);
-	g_GuassBlurRootSignature[My::kComputeSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
-	g_GuassBlurRootSignature[My::kComputeUAV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 0, 1);
-	g_GuassBlurRootSignature.Finalize(L"Guass Blur");
+	g_GaussBlurRootSignature.Reset(My::kComputeRootBindings - 1);
+	g_GaussBlurRootSignature[My::kComputeSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_GaussBlurRootSignature[My::kComputeUAV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 0, 1);
+	g_GaussBlurRootSignature.Finalize(L"Gauss Blur");
 
-	std::unique_ptr<ComputePSO> GuassBlurPSO = std::make_unique<ComputePSO>(L"GuassBlur PSO");
-	GuassBlurPSO->SetRootSignature(g_GuassBlurRootSignature);
-	D3D12_SHADER_BYTECODE GuassBlurShader = CD3DX12_SHADER_BYTECODE();
-	GuassBlurShader.pShaderBytecode = g_ShaderByteMap["MyGuassBlurCS"].pShaderByteCode;
-	GuassBlurShader.BytecodeLength = g_ShaderByteMap["MyGuassBlurCS"].size;
-	GuassBlurPSO->SetComputeShader(GuassBlurShader);
-	GuassBlurPSO->Finalize();
-	g_ComputePSOMap.emplace("GuassBlur_CS", std::move(GuassBlurPSO));
+	std::unique_ptr<ComputePSO> GaussBlurPSO = std::make_unique<ComputePSO>(L"GaussBlur PSO");
+	GaussBlurPSO->SetRootSignature(g_GaussBlurRootSignature);
+	D3D12_SHADER_BYTECODE GaussBlurShader = CD3DX12_SHADER_BYTECODE();
+	GaussBlurShader.pShaderBytecode = g_ShaderByteMap["MyGaussBlurCS"].pShaderByteCode;
+	GaussBlurShader.BytecodeLength = g_ShaderByteMap["MyGaussBlurCS"].size;
+	GaussBlurPSO->SetComputeShader(GaussBlurShader);
+	GaussBlurPSO->Finalize();
+	g_ComputePSOMap.emplace("GaussBlur_CS", std::move(GaussBlurPSO));
 }
 
 void D3dGraphicsCore::InitializeLightPipelines()

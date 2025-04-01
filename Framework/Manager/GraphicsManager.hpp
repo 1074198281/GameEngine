@@ -6,6 +6,7 @@
 
 namespace My {
     class LightManager;
+
     class GraphicsManager : __implements IGraphicsManager
     {
     public:
@@ -38,7 +39,7 @@ namespace My {
         void DrawSkybox(Frame& frame) override {}
         void DrawGui(Frame& frame) override {}
         void DrawPresent(Frame& frame) override {}
-        void DrawGuassBlur(Frame& frame) override {}
+        void DrawGaussBlur(Frame& frame) override {}
         void DrawOverlay(Frame& frame) override {}
 
         void BeginSubPass(const std::string& PassName) override {}
@@ -70,9 +71,14 @@ namespace My {
         virtual void EndFrame(Frame& frame) {}
 
     public:
+        ShadowMapPass* GetShadowMapPass() override;
+        ForwardGeometryPass* GetForwardGeometryPass() override;
+        OverlayPass* GetOverlayPass() override;
+        PresentPass* GetPresentPass() override;
+    public:
         bool* GetDrawSkyboxStatus() override { return &m_bDrawSkybox; }
         bool* GetCastShadowStatus() override { return &m_bCastShadow; }
-        bool* GetGuassBlurStatus() override { return &m_bGuassBlur; }
+        bool* GetGaussBlurStatus() override { return &m_bGaussBlur; }
         int* GetSkyboxIndex() override { return &m_iSkyboxIndex; }
         bool* GetOverlayStatus() override { return &m_bDrawOverlay; }
     protected:
@@ -85,7 +91,7 @@ namespace My {
 
         bool m_bDrawSkybox{ false };
         bool m_bCastShadow{ false };
-        bool m_bGuassBlur{ false };
+        bool m_bGaussBlur{ false };
 
         int m_iSkyboxIndex{ 0 };
         bool m_bDrawOverlay{ false };

@@ -6,6 +6,11 @@
 
 namespace My {
     class LightManager;
+    class ShadowMapPass;
+    class ForwardGeometryPass;
+    class OverlayPass;
+    class PresentPass;
+
     __Interface IGraphicsManager : public IRuntimeModule {
     public:
         IGraphicsManager() = default;
@@ -37,7 +42,7 @@ namespace My {
         virtual void DrawSkybox(Frame& frame) = 0;
         virtual void DrawGui(Frame& frame) = 0;
         virtual void DrawPresent(Frame& frame) = 0;
-        virtual void DrawGuassBlur(Frame& frame) = 0;
+        virtual void DrawGaussBlur(Frame& frame) = 0;
         virtual void DrawOverlay(Frame& frame) = 0;
         virtual void DrawVolumetricLight(Frame& frame) = 0;
 
@@ -55,9 +60,14 @@ namespace My {
         virtual size_t GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height) = 0;
         virtual size_t GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size) = 0;
     public:
+        virtual ShadowMapPass* GetShadowMapPass() = 0;
+        virtual ForwardGeometryPass* GetForwardGeometryPass() = 0;
+        virtual OverlayPass* GetOverlayPass() = 0;
+        virtual PresentPass* GetPresentPass() = 0;
+    public:
         virtual bool* GetDrawSkyboxStatus() = 0;
         virtual bool* GetCastShadowStatus() = 0;
-        virtual bool* GetGuassBlurStatus() = 0;
+        virtual bool* GetGaussBlurStatus() = 0;
 
         virtual int* GetSkyboxIndex() = 0;
         virtual bool* GetOverlayStatus() = 0;

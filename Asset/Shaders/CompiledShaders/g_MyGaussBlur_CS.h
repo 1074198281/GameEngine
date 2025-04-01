@@ -239,7 +239,7 @@ attributes #2 = { nounwind readonly }
 !dx.entryPoints = !{!76}
 
 !0 = distinct !DICompileUnit(language: DW_LANG_C_plus_plus, file: !1, producer: "clang version 3.7 (tags/RELEASE_370/final)", isOptimized: false, runtimeVersion: 0, emissionKind: 1, enums: !2, retainedTypes: !3, subprograms: !14, globals: !26)
-!1 = !DIFile(filename: "D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGuassBlur_CS.hlsl", directory: "")
+!1 = !DIFile(filename: "D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGaussBlur_CS.hlsl", directory: "")
 !2 = !{}
 !3 = !{!4}
 !4 = !DIDerivedType(tag: DW_TAG_typedef, name: "uint2", file: !1, line: 13, baseType: !5)
@@ -292,8 +292,8 @@ attributes #2 = { nounwind readonly }
 !51 = !{i32 2, !"Dwarf Version", i32 4}
 !52 = !{i32 2, !"Debug Info Version", i32 3}
 !53 = !{!"clang version 3.7 (tags/RELEASE_370/final)"}
-!54 = !{!"D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGuassBlur_CS.hlsl", !"Texture2D<float3> InputBuf : register(t0);\0D\0ARWTexture2D<float3> Result : register(u0);\0D\0A\0D\0Astatic const float Weights[3] = { 1.0f / 16.0f, 1.0f / 4.0f, 3.0f / 8.0f };\0D\0A\0D\0Agroupshared float3 gCache[9];\0D\0A\0D\0A[numthreads(1, 1, 1)]\0D\0Avoid main(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV_DispatchThreadID)\0D\0A{\0D\0A    for (int i = 0; i < 3; i++)\0D\0A    {\0D\0A        gCache[0 + i * 3] = InputBuf[uint2(DTid.x - 1, DTid.y + i - 1)];\0D\0A        gCache[1 + i * 3] = InputBuf[uint2(DTid.x, DTid.y + i - 1)];\0D\0A        gCache[2 + i * 3] = InputBuf[uint2(DTid.x + 1, DTid.y + i - 1)];\0D\0A    }\0D\0A    \0D\0A    \0D\0A    Result[uint2(DTid.x, DTid.y)] = (gCache[0] + gCache[2] + gCache[6] + gCache[8]) * Weights[0] +\0D\0A                            (gCache[1] + gCache[3] + gCache[5] + gCache[7]) * Weights[1] +\0D\0A                            (gCache[4]) * Weights[2];\0D\0A\0D\0A}"}
-!55 = !{!"D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGuassBlur_CS.hlsl"}
+!54 = !{!"D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGaussBlur_CS.hlsl", !"Texture2D<float3> InputBuf : register(t0);\0D\0ARWTexture2D<float3> Result : register(u0);\0D\0A\0D\0Astatic const float Weights[3] = { 1.0f / 16.0f, 1.0f / 4.0f, 3.0f / 8.0f };\0D\0A\0D\0Agroupshared float3 gCache[9];\0D\0A\0D\0A[numthreads(1, 1, 1)]\0D\0Avoid main(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV_DispatchThreadID)\0D\0A{\0D\0A    for (int i = 0; i < 3; i++)\0D\0A    {\0D\0A        gCache[0 + i * 3] = InputBuf[uint2(DTid.x - 1, DTid.y + i - 1)];\0D\0A        gCache[1 + i * 3] = InputBuf[uint2(DTid.x, DTid.y + i - 1)];\0D\0A        gCache[2 + i * 3] = InputBuf[uint2(DTid.x + 1, DTid.y + i - 1)];\0D\0A    }\0D\0A    \0D\0A    \0D\0A    Result[uint2(DTid.x, DTid.y)] = (gCache[0] + gCache[2] + gCache[6] + gCache[8]) * Weights[0] +\0D\0A                            (gCache[1] + gCache[3] + gCache[5] + gCache[7]) * Weights[1] +\0D\0A                            (gCache[4]) * Weights[2];\0D\0A\0D\0A}"}
+!55 = !{!"D:\5CEngine\5CGitEngine\5Cnewtrunk\5CAsset\5CShaders\5Chlsl\5CAlgorithm\5CMyGaussBlur_CS.hlsl"}
 !56 = !{!"-E", !"main", !"-T", !"cs_6_3", !"/Od", !"/Zi", !"-Qembed_debug"}
 !57 = !{i32 1, i32 3}
 !58 = !{i32 1, i32 6}
@@ -379,9 +379,9 @@ attributes #2 = { nounwind readonly }
 
 #endif
 
-const unsigned char g_pMyGuassBlur_CS[] = {
-  0x44, 0x58, 0x42, 0x43, 0x1f, 0x41, 0xe7, 0x5b, 0xb9, 0x49, 0x74, 0x67,
-  0x62, 0x47, 0x4e, 0x2b, 0xbe, 0x9f, 0x7c, 0x20, 0x01, 0x00, 0x00, 0x00,
+const unsigned char g_pMyGaussBlur_CS[] = {
+  0x44, 0x58, 0x42, 0x43, 0xc0, 0xf1, 0x32, 0x41, 0x99, 0x80, 0x28, 0x0d,
+  0x62, 0xbe, 0xe9, 0x99, 0xbe, 0x59, 0x74, 0x62, 0x01, 0x00, 0x00, 0x00,
   0x68, 0x2a, 0x00, 0x00, 0x09, 0x00, 0x00, 0x00, 0x44, 0x00, 0x00, 0x00,
   0x54, 0x00, 0x00, 0x00, 0x64, 0x00, 0x00, 0x00, 0x74, 0x00, 0x00, 0x00,
   0xd8, 0x00, 0x00, 0x00, 0x74, 0x18, 0x00, 0x00, 0x34, 0x20, 0x00, 0x00,
@@ -477,7 +477,7 @@ const unsigned char g_pMyGuassBlur_CS[] = {
   0x3b, 0x4b, 0x73, 0x2b, 0xe3, 0x72, 0x2b, 0xbb, 0xa3, 0x93, 0xab, 0x73,
   0x5b, 0xe3, 0x0a, 0x9a, 0x9b, 0x2b, 0xa3, 0xe3, 0x9a, 0x42, 0x0b, 0x23,
   0x2b, 0x93, 0x9b, 0xe3, 0x42, 0x63, 0x9b, 0x63, 0xe3, 0x0a, 0x62, 0x3b,
-  0x7b, 0x93, 0x4b, 0xa3, 0x43, 0x6b, 0xe3, 0x6a, 0xca, 0x3b, 0xaa, 0x0b,
+  0x7b, 0x93, 0x4b, 0xa3, 0x43, 0x6b, 0xe3, 0x6a, 0xca, 0x3b, 0x0a, 0xab,
   0x9b, 0x9b, 0x13, 0x62, 0xab, 0x93, 0xfb, 0x1a, 0x9a, 0x72, 0x41, 0x63,
   0x9b, 0x63, 0x1b, 0x34, 0x00, 0x01, 0x40, 0x35, 0x18, 0x63, 0x0b, 0x73,
   0x3b, 0x03, 0xb1, 0x2b, 0x93, 0x9b, 0x4b, 0x7b, 0x73, 0x03, 0x99, 0x71,

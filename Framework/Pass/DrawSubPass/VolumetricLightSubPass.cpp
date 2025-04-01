@@ -16,7 +16,12 @@ void My::VolumetricLightSubPass::Draw(Frame& frame)
 	m_pGraphicsManager->DrawVolumetricLight(frame);
 }
 
-int* My::VolumetricLightSubPass::GetMarchingSteps()
+int* My::VolumetricLightSubPass::GetMarchingStepsPtr()
 {
 	return &m_iMarchingSteps;
+}
+
+float* My::VolumetricLightSubPass::GetSampleIntensity()
+{
+	return &m_fSampleIntensity;
 }

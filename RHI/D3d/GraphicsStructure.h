@@ -49,7 +49,7 @@ namespace D3dGraphicsCore {
 	extern RootSignature g_VolumetricLightSubRootSignature;
 	extern std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
-	extern RootSignature g_GuassBlurRootSignature;
+	extern RootSignature g_GaussBlurRootSignature;
 	extern std::unordered_map<std::string, std::unique_ptr<ComputePSO>> g_ComputePSOMap;
 
 	extern RootSignature g_ShadowOmniRootSignature;

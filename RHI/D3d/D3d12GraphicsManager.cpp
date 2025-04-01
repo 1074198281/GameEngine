@@ -14,6 +14,9 @@
 #include "CommonDefine.h"
 #include "Core/Resource/DDSTextureLoader.h"
 
+#include "OverlayPass.hpp"
+#include "VolumetricLightSubPass.hpp"
+
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
@@ -938,7 +941,7 @@ void My::D3d12GraphicsManager::DrawPresent(Frame& frame)
     GraphicsRHI.DrawPresent(frame, m_PixelBufferResources["ColorBuffer"]->handle, m_PixelBufferResources["ColorBuffer"]->iHeapIndex);
 }
 
-void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
+void My::D3d12GraphicsManager::DrawGaussBlur(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     auto& config = dynamic_cast<D3d12Application*>(m_pApp)->GetConfiguration();
@@ -947,7 +950,7 @@ void My::D3d12GraphicsManager::DrawGuassBlur(Frame& frame)
     auto& desBuffer = m_PixelBufferResources["OverlayDes"];
     ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
 
-    GraphicsRHI.DrawGuassBlur(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+    GraphicsRHI.DrawGaussBlur(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
         m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
 }
 
@@ -975,7 +978,9 @@ void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
 
 
     GraphicsRHI.DrawVolumetricLight(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
-        m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex, 100);
+        m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex,
+        *GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(),
+        *GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity());
 }
 
 void My::D3d12GraphicsManager::BeginSubPass(const std::string& PassName)

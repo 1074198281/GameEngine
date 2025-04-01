@@ -3,7 +3,7 @@
 #include "BaseSubPass.hpp"
 
 namespace My {
-	class GuassBlurSubPass : __implements BaseSubPass {
+	class GaussBlurSubPass : __implements BaseSubPass {
 	public:
 		using BaseSubPass::BaseSubPass;
 

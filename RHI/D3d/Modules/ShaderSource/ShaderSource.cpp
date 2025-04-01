@@ -17,8 +17,8 @@
 #include "../Asset/Shaders/CompiledShaders/g_OverlaySub_PS.h"
 
 
-#include "../Asset/Shaders/CompiledShaders/g_GuassBlur_CS.h"
-#include "../Asset/Shaders/CompiledShaders/g_MyGuassBlur_CS.h"
+#include "../Asset/Shaders/CompiledShaders/g_GaussBlur_CS.h"
+#include "../Asset/Shaders/CompiledShaders/g_MyGaussBlur_CS.h"
 
 
 // lighting
@@ -101,8 +101,8 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	ShaderByteCode cs##NAME##ByteCode = { g_p##NAME##_CS, sizeof(g_p##NAME##_CS)};\
 	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##CS), cs##NAME##ByteCode)); \
 
-	GENERATE_CS_SHADER_BYTE_CODE(GuassBlur)
-	GENERATE_CS_SHADER_BYTE_CODE(MyGuassBlur)
+	GENERATE_CS_SHADER_BYTE_CODE(GaussBlur)
+	GENERATE_CS_SHADER_BYTE_CODE(MyGaussBlur)
 
 #endif // GENERATE_CS_SHADER_BYTE_CODE
 

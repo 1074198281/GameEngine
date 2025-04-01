@@ -11,8 +11,10 @@ namespace My {
 		void Draw(Frame& frame) override;
 
 	public:
-		int* GetMarchingSteps();
+		int* GetMarchingStepsPtr();
+		float* GetSampleIntensity();
 	protected:
 		int m_iMarchingSteps = 20;
+		float m_fSampleIntensity = 1.0f;
 	};
 }

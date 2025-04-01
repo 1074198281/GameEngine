@@ -15,3 +15,8 @@ void My::SkyboxSubPass::Draw(Frame& frame)
 	m_pGraphicsManager->SetPipelineStatus("Skybox");
 	m_pGraphicsManager->DrawSkybox(frame);
 }
+
+bool* My::SkyboxSubPass::GetDrawSkyBox()
+{
+	return &m_bDrawSkybox;
+}

@@ -127,3 +127,23 @@ void GraphicsManager::FunctionKeyDown(int64_t key)
 void GraphicsManager::FunctionKeyUp(int64_t key)
 {
 }
+
+ShadowMapPass* GraphicsManager::GetShadowMapPass()
+{
+    return reinterpret_cast<ShadowMapPass*>(m_DrawPasses[kShadowMapPass].get());
+}
+
+ForwardGeometryPass* GraphicsManager::GetForwardGeometryPass()
+{
+    return reinterpret_cast<ForwardGeometryPass*>(m_DrawPasses[kForwardGeometryPass].get());
+}
+
+OverlayPass* GraphicsManager::GetOverlayPass()
+{
+    return reinterpret_cast<OverlayPass*>(m_DrawPasses[kOverlayPass].get());
+}
+
+PresentPass* GraphicsManager::GetPresentPass()
+{
+    return reinterpret_cast<PresentPass*>(m_DrawPasses[kPresentPass].get());
+}

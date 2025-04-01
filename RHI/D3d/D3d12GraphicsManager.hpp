@@ -47,7 +47,7 @@ namespace My {
         void DrawSkybox(Frame& frame) override;
         void DrawGui(Frame& frame) override;
         void DrawPresent(Frame& frame) override;
-        void DrawGuassBlur(Frame& frame) override;
+        void DrawGaussBlur(Frame& frame) override;
         void DrawOverlay(Frame& frame) override;
         void DrawVolumetricLight(Frame& frame) override;
 

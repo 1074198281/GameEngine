@@ -9,7 +9,7 @@ namespace My {
 	public:
 		ForwardGeometryPass(IGraphicsManager* gmr, IApplication* pApp) : BaseDrawPass(gmr)
 		{
-			m_PassType = PassType::kForwardGeometry;
+			m_PassType = DrawPassType::kForwardGeometryPass;
 			m_DrawSubPasses.push_back(std::make_shared<GeometrySubPass>(gmr, pApp));
 			m_DrawSubPasses.push_back(std::make_shared<SkyboxSubPass>(gmr, pApp));
 		}

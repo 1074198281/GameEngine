@@ -2,7 +2,7 @@
 
 void My::BaseDrawPass::BeginPass(Frame& frame)
 {
-	if (m_PassType == kOverlay)
+	if (m_PassType == kOverlayPass)
 	{
 		m_pGraphicsManager->BeginOverlayPass();
 	}
@@ -10,7 +10,7 @@ void My::BaseDrawPass::BeginPass(Frame& frame)
 
 void My::BaseDrawPass::EndPass(Frame& frame)
 {
-	if (m_PassType == kOverlay)
+	if (m_PassType == kOverlayPass)
 	{
 		m_pGraphicsManager->EndOverlayPass();
 	}

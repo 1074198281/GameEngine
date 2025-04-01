@@ -542,7 +542,7 @@ void D3dGraphicsCore::D3d12RHI::DrawPresent(const My::Frame& frame, DescriptorHa
     m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawGuassBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
+void D3dGraphicsCore::D3d12RHI::DrawGaussBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
     if (!m_pComputePSO) {
         return;
@@ -599,7 +599,7 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps)
+void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps, float sampleIntensity)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -636,8 +636,8 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
         float gCameraFarZ;
         float padding0[2];
     } VLCBV;
-    auto& m = m_Camera->GetViewProjMatrix();
-    auto invm = Invert(m);
+    //auto& m = m_Camera->GetViewProjMatrix();
+    //auto invm = Invert(m);
     My::Matrix4X4f inv;
     My::Matrix4X4f viewProj = frame.FrameContext.ViewMatrix * frame.FrameContext.ProjectionMatrix;
     if (!My::InvertMatrix(inv, viewProj)) {
@@ -648,8 +648,8 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
     VLCBV.gScreenWidth = g_DisplayWidth;
     VLCBV.gScreenHeight = g_DisplayHeight;
-    VLCBV.gMarchingStep = 256;
-    VLCBV.gSampleIntensity = 5;
+    VLCBV.gMarchingStep = marchingSteps;
+    VLCBV.gSampleIntensity = sampleIntensity;
     VLCBV.gCameraNearZ = m_Camera->GetNearClip();
     VLCBV.gCameraFarZ = m_Camera->GetFarClip();
     VLCBV.padding0[0] = 0;
