@@ -564,7 +564,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGaussBlur(const My::Frame& frame, ColorBuffe
     m_pComputeContext->CopyBuffer(src, result);
 }
 
-void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
+void D3dGraphicsCore::D3d12RHI::DrawWaterDrops(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
     m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
@@ -575,22 +575,22 @@ void D3dGraphicsCore::D3d12RHI::DrawOverlay(const My::Frame& frame, ColorBuffer&
     m_pGraphicsContext->SetRenderTarget(result.GetRTV());
 
     m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
-    m_pGraphicsContext->SetDescriptorTable(My::kOverlaySRV, ColorBufferHandle);
+    m_pGraphicsContext->SetDescriptorTable(My::kWaterDropsSRV, ColorBufferHandle);
 
     __declspec(align(16)) struct OverlayPSCB
     {
         float ScreenSize[2];
         float Time;
         float padding0;
-    } overlayPSCB;
+    } waterDropsPSCB;
 
-    memset(&overlayPSCB, 0, sizeof(OverlayPSCB));
+    memset(&waterDropsPSCB, 0, sizeof(OverlayPSCB));
 
-    overlayPSCB.ScreenSize[0] = g_DisplayWidth;
-    overlayPSCB.ScreenSize[1] = g_DisplayHeight;
-    overlayPSCB.Time = m_fGetTimestamp();
+    waterDropsPSCB.ScreenSize[0] = g_DisplayWidth;
+    waterDropsPSCB.ScreenSize[1] = g_DisplayHeight;
+    waterDropsPSCB.Time = m_fGetTimestamp();
 
-    m_pGraphicsContext->SetDynamicConstantBufferView(My::kOverlayCBV, sizeof(OverlayPSCB), &overlayPSCB);
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kWaterDropsCBV, sizeof(OverlayPSCB), &waterDropsPSCB);
 
     m_pGraphicsContext->Draw(3);
 

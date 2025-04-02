@@ -78,7 +78,7 @@ namespace D3dGraphicsCore {
 		void DrawGui(const My::Frame& frame);
 		void DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawGaussBlur(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
-		void DrawOverlay(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
+		void DrawWaterDrops(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex);
 		void DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps, float sampleIntensity);
 
 		void BeginSubPass(const std::string& PassName);

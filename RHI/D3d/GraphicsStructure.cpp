@@ -23,7 +23,7 @@ namespace D3dGraphicsCore {
 
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
-	RootSignature g_OverlaySubRootSignature;
+	RootSignature g_WaterDropsSubRootSignature;
 	RootSignature g_VolumetricLightSubRootSignature;
 	RootSignature g_ShadowRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
@@ -240,16 +240,16 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	g_PresentRootSignature.InitStaticSampler(17, g_linearClamp);
 	g_PresentRootSignature.Finalize(L"PresentRootSig");
 
-	g_OverlaySubRootSignature.Reset(My::kOverlayRootBindings, 6);
-	g_OverlaySubRootSignature[My::kOverlaySRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
-	g_OverlaySubRootSignature[My::kOverlayCBV].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
-	g_OverlaySubRootSignature.InitStaticSampler(16, g_linearWarp);
-	g_OverlaySubRootSignature.InitStaticSampler(17, g_linearClamp);
-	g_OverlaySubRootSignature.InitStaticSampler(18, g_pointWarp);
-	g_OverlaySubRootSignature.InitStaticSampler(19, g_pointClamp);
-	g_OverlaySubRootSignature.InitStaticSampler(20, g_anisotropicWarp);
-	g_OverlaySubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
-	g_OverlaySubRootSignature.Finalize(L"OverlaySubRootSig");
+	g_WaterDropsSubRootSignature.Reset(My::kWaterDropsRootBindings, 6);
+	g_WaterDropsSubRootSignature[My::kWaterDropsSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_WaterDropsSubRootSignature[My::kWaterDropsCBV].InitAsConstantBuffer(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	g_WaterDropsSubRootSignature.InitStaticSampler(16, g_linearWarp);
+	g_WaterDropsSubRootSignature.InitStaticSampler(17, g_linearClamp);
+	g_WaterDropsSubRootSignature.InitStaticSampler(18, g_pointWarp);
+	g_WaterDropsSubRootSignature.InitStaticSampler(19, g_pointClamp);
+	g_WaterDropsSubRootSignature.InitStaticSampler(20, g_anisotropicWarp);
+	g_WaterDropsSubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
+	g_WaterDropsSubRootSignature.Finalize(L"WaterDropsSubRootSig");
 
 	g_VolumetricLightSubRootSignature.Reset(My::kVolumetricLightRootBindings, 2);
 	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -274,18 +274,18 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	pPresentPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pPresentPSO->Finalize();
 
-	// Overlay Sub
-	std::unique_ptr<GraphicsPSO> pOverlaySubPSO = std::make_unique<GraphicsPSO>(L"OverlaySub PSO");
-	pOverlaySubPSO->SetRootSignature(g_OverlaySubRootSignature);
-	pOverlaySubPSO->SetRasterizerState(RasterizerDefault);
-	pOverlaySubPSO->SetBlendState(BlendDisable);
-	pOverlaySubPSO->SetDepthStencilState(DepthStateDisabled);
-	pOverlaySubPSO->SetSampleMask(0xFFFFFFFF);
-	pOverlaySubPSO->SetInputLayout(0, nullptr);
-	SetShaderByteCode(*pOverlaySubPSO.get(), "OverlaySub");
-	pOverlaySubPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
-	pOverlaySubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-	pOverlaySubPSO->Finalize();
+	// WaterDrops Sub
+	std::unique_ptr<GraphicsPSO> pWaterDropsSubPSO = std::make_unique<GraphicsPSO>(L"WaterDropsSub PSO");
+	pWaterDropsSubPSO->SetRootSignature(g_WaterDropsSubRootSignature);
+	pWaterDropsSubPSO->SetRasterizerState(RasterizerDefault);
+	pWaterDropsSubPSO->SetBlendState(BlendDisable);
+	pWaterDropsSubPSO->SetDepthStencilState(DepthStateDisabled);
+	pWaterDropsSubPSO->SetSampleMask(0xFFFFFFFF);
+	pWaterDropsSubPSO->SetInputLayout(0, nullptr);
+	SetShaderByteCode(*pWaterDropsSubPSO.get(), "WaterDropsSub");
+	pWaterDropsSubPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
+	pWaterDropsSubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pWaterDropsSubPSO->Finalize();
 
 	// Volumetric Light Sub
 	std::unique_ptr<GraphicsPSO> pVolumetricLightPSO = std::make_unique<GraphicsPSO>(L"VolumetricLight PSO");
@@ -301,7 +301,7 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	pVolumetricLightPSO->Finalize();
 
 	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
-	g_PipelineStatusMap.emplace("Overlay", std::move(pOverlaySubPSO));
+	g_PipelineStatusMap.emplace("WaterDrops", std::move(pWaterDropsSubPSO));
 	g_PipelineStatusMap.emplace("VolumetricLight", std::move(pVolumetricLightPSO));
 
 

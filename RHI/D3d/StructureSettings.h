@@ -61,11 +61,11 @@ namespace My {
 		kComputeRootBindings
 	};
 
-	enum OverlayRootBindings {
-		kOverlaySRV,
-		kOverlayCBV,
+	enum WaterDropsRootBindings {
+		kWaterDropsSRV,
+		kWaterDropsCBV,
 
-		kOverlayRootBindings
+		kWaterDropsRootBindings
 	};
 
 	enum VolumetricLightRootBindings {

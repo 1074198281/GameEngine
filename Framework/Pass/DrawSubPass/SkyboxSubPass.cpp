@@ -12,11 +12,28 @@ void My::SkyboxSubPass::EndSubPass()
 
 void My::SkyboxSubPass::Draw(Frame& frame)
 {
-	m_pGraphicsManager->SetPipelineStatus("Skybox");
-	m_pGraphicsManager->DrawSkybox(frame);
+	if (m_bDrawSkybox) {
+		m_pGraphicsManager->SetPipelineStatus("Skybox");
+		m_pGraphicsManager->DrawSkybox(frame);
+	}
 }
 
-bool* My::SkyboxSubPass::GetDrawSkyBox()
+bool* My::SkyboxSubPass::GetDrawSkyBoxPtr()
 {
 	return &m_bDrawSkybox;
+}
+
+bool My::SkyboxSubPass::GetDrawSkyBox()
+{
+	return m_bDrawSkybox;
+}
+
+int* My::SkyboxSubPass::GetSkyBoxIndexPtr()
+{
+	return &m_iSkyBoxIndex;
+}
+
+int My::SkyboxSubPass::GetSkyBoxIndex()
+{
+	return m_iSkyBoxIndex;
 }

@@ -13,6 +13,13 @@ void My::OverlaySubPass::EndSubPass()
 
 void My::OverlaySubPass::Draw(Frame& frame)
 {
-	m_pGraphicsManager->SetPipelineStatus("Overlay");
-	m_pGraphicsManager->DrawOverlay(frame);
+	if (m_bDrawWaterDropsScreen) {
+		m_pGraphicsManager->SetPipelineStatus("WaterDrops");
+		m_pGraphicsManager->DrawWaterDrops(frame);
+	}
+}
+
+bool* My::OverlaySubPass::GetDrawWaterDropsScreen()
+{
+	return &m_bDrawWaterDropsScreen;
 }

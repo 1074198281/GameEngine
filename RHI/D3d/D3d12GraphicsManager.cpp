@@ -16,6 +16,8 @@
 
 #include "OverlayPass.hpp"
 #include "VolumetricLightSubPass.hpp"
+#include "ForwardGeometryPass.hpp"
+#include "SkyboxSubPass.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -829,13 +831,14 @@ std::vector<std::string> My::D3d12GraphicsManager::GetSkyboxInfo()
 
 size_t My::D3d12GraphicsManager::GetSkyboxTextureGpuPtr(const std::string skyboxName, uint32_t& width, uint32_t& height)
 {
-    if (!m_IBLResource->IBLImages.contains(m_iSkyboxIndex)) {
+    uint32_t iSkyboxIndex = GetForwardGeometryPass()->GetSkyboxSubPass()->GetSkyBoxIndex();
+    if (!m_IBLResource->IBLImages.contains(iSkyboxIndex)) {
         ASSERT(false, "Skybox Not Exist!");
         std::cout << "[D3d12 Get Skybox Error] Skybox Not Exist!" << std::endl;
         return 0;
     }
 
-    return m_IBLResource->IBLImages[m_iSkyboxIndex]->handle.GetGpuPtr();
+    return m_IBLResource->IBLImages[iSkyboxIndex]->handle.GetGpuPtr();
 }
 
 size_t My::D3d12GraphicsManager::GetTextureGpuPtr(const int& batch_index, int material_index, uint32_t& width, uint32_t& height, uint32_t& size)
@@ -883,19 +886,21 @@ void My::D3d12GraphicsManager::UpdateD3dFrameConstants(Frame& frame) {
 void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool castShadow, bool isDrawSkybox)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    uint32_t iSkyboxIndex = GetForwardGeometryPass()->GetSkyboxSubPass()->GetSkyBoxIndex();
+    bool* bDrawSkybox = GetForwardGeometryPass()->GetSkyboxSubPass()->GetDrawSkyBoxPtr();
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
-        std::string skyboxName = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
+        std::string skyboxName = m_IBLResource->IBLImages[iSkyboxIndex]->name;
         ID3D12DescriptorHeap* pHeap = nullptr;
         D3dGraphicsCore::DescriptorHandle handle;
-        if (m_bDrawSkybox) {
-            if (m_IBLResource->IBLImages.find(m_iSkyboxIndex) != m_IBLResource->IBLImages.end()) {
-                pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[m_iSkyboxIndex]->iHeapIndex].GetHeapPointer();
-                handle = m_IBLResource->IBLImages[m_iSkyboxIndex]->handle;
+        if (*bDrawSkybox) {
+            if (m_IBLResource->IBLImages.find(iSkyboxIndex) != m_IBLResource->IBLImages.end()) {
+                pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[iSkyboxIndex]->iHeapIndex].GetHeapPointer();
+                handle = m_IBLResource->IBLImages[iSkyboxIndex]->handle;
             } else {
                 ASSERT(false, "No Such Skybox Texture, Name: %s", skyboxName);
                 std::cout << "[D3d12 Draw Batch] No Such Skybox Texture, Name: " << skyboxName << std::endl;
-                m_bDrawSkybox = false;
+                *bDrawSkybox = false;
             }
         }
         if (lightIdx == -1) {
@@ -909,7 +914,7 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
                 m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
                 m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
                 pHeap,
-                handle, m_pLightManager, lightIdx, castShadow, m_bDrawSkybox && isDrawSkybox);
+                handle, m_pLightManager, lightIdx, castShadow, *bDrawSkybox && isDrawSkybox);
         }
     }
 }
@@ -917,16 +922,14 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
 void My::D3d12GraphicsManager::DrawSkybox(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-    if (m_bDrawSkybox)
-    {
-        std::string skyboxName = m_IBLResource->IBLImages[m_iSkyboxIndex]->name;
-        ID3D12DescriptorHeap* pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[m_iSkyboxIndex]->iHeapIndex].GetHeapPointer();
-        D3dGraphicsCore::DescriptorHandle handle = m_IBLResource->IBLImages[m_iSkyboxIndex]->handle;
-        GraphicsRHI.DrawSkybox(frame, pHeap,
-            handle,
-            m_IBLResource->IBLImages[0]->pSpecular->pTexture.get(),
-            m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
-    }
+    uint32_t iSkyboxIndex = GetForwardGeometryPass()->GetSkyboxSubPass()->GetSkyBoxIndex();
+    std::string skyboxName = m_IBLResource->IBLImages[iSkyboxIndex]->name;
+    ID3D12DescriptorHeap* pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[iSkyboxIndex]->iHeapIndex].GetHeapPointer();
+    D3dGraphicsCore::DescriptorHandle handle = m_IBLResource->IBLImages[iSkyboxIndex]->handle;
+    GraphicsRHI.DrawSkybox(frame, pHeap,
+        handle,
+        m_IBLResource->IBLImages[0]->pSpecular->pTexture.get(),
+        m_IBLResource->SpecularIBLRange, m_IBLResource->SpecularIBLBias);
 }
 
 void My::D3d12GraphicsManager::DrawGui(Frame& frame)
@@ -954,19 +957,16 @@ void My::D3d12GraphicsManager::DrawGaussBlur(Frame& frame)
         m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
 }
 
-void My::D3d12GraphicsManager::DrawOverlay(Frame& frame)
+void My::D3d12GraphicsManager::DrawWaterDrops(Frame& frame)
 {
-    if (m_bDrawOverlay) {
-        auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
-
-        auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
-        auto& desBuffer = m_PixelBufferResources["OverlayDes"];
-        ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
-
-
-        GraphicsRHI.DrawOverlay(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
-            m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
-    }
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+    
+    auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
+    auto& desBuffer = m_PixelBufferResources["OverlayDes"];
+    ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
+    
+    GraphicsRHI.DrawWaterDrops(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+        m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
 }
 
 void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
@@ -975,7 +975,6 @@ void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
     auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
     auto& desBuffer = m_PixelBufferResources["OverlayDes"];
     ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
-
 
     GraphicsRHI.DrawVolumetricLight(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
         m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlaySrc"]->iHeapIndex,

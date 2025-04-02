@@ -40,7 +40,7 @@ namespace My {
         void DrawGui(Frame& frame) override {}
         void DrawPresent(Frame& frame) override {}
         void DrawGaussBlur(Frame& frame) override {}
-        void DrawOverlay(Frame& frame) override {}
+        void DrawWaterDrops(Frame& frame) override {}
 
         void BeginSubPass(const std::string& PassName) override {}
         void EndSubPass() override {}
@@ -75,12 +75,7 @@ namespace My {
         ForwardGeometryPass* GetForwardGeometryPass() override;
         OverlayPass* GetOverlayPass() override;
         PresentPass* GetPresentPass() override;
-    public:
-        bool* GetDrawSkyboxStatus() override { return &m_bDrawSkybox; }
-        bool* GetCastShadowStatus() override { return &m_bCastShadow; }
-        bool* GetGaussBlurStatus() override { return &m_bGaussBlur; }
-        int* GetSkyboxIndex() override { return &m_iSkyboxIndex; }
-        bool* GetOverlayStatus() override { return &m_bDrawOverlay; }
+
     protected:
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
@@ -89,11 +84,5 @@ namespace My {
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
 
-        bool m_bDrawSkybox{ false };
-        bool m_bCastShadow{ false };
-        bool m_bGaussBlur{ false };
-
-        int m_iSkyboxIndex{ 0 };
-        bool m_bDrawOverlay{ false };
     };
 }

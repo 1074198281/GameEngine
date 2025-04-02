@@ -12,8 +12,10 @@ void My::VolumetricLightSubPass::EndSubPass()
 
 void My::VolumetricLightSubPass::Draw(Frame& frame)
 {
-	m_pGraphicsManager->SetPipelineStatus("VolumetricLight");
-	m_pGraphicsManager->DrawVolumetricLight(frame);
+	if (m_bDrawVolumetricLight) {
+		m_pGraphicsManager->SetPipelineStatus("VolumetricLight");
+		m_pGraphicsManager->DrawVolumetricLight(frame);
+	}
 }
 
 int* My::VolumetricLightSubPass::GetMarchingStepsPtr()
@@ -24,4 +26,9 @@ int* My::VolumetricLightSubPass::GetMarchingStepsPtr()
 float* My::VolumetricLightSubPass::GetSampleIntensity()
 {
 	return &m_fSampleIntensity;
+}
+
+bool* My::VolumetricLightSubPass::GetDrawVolumetricLight()
+{
+	return &m_bDrawVolumetricLight;
 }

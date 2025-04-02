@@ -2,9 +2,12 @@
 #include "BaseApplication.hpp"
 #include "LightManager.h"
 
+#include "ForwardGeometryPass.hpp"
+#include "SkyboxSubPass.hpp"
 #include "OverlayPass.hpp"
 #include "VolumetricLightSubPass.hpp"
-
+#include "OverlayPass.hpp"
+#include "OverlaySubPass.hpp"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -108,9 +111,9 @@ void My::GuiSubPass::Draw(Frame& frame)
 			if (ImGui::TreeNode("BaseSceneSettings"))
 			{
 				if (ImGui::TreeNode("Skybox")) {
-					bool* pIsDrawSkybox = m_pGraphicsManager->GetDrawSkyboxStatus();
+					bool* pIsDrawSkybox = m_pGraphicsManager->GetForwardGeometryPass()->GetSkyboxSubPass()->GetDrawSkyBoxPtr();
 					ImGui::Checkbox("SkyboxVisible", pIsDrawSkybox);
-					int* skyboxIndex = m_pGraphicsManager->GetSkyboxIndex();
+					int* skyboxIndex = m_pGraphicsManager->GetForwardGeometryPass()->GetSkyboxSubPass()->GetSkyBoxIndexPtr();
 					std::vector<std::string> skyboxInfo = m_pGraphicsManager->GetSkyboxInfo();
 					ImGui::SliderInt("SkyboxIndex", skyboxIndex, 0, skyboxInfo.size() - 1);
 
@@ -122,14 +125,14 @@ void My::GuiSubPass::Draw(Frame& frame)
 					ImGui::TreePop();
 				}
 
-				bool* pIsCastShadow = m_pGraphicsManager->GetCastShadowStatus();
-				ImGui::Checkbox("CastShadow", pIsCastShadow);
-
-				bool* pIsGaussBlur = m_pGraphicsManager->GetGaussBlurStatus();
+				bool* pIsGaussBlur = m_pGraphicsManager->GetOverlayPass()->GetGaussSubPass()->GetGaussBlurPtr();
 				ImGui::Checkbox("GaussBlur", pIsGaussBlur);
 
-				bool* pIsOverlay = m_pGraphicsManager->GetOverlayStatus();
+				bool* pIsOverlay = m_pGraphicsManager->GetOverlayPass()->GetOverlaySubPass()->GetDrawWaterDropsScreen();
 				ImGui::Checkbox("Overlay", pIsOverlay);
+
+				bool* pIsVolumetricLight = m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetDrawVolumetricLight();
+				ImGui::Checkbox("Volumetric Light", pIsVolumetricLight);
 
 				ImGui::TreePop();
 			}
@@ -204,7 +207,6 @@ void My::GuiSubPass::Draw(Frame& frame)
 				ImGui::SliderFloat("Depth Bias", pLightManager->GetDepthBias(), 0, 0.5);
 				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 256);
 				ImGui::SliderFloat("Volumetric Light Sample Intensity", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity(), 0, 100);
-				
 
 				int lightNum = pScene->LightNodes.size();
 				LightInfo* pLightInfo = pLightManager->GetAllLightInfoPtr();

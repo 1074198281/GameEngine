@@ -11,10 +11,13 @@ namespace My {
 		void Draw(Frame& frame) override;
 
 	public:
-		bool* GetDrawSkyBox();
+		bool* GetDrawSkyBoxPtr();
+		bool GetDrawSkyBox();
+		int* GetSkyBoxIndexPtr();
+		int GetSkyBoxIndex();
 
 	public:
-		bool m_bDrawSkybox;
-
+		bool m_bDrawSkybox = false;
+		int m_iSkyBoxIndex{ 0 };
 	};
 }

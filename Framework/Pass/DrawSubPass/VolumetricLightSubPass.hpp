@@ -13,8 +13,10 @@ namespace My {
 	public:
 		int* GetMarchingStepsPtr();
 		float* GetSampleIntensity();
+		bool* GetDrawVolumetricLight();
 	protected:
 		int m_iMarchingSteps = 20;
 		float m_fSampleIntensity = 1.0f;
+		bool m_bDrawVolumetricLight = false;
 	};
 }

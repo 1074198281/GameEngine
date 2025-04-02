@@ -43,7 +43,7 @@ namespace My {
         virtual void DrawGui(Frame& frame) = 0;
         virtual void DrawPresent(Frame& frame) = 0;
         virtual void DrawGaussBlur(Frame& frame) = 0;
-        virtual void DrawOverlay(Frame& frame) = 0;
+        virtual void DrawWaterDrops(Frame& frame) = 0;
         virtual void DrawVolumetricLight(Frame& frame) = 0;
 
         virtual void BeginSubPass(const std::string& PassName) = 0;
@@ -64,12 +64,6 @@ namespace My {
         virtual ForwardGeometryPass* GetForwardGeometryPass() = 0;
         virtual OverlayPass* GetOverlayPass() = 0;
         virtual PresentPass* GetPresentPass() = 0;
-    public:
-        virtual bool* GetDrawSkyboxStatus() = 0;
-        virtual bool* GetCastShadowStatus() = 0;
-        virtual bool* GetGaussBlurStatus() = 0;
 
-        virtual int* GetSkyboxIndex() = 0;
-        virtual bool* GetOverlayStatus() = 0;
 	};
 }

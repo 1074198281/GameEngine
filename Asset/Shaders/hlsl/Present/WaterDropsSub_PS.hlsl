@@ -13,7 +13,7 @@ SamplerState AnisotropicClamp : register(s21);
 
 Texture2D<float4> PresentMap : register(t0);
 
-cbuffer OverlaySubParams : register(b0)
+cbuffer WaterDropsSubParams : register(b0)
 {
     float2 _ScreenSize;
     float _Time;

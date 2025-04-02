@@ -13,8 +13,8 @@
 #include "../Asset/Shaders/CompiledShaders/g_Present_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Model_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Model_PS.h"
-#include "../Asset/Shaders/CompiledShaders/g_OverlaySub_VS.h"
-#include "../Asset/Shaders/CompiledShaders/g_OverlaySub_PS.h"
+#include "../Asset/Shaders/CompiledShaders/g_WaterDropsSub_VS.h"
+#include "../Asset/Shaders/CompiledShaders/g_WaterDropsSub_PS.h"
 
 
 #include "../Asset/Shaders/CompiledShaders/g_GaussBlur_CS.h"
@@ -79,7 +79,7 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	GENERATE_SHADER_BYTE_CODE(SkyBox);
 	GENERATE_SHADER_BYTE_CODE(Present);
 	GENERATE_SHADER_BYTE_CODE(Model);
-	GENERATE_SHADER_BYTE_CODE(OverlaySub);
+	GENERATE_SHADER_BYTE_CODE(WaterDropsSub);
 
 	// lighting
 	GENERATE_SHADER_BYTE_CODE(LambertGouraudLighting);

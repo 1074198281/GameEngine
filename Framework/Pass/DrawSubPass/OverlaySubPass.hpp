@@ -10,5 +10,10 @@ namespace My {
 		void BeginSubPass() override;
 		void EndSubPass() override;
 		void Draw(Frame& frame) override;
+
+	public:
+		bool* GetDrawWaterDropsScreen();
+	private:
+		bool m_bDrawWaterDropsScreen = false;
 	};
 }
