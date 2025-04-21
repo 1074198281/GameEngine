@@ -80,7 +80,6 @@ namespace My {
         std::vector<Frame> m_Frames;
         std::vector<std::shared_ptr<IDrawPass>> m_DrawPasses;
 
-        bool m_bInitialized{ false };
         uint64_t m_nSceneRevision;
         uint32_t m_nFrameIndex;
 

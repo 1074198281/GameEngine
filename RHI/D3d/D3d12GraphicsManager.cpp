@@ -70,7 +70,6 @@ void My::D3d12GraphicsManager::Clear()
     m_PixelBufferResources.clear();
     m_pLightManager->Clear();
 
-    m_bInitialized = false;
 }
 
 void My::D3d12GraphicsManager::Resize(uint32_t width, uint32_t height)
@@ -584,33 +583,38 @@ void My::D3d12GraphicsManager::LoadIBLDDSImage(std::string& ImagePath, std::stri
 }
 void My::D3d12GraphicsManager::initializeFixedHandle()
 {
+    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
     D3dGraphicsCore::DescriptorHandle Handle;
     int HeapIdx = -1;
-    Handle = D3dGraphicsCore::AllocateFromDescriptorHeap(1, HeapIdx);
+    int iDescriptorCount = 0;
+    
     std::unique_ptr<SResourceColorBufferInfo> pSceneColorBuffer = std::make_unique<SResourceColorBufferInfo>();
-    pSceneColorBuffer->handle = Handle;
-    pSceneColorBuffer->iHeapIndex = HeapIdx;
-    pSceneColorBuffer->name = "ColorBuffer";
-    pSceneColorBuffer->pGpuBuffer = std::make_shared<D3dGraphicsCore::ColorBuffer>(D3dGraphicsCore::g_SceneColorBuffer);
-    m_PixelBufferResources.emplace(pSceneColorBuffer->name, std::move(pSceneColorBuffer));
+    vecHandle.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
+    iDescriptorCount++;
 
-
-    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vecHandle;
-    int HeapIndex = -1;
     std::unique_ptr<SResourceColorBufferInfo> pOverlaySrcInfo = std::make_unique<SResourceColorBufferInfo>();
     std::unique_ptr<SResourceColorBufferInfo> pOverlayDesInfo = std::make_unique<SResourceColorBufferInfo>();
 
     std::shared_ptr<D3dGraphicsCore::ColorBuffer> OverlaySrc = std::make_shared<D3dGraphicsCore::ColorBuffer>();
     OverlaySrc->Create(L"OverlaySrc", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
     vecHandle.push_back(OverlaySrc->GetSRV());
+    iDescriptorCount++;
 
     std::shared_ptr<D3dGraphicsCore::ColorBuffer> OverlayDes = std::make_shared<D3dGraphicsCore::ColorBuffer>();
     OverlayDes->Create(L"OverlayDes", D3dGraphicsCore::g_DisplayWidth, D3dGraphicsCore::g_DisplayHeight, 1, D3dGraphicsCore::g_SceneColorBufferFormat);
     vecHandle.push_back(OverlayDes->GetUAV());
+    iDescriptorCount++;
 
-    D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(2, HeapIndex);
-    D3dGraphicsCore::CopyDescriptors(handle, vecHandle, 2);
+    D3dGraphicsCore::DescriptorHandle handle = D3dGraphicsCore::AllocateFromDescriptorHeap(iDescriptorCount, HeapIdx);
+    D3dGraphicsCore::CopyDescriptors(handle, vecHandle, iDescriptorCount);
 
+    pSceneColorBuffer->handle = handle;
+    pSceneColorBuffer->iHeapIndex = HeapIdx;
+    pSceneColorBuffer->name = "ColorBuffer";
+    pSceneColorBuffer->pGpuBuffer = std::make_shared<D3dGraphicsCore::ColorBuffer>(D3dGraphicsCore::g_SceneColorBuffer);
+    m_PixelBufferResources.emplace(pSceneColorBuffer->name, std::move(pSceneColorBuffer));
+
+    D3dGraphicsCore::OffsetDescriptorHandle(handle);
     pOverlaySrcInfo->handle = handle;
     pOverlaySrcInfo->iHeapIndex = HeapIdx;
     pOverlaySrcInfo->name = "OverlaySrc";
@@ -623,6 +627,34 @@ void My::D3d12GraphicsManager::initializeFixedHandle()
     pOverlayDesInfo->name = "OverlayDes";
     pOverlayDesInfo->pGpuBuffer = std::move(OverlayDes);
     m_PixelBufferResources.emplace(pOverlayDesInfo->name, std::move(pOverlayDesInfo));
+
+
+    // frame batch handle
+    for (auto& batch : m_Frames[0].BatchContexts) {
+        D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
+        D3D12_CPU_DESCRIPTOR_HANDLE diffuseHandle, metallicRoughnessHandle,
+            ambientOcclusionHandle, emissiveHandle, normalHandle;
+        diffuseHandle.ptr = d3dbatch->Material.DiffuseMap.handle;
+        metallicRoughnessHandle.ptr = d3dbatch->Material.MetallicRoughnessMap.handle;
+        ambientOcclusionHandle.ptr = d3dbatch->Material.AmbientOcclusionMap.handle;
+        emissiveHandle.ptr = d3dbatch->Material.EmissiveMap.handle;
+        normalHandle.ptr = d3dbatch->Material.NormalMap.handle;
+
+        vecHandle.clear();
+        vecHandle.push_back(diffuseHandle);
+        vecHandle.push_back(metallicRoughnessHandle);
+        vecHandle.push_back(ambientOcclusionHandle);
+        vecHandle.push_back(emissiveHandle);
+        vecHandle.push_back(normalHandle);
+        D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(vecHandle.size(), HeapIdx);
+        D3dGraphicsCore::CopyDescriptors(GpuHandle, vecHandle, vecHandle.size());
+
+        auto pRe = m_BatchTextureResource.find(d3dbatch->BatchIndex);
+        if (pRe != m_BatchTextureResource.end()) {
+            pRe->second->handle = GpuHandle;
+            pRe->second->iHeapIndex = HeapIdx;
+        }
+    }
 }
 
 int My::D3d12GraphicsManager::InitializeD3dImGUI()
@@ -727,48 +759,6 @@ void My::D3d12GraphicsManager::BeginFrame(Frame& frame)
     m_pLightManager->UpdateLight();
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     GraphicsRHI.UpdateCameraConstants(frame);
-    if (!m_bInitialized) {
-        uint32_t NumDest = 5;
-        int HeapIndex = -1;
-        for (auto& batch : frame.BatchContexts) {
-            D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
-            D3D12_CPU_DESCRIPTOR_HANDLE diffuseHandle, metallicRoughnessHandle,
-                ambientOcclusionHandle, emissiveHandle, normalHandle;
-            diffuseHandle.ptr = d3dbatch->Material.DiffuseMap.handle;
-            metallicRoughnessHandle.ptr = d3dbatch->Material.MetallicRoughnessMap.handle;
-            ambientOcclusionHandle.ptr = d3dbatch->Material.AmbientOcclusionMap.handle;
-            emissiveHandle.ptr = d3dbatch->Material.EmissiveMap.handle;
-            normalHandle.ptr = d3dbatch->Material.NormalMap.handle;
-            
-            D3D12_CPU_DESCRIPTOR_HANDLE CpuHandle[] = {
-                diffuseHandle,
-                metallicRoughnessHandle,
-                ambientOcclusionHandle,
-                emissiveHandle,
-                normalHandle
-            };
-
-            const uint32_t NumSrc = _countof(CpuHandle);
-            uint32_t pArray[NumSrc];
-            for (int i = 0; i < NumSrc; i++) {
-                pArray[i] = 1;
-            }
-            D3dGraphicsCore::DescriptorHandle GpuHandle = D3dGraphicsCore::AllocateFromDescriptorHeap(NumSrc, HeapIndex);
-            D3dGraphicsCore::g_Device->CopyDescriptors(1, &GpuHandle, &NumDest, NumSrc, CpuHandle, pArray, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-            
-            auto pRe = m_BatchTextureResource.find(d3dbatch->BatchIndex);
-            if (pRe != m_BatchTextureResource.end()) {
-                pRe->second->handle = GpuHandle;
-                pRe->second->iHeapIndex = HeapIndex;
-            }
-        }
-
-        m_bInitialized = true;
-    }
-
-    std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> HandleVec;
-    HandleVec.push_back(D3dGraphicsCore::g_SceneColorBuffer.GetSRV());
-    CopyDescriptors(m_PixelBufferResources["ColorBuffer"]->handle, HandleVec, 1);
 }
 
 void My::D3d12GraphicsManager::EndFrame(Frame& frame)

@@ -190,7 +190,7 @@ void D3dGraphicsCore::D3d12RHI::UpdatePresent()
     D3dGraphicsCore::Present();
 
     g_CommandManager.IdleGPU();
-    InitializeBuffers();
+    //InitializeBuffers();
 }
 
 void D3dGraphicsCore::D3d12RHI::SetPrimitiveType(GraphicsContext& context, My::PrimitiveType Type)

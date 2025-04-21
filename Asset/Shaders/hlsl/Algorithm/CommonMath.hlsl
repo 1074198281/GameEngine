@@ -1,5 +1,4 @@
-static const float3 F0 = float3(0.04, 0.04, 0.04);
-static const float PI = 3.14159265358979;
+#include "CommonMathDefines.hlsl"
 #define MAX_LIGHT_NUM 100
 
 float Pow5(float x)

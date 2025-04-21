@@ -87,7 +87,7 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
             float4 currPos = gCameraPos + marchingDir * m;
             _intensity += GetCurrentPositionIntensity(currPos, l);
         }
-        _intensity /= gMarchingStep;
+        //_intensity /= gMarchingStep;
         
         color += _intensity * l.gLightColor;
     }

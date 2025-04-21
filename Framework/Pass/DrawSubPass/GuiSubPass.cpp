@@ -205,7 +205,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 				LightManager* pLightManager = m_pGraphicsManager->GetLightManager();
 				
 				ImGui::SliderFloat("Depth Bias", pLightManager->GetDepthBias(), 0, 0.5);
-				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 256);
+				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 1024);
 				ImGui::SliderFloat("Volumetric Light Sample Intensity", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity(), 0, 100);
 
 				int lightNum = pScene->LightNodes.size();
