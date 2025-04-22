@@ -1,6 +1,13 @@
 #include "CommonMath.hlsl"
 #define PBR
 
+#define LIGHT_TYPE_OMNI  0
+#define LIGHT_TYPE_SPOT  1
+#define LIGHT_TYPE_INFI  2
+#define LIGHT_TYPE_AREA  3
+
+static const float3 F0 = float3(0.04, 0.04, 0.04);
+
 #ifdef LAMBERT
 float4 LambertLighting(float Insensity, float4 LightColor, float3 LightDir, float3 NormalDir)
 {

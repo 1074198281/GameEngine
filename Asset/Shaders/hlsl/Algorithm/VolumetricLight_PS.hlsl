@@ -6,6 +6,7 @@ considering Mie scattering and Rayleigh scattering
 calculate phase function (HG phase function)
 */
 
+#include "Atmosphere/BaseScattering.hlsl"
 #include "Lighting.hlsl"
 
 struct VolumetricLightVSOut
@@ -57,9 +58,101 @@ float GetCurrentPositionIntensity(float4 currPos, cLight l)
         return 0;
     }
     
-    return gSampleIntensity;
+    float3 viewDir = normalize(gCameraPos.xyz - currPos.xyz);
+    float3 lightDir = normalize(l.gLightPosition.xyz - currPos.xyz);
+    float cos_theta = dot(viewDir, lightDir);
+    
+    AtmosphereParam atParam;
+    atParam.Rayliegh_Scalar_Height = 8500;
+    atParam.Mie_Scalar_Height = 1200;
+    atParam.Mie_Anisotropy_G = 0.8;
+    
+    float3 rayleigh = RayleighCoefficient(atParam, 8501) * RayleighPhase(cos_theta);
+    float3 mie = MieCoefficient(atParam, 8501) * MiePhase(atParam, cos_theta);
+    // 混合散射
+    float scattering = lerp(rayleigh * 0.1, mie, 0.7);
+    
+    // 反平方衰减
+    float dis = length(light_pos_vec);
+    float attenu = 1.0 / (1 + dis * dis);
+    
+    return scattering * attenu;
 }
 
+//-------------------------Spot Light-------------------------//
+// 计算视线与聚光灯锥体的交点
+// 返回交点参数 t_start 和 t_end（沿视线方向）
+bool GetLightIntersection(float3 rayOrigin, float3 rayDir, cLight l, float maxMarchingLength, out float t_start, out float t_end)
+{
+    float3 lightToRay = rayOrigin - l.gLightPosition.xyz;
+    float lightCosAngle = cos(l.penumbraAngle);
+    
+    // 计算光线与锥体的交点（二次方程）
+    float3 D = normalize(l.gLightDirection);
+    float3 CO = rayOrigin - l.gLightPosition.xyz;
+    
+    float a = dot(rayDir, D) * dot(rayDir, D) - lightCosAngle * lightCosAngle;
+    float b = 2.0 * (dot(rayDir, D) * dot(CO, D) - dot(rayDir, CO) * lightCosAngle * lightCosAngle);
+    float c = dot(CO, D) * dot(CO, D) - dot(CO, CO) * lightCosAngle * lightCosAngle;
+    
+    float discriminant = b * b - 4 * a * c;
+    if (discriminant < 0)
+    {
+        return false; // 无交点
+    }
+    
+    t_start = (-b - sqrt(discriminant)) / (2 * a);
+    t_end = (-b + sqrt(discriminant)) / (2 * a);
+    
+    // 确保 t_start < t_end 且在视距范围内
+    if (t_end < 0 || t_start > maxMarchingLength)
+    {
+        return false;
+    }
+    
+    t_start = max(t_start, 0);
+    t_end = min(t_end, maxMarchingLength);
+    
+    return true;
+}
+
+float4 GetSpotLightIntensity(float3 marchingDir, cLight l, float marchingLength, float2 screenUV)
+{
+    float t_start = 0.0f;
+    float t_end = 0.0f;
+    float color = 0.0f;
+    
+    if (!GetLightIntersection(gCameraPos.xyz, marchingDir.xyz, l, marchingLength, t_start, t_end))
+    {
+        return 0;
+    }
+    
+    // 仅在有效区间内积分
+    float _step = min((t_end - t_start) / gMarchingStep, 0.1); // 动态步长
+    float _intensity = 0;
+    float prevDensity = 0;
+        
+    // 添加抖动减少条带
+    float offset = frac(dot(screenUV, float2(12.9898, 78.233))) * _step;
+        
+    for (float t = t_start + offset; t < t_end; t += _step)
+    {
+        float4 currPos = float4(gCameraPos.xyz + marchingDir * t, 1.0f);
+        float currentDensity = GetCurrentPositionIntensity(currPos, l);
+            
+        // 梯形积分法平滑过渡
+        _intensity += (prevDensity + currentDensity) * 0.5 * _step;
+        prevDensity = currentDensity;
+    }
+        
+    color += _intensity * l.gLightColor;
+    
+    return color;
+}
+
+
+
+//-------------------------Main Calc-------------------------//
 float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
 {
     float depth = gCameraDepthMap.Load(int3(PresentIn.texUV.x * gScreenWidth, PresentIn.texUV.y * gScreenHeight, 0));
@@ -70,7 +163,6 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
     float4 marchingDir = worldPos - gCameraPos;
     float marchingLength = length(marchingDir);
     marchingDir = marchingDir / length(marchingDir);
-    float _step = marchingLength / gMarchingStep;
     
     float4 color = float4(0.0, 0.0, 0.0, 0.0);
     for (int i = 0; i < MAX_LIGHT_NUM; i++)
@@ -82,15 +174,26 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
         }
         
         float _intensity = 0;
-        for (float m = _step; m < marchingLength; m += _step)
-        {
-            float4 currPos = gCameraPos + marchingDir * m;
-            _intensity += GetCurrentPositionIntensity(currPos, l);
-        }
-        //_intensity /= gMarchingStep;
         
-        color += _intensity * l.gLightColor;
+        if (l.gLightType == LIGHT_TYPE_OMNI)
+        {
+            
+        }
+        else if (l.gLightType == LIGHT_TYPE_SPOT)
+        {
+            _intensity = GetSpotLightIntensity(marchingDir.xyz, l, marchingLength, PresentIn.texUV);
+        }
+        else if (l.gLightType == LIGHT_TYPE_INFI)
+        {
+            
+        }
+        else if (l.gLightType == LIGHT_TYPE_AREA)
+        {
+            
+        }
+        
+        color += _intensity;
     }
     
-    return color + PresentMap.Sample(LinearWarp, PresentIn.texUV);
+    return color;
 }

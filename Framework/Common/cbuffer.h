@@ -82,4 +82,11 @@ namespace My {
 		Light Lights[MAX_LIGHT_NUM];
 	} LightInfo;
 
+	// cb5
+	__declspec(align(16)) typedef struct AtmosphereParam {
+		float RayleighScalarHeight;
+		float MieScalarHeight;
+		float MieAnisotropyG;
+	} AtmosphereParam;
+
 }

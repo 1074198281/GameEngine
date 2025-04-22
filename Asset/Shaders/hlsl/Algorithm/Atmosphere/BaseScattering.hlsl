@@ -23,14 +23,14 @@ phase(θ)=  -- * --------- * ---------------------------------
             8π   2 + g^2      (1 + g^2 - 2g * cos(θ))^1.5
 */
 
-#include "../CommonMathDefines.hlsl"
+#define PI 3.14159265358979
 #include "AtmosphereDefine.hlsl"
 
 // 瑞利散射的散射系数
 float3 RayleighCoefficient(AtmosphereParam param, float h)
 {
     float rho = exp(-(h / param.Rayliegh_Scalar_Height));
-    return Reyleigh * rho;
+    return Rayleigh * rho;
 }
 
 // 瑞利散射的相位函数
