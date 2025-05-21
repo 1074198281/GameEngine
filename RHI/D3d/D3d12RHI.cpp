@@ -643,6 +643,7 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     if (!My::InvertMatrix(inv, viewProj)) {
         std::cout << "[D3dRHI Draw Volumetric Light]: Can't calculate invert matrix!" << std::endl;
         ASSERT(false);
+        return;
     }
     My::Transpose(VLCBV.invViewProj, inv);
     VLCBV.cameraPos = My::Vector4f(m_Camera->GetPosition().GetX(), m_Camera->GetPosition().GetY(), m_Camera->GetPosition().GetZ(), 1.0f);
