@@ -205,8 +205,8 @@ void My::GuiSubPass::Draw(Frame& frame)
 				LightManager* pLightManager = m_pGraphicsManager->GetLightManager();
 				
 				ImGui::SliderFloat("Depth Bias", pLightManager->GetDepthBias(), 0, 0.5);
-				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 1024);
-				ImGui::SliderFloat("Volumetric Light Sample Intensity", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity(), 0, 100);
+				ImGui::SliderInt("Volumetric Light Marching Steps", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetMarchingStepsPtr(), 1, 128);
+				ImGui::SliderFloat("Volumetric Light Sample Intensity", m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetSampleIntensity(), 0, 1e9);
 
 				int lightNum = pScene->LightNodes.size();
 				LightInfo* pLightInfo = pLightManager->GetAllLightInfoPtr();
@@ -216,7 +216,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 					std::string lightName = pLightManager->GetLightName(l->LightIndex);
 					if (ImGui::TreeNode(lightName.c_str()))
 					{
-						ImGui::SliderFloat("LightIntensity", &l->Intensity, 0, 10 * pScene->GetLight(lightName)->GetIntensity());
+						ImGui::SliderFloat("LightIntensity", &l->Intensity, 0, 100 * pScene->GetLight(lightName)->GetIntensity());
 						ImGui::SliderFloat4("LightColor", l->LightColor, 0, 1);
 						ImGui::SliderFloat4("LightPosition", l->LightPosition, -100, 100);
 						ImGui::SliderInt("CastShadow", &l->IsCastShadow, 0, 1);

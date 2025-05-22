@@ -78,7 +78,7 @@ float3 GetCurrentPositionIntensity(float4 currPos, cLight l)
     // ·´Æ½·½Ë¥¼õ
     float attenu = 1.0 / (1 + dis * dis);
     
-    return scattering * attenu * l.gLightColor.xyz * l.gInsensity;
+    return scattering * attenu * l.gLightColor.xyz * gSampleIntensity;
 }
 
 //-------------------------Spot Light-------------------------//

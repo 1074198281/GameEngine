@@ -29,6 +29,7 @@ namespace D3dGraphicsCore {
 	DescriptorHandle AllocateFromDescriptorHeap(int Count, int& iCurrentHeapIndex);
 	void ReleaseHeapByIndex(int HeapIndex);
 	void CopyDescriptors(const DescriptorHandle& DesHandle, const std::vector<D3D12_CPU_DESCRIPTOR_HANDLE>& SrcHandle, const UINT DescriptorsCount);
+	void CopyDescriptors(const DescriptorHandle& DesHandle, const D3D12_CPU_DESCRIPTOR_HANDLE* SrcHandle, const UINT DescriptorsCount);
 	void OffsetDescriptorHandle(DescriptorHandle& handle, int offset = 1);
 
 	//-------------------------------------baseTextures-------------------------------------//

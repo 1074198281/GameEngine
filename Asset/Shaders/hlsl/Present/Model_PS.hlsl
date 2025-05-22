@@ -10,7 +10,7 @@ TextureCube<float3> RadianceIBLTexture : register(t20);
 TextureCube<float3> IrradianceIBLTexture : register(t21);
 Texture2D<float4> BRDF_LUT : register(t32);
 
-Texture2D<float> ShadowMaps[100] : register(t100);
+Texture2D<float> ShadowMaps : register(t100);
 
 SamplerState DefaultSampler : register(s10);
 
@@ -208,14 +208,13 @@ float4 main(VertexOut pin) : SV_Target
             
         }
         
-        Texture2D<float> shadow = ShadowMaps[glightinfo[idx].gDescriptorOffset];
         // calculate cuurent world pos in light view coordinate to get if has light cast
         p1 = mul(pin.WorldPosition, transpose(glightinfo[idx].gLightViewMatrix));
         p1 = mul(p1, transpose(glightinfo[idx].gLightProjectMatrix));
         // in dx coordinate, screen coordinate x+ points to right and y+ points to down, so when get depth from shadowmap,
         // we have to convert to x+ points to right and y+ points to up in its coordinate
         int2 uv = int2(((p1.x / p1.w) + 1) * 0.5  * gScreenWidth, (-p1.y / p1.w + 1) * 0.5 * gScreenHeight);
-        p2 = shadow.Load(int3(uv, 0));
+        p2 = ShadowMaps.Load(int3(uv, 0));
         if ((p1.z / p1.w) - depth_bias > p2)
         {
             continue;

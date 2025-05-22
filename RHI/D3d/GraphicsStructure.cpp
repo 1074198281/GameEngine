@@ -112,6 +112,17 @@ void D3dGraphicsCore::CopyDescriptors(const DescriptorHandle& DesHandle, const s
 		DescriptorsCount, SrcHandle.data(), SourceCounts.data(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
+void D3dGraphicsCore::CopyDescriptors(const DescriptorHandle& DesHandle, const D3D12_CPU_DESCRIPTOR_HANDLE* SrcHandle, const UINT DescriptorsCount)
+{
+	std::vector<UINT> SourceCounts;
+	for (int i = 0; i < DescriptorsCount; i++) {
+		SourceCounts.push_back(1);
+	}
+
+	g_Device->CopyDescriptors(1, &DesHandle, &DescriptorsCount,
+		DescriptorsCount, SrcHandle, SourceCounts.data(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
 void D3dGraphicsCore::OffsetDescriptorHandle(DescriptorHandle& handle, int offset)
 {
 	handle += offset * g_DescriptorSize;
