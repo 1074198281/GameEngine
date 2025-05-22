@@ -143,13 +143,14 @@ float4 GetSpotLightIntensity(float3 marchingDir, cLight l, float marchingLength,
     }
     
     // 仅在有效区间内积分
-    float _step = min((t_end - t_start) / gMarchingStep, 1); // 动态步长
+    float _step = max((t_end - t_start) / gMarchingStep, 0.2); // 动态步长
     float3 _intensity = float3(0.0, 0.0, 0.0);
     float3 prevDensity = float3(0.0, 0.0, 0.0);
         
     // 添加抖动减少条带
     float offset = frac(dot(screenUV, float2(12.9898, 78.233))) * _step;
-        
+    int it = 0;
+    
     for (float t = t_start + offset; t < t_end; t += _step)
     {
         float4 currPos = float4(gCameraPos.xyz + marchingDir * t, 1.0f);
@@ -158,6 +159,11 @@ float4 GetSpotLightIntensity(float3 marchingDir, cLight l, float marchingLength,
         // 梯形积分法平滑过渡
         _intensity += (prevDensity + currentDensity) * 0.5 * _step;
         prevDensity = currentDensity;
+        it++;
+        if (it >= gMarchingStep)
+        {
+            break;
+        }
     }
         
     color = float4(_intensity, 1.0f);
