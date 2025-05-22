@@ -30,7 +30,8 @@ cbuffer VolumetricLightConstants : register(b1)
     float gSampleIntensity;
     float gCameraNearZ;
     float gCameraFarZ;
-    float2 padding0;
+    int gLightNum;
+    float padding0;
 };
 
 SamplerState LinearWarp : register(s16);
@@ -40,10 +41,11 @@ Texture2D<float> gCameraDepthMap : register(t0);
 Texture2D<float> LightDepthMap : register(t1);
 Texture2D<float4> PresentMap : register(t101);
 
-float4 GetCurrentPositionIntensity(float4 currPos, cLight l)
+float3 GetCurrentPositionIntensity(float4 currPos, cLight l)
 {
     float4 light_pos_vec = currPos - l.gLightPosition;
-    float angle = dot(light_pos_vec, l.gLightDirection) / (length(light_pos_vec) * length(l.gLightDirection));
+    float dis = length(light_pos_vec);
+    float angle = dot(light_pos_vec, l.gLightDirection) / (dis * length(l.gLightDirection));
     angle = acos(angle);
     if (angle > l.penumbraAngle)
     {
@@ -51,9 +53,10 @@ float4 GetCurrentPositionIntensity(float4 currPos, cLight l)
     }
     
     float4 lightProjPos = mul(mul(currPos, transpose(l.gLightViewMatrix)), transpose(l.gLightProjectMatrix));
-    int3 load = int3((lightProjPos.x / lightProjPos.w + 1) * 0.5 * gScreenWidth, (1 - lightProjPos.y / lightProjPos.w * 0.5) * gScreenHeight, 0);
+    //int3 load = int3((lightProjPos.x / lightProjPos.w + 1) * 0.5 * gScreenWidth, (1 - lightProjPos.y / lightProjPos.w * 0.5) * gScreenHeight, 0);
+    int3 load = int3(lerp(float2(-1, 1), float2(1, -1), float2(lightProjPos.x / lightProjPos.w, lightProjPos.y / lightProjPos.w)), 0);
     float depthInLight = LightDepthMap.Load(load);
-    if (lightProjPos.z / lightProjPos.w > depthInLight)
+    if (lightProjPos.z / lightProjPos.w >= depthInLight)
     {
         return 0;
     }
@@ -73,10 +76,9 @@ float4 GetCurrentPositionIntensity(float4 currPos, cLight l)
     float3 scattering = lerp(rayleigh * 0.1, mie, 0.7);
     
     // 反平方衰减
-    float dis = length(light_pos_vec);
     float attenu = 1.0 / (1 + dis * dis);
     
-    return float4(scattering, 1.0f) + attenu * l.gLightColor;
+    return scattering * attenu * l.gLightColor.xyz * l.gInsensity;
 }
 
 //-------------------------Spot Light-------------------------//
@@ -141,9 +143,9 @@ float4 GetSpotLightIntensity(float3 marchingDir, cLight l, float marchingLength,
     }
     
     // 仅在有效区间内积分
-    float _step = min((t_end - t_start) / gMarchingStep, 0.1); // 动态步长
-    float4 _intensity = float4(0.0, 0.0, 0.0, 0.0);
-    float4 prevDensity = float4(0.0, 0.0, 0.0, 0.0);
+    float _step = min((t_end - t_start) / gMarchingStep, 1); // 动态步长
+    float3 _intensity = float3(0.0, 0.0, 0.0);
+    float3 prevDensity = float3(0.0, 0.0, 0.0);
         
     // 添加抖动减少条带
     float offset = frac(dot(screenUV, float2(12.9898, 78.233))) * _step;
@@ -151,14 +153,14 @@ float4 GetSpotLightIntensity(float3 marchingDir, cLight l, float marchingLength,
     for (float t = t_start + offset; t < t_end; t += _step)
     {
         float4 currPos = float4(gCameraPos.xyz + marchingDir * t, 1.0f);
-        float4 currentDensity = GetCurrentPositionIntensity(currPos, l);
+        float3 currentDensity = GetCurrentPositionIntensity(currPos, l);
             
         // 梯形积分法平滑过渡
         _intensity += (prevDensity + currentDensity) * 0.5 * _step;
         prevDensity = currentDensity;
     }
         
-    color += _intensity;
+    color = float4(_intensity, 1.0f);
     
     return color;
 }
@@ -178,10 +180,10 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
     marchingDir = marchingDir / length(marchingDir);
     
     float4 color = float4(0.0, 0.0, 0.0, 0.0);
-    for (int i = 0; i < MAX_LIGHT_NUM; i++)
+    for (int i = 0; i < gLightNum; i++)
     {
         cLight l = gLights[i];
-        if(l.isCastShadow == 0)
+        if(l.isCastShadow == 0 || i >= gLightNum)
         {
             continue;
         }
@@ -207,6 +209,8 @@ float4 main(VolumetricLightVSOut PresentIn) : SV_Target0
         
         color += _intensity;
     }
+    
+    color += PresentMap.Sample(LinearClamp, PresentIn.texUV);
     
     return color;
 }

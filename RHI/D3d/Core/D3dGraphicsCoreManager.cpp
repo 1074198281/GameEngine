@@ -4,6 +4,7 @@
 #include "GraphicsStructure.h"
 #include <algorithm>
 #include <cwctype>
+#include <iostream>
 
 #ifdef _GAMING_DESKTOP
 #include <winreg.h>		// To read the registry
@@ -552,9 +553,25 @@ void D3dGraphicsCore::Present(void)
     UINT PresentInterval = 0;
     //UINT PresentInterval = s_EnableVSync ? std::min(4, (int)Round(s_FrameTime * 60.0f)) : 0;
 
-    s_SwapChain1->Present(1, 0);
+    HRESULT hr= s_SwapChain1->Present(0, 0);
+    if (hr != S_OK) {
+        hr = g_Device->GetDeviceRemovedReason();
+        const char* reason = "";
+        switch (hr) {
+        case DXGI_ERROR_DEVICE_HUNG: reason = "DEVICE_HUNG"; break;
+        case DXGI_ERROR_DEVICE_REMOVED: reason = "DEVICE_REMOVED"; break;
+        case DXGI_ERROR_DEVICE_RESET: reason = "DEVICE_RESET"; break;
+        case DXGI_ERROR_DRIVER_INTERNAL_ERROR: reason = "DRIVER_INTERNAL_ERROR"; break;
+        }
+        std::cout << "[D3dGraphicsCore] Device removed! Reason: " << reason << std::endl;
+        ASSERT(false);
+    }
+
 
     g_CurrentBuffer = (g_CurrentBuffer + 1) % SWAP_CHAIN_BUFFER_COUNT;
+
+    UINT swapBackIndex = ((IDXGISwapChain3*)s_SwapChain1)->GetCurrentBackBufferIndex();
+    ASSERT(g_CurrentBuffer == swapBackIndex);
 
     // Test robustness to handle spikes in CPU time
     //if (s_DropRandomFrames)

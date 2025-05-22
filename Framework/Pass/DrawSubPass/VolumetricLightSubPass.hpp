@@ -15,7 +15,7 @@ namespace My {
 		float* GetSampleIntensity();
 		bool* GetDrawVolumetricLight();
 	protected:
-		int m_iMarchingSteps = 20;
+		int m_iMarchingSteps = 10;
 		float m_fSampleIntensity = 1.0f;
 		bool m_bDrawVolumetricLight = false;
 	};

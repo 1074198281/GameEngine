@@ -245,6 +245,8 @@ void D3dGraphicsCore::D3d12RHI::EndSubPass()
     }
     m_pGraphicsContext->TransitionResource(g_SceneColorBuffer, D3D12_RESOURCE_STATE_PRESENT, true);
     m_pGraphicsContext->Finish();
+
+    g_CommandManager.IdleGPU();
 }
 
 void D3dGraphicsCore::D3d12RHI::BeginOverlayPass(ColorBuffer& result, ColorBuffer& src)
@@ -524,7 +526,7 @@ void D3dGraphicsCore::D3d12RHI::DrawGui(const My::Frame& frame)
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
     }
-    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT);
+    m_pGraphicsContext->TransitionResource(g_DisplayBuffer[g_CurrentBuffer], D3D12_RESOURCE_STATE_PRESENT, true);
 }
 
 void D3dGraphicsCore::D3d12RHI::DrawPresent(const My::Frame& frame, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
@@ -559,8 +561,8 @@ void D3dGraphicsCore::D3d12RHI::DrawGaussBlur(const My::Frame& frame, ColorBuffe
 
     m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, true);
 
-    m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
-    m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    //m_pComputeContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    //m_pComputeContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pComputeContext->CopyBuffer(src, result);
 }
 
@@ -594,8 +596,8 @@ void D3dGraphicsCore::D3d12RHI::DrawWaterDrops(const My::Frame& frame, ColorBuff
 
     m_pGraphicsContext->Draw(3);
 
-    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
-    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    //m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    //m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
@@ -634,7 +636,8 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
         float gSampleIntensity;
         float gCameraNearZ;
         float gCameraFarZ;
-        float padding0[2];
+        int gLightNum;
+        float padding0;
     } VLCBV;
     //auto& m = m_Camera->GetViewProjMatrix();
     //auto invm = Invert(m);
@@ -653,13 +656,13 @@ void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, Colo
     VLCBV.gSampleIntensity = sampleIntensity;
     VLCBV.gCameraNearZ = m_Camera->GetNearClip();
     VLCBV.gCameraFarZ = m_Camera->GetFarClip();
-    VLCBV.padding0[0] = 0;
-    VLCBV.padding0[1] = 0;
+    VLCBV.gLightNum = m_pLightManager->GetLightNum();
+    VLCBV.padding0 = 0;
     m_pGraphicsContext->SetDynamicConstantBufferView(My::kVolumnCBV, sizeof(VLCBV), &VLCBV);
 
     m_pGraphicsContext->Draw(3);
 
-    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
-    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    //m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    //m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
     m_pGraphicsContext->CopyBuffer(src, result);
 }

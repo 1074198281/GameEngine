@@ -15,6 +15,6 @@ namespace My {
 		bool* GetGaussBlurPtr();
 		bool GetGaussBlur();
 	private:
-		bool m_bEnableGaussBlur;
+		bool m_bEnableGaussBlur = false;
 	};
 }
