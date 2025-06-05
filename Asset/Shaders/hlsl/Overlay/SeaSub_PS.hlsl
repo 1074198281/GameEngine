@@ -232,7 +232,7 @@ float4 main(PresentOut pin) : SV_Target
     float time = _Time * 0.3 + _Mouse.x * 0.01;
 	
 #ifdef AA
-    float3 color = float3(0.0);
+    float3 color = float3(0.0, 0.0, 0.0);
     for(int i = -1; i <= 1; i++) {
         for(int j = -1; j <= 1; j++) {
         	float2 uv = pin.texUV + float2(i,j)/3.0;
