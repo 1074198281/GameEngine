@@ -959,6 +959,18 @@ void My::D3d12GraphicsManager::DrawWaterDrops(Frame& frame)
         m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
 }
 
+void My::D3d12GraphicsManager::DrawSea(Frame& frame)
+{
+    auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
+
+    auto& srcBuffer = m_PixelBufferResources["OverlaySrc"];
+    auto& desBuffer = m_PixelBufferResources["OverlayDes"];
+    ASSERT(m_PixelBufferResources["OverlayDes"]->iHeapIndex == m_PixelBufferResources["OverlaySrc"]->iHeapIndex, "Overlay Descriptors Not In Same Heap!");
+    GraphicsRHI.DrawSea(frame, *desBuffer->pGpuBuffer, *srcBuffer->pGpuBuffer,
+        m_PixelBufferResources["OverlayDes"]->handle, m_PixelBufferResources["OverlaySrc"]->handle, m_PixelBufferResources["OverlayDes"]->iHeapIndex);
+
+}
+
 void My::D3d12GraphicsManager::DrawVolumetricLight(Frame& frame)
 {
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();

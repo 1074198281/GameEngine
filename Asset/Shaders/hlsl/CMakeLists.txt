@@ -40,6 +40,10 @@ ${CMAKE_CURRENT_SOURCE_DIR}/Present/*.hlsl)
 file(GLOB ATMOSPHERE_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/PrecomputeAtmosphere/*.hlsl)
 
+file(GLOB OVERLAY_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Overlay/*hlsl)
+
+
 file(GLOB MAIN_FILE
 ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
@@ -53,6 +57,7 @@ source_group(SkyBox FILES ${SKYBOX_FILES})
 source_group(Shadow FILES ${SHADOWMAP_FILES})
 source_group(Present FILES ${PRESENT_FILES})
 source_group(Atmosphere FILES ${ATMOSPHERE_FILES})
+source_group(Overlay FILES ${OVERLAY_FILES})
 
 set(SHADER_FILES 
 ${ALGORITHM_FILES}
@@ -65,6 +70,7 @@ ${SKYBOX_FILES}
 ${SHADOWMAP_FILES}
 ${PRESENT_FILES}
 ${ATMOSPHERE_FILES}
+${OVERLAY_FILES}
 )
 
 # 设置 HLSL 文件的属性
@@ -82,7 +88,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Vertex"
-            VS_SHADER_MODEL "6.6"
+            VS_SHADER_MODEL "6.3"
             VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""
@@ -95,7 +101,7 @@ foreach(PER_SHADER_FILE ${SHADER_FILES})
             VS_SHADER_ENABLE_DEBUG "true"
             VS_SHADER_ENTRYPOINT "main"
             VS_SHADER_TYPE "Pixel"
-            VS_SHADER_MODEL "6.6"
+            VS_SHADER_MODEL "6.3"
             VS_SHADER_VARIABLE_NAME "g_p%(Filename)"
             VS_SHADER_OUTPUT_HEADER_FILE "$(SolutionDir)../Asset/Shaders/CompiledShaders/g_%(Filename).h"
             VS_SHADER_OBJECT_FILE_NAME ""

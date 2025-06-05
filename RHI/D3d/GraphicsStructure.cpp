@@ -24,6 +24,7 @@ namespace D3dGraphicsCore {
 	RootSignature g_TemplateRootSignature;
 	RootSignature g_PresentRootSignature;
 	RootSignature g_WaterDropsSubRootSignature;
+	RootSignature g_SeaSubRootSignature;
 	RootSignature g_VolumetricLightSubRootSignature;
 	RootSignature g_ShadowRootSignature;
 	std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
@@ -262,6 +263,11 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	g_WaterDropsSubRootSignature.InitStaticSampler(21, g_anisotropicClamp);
 	g_WaterDropsSubRootSignature.Finalize(L"WaterDropsSubRootSig");
 
+	g_SeaSubRootSignature.Reset(My::kSeaRootBindings);
+	g_SeaSubRootSignature[My::kSeaSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1);
+	g_SeaSubRootSignature[My::kSeaCBV].InitAsConstantBuffer(1);
+	g_SeaSubRootSignature.Finalize(L"SeaSubRootSig");
+
 	g_VolumetricLightSubRootSignature.Reset(My::kVolumetricLightRootBindings, 2);
 	g_VolumetricLightSubRootSignature[My::kCameraDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	g_VolumetricLightSubRootSignature[My::kLightDepthSRV].InitAsDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, MAX_LIGHT_NUM, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -298,6 +304,19 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 	pWaterDropsSubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 	pWaterDropsSubPSO->Finalize();
 
+	// Sea Sub
+	std::unique_ptr<GraphicsPSO> pSeaSubPSO = std::make_unique<GraphicsPSO>(L"SeaSub PSO");
+	pSeaSubPSO->SetRootSignature(g_SeaSubRootSignature);
+	pSeaSubPSO->SetRasterizerState(RasterizerDefault);
+	pSeaSubPSO->SetBlendState(BlendDisable);
+	pSeaSubPSO->SetDepthStencilState(DepthStateDisabled);
+	pSeaSubPSO->SetSampleMask(0xFFFFFFFF);
+	pSeaSubPSO->SetInputLayout(0, nullptr);
+	SetShaderByteCode(*pSeaSubPSO.get(), "SeaSub");
+	pSeaSubPSO->SetRenderTargetFormat(g_SceneColorBufferFormat, DXGI_FORMAT_UNKNOWN);	// RT是ColorBuffer
+	pSeaSubPSO->SetPrimitiveTopologyType(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+	pSeaSubPSO->Finalize();
+
 	// Volumetric Light Sub
 	std::unique_ptr<GraphicsPSO> pVolumetricLightPSO = std::make_unique<GraphicsPSO>(L"VolumetricLight PSO");
 	pVolumetricLightPSO->SetRootSignature(g_VolumetricLightSubRootSignature);
@@ -313,6 +332,7 @@ void D3dGraphicsCore::InitializeOverlayPipelines()
 
 	g_PipelineStatusMap.emplace("Present", std::move(pPresentPSO));
 	g_PipelineStatusMap.emplace("WaterDrops", std::move(pWaterDropsSubPSO));
+	g_PipelineStatusMap.emplace("Sea", std::move(pSeaSubPSO));
 	g_PipelineStatusMap.emplace("VolumetricLight", std::move(pVolumetricLightPSO));
 
 

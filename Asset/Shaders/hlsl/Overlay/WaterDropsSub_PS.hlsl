@@ -64,12 +64,15 @@ float2 dynamicDrops(float2 uv, float t)
     
     id = floor(uv * scale2);
     float3 noise3 = noiseGrid(id);
-    float2 st = frac(uv * scale2);
+    float2 st = frac(uv * scale2) - float2(0.5, 0);
     
-    float d = length(st);
+    float x = noise3.x;
+    float y = smoothstep(0.85, 0, frac(t * 0.002 + noise3.z));
+    
+    float2 p = float2(x, y);
+    float d = length((st - p) * scale.yx);
     
     return d;
-    return float2(0, 0);
 }
 
 float2 drops(float2 uv, float t)
@@ -77,7 +80,7 @@ float2 drops(float2 uv, float t)
     float sd = staticDrops(uv, t);
     float2 dd = dynamicDrops(uv, t);
     
-    return dd;
+    return sd;
     return float2(sd, sd) + dd;
 }
 
@@ -89,7 +92,6 @@ float4 main(PresentOut PresentIn) : SV_Target0
     float t = _Time;
     
     float2 c = drops(uv, t);
-    return c.x;
     
     float2 finalUV = PresentIn.texUV + c;
     //finalUV.x /= (_ScreenSize.x / _ScreenSize.y + 1);

@@ -44,6 +44,7 @@ namespace My {
         virtual void DrawPresent(Frame& frame) = 0;
         virtual void DrawGaussBlur(Frame& frame) = 0;
         virtual void DrawWaterDrops(Frame& frame) = 0;
+        virtual void DrawSea(Frame& frame) = 0;
         virtual void DrawVolumetricLight(Frame& frame) = 0;
 
         virtual void BeginSubPass(const std::string& PassName) = 0;

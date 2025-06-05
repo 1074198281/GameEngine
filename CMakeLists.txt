@@ -170,7 +170,8 @@ elseif(${PHYSICS_TYPE} STREQUAL "MyPhysics")
   # no realization
 endif()
 
-
+# add shaders include file path
+include_directories("${PROJECT_SOURCE_DIR}/Asset/Shaders/CompiledShaders")
 
 
 # add windows includes

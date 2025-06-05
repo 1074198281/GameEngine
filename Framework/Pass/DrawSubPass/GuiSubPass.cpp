@@ -131,6 +131,9 @@ void My::GuiSubPass::Draw(Frame& frame)
 				bool* pIsOverlay = m_pGraphicsManager->GetOverlayPass()->GetOverlaySubPass()->GetDrawWaterDropsScreen();
 				ImGui::Checkbox("Overlay", pIsOverlay);
 
+				bool* pIsDrawSea = m_pGraphicsManager->GetOverlayPass()->GetOverlaySubPass()->GetDrawSea();
+				ImGui::Checkbox("DrawSea", pIsDrawSea);
+
 				bool* pIsVolumetricLight = m_pGraphicsManager->GetOverlayPass()->GetVolumetricSubPass()->GetDrawVolumetricLight();
 				ImGui::Checkbox("Volumetric Light", pIsVolumetricLight);
 

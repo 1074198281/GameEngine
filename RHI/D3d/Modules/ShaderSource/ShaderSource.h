@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 
+
 typedef unsigned char BYTE;
 
 namespace D3dGraphicsCore {

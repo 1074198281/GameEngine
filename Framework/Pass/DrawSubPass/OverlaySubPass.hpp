@@ -13,7 +13,9 @@ namespace My {
 
 	public:
 		bool* GetDrawWaterDropsScreen();
+		bool* GetDrawSea();
 	private:
 		bool m_bDrawWaterDropsScreen = false;
+		bool m_bDrawSea = false;
 	};
 }

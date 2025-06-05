@@ -68,6 +68,13 @@ namespace My {
 		kWaterDropsRootBindings
 	};
 
+	enum SeaRootBindings {
+		kSeaSRV,
+		kSeaCBV,
+
+		kSeaRootBindings
+	};
+
 	enum VolumetricLightRootBindings {
 		kCameraDepthSRV,
 		kLightDepthSRV,

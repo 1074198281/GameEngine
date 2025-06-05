@@ -49,6 +49,7 @@ namespace My {
         void DrawPresent(Frame& frame) override;
         void DrawGaussBlur(Frame& frame) override;
         void DrawWaterDrops(Frame& frame) override;
+        void DrawSea(Frame& frame) override;
         void DrawVolumetricLight(Frame& frame) override;
 
         void BeginSubPass(const std::string& PassName) override;

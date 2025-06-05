@@ -17,9 +17,18 @@ void My::OverlaySubPass::Draw(Frame& frame)
 		m_pGraphicsManager->SetPipelineStatus("WaterDrops");
 		m_pGraphicsManager->DrawWaterDrops(frame);
 	}
+	if (m_bDrawSea) {
+		m_pGraphicsManager->SetPipelineStatus("Sea");
+		m_pGraphicsManager->DrawSea(frame);
+	}
 }
 
 bool* My::OverlaySubPass::GetDrawWaterDropsScreen()
 {
 	return &m_bDrawWaterDropsScreen;
+}
+
+bool* My::OverlaySubPass::GetDrawSea()
+{
+	return &m_bDrawSea;
 }

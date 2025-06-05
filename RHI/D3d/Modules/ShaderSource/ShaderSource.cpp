@@ -1,12 +1,12 @@
 #include "ShaderSource.h"
 #include "Core/Pipeline/PipelineState.h"
 
-#include "../Asset/Shaders/CompiledShaders/g_Cube_VS.h"
-#include "../Asset/Shaders/CompiledShaders/g_Cube_PS.h"
-#include "../Asset/Shaders/CompiledShaders/g_ToyCar_VS.h"
-#include "../Asset/Shaders/CompiledShaders/g_ToyCar_PS.h"
-#include "../Asset/Shaders/CompiledShaders/g_Fabric_VS.h"
-#include "../Asset/Shaders/CompiledShaders/g_Fabric_PS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_Cube_VS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_Cube_PS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_ToyCar_VS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_ToyCar_PS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_Fabric_VS.h"
+//#include "../Asset/Shaders/CompiledShaders/g_Fabric_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_SkyBox_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_SkyBox_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_Present_VS.h"
@@ -15,6 +15,9 @@
 #include "../Asset/Shaders/CompiledShaders/g_Model_PS.h"
 #include "../Asset/Shaders/CompiledShaders/g_WaterDropsSub_VS.h"
 #include "../Asset/Shaders/CompiledShaders/g_WaterDropsSub_PS.h"
+
+#include "../../../../Asset/Shaders/CompiledShaders/g_SeaSub_VS.h"
+#include "../../../../Asset/Shaders/CompiledShaders/g_SeaSub_PS.h"
 
 
 #include "../Asset/Shaders/CompiledShaders/g_GaussBlur_CS.h"
@@ -73,13 +76,14 @@ void D3dGraphicsCore::InitializeShaderByteMap()
 	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##VS), NAME##VS)); \
 	g_ShaderByteMap.insert(std::make_pair(TOSTRING(NAME##PS), NAME##PS)); \
 
-	GENERATE_SHADER_BYTE_CODE(Cube);
-	GENERATE_SHADER_BYTE_CODE(ToyCar);
-	GENERATE_SHADER_BYTE_CODE(Fabric);
+	//GENERATE_SHADER_BYTE_CODE(Cube);
+	//GENERATE_SHADER_BYTE_CODE(ToyCar);
+	//GENERATE_SHADER_BYTE_CODE(Fabric);
 	GENERATE_SHADER_BYTE_CODE(SkyBox);
 	GENERATE_SHADER_BYTE_CODE(Present);
 	GENERATE_SHADER_BYTE_CODE(Model);
 	GENERATE_SHADER_BYTE_CODE(WaterDropsSub);
+	GENERATE_SHADER_BYTE_CODE(SeaSub);
 
 	// lighting
 	GENERATE_SHADER_BYTE_CODE(LambertGouraudLighting);

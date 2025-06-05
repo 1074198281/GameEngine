@@ -601,6 +601,44 @@ void D3dGraphicsCore::D3d12RHI::DrawWaterDrops(const My::Frame& frame, ColorBuff
     m_pGraphicsContext->CopyBuffer(src, result);
 }
 
+void D3dGraphicsCore::D3d12RHI::DrawSea(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle ResultBufferHandle, DescriptorHandle ColorBufferHandle, int ColorBufferHeapIndex)
+{
+    m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
+    m_pGraphicsContext->SetPipelineState(*m_pGraphicsPSO);
+    m_pGraphicsContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE);
+    m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_RENDER_TARGET);
+    m_pGraphicsContext->SetViewportAndScissor(m_MainViewport, m_MainScissor);
+    m_pGraphicsContext->SetRenderTarget(result.GetRTV());
+
+    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_DescriptorHeaps[ColorBufferHeapIndex]->GetHeapPointer());
+    m_pGraphicsContext->SetDescriptorTable(My::kSeaSRV, ColorBufferHandle);
+
+    __declspec(align(16)) struct OverlayPSCB
+    {
+        float Mouse[2];
+        float ScreenSize[2];
+        float Time;
+        float padding0[3];
+    } seaPSCB;
+
+    memset(&seaPSCB, 0, sizeof(OverlayPSCB));
+
+    seaPSCB.Mouse[0] = 0;
+    seaPSCB.Mouse[1] = 0;
+    seaPSCB.ScreenSize[0] = g_DisplayWidth;
+    seaPSCB.ScreenSize[1] = g_DisplayHeight;
+    seaPSCB.Time = m_fGetTimestamp() * 0.01;
+
+    m_pGraphicsContext->SetDynamicConstantBufferView(My::kSeaCBV, sizeof(OverlayPSCB), &seaPSCB);
+
+    m_pGraphicsContext->Draw(3);
+
+    //m_pGraphicsContext->TransitionResource(src, D3D12_RESOURCE_STATE_COPY_DEST);
+    //m_pGraphicsContext->TransitionResource(result, D3D12_RESOURCE_STATE_COPY_SOURCE);
+    m_pGraphicsContext->CopyBuffer(src, result);
+}
+
 void D3dGraphicsCore::D3d12RHI::DrawVolumetricLight(const My::Frame& frame, ColorBuffer& result, ColorBuffer& src, DescriptorHandle& colorBufferHandle, int descriptorHeapIdx, int marchingSteps, float sampleIntensity)
 {
     m_pGraphicsContext->SetRootSignature(*m_pRootSignature);
