@@ -219,6 +219,7 @@ float3 getPixel(in float2 coord, float time)
     float3 n = getNormal(p, dot(dist, dist) * EPSILON_NRM);
     float3 light = normalize(float3(0.0, 1.0, 0.8));
              
+    
     // color
     return lerp(
         getSkyColor(dir),
