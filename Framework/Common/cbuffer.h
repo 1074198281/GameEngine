@@ -82,11 +82,23 @@ namespace My {
 		Light Lights[MAX_LIGHT_NUM];
 	} LightInfo;
 
-	// cb5
-	__declspec(align(16)) typedef struct AtmosphereParam {
-		float RayleighScalarHeight;
-		float MieScalarHeight;
-		float MieAnisotropyG;
-	} AtmosphereParam;
+	// cb0
+	__declspec(align(16)) typedef struct AtmosphereBuffer {
+		Vector3f SunDirection; // 太阳方向
+		float SunIntensity; // 太阳强度
+
+		Vector3f rayleighScattering; // 瑞利散射系数 (RGB)
+		float rayleighScaleHeight; // 瑞利散射高度衰减系数
+
+		float mieScattering; // 米氏散射系数
+		float mieScaleHeight; // 米氏散射高度衰减系数
+		float miePreferredDirection; // 米氏散射方向性参数 (通常0.76-0.99)
+
+		float earthRadius; // 地球半径 (单位:米)
+		float atmosphereRadius; // 大气层半径 (单位:米)
+		Vector3f padding0; // 填充以对齐常量缓冲区
+	} AtmosphereBuffer;
+
+
 
 }

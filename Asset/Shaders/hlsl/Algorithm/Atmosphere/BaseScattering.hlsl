@@ -36,7 +36,7 @@ float3 RayleighCoefficient(AtmosphereParam param, float h)
 // 瑞利散射的相位函数
 float RayleighPhase(float cos_theta)
 {
-    return 3 * (1 + pow(cos(cos_theta), 2)) / (8 * PI);
+    return 3 * (1 + pow(cos(cos_theta), 2)) / (16 * PI);
 }
 
 // 米氏散射的散射系数
