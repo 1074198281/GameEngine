@@ -41,8 +41,10 @@ file(GLOB ATMOSPHERE_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/PrecomputeAtmosphere/*.hlsl)
 
 file(GLOB OVERLAY_FILES
-${CMAKE_CURRENT_SOURCE_DIR}/Overlay/*hlsl)
+${CMAKE_CURRENT_SOURCE_DIR}/Overlay/*.hlsl)
 
+file(GLOB SCREEN_FILES
+${CMAKE_CURRENT_SOURCE_DIR}/Effects/*.hlsl)
 
 file(GLOB MAIN_FILE
 ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
@@ -58,6 +60,7 @@ source_group(Shadow FILES ${SHADOWMAP_FILES})
 source_group(Present FILES ${PRESENT_FILES})
 source_group(Atmosphere FILES ${ATMOSPHERE_FILES})
 source_group(Overlay FILES ${OVERLAY_FILES})
+source_group(Effects FILES ${SCREEN_FILES})
 
 set(SHADER_FILES 
 ${ALGORITHM_FILES}
@@ -71,6 +74,7 @@ ${SHADOWMAP_FILES}
 ${PRESENT_FILES}
 ${ATMOSPHERE_FILES}
 ${OVERLAY_FILES}
+${SCREEN_FILES}
 )
 
 # 设置 HLSL 文件的属性
