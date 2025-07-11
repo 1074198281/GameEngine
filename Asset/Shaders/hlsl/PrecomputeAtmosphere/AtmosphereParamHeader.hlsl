@@ -1,7 +1,0 @@
-
-
-struct AtmosphereParams
-{
-    float atmosphereDensity;
-    
-};

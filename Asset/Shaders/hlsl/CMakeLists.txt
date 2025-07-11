@@ -38,7 +38,7 @@ file(GLOB PRESENT_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/Present/*.hlsl)
 
 file(GLOB ATMOSPHERE_FILES
-${CMAKE_CURRENT_SOURCE_DIR}/PrecomputeAtmosphere/*.hlsl)
+${CMAKE_CURRENT_SOURCE_DIR}/Atmosphere/*.hlsl)
 
 file(GLOB OVERLAY_FILES
 ${CMAKE_CURRENT_SOURCE_DIR}/Overlay/*.hlsl)

@@ -26,11 +26,15 @@ phase(θ)=  -- * --------- * ---------------------------------
 #define PI 3.14159265358979
 #include "AtmosphereDefine.hlsl"
 
-// 瑞利散射的散射系数
-float3 RayleighCoefficient(AtmosphereParam param, float h)
+float GetDensity(float h, float scalar_height)
 {
-    float rho = exp(-(h / param.Rayliegh_Scalar_Height));
-    return Rayleigh * rho;
+    return exp(-(h / scalar_height));
+}
+
+// 瑞利散射的散射系数
+float3 RayleighCoefficient(float density)
+{
+    return Rayleigh * density;
 }
 
 // 瑞利散射的相位函数
@@ -40,10 +44,9 @@ float RayleighPhase(float cos_theta)
 }
 
 // 米氏散射的散射系数
-float3 MieCoefficient(AtmosphereParam param, float h)
+float3 MieCoefficient(float density)
 {
-    float rho = exp(-(h / param.Mie_Scalar_Height));
-    return Mie * rho;
+    return Mie * density;
 }
 
 float MiePhase(AtmosphereParam param, float cos_theta)

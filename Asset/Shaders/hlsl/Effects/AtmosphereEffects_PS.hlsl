@@ -416,22 +416,22 @@ void aurora(float3 rayorigin, float3 raydirection, out float3 bpos, out float4 c
     float mt = aurora_mt;
     float ms = 50.;
     for(int i=0;i<aurora_steps;i++)
+    {
+
+        float of = aurora_of * hash21(gl_FragCoord.xy) * smoothstep(0., 15., float(i) * mt);
+        float pt = ((.8 + pow(float(i), 1.4) * aurora_ss2) - rayorigin.y) / (raydirection.y * 2. + 0.4);
+        pt -= of;
+        bpos = rayorigin + pt * raydirection;
+		//bpos *= fov;
+        float2 p = bpos.zx + sin(t * 0.01);
+        float rzt = triNoise2d(p, aurora_noise);
+        float4 col2 = float4(0, 0, 0, rzt);
+        col2.rgb = (sin(1. - float3(aurora_r, aurora_g, aurora_b) + (float(i) * mt) * aurora_col) * 0.5 + 0.5) * rzt;
+        avgCol = lerp(avgCol, col2, .5);
+        col += avgCol * exp2((-float(i) * mt) * aurora_f - 2.5) * smoothstep(0., aurora_ss, float(i) * mt);
+    }
 
 
-        {
-
-            float of = aurora_of * hash21(gl_FragCoord.xy) * smoothstep(0.,15., float(i) * mt);
-            float pt = ((.8 + pow(float(i),1.4) * aurora_ss2) - rayorigin.y) / (raydirection.y * 2. + 0.4);
-            pt -= of;
-            bpos = rayorigin + pt * raydirection ;
-			//bpos *= fov;
-            float2 p = bpos.zx +sin(t*0.01);
-            float rzt = triNoise2d(p, aurora_noise);
-            float4 col2 = float4(0,0,0, rzt);
-            col2.rgb = (sin(1. -float3(aurora_r, aurora_g, aurora_b) + (float(i) * mt) * aurora_col) * 0.5 + 0.5) * rzt;
-            avgCol =  lerp(avgCol, col2, .5);
-            col += avgCol * exp2( (-float(i)*mt) * aurora_f - 2.5) * smoothstep(0., aurora_ss, float(i)*mt);
-        }
     col *= clamp(raydirection.y * 15. +0.4, 0., 1.);
 	col *= auroraINT;
     //return col*auroraINT; //col*2.
@@ -587,29 +587,27 @@ void fireworks(in float2 st, out float MI2, out float3 fire, out float3 firework
     float3 particleHash, fireworkHash, fireworkCol,finalCol;
 
     for (int j = 0; j < FIREWORK_COUNT; ++j)
-
     {
         timeHash = hash11(float(j + 1) * 9.6144 + 4098.6118);
         // original timeHash = hash11(float(j + 1) * 9.6144 + 78.6118);
         timeOffset = float(j + 1) + float(j + 1) * timeHash;
 
         // This hash changes after each firework cycle (rocket + explosion)
-        fireworkHash = hash31(471.5277 * float(j) + 1226.9146 + float(int((iTime+timeOffset) / FIREWORK_DURATION))) * 2. - 1.;
+        fireworkHash = hash31(471.5277 * float(j) + 1226.9146 + float(int((iTime + timeOffset) / FIREWORK_DURATION))) * 2. - 1.;
         fireworkCol = fireworkHash * .5 + .5;
         fireworkHash.y = remap(fireworkHash.y, -1., 1., FIREWORK_LOW, FIREWORK_HIGH);
 
         // Random firework x coordinate but confined to a certain column based on j
-        fireworkHash.x = ((float(j) + .5 + fireworkHash.x * .50)/ float(FIREWORK_COUNT)) * 2. - 1.;
+        fireworkHash.x = ((float(j) + .5 + fireworkHash.x * .50) / float(FIREWORK_COUNT)) * 2. - 1.;
         // original fireworkHash.x = ((float(j) + .5 + fireworkHash.x * .25)/ float(FIREWORK_COUNT)) * 2. - 1.;
 
         // Duration of each firework with a random start time
         float time = fmod(iTime + timeOffset, FIREWORK_DURATION);
-         if (time > ROCKET_DURATION)
+        if (time > ROCKET_DURATION)
         {
             //fireworkCol2 = fireworkCol;
             fireworkPos = float2(fireworkHash.x, fireworkHash.y);
-
-    for (int i = 0; i < EXPLOSION_PARTICLES; ++i)
+            for (int i = 0; i < EXPLOSION_PARTICLES; ++i)
             {
                 // Unique hash that yeilds a separate spread pattern for each explosion
                 particleHash = hash31(float(j) * 1291.1978 + float(i) * 1619.8196 + 469.7119);
@@ -632,26 +630,25 @@ void fireworks(in float2 st, out float MI2, out float3 fire, out float3 firework
 
                 // Fade after a certain time threshold
                 fade = C1((FIREWORK_DURATION * 2.) * radiusScale - radius);
-				fade2 += fade;			
+                fade2 += fade;
 				
-                if(shimmer > 0. && fade>0.){
+                if (shimmer > 0. && fade > 0.)
+                {
 					
                     fireworkCol2 = fireworkCol;
-				}
+                }
                 finalCol += clamp(lerp(spark, spark * shimmer, smoothstep(shimmerThreshold
-					* radiusScale, (shimmerThreshold + 1.) * radiusScale , radius))
-                    * fade * fireworkCol,0.0,1.);
+					* radiusScale, (shimmerThreshold + 1.) * radiusScale, radius))
+                    * fade * fireworkCol, 0.0, 1.);
 
             }
 
-             MI2 = fade2;
+            MI2 = fade2;
             // Initial instant flash for the explosion
-            if(time < FLASH_DURATION)
-            	finalCol += clamp(spark / (.01 + fmod(time, ROCKET_DURATION)),0.,1.);
+            if (time < FLASH_DURATION)
+                finalCol += clamp(spark / (.01 + fmod(time, ROCKET_DURATION)), 0., 1.);
 
-
-
-         }
+        }
         else
         {
             rocketPath = fmod(time, ROCKET_DURATION) / ROCKET_DURATION;
@@ -825,63 +822,67 @@ void densities(in float3 pos, in float highclouds, out float rayleigh, out float
 
 
     //FAKE HIGH CLOUDS
-    if(highclouds >0.){
-    if(d.y > 1000. && d.z > -20000.){
-        float2 uv00 = (gl_FragCoord.xy / iResolution.xy);
-        float2 uv3 = uv00 * (2.0) - (1.0);
-        uv3.x *=AR;
-        uv3.y +=Dfact;
-        float cldhighvol = cloudy + 0.5;
-        float2 st0 =  (uv3 * float2(.5 +(uv00.y +2.) *.75, 10.) + float2(0. + uv00.y *10., t*0.05)) * 0.05;
-        float f0 = iChannel0.SampleLevel(LinearWarp, st0, -100.0).y * iChannel0.SampleLevel(LinearWarp, st0 * 0.123, -100.0).x * 0.25;
-        float cloud1 = clamp(cldhighvol -.15, 0.0, 1.0);
-        float cloudthing = clamp( pow( abs(f0), 15.) * 1.0 * (cloud1*cloud1*5.), 0.0, (uv00.y +.1) *.6);
-        test3 = clamp(lerp(cloudthing, cldhighvol,f0),0.,0.5);
-    }
+        if (highclouds > 0.)
+        {
+            if (d.y > 1000. && d.z > -20000.)
+            {
+                float2 uv00 = (gl_FragCoord.xy / iResolution.xy);
+                float2 uv3 = uv00 * (2.0) - (1.0);
+                uv3.x *= AR;
+                uv3.y += Dfact;
+                float cldhighvol = cloudy + 0.5;
+                float2 st0 = (uv3 * float2(.5 + (uv00.y + 2.) * .75, 10.) + float2(0. + uv00.y * 10., t * 0.05)) * 0.05;
+                float f0 = iChannel0.SampleLevel(LinearWarp, st0, -100.0).y * iChannel0.SampleLevel(LinearWarp, st0 * 0.123, -100.0).x * 0.25;
+                float cloud1 = clamp(cldhighvol - .15, 0.0, 1.0);
+                float cloudthing = clamp(pow(abs(f0), 15.) * 1.0 * (cloud1 * cloud1 * 5.), 0.0, (uv00.y + .1) * .6);
+                test3 = clamp(lerp(cloudthing, cldhighvol, f0), 0., 0.5);
+            }
         }
 
 
 
 
     // Add Rain
-    if(pos.y < rain6){
-    if(rainvol >0.){
-        
-            //BAKED GODRAY TYPE THING
-        float2 uv0 = (gl_FragCoord.xy / iResolution.xy);
-            float2 uv = uv0 * (2.0) - (1.0);
-            uv.x *=AR;
-            uv.y +=Dfact;
-            //uv  *= moonsz *M;
-            float rainvol0 = rainvol;
-            float rainthing;
-            float rainangle = winddirx;
-            float2 st =  (uv * float2(.5 +(uv0.y +rain1) *rain2, .1) + float2(rain3 + uv0.y *rainangle, t*rain4)) * rain5;
-            float f = iChannel0.SampleLevel(LinearWarp, st, -100.0).y * iChannel0.SampleLevel(LinearWarp, st * 0.123, -100.0).x * 1.55;
-            float rain = clamp(rainvol0 -.15, 0.0, 1.0);
-            rainthing = clamp( pow( abs(f), 15.) * 1.0 * (rain*rain*5.), 0.0, (uv0.y +0.1) *0.6);
-            test = clamp(lerp(rainthing, rainvol0,f),0.,0.5);
-            float fade = smoothstep(0.5,0.6,abs(1.-uv0.y)); //between pos 0.5 and 0.6 fade 
-			//float fade = smoothstep(0.5,2.9,abs(1.-uv0.y)); //between pos 0.5 and 0.6 fade 
-            //test = test * fade /8.;
-			test = test * fade;
+        if (pos.y < rain6)
+        {
+            if (rainvol > 0.)
+            {
+                //BAKED GODRAY TYPE THING
+                float2 uv0 = (gl_FragCoord.xy / iResolution.xy);
+                float2 uv = uv0 * (2.0) - (1.0);
+                uv.x *= AR;
+                uv.y += Dfact;
+                //uv  *= moonsz *M;
+                float rainvol0 = rainvol;
+                float rainthing;
+                float rainangle = winddirx;
+                float2 st = (uv * float2(.5 + (uv0.y + rain1) * rain2, .1) + float2(rain3 + uv0.y * rainangle, t * rain4)) * rain5;
+                float f = iChannel0.SampleLevel(LinearWarp, st, -100.0).y * iChannel0.SampleLevel(LinearWarp, st * 0.123, -100.0).x * 1.55;
+                float rain = clamp(rainvol0 - .15, 0.0, 1.0);
+                rainthing = clamp(pow(abs(f), 15.) * 1.0 * (rain * rain * 5.), 0.0, (uv0.y + 0.1) * 0.6);
+                test = clamp(lerp(rainthing, rainvol0, f), 0., 0.5);
+                float fade = smoothstep(0.5, 0.6, abs(1. - uv0.y)); //between pos 0.5 and 0.6 fade 
+			    //float fade = smoothstep(0.5,2.9,abs(1.-uv0.y)); //between pos 0.5 and 0.6 fade 
+                //test = test * fade /8.;
+                test = test * fade;
 			
-            if(rain7 ==1.){
-				float2 uv2 = uv0 * (2.0) - (1.0);
-				uv2.x *=AR;
-				uv2.y +=Dfact;
-				float rainthing2;
-			    float2 st2 =  (uv2 * float2(.5 +(uv0.y +2.) *.5, .1) + float2(0. + uv0.y *rainangle, t*0.05));
-                float f2 = iChannel0.SampleLevel(LinearWarp, st2, -100.0).y * iChannel0.SampleLevel(LinearWarp, st2 * 0.123, -100.0).x * 1.55;
-				float rain2a = clamp(rainvol -.15, 0.0, 1.0);
-				rainthing2 = clamp( pow( abs(f2), 15.0) * 1.0 * (rain2a*rain2*5.), 0.0, (uv0.y +.1) *.6);
-				test2 = clamp(lerp(rainthing2, 0.5*rainvol,f2),0.,0.1);
-				float fade2 = smoothstep(rain11,rain12,abs(1.-uv0.y));
-				test2 = test2 * fade2;
+                if (rain7 == 1.)
+                {
+                    float2 uv2 = uv0 * (2.0) - (1.0);
+                    uv2.x *= AR;
+                    uv2.y += Dfact;
+                    float rainthing2;
+                    float2 st2 = (uv2 * float2(.5 + (uv0.y + 2.) * .5, .1) + float2(0. + uv0.y * rainangle, t * 0.05));
+                    float f2 = iChannel0.SampleLevel(LinearWarp, st2, -100.0).y * iChannel0.SampleLevel(LinearWarp, st2 * 0.123, -100.0).x * 1.55;
+                    float rain2a = clamp(rainvol - .15, 0.0, 1.0);
+                    rainthing2 = clamp(pow(abs(f2), 15.0) * 1.0 * (rain2a * rain2 * 5.), 0.0, (uv0.y + .1) * .6);
+                    test2 = clamp(lerp(rainthing2, 0.5 * rainvol, f2), 0., 0.1);
+                    float fade2 = smoothstep(rain11, rain12, abs(1. - uv0.y));
+                    test2 = test2 * fade2;
+                }
             }
-    }
-}
-    //End Rain
+        }
+        //End Rain
 		/*
 		if(dist > rain8){
 			cld = smoothstep(0.,rain8,dist);
@@ -891,30 +892,37 @@ void densities(in float3 pos, in float highclouds, out float rayleigh, out float
 		}
 		*/
     }
-	
-    if(tonemap == 4.0){
-    rayleigh =  exp(-h/Hr) + (cld*0.5);
-        }
-    else{
-        rayleigh =  exp(-h/Hr);// + (cld*rain10);
+    	
+    if (tonemap == 4.0)
+    {
+        rayleigh = exp(-h / Hr) + (cld * 0.5);
+    }
+    else
+    {
+        rayleigh = exp(-h / Hr); // + (cld*rain10);
     }
 
-    
-    if(tonemap == 10.){
-        if(h<height_off && h>=0.){
-        mie = exp((-h-rain10)/Hm1) + cld * + godray + test + test2 + test3 + haze ;
-            }
-        else{
-            mie = exp((-h)/Hm1) + cld  + godray + test + test2 + test3 + haze;
+        
+    if (tonemap == 10.)
+    {
+        if (h < height_off && h >= 0.)
+        {
+            mie = exp((-h - rain10) / Hm1) + cld * +godray + test + test2 + test3 + haze;
+        }
+        else
+        {
+            mie = exp((-h) / Hm1) + cld + godray + test + test2 + test3 + haze;
         }
         //mie +=  (cld * factor);
     }
-    else if(tonemap==5.0){
-        mie = exp(-h/Hm1) + cld + godray + test + test2 + test3 + haze;
+    else if (tonemap == 5.0)
+    {
+        mie = exp(-h / Hm1) + cld + godray + test + test2 + test3 + haze;
         //mie +=  (cld * factor);
     }
-    else{
-        mie = exp((-h)/Hm1) + godray + cld + test + test2 + test3 + haze;
+    else
+    {
+        mie = exp((-h) / Hm1) + godray + cld + test + test2 + test3 + haze;
     }
 
     #ifdef cloud2
@@ -1947,7 +1955,7 @@ float4 main(PresentOut pin) : SV_Target
 	
     float auratt = 1. -min(1.0,pow(uvMouse.y+0.51,64.));
 
-	 float fade = smoothstep(0.,0.01,abs(camera_vector.y))*0.1+0.9;
+	float fade = smoothstep(0.,0.01,abs(camera_vector.y))*0.1+0.9;
 	
 	float3 bg1 = ZERO_3;
     bg1 = bg(camera_vector) * fade;
