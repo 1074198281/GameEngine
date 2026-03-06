@@ -35,6 +35,10 @@ int SceneManager::LoadScene(const char* scene_file_name)
     else if (extension == "ogex") {
         LoadOgexScene(scene_file_name);
     }
+    else if (scene_file_name == "Empty")
+    {
+        m_pScene = std::make_unique<Scene>();
+    }
     else {
         printf("Invalid Or Unsupported File Extension!");
         assert(false);

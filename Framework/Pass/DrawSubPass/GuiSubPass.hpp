@@ -10,5 +10,9 @@ namespace My {
 		void BeginSubPass() override;
 		void EndSubPass() override;
 		void Draw(Frame& frame) override;
+
+	private:
+		void DrawSceneStatus();
+
 	};
 }

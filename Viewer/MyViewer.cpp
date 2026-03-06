@@ -49,7 +49,7 @@ int My::MyViewerLogic::ExecuteCommandLine()
 		std::cout << "[Scene Select] Select Load Index: ";
 		std::cin >> loadIndex;
 		if (loadIndex < 0) {
-
+			pSceneManager->LoadScene("Empty");
 		} else {
 			pSceneManager->LoadScene(filePath[loadIndex].c_str());
 		}

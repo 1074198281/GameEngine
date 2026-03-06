@@ -45,6 +45,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 		static bool show_app_about = false;
 		static bool show_app_scene_status = false;
 		static bool show_app_debug_texture = false;
+		static bool show_app_empty_scene_debug = false;
 
 		ImVec2 next_window_pos(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(), ImGui::GetWindowPos().y);
 		ImGui::SetNextWindowPos(next_window_pos, ImGuiCond_FirstUseEver);
@@ -57,6 +58,7 @@ void My::GuiSubPass::Draw(Frame& frame)
 				ImGui::MenuItem((const char*)u8"ImGui Status And Debug Window", NULL, &show_app_metrics);
 				ImGui::MenuItem((const char*)u8"Scene Status", NULL, &show_app_scene_status);
 				ImGui::MenuItem((const char*)u8"Texture Status", NULL, &show_app_debug_texture);
+				ImGui::MenuItem((const char*)u8"Empty Scene Debug", NULL, &show_app_empty_scene_debug);
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu((const char*)u8"Helper"))
@@ -101,9 +103,11 @@ void My::GuiSubPass::Draw(Frame& frame)
 			ImGui::End();
 		}
 
+		auto pScene = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager()->GetSceneForGui();
+
 		if (show_app_scene_status) {
-			auto pScene = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager()->GetSceneForGui();
 			auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
+
 			ImGui::Begin((const char*)u8"Scene Status");
 			ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
 			
