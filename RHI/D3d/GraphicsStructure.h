@@ -84,6 +84,7 @@ namespace D3dGraphicsCore {
 	extern D3D12_INPUT_ELEMENT_DESC* g_PosTex;
 	extern D3D12_INPUT_ELEMENT_DESC* g_PosNorTex;
 	extern D3D12_INPUT_ELEMENT_DESC* g_PosNorTanTex;
+	extern D3D12_INPUT_ELEMENT_DESC* g_PosColor;
 
 	void InitializeInputLayout();
 }

@@ -26,6 +26,7 @@ namespace My {
 		kTangent,			// 4
 		kTexcoord0,			// 8
 		kTexcoord1,			// 16
+		kColor0,
 		
 		kInputLayoutType
 	};

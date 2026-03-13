@@ -48,6 +48,7 @@ namespace D3dGraphicsCore {
 	D3D12_INPUT_ELEMENT_DESC* g_PosTex;
 	D3D12_INPUT_ELEMENT_DESC* g_PosNorTex;
 	D3D12_INPUT_ELEMENT_DESC* g_PosNorTanTex;
+	D3D12_INPUT_ELEMENT_DESC* g_PosColor;
 }
 
 void D3dGraphicsCore::InitializeBaseDescriptorHeap()
@@ -443,6 +444,9 @@ void D3dGraphicsCore::SetPipelineSettings(D3dGraphicsCore::GraphicsPSO& PSO, con
 	else if (InputLayoutType == ((1 << My::kPos) + (1 << My::kNormal) + (1 << My::kTangent) + (1 << My::kTexcoord0))) {
 		PSO.SetInputLayout(4, g_PosNorTanTex);
 	}
+	else if (InputLayoutType == ((1 << My::kPos) + (1 << My::kColor0))) {
+		PSO.SetInputLayout(2, g_PosColor);
+	}
 	else {
 		ASSERT(false, "InputLayout Type ERROR!");
 	}
@@ -528,6 +532,7 @@ void D3dGraphicsCore::InitializeInputLayout()
 	g_PosTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[2];
 	g_PosNorTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[3];
 	g_PosNorTanTex = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[4];
+	g_PosColor = (D3D12_INPUT_ELEMENT_DESC*)new D3D12_INPUT_ELEMENT_DESC[2];
 
 	g_Pos[0] =  { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 } ;
 
@@ -543,4 +548,6 @@ void D3dGraphicsCore::InitializeInputLayout()
 	g_PosNorTanTex[2] = { "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
 	g_PosNorTanTex[3] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 40, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
 
+	g_PosColor[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
+	g_PosColor[1] = { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0 };
 }

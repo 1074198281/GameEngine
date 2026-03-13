@@ -22,5 +22,11 @@ namespace My {
 		virtual void ResetScene() = 0;
 
 		virtual uint64_t GetSceneRevision() = 0;
+
+		virtual bool IsSceneEmpty() = 0;
+
+	public:
+		virtual void AddWaves(float x, float y, float centerX, float centerY, float centerZ,
+			float stepX, float stepY, float length, float amplitude, float speed) = 0;
 	};
 }

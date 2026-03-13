@@ -145,6 +145,8 @@ void My::D3d12GraphicsManager::initializeGeometries(const Scene& scene)
                     pVertexData[i * vertexPerCount + _dataCount] = _pData[i * elementCountPerArray + j];
                     _dataCount++;
                 }
+                //memcpy((((char*)pVertexData) + (i * vertexPerCount + _dataCount)), ((char*)_pData + (i * elementCountPerArray)), elementCountPerArray);
+                //_dataCount += elementCountPerArray;
             }
             ASSERT(_dataCount == vertexPerCount, "Scene Convert Vertex To Data ERROR!");
         }
@@ -740,6 +742,9 @@ bool My::D3d12GraphicsManager::GenerateInputLayoutType(uint32_t& InputLayoutType
     else if (name == "TEXCOORD1") {
         InputLayoutType |= (1 << kTexcoord1);
     }
+    else if (name == "COLOR0") {
+        InputLayoutType |= (1 << kColor0);
+    }
     else {
         ASSERT(false, "Set InputLayout Type Error!");
         std::cout << "[D3d12 Layout Error] Set InputLayout Type Error!" << std::endl;
@@ -882,11 +887,11 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         std::string skyboxName = m_IBLResource->IBLImages[iSkyboxIndex]->name;
         ID3D12DescriptorHeap* pHeap = nullptr;
-        D3dGraphicsCore::DescriptorHandle handle;
+        D3dGraphicsCore::DescriptorHandle skyboxHandle;
         if (*bDrawSkybox) {
             if (m_IBLResource->IBLImages.find(iSkyboxIndex) != m_IBLResource->IBLImages.end()) {
                 pHeap = D3dGraphicsCore::g_BaseDescriptorHeap[m_IBLResource->IBLImages[iSkyboxIndex]->iHeapIndex].GetHeapPointer();
-                handle = m_IBLResource->IBLImages[iSkyboxIndex]->handle;
+                skyboxHandle = m_IBLResource->IBLImages[iSkyboxIndex]->handle;
             } else {
                 ASSERT(false, "No Such Skybox Texture, Name: %s", skyboxName);
                 std::cout << "[D3d12 Draw Batch] No Such Skybox Texture, Name: " << skyboxName << std::endl;
@@ -900,11 +905,18 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
             }
         }
         if (d3dbatch->Node->Visible()) {
+            int iHeapIndex = -1;
+            D3dGraphicsCore::DescriptorHandle batchHandle;
+            if (m_BatchTextureResource[d3dbatch->BatchIndex]) {
+                iHeapIndex = m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex;
+                batchHandle = m_BatchTextureResource[d3dbatch->BatchIndex]->handle;
+            } 
+
             GraphicsRHI.DrawBatch(frame, d3dbatch, m_VecVertexBuffer[d3dbatch->BatchIndex].get(), m_VecIndexBuffer[d3dbatch->BatchIndex].get(),
-                m_BatchTextureResource[d3dbatch->BatchIndex]->iHeapIndex,
-                m_BatchTextureResource[d3dbatch->BatchIndex]->handle,
+                iHeapIndex,
+                batchHandle,
                 pHeap,
-                handle, m_pLightManager, lightIdx, castShadow, *bDrawSkybox && isDrawSkybox);
+                skyboxHandle, m_pLightManager, lightIdx, castShadow, *bDrawSkybox && isDrawSkybox);
         }
     }
 }

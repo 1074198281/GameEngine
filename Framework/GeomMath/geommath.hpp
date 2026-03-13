@@ -123,6 +123,10 @@ namespace My {
     };
 
     typedef Vector3Type<float> Vector3f;
+    typedef Vector3Type<int> Vector3i32;
+    typedef Vector3Type<int64_t> Vector3i64;
+    typedef Vector3Type<int16_t> Vector3i16;
+    typedef Vector3Type<int8_t> Vector3i8;
 
     template <typename T>
     struct Vector4Type

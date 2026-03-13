@@ -351,7 +351,9 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
 
     SetPrimitiveType(*m_pGraphicsContext, pdbc->m_PrimitiveType);
 
-    m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[TextureHeapIndex].GetHeapPointer());
+    if (TextureHeapIndex >= 0) {
+        m_pGraphicsContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, g_BaseDescriptorHeap[TextureHeapIndex].GetHeapPointer());
+    }
 
     if(!bShadowCast)
     {
@@ -405,7 +407,7 @@ void D3dGraphicsCore::D3d12RHI::DrawBatch(const My::Frame& frame, const My::D3dD
         m_pGraphicsContext->SetDynamicConstantBufferView(My::kMaterialConstants, sizeof(My::MaterialConstants), &MatCbv);
     }
 
-    if (!bShadowCast)
+    if (!bShadowCast && !TextureHandle.IsNull())
     {
         m_pGraphicsContext->SetDescriptorTable(My::kMaterialSRVs, TextureHandle);
     }

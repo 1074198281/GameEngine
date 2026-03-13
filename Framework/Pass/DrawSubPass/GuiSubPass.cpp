@@ -1,6 +1,7 @@
 ﻿#include "GuiSubPass.hpp"
 #include "BaseApplication.hpp"
 #include "LightManager.h"
+#include "../../Manager/SceneManager.hpp"
 
 #include "ForwardGeometryPass.hpp"
 #include "SkyboxSubPass.hpp"
@@ -104,6 +105,48 @@ void My::GuiSubPass::Draw(Frame& frame)
 		}
 
 		auto pScene = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager()->GetSceneForGui();
+		auto pSceneManager = dynamic_cast<BaseApplication*>(m_pApp)->GetSceneManager();
+		//show_app_empty_scene_debug = pSceneManager->IsSceneEmpty();
+
+		if (show_app_empty_scene_debug) {
+			static bool bEmpty;
+			if (ImGui::Begin((const char*)u8"Empty Scene Settings", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground))
+			{
+				if (ImGui::TreeNode("Waves Settings"))
+				{
+					static float spaceX = 200;
+					static float spaceY = 200;
+					static float centerX = 0;
+					static float centerY = 0;
+					static float centerZ = 0;
+					static float stepX = 199;
+					static float stepY = 199;
+					static float length = 10;
+					static float amplitude = 10;
+					static float speed = 1;
+
+					ImGui::InputFloat("spaceX", &spaceX);
+					ImGui::InputFloat("spaceY", &spaceY);
+					ImGui::InputFloat("centerX", &centerX);
+					ImGui::InputFloat("centerY", &centerY);
+					ImGui::InputFloat("centerZ", &centerZ);
+					ImGui::InputFloat("stepX", &stepX);
+					ImGui::InputFloat("stepY", &stepY);
+					ImGui::InputFloat("length", &length);
+					ImGui::InputFloat("amplitude", &amplitude);
+					ImGui::InputFloat("speed", &speed);
+
+					if (ImGui::Button("Generate Waves")) {
+						pSceneManager->AddWaves(spaceX, spaceY, centerX, centerY, centerZ, stepX, stepY, length, amplitude, speed);
+						pSceneManager->ResetScene();
+					}
+
+					ImGui::TreePop();
+				}
+			}
+
+			ImGui::End();
+		}
 
 		if (show_app_scene_status) {
 			auto pPhysicsManager = dynamic_cast<BaseApplication*>(m_pApp)->GetPhysicsManager();
@@ -291,4 +334,34 @@ void My::GuiSubPass::Draw(Frame& frame)
 	}
 
 	m_pGraphicsManager->DrawGui(frame);
+}
+
+void My::GuiSubPass::DrawEmptyScene(const Scene& Scene, ISceneManager* pSceneManager)
+{
+	ImGui::Begin((const char*)u8"Empty Scene Settings");
+	ImGui::SetNextItemOpen(true, ImGuiCond_FirstUseEver);
+
+	if (ImGui::TreeNode("Waves Settings"))
+	{
+		float spaceX, spaceY, centerX, centerY, centerZ, stepX, stepY, length, amplitude, speed;
+
+		ImGui::InputFloat("spaceX", &spaceX);
+		ImGui::InputFloat("spaceY", &spaceY);
+		ImGui::InputFloat("centerX", &centerX);
+		ImGui::InputFloat("centerY", &centerY);
+		ImGui::InputFloat("centerZ", &centerZ);
+		ImGui::InputFloat("stepX", &stepX);
+		ImGui::InputFloat("stepY", &stepY);
+		ImGui::InputFloat("length", &length);
+		ImGui::InputFloat("amplitude", &amplitude);
+		ImGui::InputFloat("speed", &speed);
+
+		if (ImGui::Button("Generate Waves")) {
+			pSceneManager->AddWaves(spaceX, spaceY, centerX, centerY, centerZ, stepX, stepY, length, amplitude, speed);
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 }

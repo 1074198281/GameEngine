@@ -8,12 +8,16 @@
 #include <filesystem>
 #include <assert.h>
 
+
+#include "../PCG/Waves.h"
+
 using namespace My;
 
 
 int SceneManager::Initialize()
 {
     int result = 0;
+    m_iObjectId = -1;
     return result;
 }
 
@@ -35,9 +39,10 @@ int SceneManager::LoadScene(const char* scene_file_name)
     else if (extension == "ogex") {
         LoadOgexScene(scene_file_name);
     }
-    else if (scene_file_name == "Empty")
+    else if (!strcmp(scene_file_name, "Empty"))
     {
         m_pScene = std::make_unique<Scene>();
+        m_bEmptyScene = true;
     }
     else {
         printf("Invalid Or Unsupported File Extension!");
@@ -108,4 +113,22 @@ uint64_t SceneManager::GetSceneRevision()
 void SceneManager::ResetScene()
 {
     m_nSceneRevision++;
+}
+
+bool SceneManager::IsSceneEmpty()
+{
+    return m_bEmptyScene;
+}
+
+void SceneManager::AddWaves(float x, float y, float centerX, float centerY, float centerZ,
+    float stepX, float stepY, float length, float amplitude, float speed)
+{
+    m_iObjectId++;
+    std::unique_ptr<Waves> pWaves = std::make_unique<Waves>("Waves");
+    pWaves->SetWavesParam(x, y, centerX, centerY, centerZ, stepX, stepY, length, amplitude, speed, 0);
+
+    m_pScene->Geometries[pWaves->m_Name] = pWaves->GetGeoObject();
+    m_pScene->GeometryNodes.emplace(pWaves->m_Name, pWaves->GetGeoNode());
+
+    m_ScenePCGObjects.emplace(m_iObjectId, std::move(pWaves));
 }

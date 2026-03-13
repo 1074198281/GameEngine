@@ -3,6 +3,7 @@
 #include "BaseSubPass.hpp"
 
 namespace My {
+	class ISceneManager;
 	class GuiSubPass : __implements BaseSubPass {
 	public:
 		GuiSubPass(IGraphicsManager* gmr, IApplication* pApp) : BaseSubPass(gmr, pApp) {}
@@ -12,7 +13,7 @@ namespace My {
 		void Draw(Frame& frame) override;
 
 	private:
-		void DrawSceneStatus();
+		void DrawEmptyScene(const Scene& Scene, ISceneManager* pSceneManager);
 
 	};
 }
