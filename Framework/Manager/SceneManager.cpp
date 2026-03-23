@@ -12,6 +12,7 @@
 #include "../PCG/Waves.h"
 
 using namespace My;
+using namespace My::PCG;
 
 
 int SceneManager::Initialize()
@@ -119,6 +120,7 @@ bool SceneManager::IsSceneEmpty()
 {
     return m_bEmptyScene;
 }
+
 
 void SceneManager::AddWaves(float x, float y, float centerX, float centerY, float centerZ,
     float stepX, float stepY, float length, float amplitude, float speed)

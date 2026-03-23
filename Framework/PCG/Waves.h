@@ -3,7 +3,7 @@
 #include "PCGCommonObject.h"
 #include "../GeomMath/base_math.hpp"
 
-namespace My
+namespace My::PCG
 {
 	enum WAVE_TYPE
 	{
@@ -48,5 +48,7 @@ namespace My
 		std::vector<Vector3f> m_Vertex;
 		std::vector<Vector3f> m_VertexColor;
 		std::vector<Vector3i32> m_Indice;
+
+
 	};
 }

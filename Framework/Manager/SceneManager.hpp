@@ -41,7 +41,7 @@ namespace My {
 		uint64_t m_nSceneRevision = 0;
 
 	private:
-		std::unordered_map<uint32_t, std::unique_ptr<PCGCommonObject>> m_ScenePCGObjects;
+		std::unordered_map<uint32_t, std::unique_ptr<PCG::PCGCommonObject>> m_ScenePCGObjects;
 		uint32_t m_iObjectId;
 	};
 }

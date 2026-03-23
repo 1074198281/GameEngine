@@ -1,6 +1,6 @@
 #include "PCGCommonObject.h"
 
-using namespace My;
+using namespace My::PCG;
 
 PCGCommonObject::PCGCommonObject()
 {

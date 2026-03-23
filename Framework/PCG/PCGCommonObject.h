@@ -3,7 +3,7 @@
 #include <string>
 #include "../SceneGraph/SceneNodeGeometry.hpp"
 
-namespace My
+namespace My::PCG
 {
 	class PCGCommonObject
 	{
