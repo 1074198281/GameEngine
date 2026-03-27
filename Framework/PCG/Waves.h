@@ -3,6 +3,8 @@
 #include "PCGCommonObject.h"
 #include "../GeomMath/base_math.hpp"
 
+
+
 namespace My::PCG
 {
 	enum WAVE_TYPE

@@ -50,13 +50,24 @@ void Waves::GenerateWavesMesh()
 	m_Vertex.reserve(vertexCount);
 	double y = dMinY;
 	double x = dMinX;
+#ifdef _DEBUG
+	int v_count = 0;
+#endif // _DEBUG
+
 	for (; y <= dMaxY + EP; y += dStepY)
 	{
 		for (; x <= dMaxX + EP; x += dStepX)
 		{
 			Vector3f _v = Vector3f(x, m_dCenterZ, y);
 			m_Vertex.push_back(_v);
+
+#ifdef _DEBUG
+			//v_count++;
+			//std::cout << "vertex " << v_count << " : " << _v.x << ", " << _v.y << ", " << _v.z << std::endl;
+#endif
 		}
+
+		x = dMinX;
 	}
 	SceneObjectVertexArray _v_array("POSITION", 0, kVertexDataTypeFloat3, m_Vertex.data(), 3 * (m_dStepX + 1) * (m_dStepY + 1));
 	

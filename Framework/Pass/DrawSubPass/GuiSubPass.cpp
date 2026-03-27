@@ -110,7 +110,8 @@ void My::GuiSubPass::Draw(Frame& frame)
 
 		if (show_app_empty_scene_debug) {
 			static bool bEmpty;
-			if (ImGui::Begin((const char*)u8"Empty Scene Settings", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground))
+			ImGui::SetNextWindowPos(next_window_pos, ImGuiCond_FirstUseEver);
+			if (ImGui::Begin((const char*)u8"Empty Scene Settings", nullptr));
 			{
 				if (ImGui::TreeNode("Waves Settings"))
 				{

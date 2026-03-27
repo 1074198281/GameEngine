@@ -883,6 +883,9 @@ void My::D3d12GraphicsManager::DrawBatch(Frame& frame, uint8_t lightIdx, bool ca
     auto& GraphicsRHI = dynamic_cast<D3d12Application*>(m_pApp)->GetRHI();
     uint32_t iSkyboxIndex = GetForwardGeometryPass()->GetSkyboxSubPass()->GetSkyBoxIndex();
     bool* bDrawSkybox = GetForwardGeometryPass()->GetSkyboxSubPass()->GetDrawSkyBoxPtr();
+
+    SetPipelineStatus("Default");
+    SetBatchResources(frame);
     for (auto& batch : frame.BatchContexts) {
         D3dDrawBatchContext* d3dbatch = reinterpret_cast<D3dDrawBatchContext*>(batch.get());
         std::string skyboxName = m_IBLResource->IBLImages[iSkyboxIndex]->name;
