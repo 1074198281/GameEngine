@@ -17,6 +17,7 @@ namespace My {
         std::vector<std::string> m_Materials;
         void*       m_pRigidBody;
         void*       m_pChemistryBody;
+        std::string m_ShaderName;
 
     protected:
         virtual void dump(std::ostream& out) const
@@ -85,6 +86,21 @@ namespace My {
         void* GetChemistryBody()
         {
             return m_pChemistryBody;
+        }
+
+        void SetShaderName(std::string& name)
+        {
+            m_ShaderName = name;
+        }
+
+        void SetShaderName(std::string&& name)
+        {
+            m_ShaderName = name;
+        }
+
+        const std::string& GetShaderName()
+        {
+            return m_ShaderName;
         }
     };
 }

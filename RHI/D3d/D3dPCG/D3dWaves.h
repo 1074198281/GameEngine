@@ -12,12 +12,12 @@ namespace My::PCG
 		~CD3dWavesPipeline();
 
 	public:
-		D3dGraphicsCore::RootSignature GetRootSignature();
-		D3dGraphicsCore::GraphicsPSO GetPSO();
+		D3dGraphicsCore::RootSignature* GetRootSignature();
+		D3dGraphicsCore::GraphicsPSO* GetPSO();
 
 	private:
-		D3dGraphicsCore::RootSignature m_WavesRootSignature;
-		D3dGraphicsCore::GraphicsPSO m_WavesPSO;
+		std::shared_ptr<D3dGraphicsCore::RootSignature> m_pWavesRootSignature;
+		std::shared_ptr<D3dGraphicsCore::GraphicsPSO> m_pWavesPSO;
 
 
 	//private:

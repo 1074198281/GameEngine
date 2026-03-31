@@ -96,7 +96,9 @@ void Waves::GenerateWavesMesh()
 
 	m_pGeoObject->AddMesh(_mesh);
 	
+	
 	m_pGeoNode->AddSceneObjectRef(m_Name);
 	m_pGeoNode->SetVisibility(true);
 	m_pGeoNode->SetIfCastShadow(true);
+	m_pGeoNode->SetShaderName("Waves");
 }
