@@ -9,7 +9,7 @@
 #include "PhysicsManager.hpp"
 #include "SceneObject.hpp"
 #include "StructureSettings.h"
-#include "GraphicsStructure.h"
+#include "Modules/ShaderSource/GraphicsStructure.h"
 #include "D3d_Helper.hpp"
 #include "CommonDefine.h"
 #include "Core/Resource/DDSTextureLoader.h"

@@ -1,7 +1,7 @@
 #include "D3dGraphicsCoreManager.h"
 #include "Command/CommandLineArg.h"
 #include "Common/SystemTime.h"
-#include "GraphicsStructure.h"
+#include "Modules/ShaderSource/GraphicsStructure.h"
 #include <algorithm>
 #include <cwctype>
 #include <iostream>

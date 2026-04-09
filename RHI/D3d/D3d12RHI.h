@@ -8,9 +8,11 @@
 #include "GfxConfiguration.h"
 #include "BaseApplication.hpp"
 #include "StructureSettings.h"
-#include "Modules/ShaderSource/ShaderSource.h"
+//#include "Modules/ShaderSource/ShaderSource.h"
+#include "Modules/ShaderSource/D3dPipeline.h"
+
 #include "Modules/LightManager/D3d12LightManager.h"
-#include "GraphicsStructure.h"
+#include "Modules/ShaderSource/GraphicsStructure.h"
 
 #include "D3dComponents/XMCamera/XMCamera.h"
 #include "D3dComponents/XMCamera/XMCameraController.h"
@@ -108,6 +110,7 @@ namespace D3dGraphicsCore {
 		ComputeContext* m_pComputeContext = nullptr;
 		ComputePSO* m_pComputePSO = nullptr;
 		My::D3d12LightManager* m_pLightManager;
+		std::unique_ptr<My::CD3dPipelineManager> m_pD3dPipelineManager;
 	private:
 		QueryFrameBufferSize m_fQueryFrameBufferSize;
 		GetWindowHandleProc m_fGetWindowHandleProc;

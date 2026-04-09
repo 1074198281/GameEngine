@@ -43,31 +43,31 @@ namespace D3dGraphicsCore {
 	void FinalizeDefaultTexture();
 
 
-	//---------------------------------------pipeline---------------------------------------//
-	extern RootSignature g_TemplateRootSignature;
-	extern RootSignature g_PresentRootSignature;
-	extern RootSignature g_OverlaySubRootSignature;
-	extern RootSignature g_VolumetricLightSubRootSignature;
-	extern std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
+	////---------------------------------------pipeline---------------------------------------//
+	//extern RootSignature g_TemplateRootSignature;
+	//extern RootSignature g_PresentRootSignature;
+	//extern RootSignature g_OverlaySubRootSignature;
+	//extern RootSignature g_VolumetricLightSubRootSignature;
+	//extern std::unordered_map<std::string, std::unique_ptr<GraphicsPSO>> g_PipelineStatusMap;
 
-	extern RootSignature g_GaussBlurRootSignature;
-	extern std::unordered_map<std::string, std::unique_ptr<ComputePSO>> g_ComputePSOMap;
+	//extern RootSignature g_GaussBlurRootSignature;
+	//extern std::unordered_map<std::string, std::unique_ptr<ComputePSO>> g_ComputePSOMap;
 
-	extern RootSignature g_ShadowOmniRootSignature;
-	extern RootSignature g_ShadowAreaRootSignature;
-	extern RootSignature g_ShadowSpotRootSignature;
-	extern RootSignature g_ShadowInfiRootSignature;
+	//extern RootSignature g_ShadowOmniRootSignature;
+	//extern RootSignature g_ShadowAreaRootSignature;
+	//extern RootSignature g_ShadowSpotRootSignature;
+	//extern RootSignature g_ShadowInfiRootSignature;
 
-	void InitializePipelineTemplates();
-	void InitializeGeometryPipelines();
-	void InitializeOverlayPipelines();
-	void InitializeLightPipelines();
+	//void InitializePipelineTemplates();
+	//void InitializeGeometryPipelines();
+	//void InitializeOverlayPipelines();
+	//void InitializeLightPipelines();
 
-	void FinalizePipelineTemplates();
+	//void FinalizePipelineTemplates();
 
-	void AddLightingShaders();
+	//void AddLightingShaders();
 
-	void SetPipelineSettings(GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name);
+	//void SetPipelineSettings(GraphicsPSO& PSO, const int& InputLayoutType, const My::PrimitiveType& PrimitiveType, const std::string& Name);
     
 	//---------------------------------------samplers---------------------------------------//
 	extern D3D12_SAMPLER_DESC g_pointWarp;

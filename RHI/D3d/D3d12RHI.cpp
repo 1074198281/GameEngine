@@ -10,7 +10,7 @@
 #include "Core/Common/SystemTime.h"
 #include "Core/Resource/DDSTextureLoader.h"
 #include "MemoryManager.hpp"
-#include "GraphicsStructure.h"
+#include "Modules/ShaderSource/GraphicsStructure.h"
 #include "Modules/ShaderSource/ShaderSource.h"
 #include "D3dComponents/XMInput/XMInput.h"
 #include "cbuffer.h"
@@ -48,9 +48,11 @@ int D3dGraphicsCore::D3d12RHI::StartUp()
     InitializeCoreHWND();
     InitializeInputLayout();
     InitializeSamplers();
-    InitializeShaderByteMap();
     InitializeBaseDescriptorHeap();
-    InitializePipelineTemplates();
+
+    m_pD3dPipelineManager = std::make_unique<My::CD3dPipelineManager>();
+    m_pD3dPipelineManager->InitializeShaderByteMap();
+    m_pD3dPipelineManager->InitializePipelineTemplates();
 
     SystemTime::Initialize();
     XM_Input::Initialize();
@@ -68,10 +70,13 @@ void D3dGraphicsCore::D3d12RHI::Finalize()
     ShutdownDisplay();
     DestroyCommonState();
 
-    FinalizePipelineTemplates();
     FinalizeBaseDescriptorHeap();
-    FinalizeShaderByteMap();
     FinalizeDefaultTexture();
+
+    //FinalizePipelineTemplates();
+    //FinalizeShaderByteMap();
+    m_pD3dPipelineManager->FinalizePipelineTemplates();
+    m_pD3dPipelineManager->FinalizeShaderByteMap();
 
     XM_Input::Shutdown();
     Shutdown();
@@ -270,27 +275,30 @@ void D3dGraphicsCore::D3d12RHI::EndOverlayPass(ColorBuffer& result, ColorBuffer&
 void D3dGraphicsCore::D3d12RHI::SetPipelineStatus(const std::string& PSOName)
 {
     if (PSOName.substr(PSOName.size() - 3, 3) == "_CS") {
-        if (g_ComputePSOMap.find(PSOName) != g_ComputePSOMap.end()) {
-            m_pComputePSO = g_ComputePSOMap[PSOName].get();
-            m_pRootSignature = m_pComputePSO->GetRootSignaturePtr();
+        auto d3dPipeline = m_pD3dPipelineManager->GetComputePSO(PSOName);
+        if (d3dPipeline) {
+            m_pComputePSO = d3dPipeline->GetComputePSO();
+            m_pRootSignature = d3dPipeline->GetRootSignature();
         }
         else {
             ASSERT(false, "InValid Compute Pipeline Status Name!");
             std::cout << "[PSO ERROR] InValid Compute Pipeline Status Name!" << std::endl;
             m_pComputePSO = nullptr;
+            m_pRootSignature = nullptr;
         }
         return;
     }
 
-    if (g_PipelineStatusMap.find(PSOName) != g_PipelineStatusMap.end()) {
-        m_pGraphicsPSO = g_PipelineStatusMap[PSOName].get();
+    auto d3dPipeline = m_pD3dPipelineManager->GetGraphicsPSO(PSOName);
+    if (d3dPipeline) {
+        m_pGraphicsPSO = d3dPipeline->GetPSO();
         m_pRootSignature = m_pGraphicsPSO->GetRootSignaturePtr();
     }
     else {
         ASSERT(false, "InValid Pipeline Status Name!");
         std::cout << "[PSO ERROR] InValid Pipeline Status Name!" << std::endl;
-        m_pGraphicsPSO = g_PipelineStatusMap["Default"].get();
-        m_pRootSignature = g_PipelineStatusMap["Default"]->GetRootSignaturePtr();
+        m_pGraphicsPSO = m_pD3dPipelineManager->GetGraphicsPSO("Default")->GetPSO();
+        m_pRootSignature = m_pGraphicsPSO->GetRootSignaturePtr();
     }
 }
 

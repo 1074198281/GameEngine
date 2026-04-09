@@ -1,6 +1,6 @@
 #include "D3d12LightManager.h"
 #include "D3d/Core/D3dGraphicsCoreManager.h"
-#include "GraphicsStructure.h"
+#include "Modules/ShaderSource/GraphicsStructure.h"
 #include "D3d/Core/Pipeline/DescriptorHeap.h"
 
 My::D3d12LightManager::D3d12LightManager()
